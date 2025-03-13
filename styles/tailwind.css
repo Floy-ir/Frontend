@@ -1,4 +1,4 @@
-@import 'tailwindcss';
+@import "tailwindcss";
 
 @config '../tailwind.config.js';
 
@@ -21,7 +21,7 @@
 }
 
 @theme {
-    /* Colors */
+  /* Colors */
   --color-Shade-Black: rgba(0, 0, 0, 1);
   --color-Violet-V400: rgba(161, 73, 247, 1);
   --color-Violet-V600: rgba(118, 31, 205, 1);
@@ -33,12 +33,12 @@
   --color-Flamingo-F700: rgba(167, 37, 91, 1);
   --color-Flamingo-F500: rgba(250, 56, 137, 1);
   --color-Flamingo-F900: rgba(83, 19, 46, 1);
-  --color-Blue sky-B200: rgba(158, 219, 255, 1);
-  --color-Blue sky-B900: rgba(20, 61, 85, 1);
-  --color-Blue sky-B700: rgba(41, 123, 170, 1);
-  --color-Blue sky-B500: rgba(61, 184, 255, 1);
+  --color-Blue-sky-B200: rgba(158, 219, 255, 1);
+  --color-Blue-sky-B900: rgba(20, 61, 85, 1);
+  --color-Blue-sky-B700: rgba(41, 123, 170, 1);
+  --color-Blue-sky-B500: rgba(61, 184, 255, 1);
   --color-Flamingo-F800: rgba(125, 28, 69, 1);
-  --color-Blue sky-B400: rgba(93, 196, 255, 1);
+  --color-Blue-sky-B400: rgba(93, 196, 255, 1);
   --color-Warning-W100: rgba(253, 237, 190, 1);
   --color-Warning-W200: rgba(253, 228, 158, 1);
   --color-Warning-W300: rgba(252, 218, 125, 1);
@@ -50,14 +50,14 @@
   --color-Success-s500: rgba(16, 185, 129, 1);
   --color-Flamingo-F300: rgba(252, 122, 176, 1);
   --color-Success-s600: rgba(5, 150, 105, 1);
-  --color-Blue sky-B100: rgba(190, 231, 255, 1);
+  --color-Blue-sky-B100: rgba(190, 231, 255, 1);
   --color-Success-s700: rgba(4, 120, 87, 1);
   --color-Success-s50: rgba(236, 253, 245, 1);
   --color-Shade-White: rgba(255, 255, 255, 1);
   --color-Success-s800: rgba(6, 95, 70, 1);
   --color-Violet-V900: rgba(47, 12, 82, 1);
   --color-Gray-N800: rgba(37, 37, 37, 1);
-  --color-Blue sky-B600: rgba(51, 153, 212, 1);
+  --color-Blue-sky-B600: rgba(51, 153, 212, 1);
   --color-Error-E100: rgba(250, 209, 212, 1);
   --color-Error-E300: rgba(227, 120, 127, 1);
   --color-Error-E800: rgba(117, 0, 8, 1);
@@ -70,9 +70,9 @@
   --color-Gray-N700: rgba(64, 64, 64, 1);
   --color-Error-E50: rgba(255, 235, 236, 1);
   --color-Error-E500main: rgba(231, 60, 71, 1);
-  --color-Blue sky-B50: rgba(235, 248, 255, 1);
+  --color-Blue-sky-B50: rgba(235, 248, 255, 1);
   --color-Warning-W400: rgba(251, 209, 93, 1);
-  --color-Blue sky-B300: rgba(126, 208, 255, 1);
+  --color-Blue-sky-B300: rgba(126, 208, 255, 1);
   --color-Violet-V300: rgba(180, 110, 249, 1);
   --color-Error-E700: rgba(167, 5, 16, 1);
   --color-Error-E600: rgba(213, 28, 41, 1);
@@ -87,7 +87,7 @@
   --color-Gray-N600: rgba(82, 82, 82, 1);
   --color-Error-E200: rgba(237, 161, 166, 1);
   --color-Violet-V700: rgba(95, 25, 164, 1);
-  --color-Blue sky-B800: rgba(31, 92, 128, 1);
+  --color-Blue-sky-B800: rgba(31, 92, 128, 1);
   --color-Primary-P500main: rgba(24, 66, 143, 1);
   --color-Gray-N900: rgba(23, 23, 23, 1);
   --color-Primary-P600: rgba(19, 53, 114, 1);
@@ -110,7 +110,7 @@
   --color-Secondary-S200: rgba(254, 222, 142, 1);
   --color-Secondary-S100: rgba(254, 233, 178, 1);
   --color-Secondary-S300: rgba(254, 212, 107, 1);
-  --color-Secondary-S500 main: rgba(255, 201, 112, 1);
+  --color-Secondary-S500-main: rgba(255, 201, 112, 1);
   --color-Secondary-S400: rgba(255, 251, 191, 1);
   --color-Secondary-S600: rgba(216, 158, 13, 1);
   --color-Secondary-S800: rgba(108, 78, 2, 1);
@@ -124,8 +124,8 @@
   /* fontWeight */
 
   /* fontFamily */
-  --font-family-anjoman max fn: Anjoman Max FN;
-  --font-family-anjoman max: Anjoman Max;
+  --font-family-anjoman-max-fn: Anjoman Max FN;
+  --font-family-anjoman-max: Anjoman Max;
 
   /* letterSpacing */
   --letter-spacing-normal: 0em;
