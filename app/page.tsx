@@ -1,6 +1,8 @@
+import { Eye, User } from "iconsax-react"
 import { Metadata } from "next"
 import { Button } from "components/Button/Button"
 
+import { TextField } from "components/TextField/TextField"
 import { LP_GRID_ITEMS } from "lp-items"
 
 export const metadata: Metadata = {
@@ -46,6 +48,21 @@ export default function Web() {
           </div>
         </div>
       </section>
+      <div className="p-8">
+        <TextField
+          label="عنوان"
+          placeholder="متن ورودی"
+          // prefix="پیشوند"
+          // suffix="پسوند"
+          helperText="متن راهنما"
+          maxLength={20}
+          showCharCount
+          leftIcon={<Eye color="var(--color-Gray-N500)" />}
+          rightIcon={<User color="var(--color-Gray-N500)" />}
+          dir="rtl"
+          width="md"
+        />
+      </div>
       <section className="bg-white dark:bg-gray-900">
         <div className="mx-auto max-w-(--breakpoint-xl) px-4 py-8 sm:py-16 lg:px-6">
           <div className="justify-center space-y-8 md:grid md:grid-cols-2 md:gap-12 md:space-y-0 lg:grid-cols-3">
