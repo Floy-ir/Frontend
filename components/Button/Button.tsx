@@ -44,6 +44,7 @@ const button = cva(
         small: ["inline-flex", "p-[14px_20px]", "justify-center", "items-center", "gap-1"],
         medium: ["inline-flex", "p-[16px_24px]", "justify-center", "items-center", "gap-2"],
         large: ["inline-flex", "p-[16px_28px]", "justify-center", "items-center", "gap-2"],
+      // todo: custom size
       },
     },
     defaultVariants: {
