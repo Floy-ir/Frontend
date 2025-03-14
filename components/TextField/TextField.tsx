@@ -4,6 +4,7 @@ import * as Form from "@radix-ui/react-form"
 import { cva, type VariantProps } from "class-variance-authority"
 import * as React from "react"
 import { twMerge } from "tailwind-merge"
+import { englishToFarsiNumber } from "utils/numbers"
 
 const textFieldContainer = cva(["flex", "flex-col", "gap-2", "w-full"], {
   variants: {
@@ -226,7 +227,10 @@ export function TextField({
           <div className="flex justify-between w-full">
             {showCharCount && maxLength && (
               <div className={twMerge(textFieldHelperText({ intent }))}>
-                {inputValue.length} / {maxLength}
+                {props.dir === "rtl" 
+                  ? `${englishToFarsiNumber(inputValue.length)} / ${englishToFarsiNumber(maxLength || 0)}`
+                  : `${inputValue.length} / ${maxLength}`
+                }
               </div>
             )}
             
