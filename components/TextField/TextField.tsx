@@ -36,7 +36,7 @@ const textFieldLabel = cva(["text-right", "text-sm", "font-medium"], {
 })
 
 const textFieldWrapper = cva(
-  ["flex", "items-center", "border", "rounded-xl", "w-full", "overflow-hidden", "transition-colors", "delay-50"],
+  ["flex", "items-center", "border", "rounded-xl", "overflow-hidden", "transition-colors", "delay-50"],
   {
     variants: {
       intent: {
@@ -44,8 +44,18 @@ const textFieldWrapper = cva(
         error: ["border-red-500"],
       },
       size: {
-        sm: ["h-12", "text-sm"],
-        md: ["h-14", "text-base"],
+        sm: ["text-sm", "min-h-12"],
+        md: ["text-base", "min-h-14"],
+        lg: ["text-lg", "min-h-16"],
+      },
+      width: {
+        full: ["w-full"],
+        auto: ["w-auto"],
+        xs: ["w-32"],
+        sm: ["w-64"],
+        md: ["w-80"],
+        lg: ["w-96"],
+        xl: ["w-[28rem]"],
       },
       filled: {
         true: ["bg-slate-50"],
@@ -59,6 +69,7 @@ const textFieldWrapper = cva(
     defaultVariants: {
       intent: "primary",
       size: "md",
+      width: "full",
       filled: false,
       disabled: false,
     },
@@ -121,7 +132,7 @@ const textFieldHelperText = cva(["flex", "items-center", "text-xs", "px-3"], {
   },
 })
 
-export interface TextFieldProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'size' | 'disabled'>, 
+export interface TextFieldProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'size' | 'disabled' | 'width'>, 
   VariantProps<typeof textFieldWrapper> {
   label?: string
   helperText?: string
@@ -135,6 +146,8 @@ export interface TextFieldProps extends Omit<React.InputHTMLAttributes<HTMLInput
   labelClassName?: string
   inputClassName?: string
   helperTextClassName?: string
+  customWidth?: string
+  customHeight?: string
 }
 
 export function TextField({
@@ -149,6 +162,7 @@ export function TextField({
   showCharCount = false,
   intent,
   size,
+  width,
   filled,
   disabled,
   placeholder,
@@ -158,6 +172,8 @@ export function TextField({
   labelClassName,
   inputClassName,
   helperTextClassName,
+  customWidth,
+  customHeight,
   ...props
 }: TextFieldProps) {
   const [inputValue, setInputValue] = React.useState(value?.toString() || "");
@@ -173,6 +189,11 @@ export function TextField({
   // Determine text alignment based on input direction
   const textAlign = props.dir === "ltr" ? "left" : "right";
 
+  // Custom styles for width and height if provided
+  const customStyles: React.CSSProperties = {};
+  if (customWidth) customStyles.width = customWidth;
+  if (customHeight) customStyles.height = customHeight;
+
   return (
     <Form.Root className={twMerge(textFieldContainer({ intent, disabled, className: containerClassName }))}>
       <Form.Field name={id || "textfield"}>
@@ -182,7 +203,10 @@ export function TextField({
           </Form.Label>
         )}
         
-        <div className={twMerge(textFieldWrapper({ intent, size, filled, disabled }))}>
+        <div 
+          className={twMerge(textFieldWrapper({ intent, size, width, filled, disabled }))}
+          style={Object.keys(customStyles).length > 0 ? customStyles : undefined}
+        >
           <div className="flex items-center h-full w-full px-4">
             {rightIcon && (
               <div className={twMerge(textFieldIcon({ position: "right" }))}>
