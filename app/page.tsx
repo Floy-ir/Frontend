@@ -56,7 +56,7 @@ export default function Web() {
           />
         </div>
         {/* ---------------------------------------------------------------------------------------------------- */}
-        <div className="flex w-full flex-col items-center justify-between bg-white p-6 px-38">
+        <div className="flex w-full flex-col items-center justify-between bg-white py-12 px-38">
           {/* Title, Buttons, and View All */}
           <div className="flex w-full items-center justify-between">
             <div className="flex flex-col justify-start">
