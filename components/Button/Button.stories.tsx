@@ -1,6 +1,6 @@
-import { Meta, StoryObj } from "@storybook/react";
-import { Button, ButtonProps } from "./Button";
-import { FiArrowLeft, FiArrowRight } from "react-icons/fi";
+import { Meta, StoryObj } from "@storybook/react"
+import { Button, ButtonProps } from "./Button"
+import { FiArrowLeft, FiArrowRight } from "react-icons/fi"
 
 export default {
   title: "Components/Button",
@@ -14,7 +14,7 @@ export default {
     leftIcon: { control: "boolean" },
     rightIcon: { control: "boolean" },
   },
-} satisfies Meta<ButtonProps>;
+} satisfies Meta<ButtonProps>
 
 export const Default: StoryObj<ButtonProps> = {
   args: {
@@ -22,7 +22,7 @@ export const Default: StoryObj<ButtonProps> = {
     intent: "primary",
     size: "medium",
   },
-};
+}
 
 export const WithIcons: StoryObj<ButtonProps> = {
   args: {
@@ -39,7 +39,7 @@ export const WithIcons: StoryObj<ButtonProps> = {
       rightIcon={args.rightIcon ? <FiArrowRight /> : undefined}
     />
   ),
-};
+}
 
 export const CustomSize: StoryObj<ButtonProps> = {
   args: {
@@ -48,7 +48,7 @@ export const CustomSize: StoryObj<ButtonProps> = {
     size: "custom",
     customSize: "px-10 py-5 text-lg",
   },
-};
+}
 
 export const Disabled: StoryObj<ButtonProps> = {
   args: {
@@ -57,11 +57,11 @@ export const Disabled: StoryObj<ButtonProps> = {
     size: "medium",
     disabled: true,
   },
-};
+}
 
 export const AsChild: StoryObj<ButtonProps> = {
   args: {
     asChild: true,
     children: <a href="https://example.com">Go to Link</a>,
   },
-};
+}

@@ -1,8 +1,8 @@
-"use client";
+"use client"
 
-import { Slot } from "@radix-ui/react-slot";
-import { cva, type VariantProps } from "class-variance-authority";
-import { twMerge } from "tailwind-merge";
+import { Slot } from "@radix-ui/react-slot"
+import { cva, type VariantProps } from "class-variance-authority"
+import { twMerge } from "tailwind-merge"
 
 const button = cva(
   [
@@ -49,7 +49,7 @@ const button = cva(
         large: ["px-7", "py-4", "text-lg", "rounded-xl", "inline-flex", "justify-center", "items-center", "gap-2"],
         medium: ["px-6", "py-3.5", "text-md", "rounded-xl", "inline-flex", "justify-center", "items-center", "gap-2"],
         small: ["px-5", "py-3", "text-sm", "rounded-xl", "inline-flex", "justify-center", "items-center", "gap-1"],
-        custom: [], 
+        custom: [],
       },
     },
     defaultVariants: {
@@ -57,17 +57,17 @@ const button = cva(
       size: "large",
     },
   }
-);
+)
 
 export interface ButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement | HTMLAnchorElement>,
     VariantProps<typeof button> {
-  href?: string;
-  disabled?: boolean;
-  leftIcon?: React.ReactNode;
-  rightIcon?: React.ReactNode;
-  asChild?: boolean;
-  customSize?: string;
+  href?: string
+  disabled?: boolean
+  leftIcon?: React.ReactNode
+  rightIcon?: React.ReactNode
+  asChild?: boolean
+  customSize?: string
 }
 
 export function Button({
@@ -83,18 +83,18 @@ export function Button({
   children,
   ...props
 }: ButtonProps) {
-  const Component = asChild ? Slot : href ? "a" : "button";
+  const Component = asChild ? Slot : href ? "a" : "button"
 
   return (
     <Component
       {...(href
         ? { href, target: "_blank", rel: "noopener noreferrer" }
         : { disabled, onClick: (e) => disabled && e.preventDefault() })}
-        className={twMerge(
-          button({ intent, size: size === "custom" ? undefined : size, className }),
-          size === "custom" ? customSize : "",
-          disabled ? "pointer-events-none opacity-40 cursor-not-allowed" : ""
-        )}
+      className={twMerge(
+        button({ intent, size: size === "custom" ? undefined : size, className }),
+        size === "custom" ? customSize : "",
+        disabled ? "pointer-events-none cursor-not-allowed opacity-40" : ""
+      )}
       {...props}
     >
       <span className="flex items-center">
@@ -103,5 +103,5 @@ export function Button({
         {rightIcon && <span className="ml-2">{rightIcon}</span>}
       </span>
     </Component>
-  );
+  )
 }
