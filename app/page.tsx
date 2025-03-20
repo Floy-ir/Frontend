@@ -1,8 +1,15 @@
 import { Eye, User } from "iconsax-react"
 import { Metadata } from "next"
 
+import { Button } from "components/Button/Button";
+import { CustomCarousel } from "components/Carousel/Carousel";
 import { Header } from "components/Header/Header"
 import { TextField } from "components/TextField/TextField"
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+} from "src/components/ui/carousel";
 
 export const metadata: Metadata = {
   title: "Next.js Enterprise Boilerplate",
@@ -53,6 +60,20 @@ export default function Web() {
             width="md"
           />
         </div>
+
+        <div className="flex justify-center items-center">
+
+
+
+      <div className="bg-white w-full flex flex-col">
+        <div className="flex flex-col w-full">
+          <h1 className=""> شهر های پرطرفدار </h1>
+          <Button ></Button>
+        </div>
+
+      </div>
+
+    </div>
       </main>
     </>
   )
