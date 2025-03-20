@@ -1,7 +1,8 @@
+import { Eye, User } from "iconsax-react"
 import { Metadata } from "next"
-import { Button } from "components/Button/Button"
 
-import { LP_GRID_ITEMS } from "lp-items"
+import { Header } from "components/Header/Header"
+import { TextField } from "components/TextField/TextField"
 
 export const metadata: Metadata = {
   title: "Next.js Enterprise Boilerplate",
@@ -21,46 +22,38 @@ export const metadata: Metadata = {
 }
 
 export default function Web() {
+  const menuItems = [
+    { label: "صفحه اصلی", href: "/", isActive: true },
+    { label: "پشتیبانی", href: "/support" },
+    { label: "بلاگ", href: "/blog" },
+    { label: "درباره ما", href: "/about" },
+  ]
+
   return (
     <>
-      <section className="bg-white dark:bg-gray-900">
-        <div className="mx-auto grid max-w-(--breakpoint-xl) px-4 py-8 text-center lg:py-16">
-          <div className="mx-auto place-self-center">
-            <h1 className="mb-4 max-w-2xl text-4xl leading-none font-extrabold tracking-tight md:text-5xl xl:text-6xl dark:text-white">
-              Next.js Enterprise Boilerplate
-            </h1>
-            <p className="mb-6 max-w-2xl font-light text-gray-500 md:text-lg lg:mb-8 lg:text-xl dark:text-gray-400">
-              Jumpstart your enterprise project with our feature-packed, high-performance Next.js boilerplate!
-              Experience rapid UI development, AI-powered code reviews, and an extensive suite of tools for a smooth and
-              enjoyable development process.
-            </p>
-            <Button href="https://github.com/Blazity/next-enterprise" className="mr-3">
-              Get started
-            </Button>
-            <Button
-              href="https://vercel.com/new/git/external?repository-url=https://github.com/Blazity/next-enterprise"
-              intent="secondary"
-            >
-              Deploy Now
-            </Button>
-          </div>
+      <main className="rtl flex min-h-screen flex-col items-center bg-white px-4 py-6">
+        <Header menuItems={menuItems} className="mb-8 bg-white" />
+
+        <div className="container mx-auto mt-12 text-center">
+          <h1 className="text-3xl font-bold text-slate-900"> فلوی، پرواز تا بی نهایت</h1>
+          <p className="mt-4 text-slate-600">این یک متن چرت و پرت است که توسط یک نفر نوشته شده است.</p>
         </div>
-      </section>
-      <section className="bg-white dark:bg-gray-900">
-        <div className="mx-auto max-w-(--breakpoint-xl) px-4 py-8 sm:py-16 lg:px-6">
-          <div className="justify-center space-y-8 md:grid md:grid-cols-2 md:gap-12 md:space-y-0 lg:grid-cols-3">
-            {LP_GRID_ITEMS.map((singleItem) => (
-              <div key={singleItem.title} className="flex flex-col items-center justify-center text-center">
-                <div className="bg-primary-100 dark:bg-primary-900 mb-4 flex size-10 items-center justify-center rounded-full p-1.5 text-blue-700 lg:size-12">
-                  {singleItem.icon}
-                </div>
-                <h3 className="mb-2 text-xl font-bold dark:text-white">{singleItem.title}</h3>
-                <p className="text-gray-500 dark:text-gray-400">{singleItem.description}</p>
-              </div>
-            ))}
-          </div>
+        <div className="p-8">
+          <TextField
+            label="عنوان"
+            placeholder="متن ورودی"
+            // prefix="پیشوند"
+            // suffix="پسوند"
+            helperText="متن راهنما"
+            maxLength={20}
+            showCharCount
+            leftIcon={<Eye color="var(--color-Gray-N500)" />}
+            rightIcon={<User color="var(--color-Gray-N500)" />}
+            dir="rtl"
+            width="md"
+          />
         </div>
-      </section>
+      </main>
     </>
   )
 }
