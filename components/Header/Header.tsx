@@ -69,7 +69,7 @@ export function Header({ menuItems, className }: HeaderProps) {
           <Button
             href="/login"
             intent="secondary"
-            size="sm"
+            size="small"
             className="rounded-xl bg-slate-100 px-6 py-4 text-indigo-600"
           >
             ورود | ثبت‌نام
@@ -97,7 +97,7 @@ export function Header({ menuItems, className }: HeaderProps) {
         <Button
           href="/login"
           intent="secondary"
-          size="sm"
+          size="small"
           className="rounded-xl bg-slate-100 px-4 py-3 text-sm text-indigo-600"
         >
           ورود | ثبت‌نام
