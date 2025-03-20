@@ -98,9 +98,9 @@ export function Button({
       {...props}
     >
       <span className="flex items-center">
-        {leftIcon && <span className="mr-2">{leftIcon}</span>}
+        {leftIcon && <span className="">{leftIcon}</span>}
         {children}
-        {rightIcon && <span className="ml-2">{rightIcon}</span>}
+        {rightIcon && <span className="">{rightIcon}</span>}
       </span>
     </Component>
   )

@@ -1,16 +1,12 @@
-import { Eye, User } from "iconsax-react"
+import { ArrowLeft2, ArrowRight2, Eye, User } from "iconsax-react"
 import { Metadata } from "next"
-
-import { Button } from "components/Button/Button";
-import { CustomCarousel } from "components/Carousel/Carousel";
+import Image from "next/image"
+import { Button } from "components/Button/Button"
+// import { CustomCarousel } from "components/Carousel/Carousel"
 import { Header } from "components/Header/Header"
 import { TextField } from "components/TextField/TextField"
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-} from "src/components/ui/carousel";
-
+// import { Carousel, CarouselContent, CarouselItem } from "src/components/ui/carousel"
+import img from "../public/Underline_06.svg"
 export const metadata: Metadata = {
   title: "Next.js Enterprise Boilerplate",
   twitter: {
@@ -38,19 +34,18 @@ export default function Web() {
 
   return (
     <>
-      <main className="rtl flex min-h-screen flex-col items-center bg-white px-4 py-6">
+      <main className="rtl flex min-h-screen flex-col items-center bg-[#f4f6f9] py-6">
         <Header menuItems={menuItems} className="mb-8 bg-white" />
 
         <div className="container mx-auto mt-12 text-center">
           <h1 className="text-3xl font-bold text-slate-900"> فلوی، پرواز تا بی نهایت</h1>
           <p className="mt-4 text-slate-600">این یک متن چرت و پرت است که توسط یک نفر نوشته شده است.</p>
         </div>
+
         <div className="p-8">
           <TextField
             label="عنوان"
             placeholder="متن ورودی"
-            // prefix="پیشوند"
-            // suffix="پسوند"
             helperText="متن راهنما"
             maxLength={20}
             showCharCount
@@ -60,20 +55,38 @@ export default function Web() {
             width="md"
           />
         </div>
+        {/* ---------------------------------------------------------------------------------------------------- */}
+        <div className="flex w-full flex-col items-center justify-between bg-white p-6 px-38">
+          {/* Title, Buttons, and View All */}
+          <div className="flex w-full items-center justify-between">
+            <div className="flex flex-col justify-start">
+              <h2 className="mb-1 text-2xl font-bold text-[#334155]">شهر‌های پرطرفدار</h2>
+              <Image alt="kjh" src={img} width={100} height={100} />
+            </div>
 
-        <div className="flex justify-center items-center">
-
-
-
-      <div className="bg-white w-full flex flex-col">
-        <div className="flex flex-col w-full">
-          <h1 className=""> شهر های پرطرفدار </h1>
-          <Button ></Button>
+            <div className="flex flex-row items-center">
+              <Button intent="text" size="medium" className="mr-6">
+                مشاهده همه
+              </Button>
+              <Button
+                size="medium"
+                intent="secondary"
+                rightIcon={<ArrowRight2 size="20" color="#4641FB" />}
+                className="ml-4.5"
+              />
+              <Button size="medium" intent="secondary" rightIcon={<ArrowLeft2 size="20" color="#4641FB" />} />
+            </div>
+          </div>
+          {/* Carousel */}
+          {/* <CustomCarousel
+            loop
+            items={[
+              <div className="rounded-lg bg-blue-500 p-10 text-white">تهران</div>,
+              <div className="rounded-lg bg-red-500 p-10 text-white">مشهد</div>,
+              <div className="rounded-lg bg-green-500 p-10 text-white">اصفهان</div>,
+            ]}
+          /> */}
         </div>
-
-      </div>
-
-    </div>
       </main>
     </>
   )
