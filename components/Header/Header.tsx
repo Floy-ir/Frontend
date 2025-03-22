@@ -7,6 +7,12 @@ import Link from "next/link"
 import React, { useState } from "react"
 import { twMerge } from "tailwind-merge"
 import { Button } from "../Button/Button"
+import {
+  Drawer,
+  DrawerContent,
+  DrawerTrigger,
+  DrawerTitle,
+} from "../ui/drawer"
 
 interface MenuItem {
   label: string
@@ -79,13 +85,38 @@ export function Header({ menuItems, className }: HeaderProps) {
 
       {/* Mobile view */}
       <div className="flex items-center justify-between md:hidden">
-        {/* Hamburger Menu */}
-        <HambergerMenu
-          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          size={48}
-          className="p-2"
-          color="var(--color-Gray-N500)"
-        />
+        {/* Drawer for mobile menu */}
+        <Drawer open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
+          <DrawerTrigger asChild>
+            <button className="p-2">
+              <HambergerMenu
+                size={48}
+                className="p-2"
+                color="var(--color-Gray-N500)"
+              />
+              <span className="sr-only">Toggle Menu</span>
+            </button>
+          </DrawerTrigger>
+          <DrawerContent className=" z-50 max-h-[80vh] bg-white p-0">
+            <DrawerTitle className="sr-only">Navigation Menu</DrawerTitle>
+            <div className="overflow-auto p-6">
+              <nav className="flex flex-col items-end space-y-3">
+                {menuItems.map((item, index) => (
+                  <Link
+                    key={index}
+                    href={item.href}
+                    className={`w-full px-6 py-3 text-right text-[1.15rem] ${
+                      item.isActive ? "font-semibold text-slate-800" : "text-slate-500"
+                    }`}
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    {item.label}
+                  </Link>
+                ))}
+              </nav>
+            </div>
+          </DrawerContent>
+        </Drawer>
 
         {/* Login Button */}
         <Button
@@ -97,26 +128,6 @@ export function Header({ menuItems, className }: HeaderProps) {
           ورود | ثبت‌نام
         </Button>
       </div>
-
-      {/* Mobile menu (shown when mobileMenuOpen is true) */}
-      {mobileMenuOpen && (
-        <div className="mt-4 rounded-xl bg-white py-2 shadow-md md:hidden">
-          <nav className="flex flex-col items-end">
-            {menuItems.map((item, index) => (
-              <Link
-                key={index}
-                href={item.href}
-                className={`w-full px-6 py-3 text-right ${
-                  item.isActive ? "font-semibold text-slate-800" : "text-slate-500"
-                }`}
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                {item.label}
-              </Link>
-            ))}
-          </nav>
-        </div>
-      )}
     </header>
   )
 }
