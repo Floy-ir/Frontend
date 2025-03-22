@@ -6,7 +6,7 @@ import * as React from "react"
 import { twMerge } from "tailwind-merge"
 import { englishToFarsiNumber } from "utils/numbers"
 
-const textFieldContainer = cva(["flex", "flex-col", "gap-2", "w-full"], {
+export const textFieldContainer = cva(["flex", "flex-col", "gap-2", "w-full"], {
   variants: {
     intent: {
       primary: ["text-slate-700"],
@@ -23,7 +23,7 @@ const textFieldContainer = cva(["flex", "flex-col", "gap-2", "w-full"], {
   },
 })
 
-const textFieldLabel = cva(["text-right", "text-sm", "font-medium"], {
+export const textFieldLabel = cva(["text-right", "text-sm", "font-medium"], {
   variants: {
     intent: {
       primary: ["text-slate-700"],
@@ -35,7 +35,7 @@ const textFieldLabel = cva(["text-right", "text-sm", "font-medium"], {
   },
 })
 
-const textFieldWrapper = cva(
+export const textFieldWrapper = cva(
   ["flex", "items-center", "border", "rounded-xl", "overflow-hidden", "transition-colors", "delay-50"],
   {
     variants: {
@@ -76,7 +76,7 @@ const textFieldWrapper = cva(
   }
 )
 
-const textFieldInput = cva(
+export const textFieldInput = cva(
   ["flex-grow", "h-full", "outline-none", "bg-transparent", "text-slate-900", "w-full", "px-0", "py-3"],
   {
     variants: {
@@ -96,7 +96,7 @@ const textFieldInput = cva(
   }
 )
 
-const textFieldIcon = cva(["flex", "items-center", "justify-center", "w-6", "h-6", "flex-shrink-0"], {
+export const textFieldIcon = cva(["flex", "items-center", "justify-center", "w-6", "h-6", "flex-shrink-0"], {
   variants: {
     position: {
       left: ["ml-4"],
@@ -108,7 +108,7 @@ const textFieldIcon = cva(["flex", "items-center", "justify-center", "w-6", "h-6
   },
 })
 
-const textFieldAffix = cva(["flex", "items-center", "whitespace-nowrap", "text-slate-500"], {
+export const textFieldAffix = cva(["flex", "items-center", "whitespace-nowrap", "text-slate-500"], {
   variants: {
     position: {
       prefix: ["mr-2"],
@@ -120,7 +120,7 @@ const textFieldAffix = cva(["flex", "items-center", "whitespace-nowrap", "text-s
   },
 })
 
-const textFieldHelperText = cva(["flex", "items-center", "text-xs", "px-3"], {
+export const textFieldHelperText = cva(["flex", "items-center", "text-xs", "px-3"], {
   variants: {
     intent: {
       primary: ["text-slate-500"],
