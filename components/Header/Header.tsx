@@ -69,7 +69,7 @@ export function Header({ menuItems, className }: HeaderProps) {
           <Button
             href="/login"
             intent="secondary"
-            size="sm"
+            size="small"
             className="rounded-xl bg-slate-100 px-6 py-4 text-indigo-600"
           >
             ورود | ثبت‌نام
@@ -87,17 +87,11 @@ export function Header({ menuItems, className }: HeaderProps) {
           color="var(--color-Gray-N500)"
         />
 
-        {/* Logo - Center on mobile */}
-        <div className="flex items-center gap-2">
-          <span className="text-lg font-semibold text-slate-800">لوگو</span>
-          <Airplane size={20} variant="Bold" className="text-blue-600" />
-        </div>
-
         {/* Login Button */}
         <Button
           href="/login"
           intent="secondary"
-          size="sm"
+          size="small"
           className="rounded-xl bg-slate-100 px-4 py-3 text-sm text-indigo-600"
         >
           ورود | ثبت‌نام
