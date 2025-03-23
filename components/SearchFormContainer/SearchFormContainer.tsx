@@ -1,5 +1,5 @@
 import React from "react"
-import { Airplane, Home, Global, Calendar, ArrowSwapHorizontal, Buildings, Building3 } from "iconsax-react"
+import { Airplane, ArrowSwapHorizontal, Buildings, Building3, Add } from "iconsax-react"
 
 import { TextField } from "@/components/TextField/TextField"
 import { ComboboxSelect } from "@/components/ComboboxSelect/ComboboxSelect"
@@ -104,7 +104,7 @@ export function SearchFormContainer({ cityOptions }: SearchFormContainerProps) {
             </div>
           </div>
 
-          <Button intent="primary" size="large" className="w-[199px]">
+          <Button intent="text" size="small" className="" rightIcon={<Add size="18" color="var(--color-Primary-P500main)" />}>
             تاریخ برگشت
           </Button>
 
@@ -117,7 +117,7 @@ export function SearchFormContainer({ cityOptions }: SearchFormContainerProps) {
         </div>
 
         {/* Search Button */}
-        <Button intent="primary" size="large" className="w-[199px]">
+        <Button intent="primary" size="large" className="w-50">
           جستجوی پرواز
         </Button>
       </form>

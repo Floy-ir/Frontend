@@ -14,13 +14,14 @@ const button = cva(
     "transition-colors",
     "delay-50",
     "cursor-pointer",
+    "whitespace-nowrap",
   ],
   {
     variants: {
       intent: {
         primary: [
-          "bg-[#4641FB]",
-          "text-white",
+          "bg-Primary-P500main",
+          "text-Shade-White",
           "hover:bg-[#6561FC]",
           "active:bg-[#0C05F8]",
           "disabled:pointer-events-none disabled:opacity-40 disabled:cursor-not-allowed",
@@ -46,9 +47,20 @@ const button = cva(
         ],
       },
       size: {
-        large: ["px-7", "py-4", "text-lg", "rounded-xl", "inline-flex", "justify-center", "items-center", "gap-2"],
+        large: ["px-7", "py-4", "text-base", "rounded-xl", "inline-flex", "justify-center", "items-center", "gap-2"],
         medium: ["px-6", "py-3.5", "text-md", "rounded-xl", "inline-flex", "justify-center", "items-center", "gap-2"],
-        small: ["px-5", "py-3", "text-sm", "rounded-xl", "inline-flex", "justify-center", "items-center", "gap-1"],
+        small: [
+          "px-5",
+          "py-3.5",
+          "text-[13px]",
+          "font-semibold",
+          "leading-none",
+          "rounded-xl",
+          "inline-flex",
+          "justify-center",
+          "items-center",
+          "gap-1"
+        ],
         custom: [],
       },
     },
@@ -84,6 +96,9 @@ export function Button({
   ...props
 }: ButtonProps) {
   const Component = asChild ? Slot : href ? "a" : "button"
+  
+  // Determine icon spacing based on button size
+  const iconGap = size === "small" ? "gap-1" : "gap-2"
 
   return (
     <Component
@@ -97,10 +112,10 @@ export function Button({
       )}
       {...props}
     >
-      <span className="flex items-center">
-        {leftIcon && <span className="mr-2">{leftIcon}</span>}
+      <span className={`flex items-center ${iconGap}`}>
+        {leftIcon && <span>{leftIcon}</span>}
         {children}
-        {rightIcon && <span className="ml-2">{rightIcon}</span>}
+        {rightIcon && <span>{rightIcon}</span>}
       </span>
     </Component>
   )
