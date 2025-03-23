@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useState } from "react"
 import { Airplane, ArrowSwapHorizontal, Buildings, Building3, Add } from "iconsax-react"
 
 import { TextField } from "@/components/TextField/TextField"
@@ -15,6 +15,19 @@ interface SearchFormContainerProps {
 }
 
 export function SearchFormContainer({ cityOptions }: SearchFormContainerProps) {
+  // Add state management for origin and destination
+  const [origin, setOrigin] = useState("")
+  const [destination, setDestination] = useState("")
+  const [departureDate, setDepartureDate] = useState("")
+  const [passengers, setPassengers] = useState("")
+
+  // Handle exchange of origin and destination
+  const handleExchange = () => {
+    const temp = origin
+    setOrigin(destination)
+    setDestination(temp)
+  }
+
   return (
     <div className="outline-Gray-N100 relative mx-auto flex w-full max-w-[1136px] flex-col items-start gap-6 rounded-3xl bg-white px-8 pt-6 pb-5 shadow-[0px_25px_66px_-12px_rgba(0,0,0,0.08)] outline-1 outline-offset-[-1px]">
       {/* Tabs Navigation */}
@@ -68,11 +81,18 @@ export function SearchFormContainer({ cityOptions }: SearchFormContainerProps) {
               dir="rtl"
               label="مبدا"
               searchPlaceholder="جستجوی شهر مبدا"
+              value={origin}
+              onChange={setOrigin}
+              expandDropdown={true}
             />
           </div>
 
           {/* Exchange Button */}
-          <button className="outline-Gray-N100 flex items-center justify-center rounded-lg p-2 outline-2 outline-offset-[-2px]">
+          <button
+            type="button"
+            className="outline-Gray-N100 flex items-center justify-center rounded-lg p-2 outline-2 outline-offset-[-2px]"
+            onClick={handleExchange}
+          >
             <ArrowSwapHorizontal
               size={20}
               className="text-Primary-P500main scale-x-[-1] transform"
@@ -91,6 +111,8 @@ export function SearchFormContainer({ cityOptions }: SearchFormContainerProps) {
               dir="rtl"
               label="مقصد"
               searchPlaceholder="جستجوی شهر مقصد"
+              value={destination}
+              onChange={setDestination}
             />
           </div>
 
@@ -100,11 +122,25 @@ export function SearchFormContainer({ cityOptions }: SearchFormContainerProps) {
           <div className="flex items-center gap-4">
             {/* Departure Date Field - Using TextField */}
             <div className="w-18">
-              <TextField noBorder placeholder="۱۹ اسفند" label="تاریخ رفت" size="md" filled={true} dir="rtl" />
+              <TextField
+                noBorder
+                placeholder="۱۹ اسفند"
+                label="تاریخ رفت"
+                size="md"
+                filled={true}
+                dir="rtl"
+                value={departureDate}
+                onChange={(e) => setDepartureDate(e.target.value)}
+              />
             </div>
           </div>
 
-          <Button intent="text" size="small" className="" rightIcon={<Add size="18" color="var(--color-Primary-P500main)" />}>
+          <Button
+            intent="text"
+            size="small"
+            className=""
+            rightIcon={<Add size="18" color="var(--color-Primary-P500main)" />}
+          >
             تاریخ برگشت
           </Button>
 
@@ -112,7 +148,16 @@ export function SearchFormContainer({ cityOptions }: SearchFormContainerProps) {
 
           {/* Return Date Field - Using TextField */}
           <div className="w-18">
-            <TextField noBorder placeholder="۱ مسافر" label="مسافران" size="md" filled={true} dir="rtl" />
+            <TextField
+              noBorder
+              placeholder="۱ مسافر"
+              label="مسافران"
+              size="md"
+              filled={true}
+              dir="rtl"
+              value={passengers}
+              onChange={(e) => setPassengers(e.target.value)}
+            />
           </div>
         </div>
 
