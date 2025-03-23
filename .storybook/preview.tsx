@@ -25,14 +25,14 @@ const preview: Preview = {
   },
   globalTypes: {
     direction: {
-      name: 'Direction',
-      description: 'Direction for layout',
-      defaultValue: 'rtl',
+      name: "Direction",
+      description: "Direction for layout",
+      defaultValue: "rtl",
       toolbar: {
-        icon: 'transfer',
+        icon: "transfer",
         items: [
-          { value: 'ltr', title: 'LTR' },
-          { value: 'rtl', title: 'RTL' },
+          { value: "ltr", title: "LTR" },
+          { value: "rtl", title: "RTL" },
         ],
       },
     },

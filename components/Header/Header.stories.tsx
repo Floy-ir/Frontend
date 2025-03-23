@@ -21,12 +21,7 @@ export const Default: Story = {
 }
 
 export const WithCustomBackground: Story = {
-  render: (args) => (
-    <Header 
-      {...args} 
-      className="bg-slate-50"
-    />
-  ),
+  render: (args) => <Header {...args} className="bg-slate-50" />,
 }
 
-export default meta 
+export default meta
