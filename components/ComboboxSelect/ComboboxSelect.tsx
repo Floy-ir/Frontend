@@ -98,7 +98,7 @@ export function ComboboxSelect({
       <Command className="overflow-hidden rounded-xl bg-white">
         <div className="p-4">
           <div className="flex flex-col items-end justify-center overflow-hidden rounded-xl px-4 outline-2 outline-offset-[-2px] outline-[#8480fc]">
-            <div className="flex w-full items-center justify-end gap-3">
+            <div className="flex w-full items-center justify-between gap-3">
               <CommandInput
                 placeholder={searchPlaceholder || `جستجو ${label || "options"}...`}
                 className={`h-10 flex-grow py-3 ${dir === "rtl" ? "text-right" : "text-left"} border-none outline-none`}
@@ -163,7 +163,7 @@ export function ComboboxSelect({
       return typeof dropdownWidth === "number" ? `${dropdownWidth}px` : dropdownWidth
     }
     if (expandDropdown) {
-      return "calc(var(--radix-popover-trigger-width) + 60px)"
+      return "calc(var(--radix-popover-trigger-width) + 68px)"
     }
     return customWidth || "var(--radix-popover-trigger-width)"
   }
