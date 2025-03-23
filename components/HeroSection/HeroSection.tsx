@@ -13,7 +13,7 @@ export function HeroSection() {
   ]
 
   return (
-    <section className="relative mt-11 mb-10 h-[487px] w-full">
+    <section className="relative flex mt-4 mb-10 w-full md:mt-11 md:h-[487px]">
       <div className="flex w-full flex-col items-start">
         {/* Main Title */}
         <div className="mb-6 flex w-full flex-col items-start gap-[9px] md:mb-10 md:inline-flex md:w-auto md:flex-row md:items-baseline">
