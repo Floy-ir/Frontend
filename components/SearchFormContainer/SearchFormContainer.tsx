@@ -29,33 +29,33 @@ export function SearchFormContainer({ cityOptions }: SearchFormContainerProps) {
   }
 
   return (
-    <div className="outline-Gray-N100 relative mx-auto flex w-full flex-col items-start gap-4 md:gap-6 rounded-xl md:rounded-3xl bg-white p-4 md:px-8 md:pt-6 md:pb-5 shadow-[0px_25px_66px_-12px_rgba(0,0,0,0.08)] outline-1 outline-offset-[-1px]">
+    <div className="outline-Gray-N100 relative mx-auto flex w-full flex-col items-start gap-4 rounded-xl bg-white p-4 shadow-[0px_25px_66px_-12px_rgba(0,0,0,0.08)] outline-1 outline-offset-[-1px] md:gap-6 md:rounded-3xl md:px-8 md:pt-6 md:pb-5">
       {/* Tabs Navigation */}
-      <div className="border-Gray-N200 flex w-full items-center justify-start gap-4 md:gap-6 border-b pb-4 md:pb-6">
+      <div className="border-Gray-N200 flex w-full items-center justify-start gap-4 border-b pb-4 md:gap-6 md:pb-6">
         {/* Service Type Tabs */}
         <nav className="flex w-full items-center justify-center gap-1 md:w-auto md:justify-start md:gap-6">
-          <div className="bg-Primary-P50 flex flex-1 md:flex-initial items-center gap-1 md:gap-3 rounded-lg px-3 md:px-6 py-2">
-            <span className="text-Primary-P500main text-sm md:text-lg font-semibold">پرواز</span>
+          <div className="bg-Primary-P50 flex flex-1 items-center gap-1 rounded-lg px-3 py-2 md:flex-initial md:gap-3 md:px-6">
+            <span className="text-Primary-P500main text-sm font-semibold md:text-lg">پرواز</span>
             <Airplane size={16} variant="Bold" color="var(--color-Primary-P500main)" className="md:size-5" />
           </div>
 
-          <div className="bg-Gray-N200 h-6 w-px hidden md:block" />
+          <div className="bg-Gray-N200 hidden h-6 w-px md:block" />
 
-          <div className="flex flex-1 md:flex-initial items-center gap-1 md:gap-3 rounded-lg px-3 md:px-6 py-2">
-            <span className="text-Gray-N500 text-sm md:text-lg font-semibold">هتل</span>
+          <div className="flex flex-1 items-center gap-1 rounded-lg px-3 py-2 md:flex-initial md:gap-3 md:px-6">
+            <span className="text-Gray-N500 text-sm font-semibold md:text-lg">هتل</span>
             <Buildings size={16} variant="Bold" color="var(--color-Gray-N500)" className="md:size-5" />
           </div>
 
-          <div className="bg-Gray-N200 h-6 w-px hidden md:block" />
+          <div className="bg-Gray-N200 hidden h-6 w-px md:block" />
 
-          <div className="flex flex-1 md:flex-initial items-center gap-1 md:gap-3 rounded-lg px-3 md:px-6 py-2">
-            <span className="text-Gray-N500 text-sm md:text-lg font-semibold">اقامتگاه</span>
+          <div className="flex flex-1 items-center gap-1 rounded-lg px-3 py-2 md:flex-initial md:gap-3 md:px-6">
+            <span className="text-Gray-N500 text-sm font-semibold md:text-lg">اقامتگاه</span>
             <Building3 size={16} variant="Bold" color="var(--color-Gray-N500)" className="md:size-5" />
           </div>
         </nav>
 
         {/* Trip Type Selection - Hidden on mobile */}
-        <div className="hidden md:flex flex-1 items-center justify-end gap-3">
+        <div className="hidden flex-1 items-center justify-end gap-3 md:flex">
           <button className="outline-Gray-N100 flex items-center gap-2 rounded-3xl bg-white px-5 py-2.5 outline-2 outline-offset-[-2px]">
             <span className="text-Gray-N700 text-base font-medium">یک طرفه</span>
           </button>
@@ -67,9 +67,9 @@ export function SearchFormContainer({ cityOptions }: SearchFormContainerProps) {
       </div>
 
       {/* Search Form */}
-      <div className="flex w-full flex-col md:flex-row items-start md:items-center gap-4 md:gap-6">
+      <div className="flex w-full flex-col items-start gap-4 md:flex-row md:items-center md:gap-6">
         {/* Form Fields */}
-        <div className="flex w-full flex-col md:flex-row md:flex-1 items-start md:items-center gap-1 md:gap-6">
+        <div className="flex w-full flex-col items-start gap-1 md:flex-1 md:flex-row md:items-center md:gap-6">
           {/* Origin/Destination Section - Mobile layout */}
           <div className="flex w-full flex-col md:hidden">
             <div className="flex w-full items-center gap-4">
@@ -87,7 +87,7 @@ export function SearchFormContainer({ cityOptions }: SearchFormContainerProps) {
                   />
                 </button>
               </div>
-              
+
               {/* Fields Container - Mobile */}
               <div className="flex flex-1 flex-col">
                 {/* Origin Field - Mobile */}
@@ -106,10 +106,10 @@ export function SearchFormContainer({ cityOptions }: SearchFormContainerProps) {
                     onChange={setOrigin}
                   />
                 </div>
-                
+
                 {/* Divider between fields - Mobile */}
-                <div className="h-px w-full bg-Gray-N200 my-2"></div>
-                
+                <div className="bg-Gray-N200 my-2 h-px w-full"></div>
+
                 {/* Destination Field - Mobile */}
                 <div className="w-full">
                   <ComboboxSelect
@@ -128,13 +128,13 @@ export function SearchFormContainer({ cityOptions }: SearchFormContainerProps) {
                 </div>
               </div>
             </div>
-            
+
             {/* Horizontal divider after Origin/Destination - Mobile */}
-            <div className="h-px w-full bg-Gray-N200 my-2"></div>
+            <div className="bg-Gray-N200 my-2 h-px w-full"></div>
           </div>
 
           {/* Origin/Destination Section - Desktop layout */}
-          <div className="hidden md:flex w-full md:w-auto md:flex-row items-start md:items-center gap-4 md:gap-6">
+          <div className="hidden w-full items-start gap-4 md:flex md:w-auto md:flex-row md:items-center md:gap-6">
             {/* Origin Field - Desktop */}
             <div className="w-full md:w-47">
               <ComboboxSelect
@@ -185,10 +185,10 @@ export function SearchFormContainer({ cityOptions }: SearchFormContainerProps) {
             </div>
           </div>
 
-          <div className="hidden md:block bg-Gray-N200 h-12 w-px" />
+          <div className="bg-Gray-N200 hidden h-12 w-px md:block" />
 
           {/* Date and Passenger Fields - Side by side on mobile and desktop */}
-          <div className="flex w-full mt-4 md:mt-0 flex-row items-center gap-4">
+          <div className="mt-4 flex w-full flex-row items-center gap-4 md:mt-0">
             {/* Departure Date Field */}
             <div className="w-1/2 md:w-18">
               <TextField
@@ -201,6 +201,13 @@ export function SearchFormContainer({ cityOptions }: SearchFormContainerProps) {
                 value={departureDate}
                 onChange={(e) => setDepartureDate(e.target.value)}
               />
+            </div>
+
+            {/* Return Date Button - Hidden on mobile */}
+            <div className="hidden md:block">
+              <Button intent="text" size="small" rightIcon={<Add size="18" color="var(--color-Primary-P500main)" />}>
+                تاریخ برگشت
+              </Button>
             </div>
 
             <div className="bg-Gray-N200 h-12 w-px" />
@@ -219,24 +226,13 @@ export function SearchFormContainer({ cityOptions }: SearchFormContainerProps) {
               />
             </div>
           </div>
-
-          {/* Return Date Button - Hidden on mobile */}
-          <div className="hidden md:block">
-            <Button
-              intent="text"
-              size="small"
-              rightIcon={<Add size="18" color="var(--color-Primary-P500main)" />}
-            >
-              تاریخ برگشت
-            </Button>
-          </div>
         </div>
 
         {/* Divider before search button - Mobile only */}
-        <div className="h-px w-full bg-Gray-N200 my-2 md:hidden"></div>
+        <div className="bg-Gray-N200 my-2 h-px w-full md:hidden"></div>
 
         {/* Search Button - Full width on mobile */}
-        <Button intent="primary" size="large" className="w-full md:w-50 mt-4 md:mt-0">
+        <Button intent="primary" size="large" className="mt-4 w-full md:mt-0 md:w-50">
           جستجوی پرواز
         </Button>
       </div>
