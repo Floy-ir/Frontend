@@ -163,7 +163,7 @@ export function ComboboxSelect({
       return typeof dropdownWidth === "number" ? `${dropdownWidth}px` : dropdownWidth
     }
     if (expandDropdown) {
-      return "calc(var(--radix-popover-trigger-width) + 80px)"
+      return "calc(var(--radix-popover-trigger-width) + 60px)"
     }
     return customWidth || "var(--radix-popover-trigger-width)"
   }
@@ -177,7 +177,7 @@ export function ComboboxSelect({
             <div>{triggerField}</div>
           </PopoverTrigger>
           <PopoverContent
-            className="overflow-hidden rounded-xl p-0"
+            className="overflow-hidden rounded-xl p-0 border border-Gray-N200 shadow-[0px_4px_20px_rgba(0,0,0,0.1)] bg-white"
             align={dir === "rtl" ? "end" : "start"}
             sideOffset={8}
             style={{ width: getDropdownWidth() }}

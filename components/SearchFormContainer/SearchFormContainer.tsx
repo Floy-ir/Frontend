@@ -74,6 +74,7 @@ export function SearchFormContainer({ cityOptions }: SearchFormContainerProps) {
           <div className="w-47">
             <ComboboxSelect
               noBorder
+              expandDropdown
               placeholder="انتخاب شهر"
               options={cityOptions}
               filled={true}
@@ -83,7 +84,6 @@ export function SearchFormContainer({ cityOptions }: SearchFormContainerProps) {
               searchPlaceholder="جستجوی شهر مبدا"
               value={origin}
               onChange={setOrigin}
-              expandDropdown={true}
             />
           </div>
 
@@ -104,6 +104,7 @@ export function SearchFormContainer({ cityOptions }: SearchFormContainerProps) {
           <div className="w-47">
             <ComboboxSelect
               noBorder
+              expandDropdown
               placeholder="انتخاب شهر"
               options={cityOptions}
               filled={true}
