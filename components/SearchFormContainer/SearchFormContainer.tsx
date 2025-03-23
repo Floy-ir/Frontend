@@ -60,25 +60,30 @@ export function SearchFormContainer({ cityOptions }: SearchFormContainerProps) {
           {/* Origin Field - Using ComboboxSelect */}
           <div className="w-[200px]">
             <ComboboxSelect
-              placeholder="مبدا"
+              placeholder="انتخاب شهر"
               options={cityOptions}
               filled={true}
               size="md"
               dir="rtl"
-              rightIcon={<Global size={16} color="var(--color-Gray-N500)" />}
+              label="مبدا"
               searchPlaceholder="جستجوی شهر مبدا"
             />
           </div>
 
+          {/* Exchange Button */}
+          <button className="outline-Gray-N100 flex items-center justify-center rounded-lg p-2 outline-2 outline-offset-[-2px]">
+            <ArrowSwapHorizontal size={20} className="text-Primary-P500main scale-x-[-1] transform" color="var(--color-Primary-P500main)"/>
+          </button>
+
           {/* Destination Field - Using ComboboxSelect */}
           <div className="w-[200px]">
             <ComboboxSelect
-              placeholder="مقصد"
+              placeholder="انتخاب شهر"
               options={cityOptions}
               filled={true}
               size="md"
               dir="rtl"
-              rightIcon={<Global size={16} color="var(--color-Gray-N500)" />}
+              label="مقصد"
               searchPlaceholder="جستجوی شهر مقصد"
             />
           </div>
@@ -90,11 +95,11 @@ export function SearchFormContainer({ cityOptions }: SearchFormContainerProps) {
             {/* Departure Date Field - Using TextField */}
             <div className="w-[200px]">
               <TextField
-                placeholder="تاریخ رفت"
+                placeholder="19 اسفند"
+                label="تاریخ رفت"
                 size="md"
                 filled={true}
                 dir="rtl"
-                rightIcon={<Calendar size={16} color="var(--color-Gray-N500)" />}
               />
             </div>
           </div>
@@ -102,20 +107,17 @@ export function SearchFormContainer({ cityOptions }: SearchFormContainerProps) {
           {/* Return Date Field - Using TextField */}
           <div className="w-[200px]">
             <TextField
-              placeholder="تاریخ برگشت"
+              placeholder="19 اسفند"
+              label="تاریخ برگشت"
               size="md"
               filled={true}
               dir="rtl"
-              rightIcon={<Calendar size={16} color="var(--color-Gray-N500)" />}
             />
           </div>
           
           <div className="bg-Gray-N200 h-12 w-px" />
           
-          {/* Exchange Button */}
-          <button className="outline-Gray-N100 flex items-center justify-center rounded-lg p-2 outline-2 outline-offset-[-2px]">
-            <ArrowSwapHorizontal size={20} className="text-Primary-P500main scale-x-[-1] transform" />
-          </button>
+          
         </div>
 
         {/* Search Button */}
