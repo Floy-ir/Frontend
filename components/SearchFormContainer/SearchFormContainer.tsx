@@ -72,9 +72,9 @@ export function SearchFormContainer({ cityOptions }: SearchFormContainerProps) {
         <div className="flex w-full flex-col items-start gap-1 md:flex-row md:items-center md:gap-6">
           {/* Origin/Destination Section - Mobile layout */}
           <div className="flex w-full flex-col md:hidden">
-            <div className="flex w-full items-center gap-4">
+            <div className="flex flex-row-reverse w-full items-center gap-4">
               {/* Exchange Button - Mobile */}
-              <div className="-rotate-90">
+              <div>
                 <button
                   type="button"
                   className="outline-Gray-N100 flex items-center justify-center rounded-lg p-2 outline-2 outline-offset-[-2px]"
@@ -82,7 +82,7 @@ export function SearchFormContainer({ cityOptions }: SearchFormContainerProps) {
                 >
                   <ArrowSwapHorizontal
                     size={20}
-                    className="text-Primary-P500main"
+                    className="text-Primary-P500main scale-x-[-1] transform"
                     color="var(--color-Primary-P500main)"
                   />
                 </button>

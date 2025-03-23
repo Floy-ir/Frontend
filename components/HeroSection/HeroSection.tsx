@@ -13,24 +13,23 @@ export function HeroSection() {
   ]
 
   return (
-    <section className="relative w-full h-[487px] mb-10 mt-11">
-      {/* Background gradient */}
-      {/* <div className="absolute w-full h-[629px] -right-[107px] -top-[144px] rounded-[40px] overflow-hidden">
-        <div className="absolute w-full h-[505px] right-full top-[510px] origin-top-right rotate-180 bg-gradient-to-r from-slate-700/0 to-slate-700/70 rounded-[32px]" />
-      </div> */}
-
-      <div className="flex flex-col items-start w-full">
+    <section className="relative mt-11 mb-10 h-[487px] w-full">
+      <div className="flex w-full flex-col items-start">
         {/* Main Title */}
-        <div className="inline-flex justify-start items-baseline gap-[9px] mb-10 h-19">
-          <span className="text-right text-white text-5xl font-light">مرجع مقایسه قیمت و خرید</span>
-          <h1 className="text-right text-white text-5xl font-extrabold">بلیط هواپیما</h1>
+        <div className="mb-6 flex w-full flex-col items-start gap-[9px] md:mb-10 md:inline-flex md:w-auto md:flex-row md:items-baseline">
+          <span className="text-right text-[28px] leading-[48px] font-light text-white md:text-5xl md:leading-normal">
+            مرجع مقایسه قیمت و خرید
+          </span>
+          <h1 className="text-right text-[28px] leading-[48px] font-bold text-white md:text-5xl md:leading-normal md:font-extrabold">
+            بلیط هواپیما
+          </h1>
         </div>
-        
+
         {/* Subtitle */}
-        <div className=" mb-20 opacity-80 text-right text-Gray-N100 text-xl font-normal">
+        <div className="text-Gray-N100 mb-12 w-full text-right text-[13px] font-normal opacity-80 md:mb-20 md:text-xl">
           همین الان از معتبر‌ترین آژانس‌ها رزرو کن!
         </div>
-        
+
         {/* Search Form Container */}
         <div className="w-full">
           <SearchFormContainer cityOptions={cityOptions} />
@@ -38,4 +37,4 @@ export function HeroSection() {
       </div>
     </section>
   )
-} 
+}
