@@ -58,8 +58,9 @@ export function SearchFormContainer({ cityOptions }: SearchFormContainerProps) {
         {/* Form Fields */}
         <div className="flex flex-1 items-center gap-6">
           {/* Origin Field - Using ComboboxSelect */}
-          <div className="w-[200px]">
+          <div className="w-47">
             <ComboboxSelect
+              noBorder
               placeholder="انتخاب شهر"
               options={cityOptions}
               filled={true}
@@ -72,12 +73,17 @@ export function SearchFormContainer({ cityOptions }: SearchFormContainerProps) {
 
           {/* Exchange Button */}
           <button className="outline-Gray-N100 flex items-center justify-center rounded-lg p-2 outline-2 outline-offset-[-2px]">
-            <ArrowSwapHorizontal size={20} className="text-Primary-P500main scale-x-[-1] transform" color="var(--color-Primary-P500main)"/>
+            <ArrowSwapHorizontal
+              size={20}
+              className="text-Primary-P500main scale-x-[-1] transform"
+              color="var(--color-Primary-P500main)"
+            />
           </button>
 
           {/* Destination Field - Using ComboboxSelect */}
-          <div className="w-[200px]">
+          <div className="w-47">
             <ComboboxSelect
+              noBorder
               placeholder="انتخاب شهر"
               options={cityOptions}
               filled={true}
@@ -93,31 +99,21 @@ export function SearchFormContainer({ cityOptions }: SearchFormContainerProps) {
           {/* Date and Passenger Fields */}
           <div className="flex items-center gap-4">
             {/* Departure Date Field - Using TextField */}
-            <div className="w-[200px]">
-              <TextField
-                placeholder="19 اسفند"
-                label="تاریخ رفت"
-                size="md"
-                filled={true}
-                dir="rtl"
-              />
+            <div className="w-18">
+              <TextField noBorder placeholder="۱۹ اسفند" label="تاریخ رفت" size="md" filled={true} dir="rtl" />
             </div>
           </div>
 
-          {/* Return Date Field - Using TextField */}
-          <div className="w-[200px]">
-            <TextField
-              placeholder="19 اسفند"
-              label="تاریخ برگشت"
-              size="md"
-              filled={true}
-              dir="rtl"
-            />
-          </div>
-          
+          <Button intent="primary" size="large" className="w-[199px]">
+            تاریخ برگشت
+          </Button>
+
           <div className="bg-Gray-N200 h-12 w-px" />
-          
-          
+
+          {/* Return Date Field - Using TextField */}
+          <div className="w-18">
+            <TextField noBorder placeholder="۱ مسافر" label="مسافران" size="md" filled={true} dir="rtl" />
+          </div>
         </div>
 
         {/* Search Button */}

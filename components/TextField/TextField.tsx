@@ -148,6 +148,7 @@ export interface TextFieldProps extends Omit<React.InputHTMLAttributes<HTMLInput
   helperTextClassName?: string
   customWidth?: string
   customHeight?: string
+  noBorder?: boolean
 }
 
 export function TextField({
@@ -174,6 +175,7 @@ export function TextField({
   helperTextClassName,
   customWidth,
   customHeight,
+  noBorder = false,
   ...props
 }: TextFieldProps) {
   const [inputValue, setInputValue] = React.useState(value?.toString() || "");
@@ -195,7 +197,10 @@ export function TextField({
   if (customHeight) customStyles.height = customHeight;
 
   return (
-    <Form.Root className={twMerge(textFieldContainer({ intent, disabled, className: containerClassName }))}>
+    <Form.Root className={twMerge(
+      textFieldContainer({ intent, disabled, className: containerClassName }),
+      noBorder && "gap-0"
+    )}>
       <Form.Field name={id || "textfield"}>
         {label && (
           <Form.Label className={twMerge(textFieldLabel({ intent, className: labelClassName }))}>
@@ -204,10 +209,11 @@ export function TextField({
         )}
         
         <div 
-          className={twMerge(textFieldWrapper({ intent, size, width, filled, disabled }))}
+          className={twMerge(textFieldWrapper({ intent, size, width, filled, disabled }), 
+            noBorder && "border-0 bg-transparent")}
           style={Object.keys(customStyles).length > 0 ? customStyles : undefined}
         >
-          <div className="flex items-center h-full w-full px-4">
+          <div className={`flex items-center h-full w-full ${noBorder ? '' : 'px-4'}`}>
             {rightIcon && (
               <div className={twMerge(textFieldIcon({ position: "right" }))}>
                 {rightIcon}

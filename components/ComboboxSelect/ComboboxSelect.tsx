@@ -128,7 +128,10 @@ export function ComboboxSelect({
   
   // Main container wrapper
   const Container = ({ children }: { children: React.ReactNode }) => (
-    <div className={twMerge(textFieldContainer({ intent, disabled, className: containerClassName }))}>
+    <div className={twMerge(
+      textFieldContainer({ intent, disabled, className: containerClassName }),
+      props.noBorder && "gap-0"
+    )}>
       {label && (
         <div className={twMerge(textFieldLabel({ intent, className: labelClassName }))}>
           {label}
