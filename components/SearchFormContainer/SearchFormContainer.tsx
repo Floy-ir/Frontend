@@ -67,9 +67,9 @@ export function SearchFormContainer({ cityOptions }: SearchFormContainerProps) {
       </div>
 
       {/* Search Form */}
-      <div className="flex w-full flex-col items-start gap-4 md:flex-row md:items-center md:gap-6">
+      <div className="flex w-full flex-col items-start gap-4 md:flex-col lg:flex-row md:items-start lg:items-center md:gap-6">
         {/* Form Fields */}
-        <div className="flex w-full flex-col items-start gap-1 md:flex-1 md:flex-row md:items-center md:gap-6">
+        <div className="flex w-full flex-col items-start gap-1 md:flex-row md:items-center md:gap-6">
           {/* Origin/Destination Section - Mobile layout */}
           <div className="flex w-full flex-col md:hidden">
             <div className="flex w-full items-center gap-4">
@@ -231,8 +231,8 @@ export function SearchFormContainer({ cityOptions }: SearchFormContainerProps) {
         {/* Divider before search button - Mobile only */}
         <div className="bg-Gray-N200 my-2 h-px w-full md:hidden"></div>
 
-        {/* Search Button - Full width on mobile */}
-        <Button intent="primary" size="large" className="mt-4 w-full md:mt-0 md:w-50">
+        {/* Search Button - Full width on mobile and medium screens */}
+        <Button intent="primary" size="large" className="mt-4 w-full md:mt-4 lg:mt-0 md:w-full lg:w-50">
           جستجوی پرواز
         </Button>
       </div>
