@@ -51,11 +51,11 @@ export const textFieldWrapper = cva(
       width: {
         full: ["w-full"],
         auto: ["w-auto"],
-        xs: ["w-32"],
-        sm: ["w-64"],
-        md: ["w-80"],
-        lg: ["w-96"],
-        xl: ["w-[28rem]"],
+        xs: ["w-32", "min-w-[8rem]", "max-w-xs"],
+        sm: ["w-64", "min-w-[12rem]", "max-w-sm"],
+        md: ["w-80", "min-w-[16rem]", "max-w-md"],
+        lg: ["w-96", "min-w-[20rem]", "max-w-lg"],
+        xl: ["w-[28rem]", "min-w-[24rem]", "max-w-xl"],
       },
       filled: {
         true: ["bg-slate-50"],
@@ -194,8 +194,18 @@ export function TextField({
 
   // Custom styles for width and height if provided
   const customStyles: React.CSSProperties = {}
-  if (customWidth) customStyles.width = customWidth
-  if (customHeight) customStyles.height = customHeight
+  if (customWidth) {
+    // Support for responsive width values (min/max/clamp)
+    customStyles.width = customWidth.includes('clamp') || customWidth.includes('min') || customWidth.includes('max') 
+      ? customWidth 
+      : customWidth;
+  }
+  if (customHeight) {
+    // Support for responsive height values (min/max/clamp)
+    customStyles.height = customHeight.includes('clamp') || customHeight.includes('min') || customHeight.includes('max')
+      ? customHeight
+      : customHeight;
+  }
 
   return (
     <Form.Root className={twMerge(
