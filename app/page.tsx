@@ -1,11 +1,8 @@
-import { Eye, User } from "iconsax-react"
+import Image from "next/image"
 import { Metadata } from "next"
 
 import { Header } from "@/components/Header/Header"
-import { TextField } from "@/components/TextField/TextField"
-import FormExample from "@/components/FormExample/FormExample"
 import { HeroSection } from "@/components/HeroSection/HeroSection"
-
 export const metadata: Metadata = {
   title: "Next.js Enterprise Boilerplate",
   twitter: {
@@ -33,13 +30,24 @@ export default function Web() {
 
   return (
     <>
-      <main className="rtl flex min-h-screen flex-col items-center bg-white px-4 py-6">
-        <Header menuItems={menuItems} className="mb-8 bg-white" />
+      {/* Hero image section */}
+      <div className="fixed -top-12 left-0 w-full h-136">
+        <Image
+          src="/images/hero-image.png"
+          alt="Hero Image"
+          fill
+          className="object-cover -z-40"
+          sizes="100vw"
+          priority
+        />
+      </div>
+      <main className="rtl flex min-h-screen flex-col items-center bg-transparent relative z-10">
+        <div className="w-full max-w-[1136px]">
+          <Header menuItems={menuItems} className="" />
+          <HeroSection />
+        </div>
 
-        {/* Using the refactored Hero Section component */}
-        <HeroSection />
-
-        <div className="container mx-auto mt-12 text-center">
+        {/* <div className="container mx-auto mt-12 text-center">
           <h2 className="text-3xl font-bold text-slate-900">فلوی، پرواز تا بی نهایت</h2>
           <p className="mt-4 text-slate-600">این یک متن چرت و پرت است که توسط یک نفر نوشته شده است.</p>
         </div>
@@ -57,7 +65,7 @@ export default function Web() {
             width="md"
           />
         </div>
-        <FormExample />
+        <FormExample /> */}
       </main>
     </>
   )

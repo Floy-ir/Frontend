@@ -1,5 +1,5 @@
 import React from "react"
-import { Airplane, Home, Global, Calendar, ArrowSwapHorizontal } from "iconsax-react"
+import { Airplane, Home, Global, Calendar, ArrowSwapHorizontal, Buildings, Building3 } from "iconsax-react"
 
 import { TextField } from "@/components/TextField/TextField"
 import { ComboboxSelect } from "@/components/ComboboxSelect/ComboboxSelect"
@@ -16,92 +16,49 @@ interface SearchFormContainerProps {
 
 export function SearchFormContainer({ cityOptions }: SearchFormContainerProps) {
   return (
-    <div className="absolute w-[1136px] right-[152px] top-[239px] px-8 pt-6 pb-5 bg-white rounded-3xl shadow-[0px_25px_66px_-12px_rgba(0,0,0,0.08)] outline outline-1 outline-offset-[-1px] outline-Gray-N100 flex flex-col items-start gap-6">
+    <div className="outline-Gray-N100 relative mx-auto flex w-full max-w-[1136px] flex-col items-start gap-6 rounded-3xl bg-white px-8 pt-6 pb-5 shadow-[0px_25px_66px_-12px_rgba(0,0,0,0.08)] outline-1 outline-offset-[-1px]">
       {/* Tabs Navigation */}
-      <div className="w-full pb-6 border-b border-Gray-N200 flex justify-start items-center gap-6">
+      <div className="border-Gray-N200 flex w-full items-center justify-start gap-6 border-b pb-6">
+        {/* Service Type Tabs */}
+        <nav className="flex items-center gap-6">
+          <div className="bg-Primary-P50 flex items-center gap-3 rounded-lg px-6 py-2">
+            <Airplane size={20} variant="Bold" color="var(--color-Primary-P500main)" />
+            <span className="text-Primary-P500main text-lg font-semibold">پرواز</span>
+          </div>
+
+          <div className="bg-Gray-N200 h-6 w-px" />
+
+          <div className="flex items-center gap-3 rounded-lg px-6 py-2">
+            <Buildings size={20} variant="Bold" color="var(--color-Gray-N500)" />
+            <span className="text-Gray-N500 text-lg font-semibold">هتل</span>
+          </div>
+
+          <div className="bg-Gray-N200 h-6 w-px" />
+
+          <div className="flex items-center gap-3 rounded-lg px-6 py-2">
+            <Building3 size={20} variant="Bold" color="var(--color-Gray-N500)" />
+            <span className="text-Gray-N500 text-lg font-semibold">اقامتگاه</span>
+          </div>
+        </nav>
+
         {/* Trip Type Selection */}
-        <div className="flex-1 flex justify-end items-center gap-3">
-          <button className="px-5 py-2.5 bg-white rounded-3xl outline outline-2 outline-offset-[-2px] outline-Gray-N100 flex items-center gap-2">
+        <div className="flex flex-1 items-center justify-end gap-3">
+          <button className="outline-Gray-N100 flex items-center gap-2 rounded-3xl bg-white px-5 py-2.5 outline-2 outline-offset-[-2px]">
             <span className="text-Gray-N700 text-base font-medium">یک طرفه</span>
           </button>
-          
-          <button className="px-5 py-2.5 bg-white rounded-3xl outline outline-2 outline-offset-[-2px] outline-Gray-N100 flex items-center gap-2">
+
+          <button className="outline-Gray-N100 flex items-center gap-2 rounded-3xl bg-white px-5 py-2.5 outline-2 outline-offset-[-2px]">
             <span className="text-Gray-N700 text-base font-medium">داخلی</span>
           </button>
         </div>
-
-        {/* Service Type Tabs */}
-        <nav className="flex items-center gap-6">
-          <div className="px-6 py-2 bg-Primary-P50 rounded-lg flex items-center gap-3">
-            <span className="text-Primary-P500main text-lg font-semibold">پرواز</span>
-            <Airplane size={20} variant="Bold" className="text-Primary-P500main" />
-          </div>
-          
-          <div className="w-px h-6 bg-Gray-N200" />
-          
-          <div className="px-6 py-2 rounded-lg flex items-center gap-3">
-            <span className="text-Gray-N500 text-lg font-semibold">هتل</span>
-            <Home size={20} variant="Bold" className="text-Gray-N500" />
-          </div>
-          
-          <div className="w-px h-6 bg-Gray-N200" />
-          
-          <div className="px-6 py-2 rounded-lg flex items-center gap-3">
-            <span className="text-Gray-N500 text-lg font-semibold">اقامتگاه</span>
-            <Home size={20} variant="Bold" className="text-Gray-N500" />
-          </div>
-        </nav>
       </div>
 
       {/* Search Form */}
-      <form className="w-full flex items-center gap-6">
+      <form className="flex w-full items-center gap-6">
         {/* Form Fields */}
-        <div className="flex-1 flex items-center gap-6">
-          {/* Date and Passenger Fields */}
-          <div className="flex-1 flex items-center gap-4">
-            {/* Return Date Field - Using TextField */}
-            <TextField
-              placeholder="تاریخ برگشت"
-              size="md"
-              filled={true}
-              dir="rtl"
-              rightIcon={<Calendar size={16} color="var(--color-Gray-N500)" />}
-            />
-            
-            {/* Exchange Button */}
-            <button className="p-2 rounded-lg outline outline-2 outline-offset-[-2px] outline-Gray-N100 flex justify-center items-center">
-              <ArrowSwapHorizontal size={20} className="text-Primary-P500main transform scale-x-[-1]" />
-            </button>
-            
-            {/* Departure Date Field - Using TextField */}
-            <TextField
-              placeholder="تاریخ رفت"
-              size="md"
-              filled={true}
-              dir="rtl"
-              rightIcon={<Calendar size={16} color="var(--color-Gray-N500)" />}
-            />
-          </div>
-          
-          <div className="w-px h-12 bg-Gray-N200" />
-          
-          {/* Destination Field - Using ComboboxSelect */}
-          <div className="w-[204px]">
-            <ComboboxSelect
-              placeholder="مقصد"
-              options={cityOptions}
-              filled={true}
-              size="md"
-              dir="rtl"
-              rightIcon={<Global size={16} color="var(--color-Gray-N500)" />}
-              searchPlaceholder="جستجوی شهر مقصد"
-            />
-          </div>
-          
-          <div className="w-px h-12 bg-Gray-N200" />
-          
+        <div className="flex flex-1 items-center gap-6">
           {/* Origin Field - Using ComboboxSelect */}
-          <div className="w-[103px]">
+          <div className="w-[200px]">
             <ComboboxSelect
               placeholder="مبدا"
               options={cityOptions}
@@ -112,17 +69,60 @@ export function SearchFormContainer({ cityOptions }: SearchFormContainerProps) {
               searchPlaceholder="جستجوی شهر مبدا"
             />
           </div>
+
+          {/* Destination Field - Using ComboboxSelect */}
+          <div className="w-[200px]">
+            <ComboboxSelect
+              placeholder="مقصد"
+              options={cityOptions}
+              filled={true}
+              size="md"
+              dir="rtl"
+              rightIcon={<Global size={16} color="var(--color-Gray-N500)" />}
+              searchPlaceholder="جستجوی شهر مقصد"
+            />
+          </div>
+
+          <div className="bg-Gray-N200 h-12 w-px" />
+
+          {/* Date and Passenger Fields */}
+          <div className="flex items-center gap-4">
+            {/* Departure Date Field - Using TextField */}
+            <div className="w-[200px]">
+              <TextField
+                placeholder="تاریخ رفت"
+                size="md"
+                filled={true}
+                dir="rtl"
+                rightIcon={<Calendar size={16} color="var(--color-Gray-N500)" />}
+              />
+            </div>
+          </div>
+
+          {/* Return Date Field - Using TextField */}
+          <div className="w-[200px]">
+            <TextField
+              placeholder="تاریخ برگشت"
+              size="md"
+              filled={true}
+              dir="rtl"
+              rightIcon={<Calendar size={16} color="var(--color-Gray-N500)" />}
+            />
+          </div>
+          
+          <div className="bg-Gray-N200 h-12 w-px" />
+          
+          {/* Exchange Button */}
+          <button className="outline-Gray-N100 flex items-center justify-center rounded-lg p-2 outline-2 outline-offset-[-2px]">
+            <ArrowSwapHorizontal size={20} className="text-Primary-P500main scale-x-[-1] transform" />
+          </button>
         </div>
 
         {/* Search Button */}
-        <Button 
-          intent="primary" 
-          size="large" 
-          className="w-[199px]"
-        >
+        <Button intent="primary" size="large" className="w-[199px]">
           جستجوی پرواز
         </Button>
       </form>
     </div>
   )
-} 
+}

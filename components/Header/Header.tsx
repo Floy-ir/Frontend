@@ -28,8 +28,8 @@ interface HeaderProps {
 const navItem = cva(["flex", "flex-col", "items-center", "gap-1"], {
   variants: {
     isActive: {
-      true: ["text-slate-800", "font-semibold"],
-      false: ["text-slate-500", "font-medium", "hover:text-slate-700"],
+      true: ["text-white", "font-semibold"],
+      false: ["text-white", "font-normal", "hover:text-white/90"],
     },
   },
   defaultVariants: {
@@ -41,13 +41,13 @@ export function Header({ menuItems, className }: HeaderProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   return (
-    <header className={twMerge("max-w-8xl mx-auto w-full rounded-3xl px-6 py-6", className)}>
+    <header className={twMerge("w-full rounded-3xl sticky top-0 z-50", className)}>
       {/* Desktop view */}
-      <div className="hidden items-center justify-between md:flex">
+      <div className="hidden items-center justify-between md:flex h-22">
         {/* Logo - Right Side in RTL */}
         <div className="flex items-center gap-2">
-          <span className="text-lg font-semibold text-slate-800">لوگو</span>
-          <Airplane size={20} variant="Bold" className="text-blue-600" />
+          <span className="text-lg font-semibold text-white">لوگو</span>
+          <Airplane size={20} variant="Bold" className="text-white" />
         </div>
 
         {/* Navigation Menu - Middle */}
@@ -57,10 +57,10 @@ export function Header({ menuItems, className }: HeaderProps) {
               <NavigationMenu.Item key={index}>
                 <NavigationMenu.Link asChild>
                   <Link href={item.href} className={navItem({ isActive: item.isActive })}>
-                    <span className="text-base">{item.label}</span>
+                    <span className="text-lg">{item.label}</span>
                     {item.isActive && (
                       <div className="relative h-1 w-1">
-                        <div className="absolute h-1.5 w-1.5 rounded-sm bg-emerald-500"></div>
+                        <div className="absolute h-1.5 w-1.5 rounded-sm bg-white"></div>
                       </div>
                     )}
                   </Link>
@@ -76,7 +76,7 @@ export function Header({ menuItems, className }: HeaderProps) {
             href="/login"
             intent="secondary"
             size="small"
-            className="rounded-xl bg-slate-100 px-6 py-4 text-indigo-600"
+            className="rounded-xl bg-Gray-N100 px-6 py-4 text-indigo-600"
           >
             ورود | ثبت‌نام
           </Button>
@@ -92,12 +92,12 @@ export function Header({ menuItems, className }: HeaderProps) {
               <HambergerMenu
                 size={48}
                 className="p-2"
-                color="var(--color-Gray-N500)"
+                color="white"
               />
               <span className="sr-only">Toggle Menu</span>
             </button>
           </DrawerTrigger>
-          <DrawerContent className=" z-50 max-h-[80vh] bg-white p-0">
+          <DrawerContent className="z-50 max-h-[80vh] bg-white p-0">
             <DrawerTitle className="sr-only">Navigation Menu</DrawerTitle>
             <div className="overflow-auto p-6">
               <nav className="flex flex-col items-end space-y-3">
@@ -123,7 +123,7 @@ export function Header({ menuItems, className }: HeaderProps) {
           href="/login"
           intent="secondary"
           size="small"
-          className="rounded-xl bg-slate-100 px-4 py-3 text-sm text-indigo-600"
+          className="rounded-xl bg-Gray-N100 px-4 py-3 text-sm text-indigo-600"
         >
           ورود | ثبت‌نام
         </Button>
