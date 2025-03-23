@@ -118,24 +118,11 @@ export const Complex: Story = {
 }
 
 export const FixedWidth: Story = {
-  render: (args) => (
-    <TextField
-      {...args}
-      width="md"
-      label="Medium Width Field"
-    />
-  ),
-};
+  render: (args) => <TextField {...args} width="md" label="Medium Width Field" />,
+}
 
 export const CustomSized: Story = {
-  render: (args) => (
-    <TextField
-      {...args}
-      customWidth="250px"
-      customHeight="70px"
-      label="Custom Sized Field"
-    />
-  ),
-};
+  render: (args) => <TextField {...args} customWidth="250px" customHeight="70px" label="Custom Sized Field" />,
+}
 
 export default meta

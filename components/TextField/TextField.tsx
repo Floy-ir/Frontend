@@ -132,8 +132,9 @@ export const textFieldHelperText = cva(["flex", "items-center", "text-xs", "px-3
   },
 })
 
-export interface TextFieldProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'size' | 'disabled' | 'width'>, 
-  VariantProps<typeof textFieldWrapper> {
+export interface TextFieldProps
+  extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "size" | "disabled" | "width">,
+    VariantProps<typeof textFieldWrapper> {
   label?: string
   helperText?: string
   leftIcon?: React.ReactNode
@@ -178,23 +179,23 @@ export function TextField({
   noBorder = false,
   ...props
 }: TextFieldProps) {
-  const [inputValue, setInputValue] = React.useState(value?.toString() || "");
-  
+  const [inputValue, setInputValue] = React.useState(value?.toString() || "")
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newValue = e.target.value;
-    if (maxLength && newValue.length > maxLength) return;
-    
-    setInputValue(newValue);
-    onChange?.(e);
-  };
-  
+    const newValue = e.target.value
+    if (maxLength && newValue.length > maxLength) return
+
+    setInputValue(newValue)
+    onChange?.(e)
+  }
+
   // Determine text alignment based on input direction
-  const textAlign = props.dir === "ltr" ? "left" : "right";
+  const textAlign = props.dir === "ltr" ? "left" : "right"
 
   // Custom styles for width and height if provided
-  const customStyles: React.CSSProperties = {};
-  if (customWidth) customStyles.width = customWidth;
-  if (customHeight) customStyles.height = customHeight;
+  const customStyles: React.CSSProperties = {}
+  if (customWidth) customStyles.width = customWidth
+  if (customHeight) customStyles.height = customHeight
 
   return (
     <Form.Root className={twMerge(
@@ -203,9 +204,7 @@ export function TextField({
     )}>
       <Form.Field name={id || "textfield"}>
         {label && (
-          <Form.Label className={twMerge(textFieldLabel({ intent, className: labelClassName }))}>
-            {label}
-          </Form.Label>
+          <Form.Label className={twMerge(textFieldLabel({ intent, className: labelClassName }))}>{label}</Form.Label>
         )}
         
         <div 
@@ -238,32 +237,23 @@ export function TextField({
                 {...props}
               />
             </Form.Control>
-            
-            {suffix && (
-              <div className={twMerge(textFieldAffix({ position: "suffix" }))}>
-                {suffix}
-              </div>
-            )}
-            
-            {leftIcon && (
-              <div className={twMerge(textFieldIcon({ position: "left" }))}>
-                {leftIcon}
-              </div>
-            )}
+
+            {suffix && <div className={twMerge(textFieldAffix({ position: "suffix" }))}>{suffix}</div>}
+
+            {leftIcon && <div className={twMerge(textFieldIcon({ position: "left" }))}>{leftIcon}</div>}
           </div>
         </div>
-        
+
         {(helperText || (showCharCount && maxLength)) && (
-          <div className="flex justify-between w-full">
+          <div className="flex w-full justify-between">
             {showCharCount && maxLength && (
               <div className={twMerge(textFieldHelperText({ intent }))}>
-                {props.dir === "rtl" 
+                {props.dir === "rtl"
                   ? `${englishToFarsiNumber(inputValue.length)} / ${englishToFarsiNumber(maxLength || 0)}`
-                  : `${inputValue.length} / ${maxLength}`
-                }
+                  : `${inputValue.length} / ${maxLength}`}
               </div>
             )}
-            
+
             {helperText && (
               <div className={twMerge(textFieldHelperText({ intent, className: helperTextClassName }))}>
                 {helperText}
@@ -273,5 +263,5 @@ export function TextField({
         )}
       </Form.Field>
     </Form.Root>
-  );
-} 
+  )
+}
