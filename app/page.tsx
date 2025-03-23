@@ -2,10 +2,11 @@ import { ArrowLeft2, ArrowRight2, Eye, User } from "iconsax-react"
 import { Metadata } from "next"
 import Image from "next/image"
 import { Button } from "components/Button/Button"
+import Example from "components/Carousel/example"
 import { Header } from "components/Header/Header"
 import { TextField } from "components/TextField/TextField"
-import PopularCities from "./api/health/cities"
-import SuggestionsCarousel from "./api/health/suggestion"
+import PopularCities from "../components/Carousel/cities"
+import SuggestionsCarousel from "../components/Carousel/suggestion"
 import img from "../public/Underline_06.svg"
 export const metadata: Metadata = {
   title: "Next.js Enterprise Boilerplate",
@@ -84,6 +85,7 @@ export default function Web() {
         {/* suggestions */}
         <div className="flex w-full flex-col items-center justify-center px-4 py-8 sm:px-38 sm:py-12">
           <SuggestionsCarousel />
+          {/* <Example/> */}
         </div>
       </main>
     </>
