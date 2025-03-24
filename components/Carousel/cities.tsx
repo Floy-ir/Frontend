@@ -16,7 +16,7 @@ const cities: { city: string; price: string; bg: StaticImageData; large?: boolea
 
 function CityRow({ cities }: { cities: { city: string; price: string; bg: StaticImageData }[] }) {
   return (
-    <div className="flex w-full gap-2">
+    <div className="flex w-full gap-2 ">
       {cities.map((city, index) => (
         <CityCard key={index} {...city} />
       ))}
@@ -28,8 +28,8 @@ function CityCard({ city, price, bg, large }: { city: string; price: string; bg:
   return (
     <div
       className={`relative flex ${
-        large ? "h-82 w-150 px-8 py-4" : "h-40 w-60 px-6 py-4"
-      } flex-1 flex-col justify-end overflow-hidden rounded-2xl outline`}
+        large ? "h-82 lg:not-only:w-[1/2] sm:w-[1/4] px-8 py-4" : "h-40 w-60 px-6 py-4"
+      } flex-1 flex-col justify-end overflow-hidden rounded-2xl border-2 border-slate-200`}
     >
       {/* Background Image */}
       <Image src={bg} alt={city} fill className="h-full w-full" priority />
@@ -65,18 +65,19 @@ function CityCard({ city, price, bg, large }: { city: string; price: string; bg:
 
 export default function PopularCities() {
   return (
-    <div className="mt-14 flex w-full gap-2 lg:flex-row">
+    <div className="mt-14 flex w-full gap-2 lg:flex-row ">
       {/* Scrollable Container for Smaller Screens */}
-      <div className="relative flex w-full gap-2 overflow-x-auto snap-x snap-mandatory sm:justify-center sm:px-12 sm:scroll-smooth max-w-[1140px]:overflow-hidden max-w-[1140px]:flex-nowrap">
-        {/* Large City Card */}
+
+      <div className="relative flex w-full gap-2 overflow-x-auto snap-x snap-mandatory sm:justify-center sm:px-12 scroll-smooth overflow-hidden flex-nowrap">
+      {/* Large City Card */}
         {cities[0] && (
-          <div className="snap-center shrink-0  ">
+          <div className="snap-center shrink-0 ">
             <CityCard {...cities[0]} />
           </div>
         )}
 
         {/* Small Cities Cards */}
-        <div className="flex flex-1 flex-col gap-2 max-w-[1140px]:flex-row max-w-[1140px]:overflow-x-auto max-w-[1140px]:snap-x max-w-[1140px]:snap-mandatory">
+      <div className="flex flex-1 flex-col gap-2">
           {cities
             .slice(1)
             .reduce<{ city: string; price: string; bg: StaticImageData }[][]>((rows, city, index, arr) => {

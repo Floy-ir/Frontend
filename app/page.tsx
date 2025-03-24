@@ -71,17 +71,19 @@ export default function Web() {
             dir="rtl"
             width="md"
           />
-        </div>
-        {/* ---------------------------------------------------------------------------------------------------- */}
-        <div className="flex w-full flex-col items-center justify-between bg-white px-4 py-8 sm:px-38 sm:py-12">
-          {/* Title, Buttons, and View All */}
+        </div> */}
+
+        {/* Cities */}
+        <div className=" shrink-0 max-w-[1600px] flex w-full flex-col items-center justify-between bg-white px-4 py-8 sm:px-38 sm:py-12">
+          {/* Title */}
           <div className="flex w-full items-center justify-between">
             <div className="flex flex-col justify-start">
               <h2 className="mb-1 text-2xl font-bold text-[#334155]">شهر‌های پرطرفدار</h2>
               <Image alt="" src={img} width={100} height={100} />
             </div>
 
-            <div className="flex flex-row items-center">
+            {/*Buttons */}
+            {/* <div className="flex flex-row items-center">
               <Button intent="text" size="medium" className="mr-6">
                 مشاهده همه
               </Button>
@@ -94,15 +96,16 @@ export default function Web() {
                 />
                 <Button size="medium" intent="secondary" rightIcon={<ArrowLeft2 size="20" color="#4641FB" />} />
               </div>
-            </div>
+            </div> */}
           </div>
           <PopularCities/>
         </div>
+
         {/* suggestions */}
-        <div className="flex w-full flex-col items-center justify-center px-4 py-8 sm:px-38 sm:py-12">
+        <div className="flex w-full flex-col items-center justify-center px-4 py-8 sm:px-38 sm:py-12 shrink-0 max-w-[1500px]">
           <SuggestionsCarousel />
-          {/* <Example/> */}
         </div>
+
       </main>
     </>
   )
