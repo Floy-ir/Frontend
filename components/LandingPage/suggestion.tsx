@@ -3,7 +3,7 @@ import type { EmblaCarouselType } from "embla-carousel"
 import Autoplay from "embla-carousel-autoplay"
 import Image from "next/image"
 import { useCallback, useState } from "react"
-import { Card, CardContent } from "@/components/ui/card"
+import { Card } from "@/components/ui/card"
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel"
 import img from "../../public/dude.png"
 

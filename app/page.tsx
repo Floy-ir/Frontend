@@ -1,11 +1,9 @@
-import Image from "next/image"
 import { Metadata } from "next"
+import Image from "next/image"
 
 import { Header } from "@/components/Header/Header"
 import { HeroSection } from "@/components/HeroSection/HeroSection"
 
-import { ArrowLeft2, ArrowRight2, Eye, User } from "iconsax-react"
-import { Button } from "components/Button/Button"
 import PopularCities from "../components/LandingPage/cities"
 import SuggestionsCarousel from "../components/LandingPage/suggestion"
 import img from "../public/Underline_06.svg"
