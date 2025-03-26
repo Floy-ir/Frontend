@@ -16,7 +16,7 @@ const cities: { city: string; price: string; bg: StaticImageData; large?: boolea
 
 function CityRow({ cities }: { cities: { city: string; price: string; bg: StaticImageData }[] }) {
   return (
-    <div className="flex w-full gap-2 ">
+    <div className="flex w-full gap-2">
       {cities.map((city, index) => (
         <CityCard key={index} {...city} />
       ))}
@@ -28,7 +28,7 @@ function CityCard({ city, price, bg, large }: { city: string; price: string; bg:
   return (
     <div
       className={`relative flex ${
-        large ? "h-82 lg:not-only:w-[1/2] sm:w-[1/4] px-8 py-4" : "h-40 w-60 px-6 py-4"
+        large ? "h-80 w-67 px-8 py-4 md:w-80 lg:w-141" : "h-39 w-69 px-6 py-4"
       } flex-1 flex-col justify-end overflow-hidden rounded-2xl border-2 border-slate-200`}
     >
       {/* Background Image */}
@@ -65,19 +65,19 @@ function CityCard({ city, price, bg, large }: { city: string; price: string; bg:
 
 export default function PopularCities() {
   return (
-    <div className="mt-14 flex w-full gap-2 lg:flex-row ">
+    <div className="mt-6 md:mt-10 lg:mt-14 flex w-full gap-2 lg:flex-row mb-8">
       {/* Scrollable Container for Smaller Screens */}
 
-      <div className="relative flex w-full gap-2 overflow-x-auto snap-x snap-mandatory sm:justify-center sm:px-12 scroll-smooth overflow-hidden flex-nowrap">
-      {/* Large City Card */}
+      <div className="relative flex w-full snap-x snap-proximity flex-nowrap gap-2 overflow-hidden overflow-x-auto scroll-smooth sm:justify-center sm:px-12 lg:overflow-visible">
+        {/* Large City Card */}
         {cities[0] && (
-          <div className="snap-center shrink-0 ">
+          <div className="shrink-0 snap-center mb-4">
             <CityCard {...cities[0]} />
           </div>
         )}
 
         {/* Small Cities Cards */}
-      <div className="flex flex-1 flex-col gap-2">
+        <div className="flex flex-1 flex-col gap-2">
           {cities
             .slice(1)
             .reduce<{ city: string; price: string; bg: StaticImageData }[][]>((rows, city, index, arr) => {
@@ -85,7 +85,7 @@ export default function PopularCities() {
               return rows
             }, [])
             .map((pair, index) => (
-              <div key={index} className="snap-center shrink-0  ">
+              <div key={index} className="shrink-0 snap-center">
                 <CityRow cities={pair} />
               </div>
             ))}

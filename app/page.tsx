@@ -6,8 +6,8 @@ import { HeroSection } from "@/components/HeroSection/HeroSection"
 
 import { ArrowLeft2, ArrowRight2, Eye, User } from "iconsax-react"
 import { Button } from "components/Button/Button"
-import PopularCities from "../components/Carousel/cities"
-import SuggestionsCarousel from "../components/Carousel/suggestion"
+import PopularCities from "../components/LandingPage/cities"
+import SuggestionsCarousel from "../components/LandingPage/suggestion"
 import img from "../public/Underline_06.svg"
 
 export const metadata: Metadata = {
@@ -36,24 +36,25 @@ export default function Web() {
   ]
 
   return (
-    <>
+    <div className="mx-0">
       {/* Hero image section */}
-      <div className="fixed -top-12 left-0 w-full h-136">
+      <div className="fixed -top-12 left-0 h-136 w-full">
         <Image
           src="/images/hero-image.png"
           alt="Hero Image"
           fill
-          className="object-cover -z-40"
+          className="-z-40 object-cover"
           sizes="100vw"
           priority
         />
       </div>
-      <main className="rtl flex min-h-screen flex-col items-center bg-transparent relative z-10 m-4 md:m-0">
-        <div className="w-full max-w-[1136px]">
-          <Header menuItems={menuItems}/>
-          <HeroSection />
+      <main className="rtl relative z-10 flex min-h-screen flex-col items-center bg-transparent">
+        <div className="m-4 md:m-0">
+          <div className="w-full max-w-[1136px]">
+            <Header menuItems={menuItems} />
+            <HeroSection />
+          </div>
         </div>
-
         {/* <div className="container mx-auto mt-12 text-center">
           <h2 className="text-3xl font-bold text-slate-900">فلوی، پرواز تا بی نهایت</h2>
           <p className="mt-4 text-slate-600">این یک متن چرت و پرت است که توسط یک نفر نوشته شده است.</p>
@@ -74,7 +75,7 @@ export default function Web() {
         </div> */}
 
         {/* Cities */}
-        <div className=" shrink-0 max-w-[1600px] flex w-full flex-col items-center justify-between bg-white px-4 py-8 sm:px-38 sm:py-12">
+        <div className="flex w-full max-w-[1600px] shrink-0 flex-col items-center justify-between bg-white px-4 py-8 lg:px-38 lg:py-12">
           {/* Title */}
           <div className="flex w-full items-center justify-between">
             <div className="flex flex-col justify-start">
@@ -98,15 +99,14 @@ export default function Web() {
               </div>
             </div> */}
           </div>
-          <PopularCities/>
+          <PopularCities />
         </div>
 
         {/* suggestions */}
-        <div className="flex w-full flex-col items-center justify-center px-4 py-8 sm:px-38 sm:py-12 shrink-0 max-w-[1500px]">
+        <div className="mt-12 flex w-full max-w-[1500px] shrink-0 flex-col items-center justify-center px-4 py-8 lg:px-38 lg:py-12">
           <SuggestionsCarousel />
         </div>
-
       </main>
-    </>
+    </div>
   )
 }
