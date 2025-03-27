@@ -1,22 +1,22 @@
 import Image from "next/image"
 import crownBg from "../../public/images/crown-bg.svg"
 import crownOutline from "../../public/images/crown-outline.svg"
-import lampOutline from "../../public/images/lamp-outline.svg"
-import lampBg from "../../public/images/lamp-bg.svg"
-import flashOutline from "../../public/images/flash-circle-outline.svg"
 import flashBg from "../../public/images/flash-circle-bg.png"
+import flashOutline from "../../public/images/flash-circle-outline.svg"
+import lampBg from "../../public/images/lamp-bg.svg"
+import lampOutline from "../../public/images/lamp-outline.svg"
 import line from "../../public/images/Underline_06_small.svg"
 
 export default function Benefits() {
   return (
-    <div className="w-full overflow-x-auto lg:flex lg:items-center lg:justify-center">
+    <div className="w-full overflow-x-auto md:flex md:items-center justify-start md:justify-center">
       <div className="mt-17 mb-16 inline-flex h-[54px] min-w-max shrink-0 snap-x snap-mandatory items-center justify-center gap-18">
         {/*Title */}
         <div className="hidden md:inline-flex flex-col items-end justify-end gap-1">
-          <div className="md:mr-20 lg:mr-0 text-Gray-N700 text-center font-['Anjoman_Max_FN'] text-[25px] leading-10 font-bold">
+          <div className=" lg:mr-0 text-Gray-N700 text-end w-full font-['Anjoman_Max_FN'] text-[25px] leading-10 font-bold">
             فلوی
           </div>
-          <Image src={line} width={100} height={100} alt="underline" className="h-[9.19px] w-[49px]" />
+          <Image src={line} width={100} height={100} alt="underline" className="text-start h-[9.19px] w-[49px]" />
         </div>
 
         {/* Benefits */}
