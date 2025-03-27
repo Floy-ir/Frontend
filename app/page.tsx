@@ -1,9 +1,10 @@
-import Image from "next/image"
 import { Metadata } from "next"
+import Image from "next/image"
 
 import { Header } from "@/components/Header/Header"
 import { HeroSection } from "@/components/HeroSection/HeroSection"
 import Benefits from "@/components/LandingPage/Benefits"
+import Companies from "@/components/LandingPage/Companies"
 
 export const metadata: Metadata = {
   title: "Next.js Enterprise Boilerplate",
@@ -43,7 +44,7 @@ export default function Web() {
           priority
         />
       </div>
-      <main className="rtl flex min-h-screen flex-col items-center bg-transparent relative z-10 m-4 md:m-0 font-anjoman-max">
+      <main className="rtl flex min-h-screen flex-col items-center bg-white relative z-10 m-4 md:m-0 font-anjoman-max">
         <div className="w-full max-w-[1136px]">
           <Header menuItems={menuItems}/>
           <HeroSection />
@@ -68,6 +69,7 @@ export default function Web() {
           />
         </div>
         <FormExample /> */}
+        <Companies/>
         <Benefits/>
       </main>
     </>
