@@ -8,10 +8,8 @@ export default function Companies() {
             <Image className="" src="/alibaba.png" alt="Alibaba" width={100} height={10} />
           {/* </div> */}
 
-          {/* <div className="flex flex-1 flex-col items-start justify-start gap-2 h-4"> */}
-            <Image className="" src="/safarmarket.svg" alt="Safar Market" width={150} height={20} />
-          {/* </div> */}
-
+          <Image className="" src="/safarmarket.png" alt="safarmarket" width={100} height={10} />
+  
           {/* <div className="flex flex-1 flex-col items-start justify-start gap-2 h-4"> */}
             <Image className="" src="/flightio.png" alt="Flightio" width={100} height={100} />
           {/* </div> */}

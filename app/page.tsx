@@ -39,7 +39,7 @@ export default function Web() {
   return (
     <>
       {/* Hero image section */}
-      <div className="fixed -top-12 left-0 h-136 w-full">
+      {/* <div className="fixed -top-12 left-0 h-136 w-full">
         <Image
           src="/images/hero-image.png"
           alt="Hero Image"
@@ -48,7 +48,7 @@ export default function Web() {
           sizes="100vw"
           priority
         />
-      </div>
+      </div> */}
       <main className="rtl font-anjoman-max relative z-10 flex min-h-screen flex-col items-center bg-transparent">
         <div className="m-4 md:m-0">
           <div className="w-full max-w-[1136px]">
@@ -84,7 +84,7 @@ export default function Web() {
           {/* Title */}
           <div className="flex w-full items-center justify-between">
             <div className="flex flex-col justify-start">
-              <h2 className="mb-1 text-2xl font-bold text-[#334155]">شهر‌های پرطرفدار</h2>
+              <h2 className="mb-1 text-2xl font-semibold text-[#334155]">شهر‌های پرطرفدار</h2>
               <Image alt="" src={img} width={100} height={100} />
             </div>
 
