@@ -20,7 +20,7 @@ const button = cva(
     variants: {
       intent: {
         primary: [
-          "bg-Primary-P500main",
+          "bg-[#4641FB]",
           "text-Shade-White",
           "hover:bg-[#6561FC]",
           "active:bg-[#0C05F8]",
