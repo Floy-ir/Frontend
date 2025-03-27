@@ -4,6 +4,7 @@ import { Airplane, ArrowSwapHorizontal, Buildings, Building3, Add } from "iconsa
 import { TextField } from "@/components/TextField/TextField"
 import { ComboboxSelect } from "@/components/ComboboxSelect/ComboboxSelect"
 import { Button } from "@/components/Button/Button"
+import { DatePicker } from "@/components/DatePicker/DatePicker"
 
 type CityOption = {
   value: string
@@ -18,7 +19,7 @@ export function SearchFormContainer({ cityOptions }: SearchFormContainerProps) {
   // Add state management for origin and destination
   const [origin, setOrigin] = useState("")
   const [destination, setDestination] = useState("")
-  const [departureDate, setDepartureDate] = useState("")
+  const [departureDate, setDepartureDate] = useState<Date | null>(null)
   const [passengers, setPassengers] = useState("")
 
   // Handle exchange of origin and destination
@@ -27,6 +28,16 @@ export function SearchFormContainer({ cityOptions }: SearchFormContainerProps) {
     setOrigin(destination)
     setDestination(temp)
   }
+
+  // Add a wrapper handler function for the DatePicker
+  const handleDateChange = (date: string | Date | null) => {
+    // Convert string dates to Date objects if needed
+    if (typeof date === 'string') {
+      setDepartureDate(new Date(date));
+    } else {
+      setDepartureDate(date);
+    }
+  };
 
   return (
     <div className="outline-Gray-N100 relative mx-auto flex w-full flex-col items-start gap-4 rounded-xl bg-white p-4 shadow-[0px_25px_66px_-12px_rgba(0,0,0,0.08)] outline-1 outline-offset-[-1px] md:gap-6 md:rounded-3xl md:px-8 md:pt-6 md:pb-5">
@@ -189,23 +200,27 @@ export function SearchFormContainer({ cityOptions }: SearchFormContainerProps) {
 
           {/* Date and Passenger Fields - Side by side on mobile and desktop */}
           <div className="mt-4 flex w-full flex-row items-center gap-4 md:mt-0">
-            {/* Departure Date Field */}
-            <div className="w-1/2 md:w-18">
-              <TextField
+            {/* Departure Date Field - REPLACED WITH DATEPICKER */}
+            <div className="w-1/2 md:w-20">
+              <DatePicker
                 noBorder
-                placeholder="۱۹ اسفند"
+                placeholder="انتخاب تاریخ"
                 label="تاریخ رفت"
                 size="md"
                 filled={true}
                 dir="rtl"
                 value={departureDate}
-                onChange={(e) => setDepartureDate(e.target.value)}
+                onChange={handleDateChange}
+                minDate={new Date()} // Can't select dates in the past
+                calendarProps={{
+                  className: "w-full",
+                }}
               />
             </div>
 
             {/* Return Date Button - Hidden on mobile */}
             <div className="hidden md:block">
-              <Button intent="text" size="small" rightIcon={<Add size="18" color="var(--color-Primary-P500main)" />}>
+              <Button disabled intent="text" size="small" rightIcon={<Add size="18" color="var(--color-Primary-P500main)" />}>
                 تاریخ برگشت
               </Button>
             </div>
@@ -232,7 +247,12 @@ export function SearchFormContainer({ cityOptions }: SearchFormContainerProps) {
         <div className="bg-Gray-N200 my-2 h-px w-full md:hidden"></div>
 
         {/* Search Button - Full width on mobile and medium screens */}
-        <Button intent="primary" size="large" className="mt-4 w-full md:mt-4 lg:mt-0 md:w-full lg:w-50">
+        <Button 
+          intent="primary" 
+          size="large" 
+          className="mt-4 w-full md:mt-4 lg:mt-0 md:w-full lg:w-50"
+          disabled={!origin || !destination || !departureDate}
+        >
           جستجوی پرواز
         </Button>
       </div>
