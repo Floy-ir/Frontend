@@ -39,7 +39,7 @@ export default function Web() {
   return (
     <>
       {/* Hero image section */}
-      {/* <div className="fixed -top-12 left-0 h-136 w-full">
+      <div className="fixed -top-12 left-0 h-136 w-full">
         <Image
           src="/images/hero-image.png"
           alt="Hero Image"
@@ -48,7 +48,7 @@ export default function Web() {
           sizes="100vw"
           priority
         />
-      </div> */}
+      </div>
       <main className="rtl font-anjoman-max relative z-10 flex min-h-screen flex-col items-center bg-transparent">
         <div className="m-4 md:m-0">
           <div className="w-full max-w-[1136px]">
