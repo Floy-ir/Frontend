@@ -25,7 +25,7 @@ function JalaliCalendar({ className, classNames, showOutsideDays = false, fromDa
     <DayPicker
       showOutsideDays={showOutsideDays}
       disabled={{ before: fromDate }}
-      className={cn("w-fit", className)}
+      className={cn("w-fit", className || "")}
       classNames={{
         month: "space-y-4",
         months: "flex flex-col sm:flex-row space-y-4 sm:space-y-0 relative",

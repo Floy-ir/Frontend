@@ -103,11 +103,9 @@ export function ComboboxSelect({
                 placeholder={searchPlaceholder || `جستجو ${label || "options"}...`}
                 className={`h-10 flex-grow py-3 ${dir === "rtl" ? "text-right" : "text-left"} border-none outline-none`}
               />
-              {value && (
-                <div className="flex items-center justify-center">
-                  <CloseCircle size={16} color="var(--color-Gray-N500)" />
-                </div>
-              )}
+              <div className="flex items-center justify-center">
+                <CloseCircle size={16} color="var(--color-Gray-N500)" />
+              </div>
             </div>
           </div>
         </div>
@@ -129,7 +127,7 @@ export function ComboboxSelect({
                   </div>
                   <div className="text-Gray-N800 flex-1 text-right text-base leading-7 font-medium">{option.label}</div>
                 </CommandItem>
-                {index < options.length - 1 && <div className="border-t border-Gray-N100 w-full"></div>}
+                {index < options.length - 1 && <div className="border-Gray-N100 w-full border-t"></div>}
               </React.Fragment>
             ))}
           </CommandGroup>
@@ -177,7 +175,7 @@ export function ComboboxSelect({
             <div>{triggerField}</div>
           </PopoverTrigger>
           <PopoverContent
-            className="overflow-hidden rounded-xl p-0 border border-Gray-N200 shadow-[0px_4px_20px_rgba(0,0,0,0.1)] bg-white transform translate-x-4"
+            className="border-Gray-N200 translate-x-4 transform overflow-hidden rounded-xl border bg-white p-0 shadow-[0px_4px_20px_rgba(0,0,0,0.1)]"
             align={dir === "rtl" ? "start" : "end"}
             sideOffset={4}
             style={{ width: getDropdownWidth() }}
