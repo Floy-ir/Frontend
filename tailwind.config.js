@@ -29,6 +29,7 @@ module.exports = {
         },
       },
       fontFamily: {
+        'anjoman-max': ['var(--font-anjoman-max)', 'Anjoman Max', 'sans-serif'],
         body: [
           "Inter",
           "ui-sans-serif",

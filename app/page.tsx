@@ -41,7 +41,7 @@ export default function Web() {
           priority
         />
       </div>
-      <main className="rtl flex min-h-screen flex-col items-center bg-transparent relative z-10 m-4 md:m-0">
+      <main className="rtl flex min-h-screen flex-col items-center bg-transparent relative z-10 m-4 md:m-0 font-anjoman-max">
         <div className="w-full max-w-[1136px]">
           <Header menuItems={menuItems}/>
           <HeroSection />
