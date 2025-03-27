@@ -3,6 +3,8 @@ import Image from "next/image"
 
 import { Header } from "@/components/Header/Header"
 import { HeroSection } from "@/components/HeroSection/HeroSection"
+import Benefits from "@/components/LandingPage/Benefits"
+import Companies from "@/components/LandingPage/Companies"
 
 import PopularCities from "@/components/LandingPage/PopularCities"
 import Suggestions from "@/components/LandingPage/suggestions"
@@ -74,6 +76,8 @@ export default function Web() {
         </div>
         <FormExample /> */}
 
+        <Companies />
+        <Benefits />
         {/* Cities */}
         <div className="flex w-full max-w-[1600px] shrink-0 flex-col items-center justify-between bg-white px-4 py-8 lg:px-38 lg:py-12">
           {/* Title */}
