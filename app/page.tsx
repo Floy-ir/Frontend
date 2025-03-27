@@ -3,6 +3,8 @@ import { Metadata } from "next"
 
 import { Header } from "@/components/Header/Header"
 import { HeroSection } from "@/components/HeroSection/HeroSection"
+import Benefits from "@/components/LandingPage/Benefits"
+
 export const metadata: Metadata = {
   title: "Next.js Enterprise Boilerplate",
   twitter: {
@@ -66,6 +68,7 @@ export default function Web() {
           />
         </div>
         <FormExample /> */}
+        <Benefits/>
       </main>
     </>
   )
