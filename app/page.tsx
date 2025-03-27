@@ -3,6 +3,7 @@ import { Metadata } from "next"
 
 import { Header } from "@/components/Header/Header"
 import { HeroSection } from "@/components/HeroSection/HeroSection"
+import JalaliCalendarExample from "@/components/test"
 export const metadata: Metadata = {
   title: "Next.js Enterprise Boilerplate",
   twitter: {
@@ -46,6 +47,7 @@ export default function Web() {
           <Header menuItems={menuItems}/>
           <HeroSection />
         </div>
+        <JalaliCalendarExample />
 
         {/* <div className="container mx-auto mt-12 text-center">
           <h2 className="text-3xl font-bold text-slate-900">فلوی، پرواز تا بی نهایت</h2>
