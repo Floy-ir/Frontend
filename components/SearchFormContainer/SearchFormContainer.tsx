@@ -5,6 +5,7 @@ import { TextField } from "@/components/TextField/TextField"
 import { ComboboxSelect } from "@/components/ComboboxSelect/ComboboxSelect"
 import { Button } from "@/components/Button/Button"
 import { DatePicker } from "@/components/DatePicker/DatePicker"
+import { PassengerSelector, PassengerCount } from "@/components/PassengerSelector/PassengerSelector"
 
 type CityOption = {
   value: string
@@ -20,7 +21,7 @@ export function SearchFormContainer({ cityOptions }: SearchFormContainerProps) {
   const [origin, setOrigin] = useState("")
   const [destination, setDestination] = useState("")
   const [departureDate, setDepartureDate] = useState<Date | null>(null)
-  const [passengers, setPassengers] = useState("")
+  const [passengers, setPassengers] = useState<PassengerCount>({ adult: 1, child: 0, infant: 0 })
 
   // Handle exchange of origin and destination
   const handleExchange = () => {
@@ -45,23 +46,23 @@ export function SearchFormContainer({ cityOptions }: SearchFormContainerProps) {
       <div className="border-Gray-N200 flex w-full items-center justify-start gap-4 border-b pb-4 md:gap-6 md:pb-6">
         {/* Service Type Tabs */}
         <nav className="flex w-full items-center justify-center gap-1 md:w-auto md:justify-start md:gap-6">
-          <div className="bg-Primary-P50 flex flex-1 items-center gap-1 rounded-lg px-3 py-2 md:flex-initial md:gap-3 md:px-6">
-            <span className="text-Primary-P500main text-sm font-semibold md:text-lg">پرواز</span>
+          <div className="bg-Primary-P50 justify-center flex flex-1 items-center gap-1 rounded-lg px-3 py-2 md:flex-initial md:gap-3 md:px-6">
             <Airplane size={16} variant="Bold" color="var(--color-Primary-P500main)" className="md:size-5" />
+            <span className="text-Primary-P500main text-sm font-semibold md:text-lg">پرواز</span>
           </div>
 
           <div className="bg-Gray-N200 hidden h-6 w-px md:block" />
 
-          <div className="flex flex-1 items-center gap-1 rounded-lg px-3 py-2 md:flex-initial md:gap-3 md:px-6">
-            <span className="text-Gray-N500 text-sm font-semibold md:text-lg">هتل</span>
+          <div className="justify-center flex flex-1 items-center gap-1 rounded-lg px-3 py-2 md:flex-initial md:gap-3 md:px-6">
             <Buildings size={16} variant="Bold" color="var(--color-Gray-N500)" className="md:size-5" />
+            <span className="text-Gray-N500 text-sm font-semibold md:text-lg">هتل</span>
           </div>
 
-          <div className="bg-Gray-N200 hidden h-6 w-px md:block" />
+          <div className="justify-center bg-Gray-N200 hidden h-6 w-px md:block" />
 
           <div className="flex flex-1 items-center gap-1 rounded-lg px-3 py-2 md:flex-initial md:gap-3 md:px-6">
-            <span className="text-Gray-N500 text-sm font-semibold md:text-lg">اقامتگاه</span>
             <Building3 size={16} variant="Bold" color="var(--color-Gray-N500)" className="md:size-5" />
+            <span className="text-Gray-N500 text-sm font-semibold md:text-lg">اقامتگاه</span>
           </div>
         </nav>
 
@@ -229,7 +230,7 @@ export function SearchFormContainer({ cityOptions }: SearchFormContainerProps) {
 
             {/* Passengers Field */}
             <div className="w-1/2 md:w-18">
-              <TextField
+              <PassengerSelector
                 noBorder
                 placeholder="۱ مسافر"
                 label="مسافران"
@@ -237,7 +238,7 @@ export function SearchFormContainer({ cityOptions }: SearchFormContainerProps) {
                 filled={true}
                 dir="rtl"
                 value={passengers}
-                onChange={(e) => setPassengers(e.target.value)}
+                onChange={setPassengers}
               />
             </div>
           </div>
@@ -251,7 +252,7 @@ export function SearchFormContainer({ cityOptions }: SearchFormContainerProps) {
           intent="primary" 
           size="large" 
           className="mt-4 w-full md:mt-4 lg:mt-0 md:w-full lg:w-50"
-          disabled={!origin || !destination || !departureDate}
+          // disabled={!origin || !destination || !departureDate}
         >
           جستجوی پرواز
         </Button>
