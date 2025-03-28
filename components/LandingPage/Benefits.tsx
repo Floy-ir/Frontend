@@ -9,18 +9,18 @@ import line from "../../public/images/Underline_06_small.svg"
 
 export default function Benefits() {
   return (
-    <div className="w-full overflow-x-auto md:flex md:items-center justify-start md:justify-center">
+    <div className="w-full justify-start overflow-x-auto md:flex md:items-center md:justify-center">
       <div className="mt-17 mb-16 inline-flex h-[54px] min-w-max shrink-0 snap-x snap-mandatory items-center justify-center gap-18">
         {/*Title */}
-        <div className="hidden md:inline-flex flex-col items-end justify-end gap-1">
-          <div className=" lg:mr-0 text-Gray-N700 text-end w-full font-['Anjoman_Max_FN'] text-[25px] leading-10 font-bold">
+        <div className="hidden flex-col items-end justify-end gap-1 md:inline-flex">
+          <div className="text-Gray-N700 w-full text-end font-['Anjoman_Max_FN'] text-[25px] leading-10 font-bold lg:mr-0">
             فلوی
           </div>
-          <Image src={line} width={100} height={100} alt="underline" className="text-start h-[9.19px] w-[49px]" />
+          <Image src={line} width={100} height={100} alt="underline" className="h-[9.19px] w-[49px] text-start" />
         </div>
 
         {/* Benefits */}
-        <div className="flex items-center justify-start gap-8">
+        <div className="mx-5 flex items-center justify-start gap-8 md:mx-0">
           {/* Benefit 1 */}
           <div className="flex items-center justify-end gap-4">
             <div className="relative size-[39.02px]">
