@@ -20,6 +20,7 @@ export interface ComboboxSelectProps extends Omit<TextFieldProps, "onChange" | "
   searchPlaceholder?: string
   dropdownWidth?: string | number
   expandDropdown?: boolean
+  recentSelections?: Array<{ value: string; label: string }>
 }
 
 export function ComboboxSelect({
@@ -50,6 +51,7 @@ export function ComboboxSelect({
   leftIcon,
   dropdownWidth,
   expandDropdown = false,
+  recentSelections = [],
   ...props
 }: ComboboxSelectProps) {
   const [open, setOpen] = React.useState(false)
@@ -111,8 +113,8 @@ export function ComboboxSelect({
       return (
         <Command className="overflow-hidden rounded-xl bg-white">
           <div className="p-4">
-            <div className="flex flex-col items-end justify-center overflow-hidden rounded-xl px-4 outline-2 outline-offset-[-2px] outline-[#8480fc]">
-              <div className="flex w-full items-center justify-between gap-3">
+            <div className="flex flex-col items-end justify-center overflow-hidden rounded-lg px-2 outline-2 outline-offset-[-2px] outline-[#9170f4]">
+              <div className="Content w-full rounded-lg flex items-center justify-between gap-3">
                 <CommandInput
                   ref={commandInputRef}
                   value={searchValue}
@@ -124,14 +126,44 @@ export function ComboboxSelect({
                   className="flex items-center justify-center cursor-pointer" 
                   onClick={clearSearch}
                 >
-                  <CloseCircle size={16} color="var(--color-Gray-N500)" />
+                  {!searchValue ? (
+                    ""
+                  ) : (
+                    <CloseCircle size={16} color="var(--color-Gray-N500)" />
+                  )}
                 </div>
               </div>
             </div>
           </div>
 
           <div className="bg-Gray-N100 h-1 w-full"></div>
-
+          
+          {recentSelections.length > 0 && (
+            <div className="self-stretch px-4 py-3 flex justify-start items-center gap-3">
+               <div className="size-5 relative">
+                <div className="text-Gray-N400">
+                  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M10 17.5C14.1421 17.5 17.5 14.1421 17.5 10C17.5 5.85786 14.1421 2.5 10 2.5C5.85786 2.5 2.5 5.85786 2.5 10C2.5 14.1421 5.85786 17.5 10 17.5Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                    <path d="M10 6.25V10H13.75" stroke="#9170F4" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </div>
+              </div>
+              <div className="flex flex-row-reverse justify-start items-center gap-2 overflow-x-auto">
+                {recentSelections.map((item) => (
+                  <div 
+                    key={item.value}
+                    onClick={() => handleSelect(item.value)}
+                    className="px-3 py-1 bg-Shade-White rounded-2xl outline-2 outline-offset-[-2px] outline-Gray-N100 flex justify-center items-center gap-1 overflow-hidden cursor-pointer"
+                  >
+                    <div className="inline-flex justify-center items-center gap-1">
+                      <div className="text-sm">{item.label}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+          <div className="border-Gray-N100 w-full border-t"></div>
           <CommandList className="shadow-[0px_25px_66px_-12px_rgba(0,0,0,0.08)]" style={{ maxHeight }}>
             <CommandEmpty className="px-4 py-3 text-right">{noResultsText}</CommandEmpty>
             <CommandGroup className="overflow-hidden">
@@ -155,7 +187,7 @@ export function ComboboxSelect({
         </Command>
       );
     },
-    [options, value, showSelectedIcon, maxHeight, dir, label, noResultsText, handleSelect, searchPlaceholder]
+    [options, value, showSelectedIcon, maxHeight, dir, label, noResultsText, handleSelect, searchPlaceholder, recentSelections]
   )
 
   // Main container wrapper

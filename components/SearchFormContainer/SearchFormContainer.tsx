@@ -116,6 +116,11 @@ export function SearchFormContainer({ cityOptions }: SearchFormContainerProps) {
                     searchPlaceholder="جستجوی شهر مبدا"
                     value={origin}
                     onChange={setOrigin}
+                    recentSelections={[
+                      { value: "tehran", label: "تهران" },
+                      { value: "shiraz", label: "مشهد" },
+                      { value: "isfahan", label: "تبریز" }
+                    ]}
                   />
                 </div>
 
@@ -136,6 +141,11 @@ export function SearchFormContainer({ cityOptions }: SearchFormContainerProps) {
                     searchPlaceholder="جستجوی شهر مقصد"
                     value={destination}
                     onChange={setDestination}
+                    recentSelections={[
+                      { value: "tehran", label: "تهران" },
+                      { value: "shiraz", label: "مشهد" },
+                      { value: "isfahan", label: "تبریز" }
+                    ]}
                   />
                 </div>
               </div>
@@ -161,6 +171,11 @@ export function SearchFormContainer({ cityOptions }: SearchFormContainerProps) {
                 searchPlaceholder="جستجوی شهر مبدا"
                 value={origin}
                 onChange={setOrigin}
+                recentSelections={[
+                  { value: "tehran", label: "تهران" },
+                  { value: "shiraz", label: "مشهد" },
+                  { value: "isfahan", label: "تبریز" }
+                ]}
               />
             </div>
 
@@ -193,6 +208,11 @@ export function SearchFormContainer({ cityOptions }: SearchFormContainerProps) {
                 searchPlaceholder="جستجوی شهر مقصد"
                 value={destination}
                 onChange={setDestination}
+                recentSelections={[
+                  { value: "tehran", label: "تهران" },
+                  { value: "shiraz", label: "مشهد" },
+                  { value: "isfahan", label: "تبریز" }
+                ]}
               />
             </div>
           </div>
