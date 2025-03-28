@@ -112,7 +112,7 @@ export default function Web() {
           <Suggestions />
         </div>
       </main>
-      <Footer/>
+      <Footer />
     </>
   )
 }
