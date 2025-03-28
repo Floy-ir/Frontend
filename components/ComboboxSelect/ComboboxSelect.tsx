@@ -94,46 +94,67 @@ export function ComboboxSelect({
 
   // The options list component
   const OptionsList = React.useCallback(
-    () => (
-      <Command className="overflow-hidden rounded-xl bg-white">
-        <div className="p-4">
-          <div className="flex flex-col items-end justify-center overflow-hidden rounded-xl px-4 outline-2 outline-offset-[-2px] outline-[#8480fc]">
-            <div className="flex w-full items-center justify-between gap-3">
-              <CommandInput
-                placeholder={searchPlaceholder || `جستجو ${label || "options"}...`}
-                className={`h-10 flex-grow py-3 ${dir === "rtl" ? "text-right" : "text-left"} border-none outline-none`}
-              />
-              <div className="flex items-center justify-center">
-                <CloseCircle size={16} color="var(--color-Gray-N500)" />
+    () => {
+      // Add state to manage the search input value
+      const [searchValue, setSearchValue] = React.useState("");
+      const commandInputRef = React.useRef<HTMLInputElement>(null);
+
+      // Function to clear the input value
+      const clearSearch = () => {
+        setSearchValue("");
+        // Focus the input after clearing for better UX
+        setTimeout(() => {
+          commandInputRef.current?.focus();
+        }, 0);
+      };
+
+      return (
+        <Command className="overflow-hidden rounded-xl bg-white">
+          <div className="p-4">
+            <div className="flex flex-col items-end justify-center overflow-hidden rounded-xl px-4 outline-2 outline-offset-[-2px] outline-[#8480fc]">
+              <div className="flex w-full items-center justify-between gap-3">
+                <CommandInput
+                  ref={commandInputRef}
+                  value={searchValue}
+                  onValueChange={setSearchValue}
+                  placeholder={searchPlaceholder || `جستجو ${label || "options"}...`}
+                  className={`h-10 flex-grow py-3 ${dir === "rtl" ? "text-right" : "text-left"} border-none outline-none`}
+                />
+                <div 
+                  className="flex items-center justify-center cursor-pointer" 
+                  onClick={clearSearch}
+                >
+                  <CloseCircle size={16} color="var(--color-Gray-N500)" />
+                </div>
               </div>
             </div>
           </div>
-        </div>
 
-        <div className="bg-Gray-N100 h-1 w-full"></div>
+          <div className="bg-Gray-N100 h-1 w-full"></div>
 
-        <CommandList className="shadow-[0px_25px_66px_-12px_rgba(0,0,0,0.08)]" style={{ maxHeight }}>
-          <CommandEmpty className="px-4 py-3 text-right">{noResultsText}</CommandEmpty>
-          <CommandGroup className="overflow-hidden">
-            {options.map((option, index) => (
-              <React.Fragment key={option.value}>
-                <CommandItem
-                  value={option.value}
-                  onSelect={handleSelect}
-                  className="flex cursor-pointer items-center justify-between px-4 py-3"
-                >
-                  <div className="relative size-4">
-                    <Location size={16} color="var(--color-Gray-N500)" />
-                  </div>
-                  <div className="text-Gray-N800 flex-1 text-right text-base leading-7 font-medium">{option.label}</div>
-                </CommandItem>
-                {index < options.length - 1 && <div className="border-Gray-N100 w-full border-t"></div>}
-              </React.Fragment>
-            ))}
-          </CommandGroup>
-        </CommandList>
-      </Command>
-    ),
+          <CommandList className="shadow-[0px_25px_66px_-12px_rgba(0,0,0,0.08)]" style={{ maxHeight }}>
+            <CommandEmpty className="px-4 py-3 text-right">{noResultsText}</CommandEmpty>
+            <CommandGroup className="overflow-hidden">
+              {options.map((option, index) => (
+                <React.Fragment key={option.value}>
+                  <CommandItem
+                    value={option.value}
+                    onSelect={handleSelect}
+                    className="flex cursor-pointer items-center justify-between px-4 py-3"
+                  >
+                    <div className="relative size-4">
+                      <Location size={16} color="var(--color-Gray-N500)" />
+                    </div>
+                    <div className="text-Gray-N800 flex-1 text-right text-base leading-7 font-medium">{option.label}</div>
+                  </CommandItem>
+                  {index < options.length - 1 && <div className="border-Gray-N100 w-full border-t"></div>}
+                </React.Fragment>
+              ))}
+            </CommandGroup>
+          </CommandList>
+        </Command>
+      );
+    },
     [options, value, showSelectedIcon, maxHeight, dir, label, noResultsText, handleSelect, searchPlaceholder]
   )
 
