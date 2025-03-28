@@ -88,18 +88,12 @@ export function PassengerSelector({
   // Convert string value to PassengerCount if needed
   const passengerCount: PassengerCount = typeof value === "string" ? { adult: 1, child: 0, infant: 0 } : value
 
-  // Maintain the component's internal copy of the passenger count
-  const [internalPassengerCount, setInternalPassengerCount] = React.useState(passengerCount)
+  // Use the value from props directly, don't maintain a separate internal state
   const [open, setOpen] = React.useState(false)
   const isDesktop = useMediaQuery("(min-width: 768px)")
 
-  // Update internal state when props change from outside
-  React.useEffect(() => {
-    setInternalPassengerCount(passengerCount)
-  }, [JSON.stringify(passengerCount)]) // Use JSON.stringify to properly compare objects
-
-  // Calculate total passengers from internal state
-  const totalPassengers = Object.values(internalPassengerCount).reduce((sum, count) => sum + count, 0)
+  // Calculate total passengers
+  const totalPassengers = Object.values(passengerCount).reduce((sum, count) => sum + count, 0)
 
   // Format passenger count for display
   const formatPassengerCount = () => {
@@ -112,7 +106,7 @@ export function PassengerSelector({
     const config = passengerTypes.find((pt) => pt.type === type)
     if (!config) return
 
-    const newCount = { ...internalPassengerCount }
+    const newCount = { ...passengerCount }
 
     if (increment) {
       // Check if incrementing would exceed max for this type
@@ -129,13 +123,8 @@ export function PassengerSelector({
       newCount[type]--
     }
 
-    // Update internal state immediately
-    setInternalPassengerCount(newCount)
-    
-    // Notify parent asynchronously to avoid immediate re-render
-    setTimeout(() => {
-      onChange(newCount)
-    }, 0)
+    // Call onChange directly without setTimeout
+    onChange(newCount)
   }
 
   // The trigger field component
@@ -194,14 +183,14 @@ export function PassengerSelector({
                 customSize="w-8 h-8 p-0 flex items-center justify-center"
                 onClick={() => updatePassengerCount(passengerType.type, true)}
                 disabled={
-                  internalPassengerCount[passengerType.type] >= passengerType.max || totalPassengers >= maxTotalPassengers
+                  passengerCount[passengerType.type] >= passengerType.max || totalPassengers >= maxTotalPassengers
                 }
               >
                 <Add size={16} color="var(--color-white)" />
               </Button>
 
               <span className="text-Gray-N700 min-w-6 text-center font-medium">
-                {englishToFarsiNumber(internalPassengerCount[passengerType.type])}
+                {englishToFarsiNumber(passengerCount[passengerType.type])}
               </span>
 
               <Button
@@ -210,7 +199,7 @@ export function PassengerSelector({
                 size="custom"
                 customSize="w-8 h-8 p-0 flex items-center justify-center"
                 onClick={() => updatePassengerCount(passengerType.type, false)}
-                disabled={internalPassengerCount[passengerType.type] <= passengerType.min}
+                disabled={passengerCount[passengerType.type] <= passengerType.min}
               >
                 <Minus size={16} color="var(--color-white)" />
               </Button>
