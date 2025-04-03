@@ -4,7 +4,7 @@ import { Slot } from "@radix-ui/react-slot"
 import { cva, type VariantProps } from "class-variance-authority"
 import { twMerge } from "tailwind-merge"
 
-const button = cva(
+export const button = cva(
   [
     "justify-center",
     "inline-flex",
@@ -38,6 +38,19 @@ const button = cva(
           "hover:border-[#6561FC] hover:text-[#6561FC]",
           "active:border-[#0C05F8] active:text-[#0904BA]",
           "disabled:!border-[#6561FC] disabled:!text-[#A0A0A0] disabled:pointer-events-none disabled:opacity-40 disabled:cursor-not-allowed",
+        ],
+        outline2: [
+          "border border-[#F1F5F9] bg-transparent text-[#4641FB]",
+          "hover:border-[#6561FC] hover:text-[#6561FC] hover:bg-[#F8FAFC]/50",
+          "active:border-[#0C05F8] active:text-[#0904BA] active:bg-[#F1F5F9]",
+          "disabled:!border-[#6561FC] disabled:!text-[#A0A0A0] disabled:pointer-events-none disabled:opacity-40 disabled:cursor-not-allowed",
+        ],
+        ghost: [
+          "bg-transparent text-[#4641FB]",
+          "hover:bg-[#F1F5F9]/70 hover:text-[#6561FC]",
+          "active:bg-[#F1F5F9] active:text-[#0C05F8]",
+          "aria-selected:bg-Primary-P500main aria-selected:text-Shade-White aria-selected:rounded-xl aria-selected:font-semibold",
+          "disabled:text-[#A0A0A0] disabled:pointer-events-none disabled:opacity-40 disabled:cursor-not-allowed",
         ],
         text: [
           "bg-transparent text-[#4641FB]",
