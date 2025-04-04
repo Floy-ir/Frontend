@@ -10,13 +10,18 @@ interface CitiesStorageSchema {
 // Create a singleton instance
 export const citiesStorage = new StorageService<CitiesStorageSchema>('cities');
 
+// Add at the top of CitiesStorageService.ts
+const isBrowser = typeof window !== 'undefined';
+
 // Convenience methods for common operations
 export const CitiesStorageService = {
   getRecentSelections(): Array<{value: string, label: string}> {
+    if (!isBrowser) return [];
     return citiesStorage.getItem('recentSelections', []);
   },
 
   addRecentSelection(value: string, label: string, maxItems = 3): void {
+    if (!isBrowser) return;
     const current = this.getRecentSelections();
     const filtered = current.filter(item => item.value !== value);
     const updated = [{ value, label }, ...filtered].slice(0, maxItems);
@@ -24,10 +29,12 @@ export const CitiesStorageService = {
   },
 
   getLastSearches(): Array<{origin: string, destination: string, date: string}> {
+    if (!isBrowser) return [];
     return citiesStorage.getItem('lastSearches', []);
   },
 
   addLastSearch(origin: string, destination: string, date: string, maxItems = 5): void {
+    if (!isBrowser) return;
     const current = this.getLastSearches();
     const search = { origin, destination, date };
     const filtered = current.filter(
@@ -37,6 +44,7 @@ export const CitiesStorageService = {
   },
 
   toggleFavorite(cityCode: string): void {
+    if (!isBrowser) return;
     const favorites = citiesStorage.getItem('favorites', []);
     const index = favorites.indexOf(cityCode);
     
@@ -50,6 +58,7 @@ export const CitiesStorageService = {
   },
 
   getFavorites(): string[] {
+    if (!isBrowser) return [];
     return citiesStorage.getItem('favorites', []);
   }
 }; 

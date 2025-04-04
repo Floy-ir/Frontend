@@ -39,23 +39,8 @@ export default function Web() {
 
   return (
     <>
-      {/* Hero image section */}
-      {/* <div className="fixed -top-12 left-0 h-136 w-full">
-        <Image
-          src="/images/hero-image.png"
-          alt="Hero Image"
-          fill
-          className="-z-40 object-cover"
-          sizes="100vw"
-          priority
-        />
-      </div> */}
       {/* Background Image with Oval Bottom */}
-      <div className="absolute inset-0 w-full md:h-[478px] -z-10 overflow-hidden" 
-           style={{ 
-             borderBottomLeftRadius: '60% 3%', 
-             borderBottomRightRadius: '60% 3%' 
-           }}>
+      <div className="absolute inset-0 w-full h-[400x] md:h-[478px] -z-10 overflow-hidden rounded-oval-mobile md:rounded-oval">
         {/* Main image container */}
         <Image
           src="/images/landing2.webp"
@@ -70,9 +55,9 @@ export default function Web() {
       </div>
 
       {/* Remove extra container divs - let the header handle its own width */}
-      <div className="rtl">
+      {/* <div className="rtl">
         <Header menuItems={menuItems} />
-      </div>
+      </div> */}
       
       <main className="rtl relative z-10 flex min-h-screen flex-col items-center bg-transparent">
         <div className="w-full max-w-[1136px] mx-auto px-4 md:px-0">

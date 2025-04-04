@@ -23,6 +23,7 @@ interface MenuItem {
 interface HeaderProps {
   menuItems: MenuItem[]
   className?: string
+  forceScrolledStyle?: boolean
 }
 
 const navItem = cva(["flex", "flex-col", "items-center", "gap-1"], {
@@ -54,11 +55,16 @@ const navItem = cva(["flex", "flex-col", "items-center", "gap-1"], {
   ],
 })
 
-export function Header({ menuItems, className }: HeaderProps) {
+export function Header({ menuItems, className, forceScrolledStyle = false }: HeaderProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [prevScrollPos, setPrevScrollPos] = useState(0)
   const [visible, setVisible] = useState(true)
-  const [isScrolled, setIsScrolled] = useState(false)
+  const [isScrolled, setIsScrolled] = useState(forceScrolledStyle)
+  
+  // This effect updates isScrolled when forceScrolledStyle changes
+  useEffect(() => {
+    setIsScrolled(forceScrolledStyle || window.scrollY > 50)
+  }, [forceScrolledStyle])
   
   useEffect(() => {
     // Function to handle scroll
@@ -66,6 +72,7 @@ export function Header({ menuItems, className }: HeaderProps) {
       const currentScrollPos = window.scrollY
       
       // Only set scrolled if we've passed a more significant threshold
+      // Always respect forceScrolledStyle if it's true
       const hasScrolledEnough = currentScrollPos > 50
       
       // Visible if:
@@ -78,37 +85,31 @@ export function Header({ menuItems, className }: HeaderProps) {
       
       // Update states
       if (shouldBeVisible) {
-        setIsScrolled(hasScrolledEnough)
+        setVisible(true)
+      } else {
+        setVisible(false)
       }
       
-      setVisible(shouldBeVisible)
+      // Update isScrolled state - always true if forceScrolledStyle is set
+      setIsScrolled(forceScrolledStyle || hasScrolledEnough)
+      
       setPrevScrollPos(currentScrollPos)
     }
     
     window.addEventListener('scroll', handleScroll)
     
-    // Clean up
-    return () => window.removeEventListener('scroll', handleScroll)
-  }, [prevScrollPos, mobileMenuOpen])
-
-  // When header visibility changes to false, reset the scrolled state
-  useEffect(() => {
-    if (!visible) {
-      // Set a small delay to ensure the transition is smooth
-      const timeout = setTimeout(() => {
-        setIsScrolled(false)
-      }, 300) // Match the duration of the header transition
-      
-      return () => clearTimeout(timeout)
+    // Cleanup function
+    return () => {
+      window.removeEventListener('scroll', handleScroll)
     }
-  }, [visible])
+  }, [prevScrollPos, mobileMenuOpen, forceScrolledStyle])
 
   // Header classes - apply rounded corners only when not scrolled
   const headerClasses = twMerge(
     "w-full fixed top-0 left-0 right-0 z-50 transition-all duration-300",
     // Only rounded when at the top and not scrolled
     !visible ? "-translate-y-full" : "translate-y-0",
-    visible && isScrolled ? "bg-white shadow-md" : "bg-transparent",
+    visible && isScrolled ? "bg-white border-b border-Gray-N200" : "bg-transparent",
     className
   )
 

@@ -80,6 +80,10 @@ module.exports = {
       minWidth: {
         ...defaultTheme.width,
       },
+      borderRadius: {
+        'oval': '100% 100% 70% 70% / 0% 0% 2% 2%',
+        'oval-mobile': '100% 100% 60% 60% / 0% 0% 1.5% 1.5%',
+      }
     },
   },
   plugins: [],
