@@ -1,27 +1,43 @@
 import React, { useState } from "react"
 import { Airplane, ArrowSwapHorizontal, Buildings, Building3, Add } from "iconsax-react"
+import { useRouter } from "next/navigation"
 
-import { TextField } from "@/components/TextField/TextField"
 import { ComboboxSelect } from "@/components/ComboboxSelect/ComboboxSelect"
 import { Button } from "@/components/Button/Button"
 import { DatePicker } from "@/components/DatePicker/DatePicker"
 import { PassengerSelector, PassengerCount } from "@/components/PassengerSelector/PassengerSelector"
+import { getCityByName, getCityOptions } from "@/config/cities"
+import { useStoredCities } from '@/hooks/useStoredCities'
 
-type CityOption = {
-  value: string
-  label: string
-}
-
-interface SearchFormContainerProps {
-  cityOptions: CityOption[]
-}
-
-export function SearchFormContainer({ cityOptions }: SearchFormContainerProps) {
-  // Add state management for origin and destination
+export function SearchFormContainer() {
+  const router = useRouter();
   const [origin, setOrigin] = useState("")
   const [destination, setDestination] = useState("")
   const [departureDate, setDepartureDate] = useState<Date | null>(null)
   const [passengers, setPassengers] = useState<PassengerCount>({ adult: 1, child: 0, infant: 0 })
+  
+  // Use our custom hook
+  const { recentSelections, addRecentSelection, saveSearch } = useStoredCities();
+
+  // Get city options from config
+  const cityOptions = getCityOptions();
+
+  // Custom onChange handlers
+  const handleOriginChange = (value: string) => {
+    setOrigin(value);
+    const cityOption = getCityByName(value);
+    if (cityOption) {
+      addRecentSelection(value, cityOption.label);
+    }
+  };
+
+  const handleDestinationChange = (value: string) => {
+    setDestination(value);
+    const cityOption = getCityByName(value);
+    if (cityOption) {
+      addRecentSelection(value, cityOption.label);
+    }
+  };
 
   // Handle exchange of origin and destination
   const handleExchange = () => {
@@ -38,6 +54,54 @@ export function SearchFormContainer({ cityOptions }: SearchFormContainerProps) {
     } else {
       setDepartureDate(date);
     }
+  };
+  
+  // Handle search button click
+  const handleSearch = () => {
+    // Don't proceed if required fields are missing
+    if (!origin || !destination || !departureDate) {
+      return;
+    }
+
+    // Get the city objects with their codes
+    const originCity = getCityByName(origin);
+    const destinationCity = getCityByName(destination);
+    
+    // If we can't find the codes, don't proceed
+    if (!originCity || !destinationCity) {
+      console.error("City codes not found");
+      return;
+    }
+
+    // Format the date as YYYY-MM-DD
+    const formatDate = (date: Date) => {
+      // For Persian calendar, you might need a specialized library
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    };
+
+    // Save search when user submits
+    if (departureDate) {
+      saveSearch(
+        originCity.code, 
+        destinationCity.code, 
+        formatDate(departureDate)
+      );
+    }
+
+    // Construct the URL path with airport codes
+    const path = `/flights/${originCity.code}-${destinationCity.code}`;
+    const query = new URLSearchParams({
+      adult: String(passengers.adult),
+      child: String(passengers.child),
+      infant: String(passengers.infant),
+      departing: departureDate ? formatDate(departureDate) : '',
+    }).toString();
+
+    // Navigate to the flights page with the query parameters
+    router.push(`${path}?${query}`);
   };
 
   return (
@@ -115,12 +179,8 @@ export function SearchFormContainer({ cityOptions }: SearchFormContainerProps) {
                     label="مبدا"
                     searchPlaceholder="جستجوی شهر مبدا"
                     value={origin}
-                    onChange={setOrigin}
-                    recentSelections={[
-                      { value: "tehran", label: "تهران" },
-                      { value: "shiraz", label: "مشهد" },
-                      { value: "isfahan", label: "تبریز" }
-                    ]}
+                    onChange={handleOriginChange}
+                    recentSelections={recentSelections}
                   />
                 </div>
 
@@ -140,12 +200,8 @@ export function SearchFormContainer({ cityOptions }: SearchFormContainerProps) {
                     label="مقصد"
                     searchPlaceholder="جستجوی شهر مقصد"
                     value={destination}
-                    onChange={setDestination}
-                    recentSelections={[
-                      { value: "tehran", label: "تهران" },
-                      { value: "shiraz", label: "مشهد" },
-                      { value: "isfahan", label: "تبریز" }
-                    ]}
+                    onChange={handleDestinationChange}
+                    recentSelections={recentSelections}
                   />
                 </div>
               </div>
@@ -170,12 +226,8 @@ export function SearchFormContainer({ cityOptions }: SearchFormContainerProps) {
                 label="مبدا"
                 searchPlaceholder="جستجوی شهر مبدا"
                 value={origin}
-                onChange={setOrigin}
-                recentSelections={[
-                  { value: "tehran", label: "تهران" },
-                  { value: "shiraz", label: "مشهد" },
-                  { value: "isfahan", label: "تبریز" }
-                ]}
+                onChange={handleOriginChange}
+                recentSelections={recentSelections}
               />
             </div>
 
@@ -207,12 +259,8 @@ export function SearchFormContainer({ cityOptions }: SearchFormContainerProps) {
                 label="مقصد"
                 searchPlaceholder="جستجوی شهر مقصد"
                 value={destination}
-                onChange={setDestination}
-                recentSelections={[
-                  { value: "tehran", label: "تهران" },
-                  { value: "shiraz", label: "مشهد" },
-                  { value: "isfahan", label: "تبریز" }
-                ]}
+                onChange={handleDestinationChange}
+                recentSelections={recentSelections}
               />
             </div>
           </div>
@@ -272,6 +320,7 @@ export function SearchFormContainer({ cityOptions }: SearchFormContainerProps) {
           intent="primary" 
           size="large" 
           className="mt-4 w-full md:mt-4 lg:mt-0 md:w-full lg:w-50"
+          onClick={handleSearch}
           // disabled={!origin || !destination || !departureDate}
         >
           جستجوی پرواز

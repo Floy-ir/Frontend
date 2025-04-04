@@ -50,6 +50,25 @@ export default function Web() {
           priority
         />
       </div> */}
+      {/* Background Image with Oval Bottom */}
+      <div className="absolute inset-0 w-full md:h-[478px] -z-10 overflow-hidden" 
+           style={{ 
+             borderBottomLeftRadius: '60% 3%', 
+             borderBottomRightRadius: '60% 3%' 
+           }}>
+        {/* Main image container */}
+        <Image
+          src="/images/landing2.webp"
+          alt="Hero Background"
+          fill
+          className="object-cover object-center"
+          sizes="100vw"
+          priority
+        />
+        {/* Overlay for text readability */}
+        <div className="absolute inset-0 bg-gradient-to-r from-slate-900/70 to-slate-900/40" />
+      </div>
+
       <main className="rtl font-anjoman-max relative z-10 flex min-h-screen flex-col items-center bg-transparent">
         <div className="m-4 md:m-0">
           <div className="w-full max-w-[1136px]">

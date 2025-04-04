@@ -5,12 +5,7 @@ import React from "react"
 import { SearchFormContainer } from "@/components/SearchFormContainer/SearchFormContainer"
 
 export function HeroSection() {
-  const cityOptions = [
-    { value: "تهران", label: "تهران" },
-    { value: "مشهد", label: "مشهد" },
-    { value: "کیش", label: "کیش" },
-    { value: "تبریز", label: "تبریز" },
-  ]
+
 
   return (
     <section className="relative flex mt-4 mb-10 w-full md:mt-11 md:h-[487px]">
@@ -32,7 +27,7 @@ export function HeroSection() {
 
         {/* Search Form Container */}
         <div className="w-full">
-          <SearchFormContainer cityOptions={cityOptions} />
+          <SearchFormContainer/>
         </div>
       </div>
     </section>
