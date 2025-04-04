@@ -8,6 +8,7 @@ import { DatePicker } from "@/components/DatePicker/DatePicker"
 import { PassengerSelector, PassengerCount } from "@/components/PassengerSelector/PassengerSelector"
 import { getCityByName, getCityOptions } from "@/config/cities"
 import { useStoredCities } from '@/hooks/useStoredCities'
+import { formatDate } from '@/utils/dateUtils'
 
 export function SearchFormContainer() {
   const router = useRouter();
@@ -72,15 +73,6 @@ export function SearchFormContainer() {
       console.error("City codes not found");
       return;
     }
-
-    // Format the date as YYYY-MM-DD
-    const formatDate = (date: Date) => {
-      // For Persian calendar, you might need a specialized library
-      const year = date.getFullYear();
-      const month = String(date.getMonth() + 1).padStart(2, '0');
-      const day = String(date.getDate()).padStart(2, '0');
-      return `${year}-${month}-${day}`;
-    };
 
     // Save search when user submits
     if (departureDate) {
