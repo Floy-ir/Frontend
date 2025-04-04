@@ -102,8 +102,6 @@ export default function Web() {
           <Questions />
         </div>
       </main>
-
-      <Footer />
     </>
   )
 }
