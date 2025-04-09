@@ -39,44 +39,30 @@ export default function Web() {
 
   return (
     <>
-      {/* Hero image section */}
-      {/* <div className="fixed -top-12 left-0 h-136 w-full">
+      {/* Background Image with Oval Bottom */}
+      <div className="absolute inset-0 w-full h-[400x] md:h-[478px] -z-10 overflow-hidden rounded-oval-mobile md:rounded-oval">
+        {/* Main image container */}
         <Image
-          src="/images/hero-image.png"
-          alt="Hero Image"
+          src="/images/landing2.webp"
+          alt="Hero Background"
           fill
-          className="-z-40 object-cover"
+          className="object-cover object-center"
           sizes="100vw"
           priority
         />
-      </div> */}
-      <main className="rtl font-anjoman-max relative z-10 flex min-h-screen flex-col items-center bg-transparent">
-        <div className="m-4 md:m-0">
-          <div className="w-full max-w-[1136px]">
-            <Header menuItems={menuItems} />
-            <HeroSection />
-          </div>
-        </div>
+        {/* Overlay for text readability */}
+        <div className="absolute inset-0 bg-gradient-to-r from-slate-900/70 to-slate-900/40" />
+      </div>
 
-        {/* <div className="container mx-auto mt-12 text-center">
-          <h2 className="text-3xl font-bold text-slate-900">فلوی، پرواز تا بی نهایت</h2>
-          <p className="mt-4 text-slate-600">این یک متن چرت و پرت است که توسط یک نفر نوشته شده است.</p>
+      {/* Remove extra container divs - let the header handle its own width */}
+      {/* <div className="rtl">
+        <Header menuItems={menuItems} />
+      </div> */}
+      
+      <main className="rtl relative z-10 flex min-h-screen flex-col items-center bg-transparent">
+        <div className="w-full max-w-[1136px] mx-auto px-4 md:px-0">
+          <HeroSection />
         </div>
-        
-        <div className="p-8">
-          <TextField
-            label="عنوان"
-            placeholder="متن ورودی"
-            helperText="متن راهنما"
-            maxLength={20}
-            showCharCount
-            leftIcon={<Eye color="var(--color-Gray-N500)" />}
-            rightIcon={<User color="var(--color-Gray-N500)" />}
-            dir="rtl"
-            width="md"
-          />
-        </div>
-        <FormExample /> */}
 
         <Companies />
         <Benefits />
