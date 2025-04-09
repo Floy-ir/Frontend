@@ -1,10 +1,10 @@
 "use client"
 
+import { ArrowRight2, ArrowLeft2 } from "iconsax-react"
 import React, { useRef, useState } from "react"
 import { Button } from "@/components/Button/Button"
 import img from "@/public/images/arrow-right.svg"
 import Image from "next/image"
-
 const Timeline = () => {
   const data = [
     { day: "شنبه", date: "۳ اسفند", price: 2389 },
@@ -13,7 +13,7 @@ const Timeline = () => {
     { day: "سه‌شنبه", date: "۶ اسفند", price: 2791 },
     { day: "چهارشنبه", date: "۷ اسفند", price: 2800 },
     { day: "پنجشنبه", date: "۸ اسفند", price: 2787 },
-    { day: "جمعه", date: "۹ اسفند", price: 2795 },
+    { day: "جمعه", date: "۹ اسفند", price: 2395 },
     { day: "شنبه", date: "۱۰ اسفند", price: 2996 },
     { day: "یکشنبه", date: "۱۱ اسفند", price: 2794 },
     { day: "دوشنبه", date: "۱۲ اسفند", price: 2803 },
@@ -43,13 +43,37 @@ const Timeline = () => {
   }
 
   return (
-    <div className="bg-Shade-White outline-Gray-N100 relative inline-flex w-full md:w-[1063px] snap-x snap-proximity flex-nowrap items-center justify-center gap-3 overflow-x-auto overflow-y-hidden scroll-smooth rounded-2xl py-3 outline outline-offset-[-1px]">
-        {/* <div className="w-full flex justify-between bg-Blue-sky-B700 h-1/2">
-                <div className="absolute left-0 top-0 h-full w-[100px] bg-gradient-to-r  from-black to-transparent"></div>
-            </div> */}
-        {/* <div className="absolute right-0 top-0 h-full w-[100px] bg-gradient-to-l  from-black to-transparent"></div>  */}
+    <div className="relative max-w-screen flex-nowrap items-center justify-center overflow-x-auto">
+      {/* Gradient and Arrows */}
+      <div className="pointer-events-none absolute inset-0 z-10 flex w-full justify-between">
+  
+        <div className="h-full w-[69px] bg-gradient-to-l from-white to-transparent lg:rounded-2xl">
+          {/* <ArrowRight2 className="hidden md:block absolute top-1/3 right-4 " size="24" color="#334155"/> */}
+          <Image
+            src={img}
+            width={24}
+            height={24}
+            alt="arrow"
+            className="absolute top-7 right-4 hidden md:block"
+            color="#334155"
+          />
+        </div>
+        <div className="h-full w-[69px] bg-gradient-to-r from-white to-transparent lg:rounded-2xl">
+          {/* <ArrowLeft2 className="hidden md:block absolute top-1/3 left-4" size="24" color="#334155"/> */}
+          <Image
+            src={img}
+            width={24}
+            height={24}
+            alt="arrow"
+            className="absolute top-7 left-4 hidden rotate-180 md:block"
+            color="#334155"
+          />
+        </div>
+      </div>
 
-        <div className="flex gap-3">
+      {/* Timeline scroll area */}
+      <div className="bg-Shade-White outline-Gray-N100 relative inline-flex h-[64px] w-full snap-x snap-proximity flex-nowrap items-center justify-center gap-3 overflow-x-auto overflow-y-hidden scroll-smooth py-3 outline outline-offset-[-1px] md:h-[80px] lg:w-[1036px] lg:rounded-2xl">
+        <div className="flex gap-3 px-3">
           {data.map((item, index) => {
             const isSelected = index === selectedDay
             const priceColor =
@@ -71,7 +95,6 @@ const Timeline = () => {
                     isSelected ? "text-Primary-P500main" : "text-Gray-N500"
                   } text-[11px] leading-none font-medium`}
                 >
-                  {/* {item.day} - {item.date} */}
                   <span className="inline md:hidden">
                     {item.day[0]} - {item.date}
                   </span>
@@ -91,9 +114,8 @@ const Timeline = () => {
             )
           })}
         </div>
-        {/* <div className="absolute left-0 top-0 h-full w-[100px] bg-gradient-to-r  from-black to-transparent"></div>  */}
-        
       </div>
+    </div>
   )
 }
 
