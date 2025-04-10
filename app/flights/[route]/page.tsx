@@ -4,6 +4,7 @@ import { formatDate } from '@/utils/dateUtils'
 import { SearchNormal } from 'iconsax-react'
 import Link from 'next/link'
 import { FlightSearchHeader } from '@/components/FlightSearchHeader/FlightSearchHeader'
+import Timeline from '@/app/time-line/scratch'
 type RouteParams = {
   params: {
     route: string
@@ -40,7 +41,7 @@ export default function FlightResultsPage({ params, searchParams }: RouteParams)
   const dateDisplay = departureDate ? 'جمعه - ۴ اسفند' : 'تاریخ نامشخص'
   
   return (
-    <>
+    <div className='flex flex-col justify-center'>
       {/* Search header summary bar */}
       <FlightSearchHeader
         originCity={originCity?.label || originCode}
@@ -53,6 +54,9 @@ export default function FlightResultsPage({ params, searchParams }: RouteParams)
         child={parseInt(child || '0')}
         infant={parseInt(infant || '0')}
       />
-    </>
+      <div className="flex flex-col mt-0 lg:mt-6 items-center mx-0 lg:mx-[376px]">
+    <Timeline/>
+    </div>
+    </div>
   )
 } 
