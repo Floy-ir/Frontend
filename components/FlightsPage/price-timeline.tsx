@@ -2,31 +2,43 @@
 
 // import { ArrowLeft2, ArrowRight2 } from "iconsax-react"
 import Image from "next/image"
-import { useRouter, useSearchParams } from "next/navigation"
+import { useRouter } from "next/navigation"
 import React, { useRef, useState } from "react"
 import img from "@/public/images/arrow-right.svg"
 import { formatToJalali } from "@/utils/dateUtils"
 import { createFlightSearchUrl } from "@/utils/navigation"
 
-const Timeline = () => {
-
+const Timeline = ({
+  originCityCode,
+  destinationCityCode,
+  selectedDate,
+  adult,
+  child,
+  infant,
+}: {
+  originCityCode: string
+  destinationCityCode: string
+  selectedDate: string
+  adult: string
+  child: string
+  infant: string
+}) => {
   const scrollRef = useRef<HTMLDivElement>(null)
   const router = useRouter()
-  const searchParams = useSearchParams()
-
-  // Retrieve parameters from the URL
-  const originCityCode = searchParams.get("origin") || "" // Default if not found
-  const destinationCityCode = searchParams.get("destination") || "" // Default if not found
-  const adult = parseInt(searchParams.get("adult") || "1", 10)
-  const child = parseInt(searchParams.get("child") || "0", 10)
-  const infant = parseInt(searchParams.get("infant") || "0", 10)
-  const departingParam = searchParams.get("departing") || "2025-04-14" // Default to a specific date if not found
 
   // Initialize the selected date from the 'departing' query param
-  const [selectedDay, setSelectedDay] = useState<string>(departingParam)
+  const [selectedDay, setSelectedDay] = useState<string>(selectedDate)
+
+  React.useEffect(() => {
+    setSelectedDay(selectedDate)
+  }, [selectedDate])
 
   // Passengers count
-  const passengers = { adult, child, infant }
+  const passengers = {
+    adult: parseInt(adult, 10),
+    child: parseInt(child, 10),
+    infant: parseInt(infant, 10),
+  }
 
   const data = [
     { day: "شنبه", departuring: "2025-04-14", price: 2389 },
@@ -49,13 +61,6 @@ const Timeline = () => {
   const minPrice = Math.min(...data.filter((item) => item.price).map((item) => item.price || Infinity))
   const maxPrice = Math.max(...data.filter((item) => item.price).map((item) => item.price || -Infinity))
 
-  // Calculate the average price
-  const avgPrice =
-    data
-      .filter((item) => item.price !== undefined || item.price == 0)
-      .reduce((acc, item) => acc + (item.price || 0), 0) /
-    data.filter((item) => item.price !== undefined).length
-
   // Convert digits to Persian numerals
   const formatPrice = (price: number) => {
     const persianDigits = ["۰", "۱", "۲", "۳", "۴", "۵", "۶", "۷", "۸", "۹"]
@@ -70,15 +75,8 @@ const Timeline = () => {
   const handleDateSelection = (newDate: string) => {
     setSelectedDay(newDate)
 
-    // Correctly create the URL with 'departing' as Date and 'passengers' separately
-    const url = createFlightSearchUrl(
-      originCityCode, // origin city code from the URL
-      destinationCityCode, // destination city code from the URL
-      new Date(newDate), // Convert the selected date to a Date object
-      passengers // Pass passengers object here
-    )
+    const url = createFlightSearchUrl(originCityCode, destinationCityCode, new Date(newDate), passengers)
 
-    // Navigate to the generated URL
     router.push(url)
   }
 
@@ -124,7 +122,7 @@ const Timeline = () => {
         <div className="flex snap-end gap-3 px-3">
           {data.map((item, index) => {
             const isSelected = selectedDay === item.departuring
-            let priceColor = "text-gray-700"  // Default color
+            let priceColor = "text-gray-700" // Default color
 
             if (item.price === minPrice) {
               priceColor = "text-Success-s600" // Green for min price
