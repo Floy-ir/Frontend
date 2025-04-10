@@ -15,6 +15,7 @@ const Timeline = ({
   adult,
   child,
   infant,
+  autoScrollToSelected,
 }: {
   originCityCode: string
   destinationCityCode: string
@@ -22,6 +23,7 @@ const Timeline = ({
   adult: string
   child: string
   infant: string
+  autoScrollToSelected?: boolean
 }) => {
   const scrollRef = useRef<HTMLDivElement>(null)
   const router = useRouter()
@@ -32,6 +34,18 @@ const Timeline = ({
   React.useEffect(() => {
     setSelectedDay(selectedDate)
   }, [selectedDate])
+
+  // Scroll to selected item if autoScrollToSelected is true
+  React.useEffect(() => {
+    if (autoScrollToSelected && scrollRef.current) {
+      const selectedEl = scrollRef.current.querySelector('[data-selected="true"]') as HTMLElement;
+      if (selectedEl) {
+        const container = scrollRef.current;
+        const offsetLeft = selectedEl.offsetLeft - container.offsetWidth / 2 + selectedEl.offsetWidth / 2;
+        container.scrollTo({ left: offsetLeft, behavior: 'smooth' });
+      }
+    }
+  }, [selectedDay, autoScrollToSelected]);
 
   // Passengers count
   const passengers = {
@@ -132,6 +146,7 @@ const Timeline = ({
             return (
               <div
                 key={index}
+                data-selected={isSelected}
                 onClick={() => handleDateSelection(item.departuring)}
                 className={`inline-flex h-[50px] w-[87px] shrink-0 cursor-pointer snap-end flex-col items-center justify-center rounded-sm px-1 py-2 outline-offset-[-1px] md:h-[57] md:w-[113px] ${
                   isSelected ? "bg-Primary-P50 border-Primary-P300 border-2" : "bg-Gray-N50 outline-Gray-N200 outline"
