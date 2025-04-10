@@ -42,38 +42,48 @@ const Timeline = () => {
       .join("")
   }
 
+  const scrollRef = useRef<HTMLDivElement>(null)
+
   return (
-    <div className="relative max-w-screen flex-nowrap items-center justify-center overflow-x-auto">
-      {/* Gradient and Arrows */}
-      <div className="pointer-events-none absolute inset-0 z-10 flex w-full justify-between">
-  
-        <div className="h-full w-[69px] bg-gradient-to-l from-white to-transparent lg:rounded-2xl">
-          {/* <ArrowRight2 className="hidden md:block absolute top-1/3 right-4 " size="24" color="#334155"/> */}
-          <Image
-            src={img}
-            width={24}
-            height={24}
-            alt="arrow"
-            className="absolute top-7 right-4 hidden md:block"
-            color="#334155"
-          />
-        </div>
-        <div className="h-full w-[69px] bg-gradient-to-r from-white to-transparent lg:rounded-2xl">
-          {/* <ArrowLeft2 className="hidden md:block absolute top-1/3 left-4" size="24" color="#334155"/> */}
-          <Image
-            src={img}
-            width={24}
-            height={24}
-            alt="arrow"
-            className="absolute top-7 left-4 hidden rotate-180 md:block"
-            color="#334155"
-          />
-        </div>
+    <div className="relative max-w-screen items-center justify-center">
+      {/* Gradient */}
+      <div className="pointer-events-none absolute inset-0 z-9 flex w-full justify-between">
+        <div className="h-full w-[69px] bg-gradient-to-l from-white to-transparent lg:rounded-2xl"></div>
+        <div className="h-full w-[69px] bg-gradient-to-r from-white to-transparent lg:rounded-2xl"></div>
       </div>
 
+      {/* buttons */}
+      <Image
+        src={img}
+        alt="scroll left"
+        width={24}
+        height={24}
+        onClick={() => {
+          if (scrollRef.current) {
+            scrollRef.current.scrollBy({ left: -200, behavior: "smooth" })
+          }
+        }}
+        className="absolute top-1/3 left-4 z-10 hidden rotate-180 cursor-pointer md:block"
+      />
+      <Image
+        src={img}
+        alt="scroll right"
+        width={24}
+        height={24}
+        onClick={() => {
+          if (scrollRef.current) {
+            scrollRef.current.scrollBy({ left: 200, behavior: "smooth" })
+          }
+        }}
+        className="absolute top-1/3 right-4 z-10 hidden cursor-pointer md:block"
+      />
+
       {/* Timeline scroll area */}
-      <div className="bg-Shade-White outline-Gray-N100 relative inline-flex h-[64px] w-full snap-x snap-proximity flex-nowrap items-center justify-center gap-3 overflow-x-auto overflow-y-hidden scroll-smooth py-3 outline outline-offset-[-1px] md:h-[80px] lg:w-[1036px] lg:rounded-2xl">
-        <div className="flex gap-3 px-3">
+      <div
+        ref={scrollRef}
+        className="bg-Shade-White outline-Gray-N100 inline-flex items-center  relative h-[64px] w-full snap-x snap-mandatory flex-nowrap gap-3 overflow-x-auto scroll-smooth py-3 outline outline-offset-[-1px] md:h-[80px] lg:w-[1036px] lg:rounded-2xl"
+      >
+        <div className="flex gap-3 px-3 snap-end">
           {data.map((item, index) => {
             const isSelected = index === selectedDay
             const priceColor =
@@ -86,7 +96,7 @@ const Timeline = () => {
               <div
                 key={index}
                 onClick={() => setSelectedDay(index)}
-                className={`h-[48px] w-[69px] shrink-0 snap-center px-1 py-2 md:h-[56] md:w-[102px] ${
+                className={`h-[48px] w-[69px] shrink-0 snap-end px-1 py-2 md:h-[56] md:w-[102px] ${
                   isSelected ? "bg-Primary-P50 border-Primary-P300 border-2" : "bg-Gray-N50 outline-Gray-N200 outline"
                 } inline-flex cursor-pointer flex-col items-center justify-center rounded-sm outline-offset-[-1px]`}
               >
