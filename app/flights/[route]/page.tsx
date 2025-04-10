@@ -65,6 +65,7 @@ export default function FlightResultsPage({ params, searchParams }: RouteParams)
           adult={adult}
           child={child}
           infant={infant}
+          autoScrollToSelected={true}
         />
       </div>
     </div>
