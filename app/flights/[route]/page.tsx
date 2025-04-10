@@ -4,7 +4,7 @@ import { formatDate } from '@/utils/dateUtils'
 import { SearchNormal } from 'iconsax-react'
 import Link from 'next/link'
 import { FlightSearchHeader } from '@/components/FlightSearchHeader/FlightSearchHeader'
-import Timeline from '@/app/time-line/scratch'
+import Timeline from '@/components/FlightsPage/price-timeline'
 type RouteParams = {
   params: {
     route: string
