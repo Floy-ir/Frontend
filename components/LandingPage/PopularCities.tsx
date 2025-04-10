@@ -41,20 +41,20 @@ function CityCard({ city, price, bg, large }: { city: string; price: string; bg:
       <div className="flex w-full items-end justify-between">
         {/* City Name */}
         <div className="flex flex-col items-start">
-          <div className="text-Shade-White z-10 justify-center self-stretch text-right font-['Anjoman_Max_FN'] text-xl leading-loose font-bold">
+          <div className="text-Shade-White z-10 justify-center self-stretch text-right text-xl leading-loose font-bold">
             {city}
           </div>
-          <div className="text-Shade-White z-10 justify-center font-['Anjoman_Max_FN'] text-sm leading-normal font-normal">
+          <div className="text-Shade-White z-10 justify-center text-sm leading-normal font-normal">
             شروع قیمت از
           </div>
         </div>
 
         {/* Price */}
         <div className="flex flex-col items-end text-right">
-          <div className="text-Shade-White z-10 mb-1 font-['Anjoman_Max_FN'] text-xs leading-none font-semibold">
+          <div className="text-Shade-White z-10 mb-1 text-xs leading-none font-semibold">
             تومان
           </div>
-          <div className="text-Shade-White z-10 justify-center self-stretch font-['Anjoman_Max_FN'] text-base leading-7 font-semibold">
+          <div className="text-Shade-White z-10 justify-center self-stretch text-base leading-7 font-semibold">
             {price}
           </div>
         </div>
