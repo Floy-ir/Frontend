@@ -38,8 +38,8 @@ function SuggestionCard({ text, discount, bg }: { text: string; discount: string
 
         {/* Text Content */}
         <div className="z-10 flex flex-1 flex-col gap-1 pr-4 text-right text-white ">
-          <div className="text-Shade-White font-['Anjoman_Max_FN'] text-base leading-relaxed font-normal">{text}</div>
-          <div className="text-Shade-White font-['Anjoman_Max_FN'] text-xl leading-loose font-bold">{discount}</div>
+          <div className="text-Shade-White text-base leading-relaxed font-normal">{text}</div>
+          <div className="text-Shade-White text-xl leading-loose font-bold">{discount}</div>
         </div>
       </div>
     </Card>
