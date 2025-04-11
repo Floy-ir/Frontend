@@ -8,7 +8,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { englishToFarsiNumber } from "@/utils/numbers"
 export default function ComparisonDialog() {
   const [open, setOpen] = useState(true)
-
+  const [openDetails, setOpenDetails] = useState(false)
   // Sample flight data
   const flightData = [
     {
@@ -67,7 +67,7 @@ export default function ComparisonDialog() {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogContent className="bg-Gray-N100 gap-0 border-none p-0 shadow-none md:max-w-[968px] ">
+      <DialogContent className="bg-Gray-N100 gap-0 border-none p-0 shadow-none md:max-w-[968px]">
         <DialogHeader className="bg-Shade-White rounded-t-2xl">
           <div className="flex flex-row items-center justify-between px-6 py-4">
             <DialogTitle className="text-Gray-N600 text-sm leading-normal font-semibold">جزییات پرواز</DialogTitle>
@@ -77,12 +77,150 @@ export default function ComparisonDialog() {
           </div>
 
           {/* divider */}
-          <div className="bg-Gray-N200 relative h-px self-stretch" />
+          <div className="bg-Gray-N200 h-px self-stretch" />
         </DialogHeader>
 
-        <div className="mb-7 flex flex-row items-center gap-4 px-6.5 pt-6.5">
+        <div className="mb-7 flex flex-row items-start gap-4 px-6.5 pt-6.5">
           {/* flight info */}
-          <div className="flex w-2/5 flex-col items-end">v</div>
+          <div className="flex w-2/5 flex-col items-end">
+            <div
+              dir="ltr"
+              className="bg-Shade-White mt-11 inline-flex flex-col items-end justify-center gap-2 self-stretch rounded-xl px-4 py-3"
+            >
+              {/* airline and tags */}
+              <div className="inline-flex items-center justify-end gap-3 self-stretch">
+                <div className="inline-flex flex-1 flex-col items-start justify-center gap-1">
+                  <div className="text-Gray-N700 justify-start self-stretch text-right text-sm leading-normal font-semibold">
+                    آتا
+                  </div>
+                  <div className="inline-flex flex-wrap content-start items-start justify-end gap-1 self-stretch">
+                    <div className="bg-Gray-N100 flex items-center justify-center gap-1.5 overflow-hidden rounded-sm px-1.5 py-1">
+                      <div className="text-Gray-N600 justify-center text-right text-[10px] leading-3 font-normal">
+                        Boeing 737-300
+                      </div>
+                    </div>
+                    <div className="bg-Gray-N100 flex items-center justify-center gap-1.5 overflow-hidden rounded-sm px-1.5 py-1">
+                      <div className="text-Gray-N600 justify-center text-right text-[10px] leading-3 font-normal">
+                        سیستمی
+                      </div>
+                    </div>
+                    <div className="bg-Gray-N100 flex items-center justify-center gap-1.5 overflow-hidden rounded-sm px-1.5 py-1">
+                      <div className="text-Gray-N600 justify-center text-right text-[10px] leading-3 font-normal">
+                        اکونومی
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div className="outline-Gray-N200 border-Gray-N200 flex h-9 w-9 items-center justify-center rounded-full border bg-white outline-[1.20px] outline-offset-[-1.20px]">
+                  <Image alt="airline" width={36} height={36} src={"/images/alibaba-icon.png"} />
+                </div>
+              </div>
+              {/* time and location */}
+              <div className="flex flex-col items-center justify-start self-stretch pb-1">
+                <div className="inline-flex items-center justify-start gap-2 self-stretch">
+                  <div className="inline-flex w-16 flex-col items-center justify-start">
+                    <div className="text-Gray-N800 justify-start self-stretch text-center text-lg leading-loose font-semibold">
+                      ۱۱:۳۰
+                    </div>
+                    <div className="flex flex-col items-center justify-start gap-2" dir="rtl">
+                      <div className="text-Gray-N500 justify-start text-center text-[10px] leading-3 font-normal">
+                        مشهد(MHD)
+                      </div>
+                      <div className="text-Gray-N500 justify-start text-center text-[10px] leading-3 font-normal">
+                        فرودگاه مشهد
+                      </div>
+                    </div>
+                  </div>
+                  <div className="inline-flex flex-1 flex-col items-center justify-end gap-2 self-stretch pt-2 pb-6">
+                    <div className="justify-start text-center" dir="rtl">
+                      <span className="text-Gray-N500 text-[10px] leading-3 font-semibold">۱ </span>
+                      <span className="text-Gray-N500 text-[10px] leading-3 font-normal">ساعت </span>
+                      <span className="text-Gray-N500 text-[10px] leading-3 font-semibold">۳۰</span>
+                      <span className="text-Gray-N500 text-[10px] leading-3 font-normal"> دقیقه</span>
+                    </div>
+                    <div className="flex items-center justify-center gap-1.5">
+                      <Image alt="airline" width={196} height={6} src={"/images/airplane.png"} />
+                    </div>
+                  </div>
+                  <div className="inline-flex w-16 flex-col items-center justify-start">
+                    <div className="text-Gray-N800 justify-start self-stretch text-center text-lg leading-loose font-semibold">
+                      ۰۹:۳۰
+                    </div>
+                    <div className="flex flex-col items-center justify-start gap-2" dir="rtl">
+                      <div className="text-Gray-N500 justify-start text-center text-[10px] leading-3 font-normal">
+                        تهران(THR)
+                      </div>
+                      <div className="text-Gray-N500 justify-start text-center text-[10px] leading-3 font-normal">
+                        فرودگاه مهراباد
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              {/* divider */}
+              <div className="bg-Gray-N100 h-px self-stretch" />
+
+              {/* details */}
+              <div className="inline-flex items-center justify-center self-stretch" dir="rtl">
+                <div onClick={() => setOpenDetails(!openDetails)}>
+                  <Button
+                    intent="text"
+                    size="small"
+                    className="text-Primary-P500main justify-center text-center text-[13px] leading-none font-semibold"
+                  >
+                    جزییات
+                    <ArrowDown2 size="14" color="#5A28EE" />
+                  </Button>
+                </div>
+              </div>
+
+              {openDetails && (
+                <div className="">
+                  {/* Accordion Content Here */}
+                  <div className="flex flex-col justify-start self-stretch  w-full" dir="rtl">
+                    <div className="flex w-full flex-row gap-4">
+                      <div className="inline-flex w-full items-center justify-start gap-1  ">
+                        <div className="text-Gray-N500 justify-start text-start text-[11px] leading-none font-normal">
+                          شماره پرواز:
+                        </div>
+                        <div className="text-Gray-N800 justify-start text-start text-[11px] leading-none font-semibold">
+                          ۲۲۴۵
+                        </div>
+                      </div>
+
+                      <div className="inline-flex w-full items-center justify-end gap-1 ">
+                        <div className="text-Gray-N500 justify-start text-start text-[11px] leading-none font-normal">
+                          کلاس پرواز:
+                        </div>
+                        <div className="text-Gray-N800 justify-start text-start text-[11px] leading-none font-semibold">
+                          اکونومی
+                        </div>
+                      </div>
+                    </div>
+                   
+                    <div className="flex w-full flex-row gap-4">
+                      <div className="mt-4 inline-flex w-full items-center justify-end gap-1  ">
+                        <div className="text-Gray-N500 justify-start text-start text-[11px] leading-none font-normal">
+                          نوع پرواز:
+                        </div>
+                        <div className="text-Gray-N800 justify-start text-start text-[11px] leading-none font-semibold">
+                          سیستمی
+                        </div>
+                      </div>
+                      <div className="mt-4 inline-flex w-full items-center justify-end gap-1">
+                        <div className="text-Gray-N500 justify-start w-[50%] text-start text-[11px] leading-none font-normal">
+                          بار مجاز:
+                        </div>
+                        <div className="text-Gray-N800 break-keep justify-start w-[80%] text-start text-[11px] leading-none font-semibold">
+                          ۲۰ کیلوگرم
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
 
           {/* ticket cards */}
           <div className="flex w-3/5 flex-col items-start gap-5">
@@ -146,7 +284,7 @@ export default function ComparisonDialog() {
                       {openPriceDetails[index] && (
                         <div className="mt-2 w-full overflow-hidden transition-all duration-500 ease-in-out">
                           {/* divider */}
-                          <div className="bg-Gray-N200 relative mb-2 h-px w-full self-stretch" />
+                          <div className="bg-Gray-N200 mb-2 h-px w-full self-stretch" />
                           <div className="flex flex-col items-end gap-2">
                             <div className="flex w-full items-center justify-end gap-3">
                               <div className="text-Gray-N700 text-[11px] leading-none font-normal">
@@ -240,25 +378,25 @@ export default function ComparisonDialog() {
                             <div className="flex flex-col items-start justify-start gap-2 self-stretch">
                               <div className="inline-flex items-center justify-center self-stretch rounded-xl p-2">
                                 <div className="text-Gray-N700 flex-1 justify-center text-right text-[13px] leading-none font-normal">
-                                  از زمان صدور بلیط تا 12:00 ظهر 3 روز قبل از پرواز
+                                  از زمان صدور بلیط تا ۱۲:۰۰ ظهر ۳ روز قبل از پرواز
                                 </div>
                                 <div className="text-Error-E500main justify-center text-center text-[13px] leading-normal font-medium">
                                   ۲۰٪
                                 </div>
                               </div>
-                              <div className="bg-Gray-N100 relative h-px self-stretch" />
+                              <div className="bg-Gray-N100 h-px self-stretch" />
                               <div className="inline-flex items-center justify-center self-stretch rounded-xl p-2">
                                 <div className="text-Gray-N700 flex-1 justify-center text-right text-[13px] leading-none font-normal">
-                                  از 12:00 ظهر 3 روز قبل از پرواز تا 12:00 ظهر 1 روز قبل از پرواز
+                                  از ۱۲:۰۰ ظهر ۳ روز قبل از پرواز تا ۱۲:۰۰ ظهر ۱ روز قبل از پرواز
                                 </div>
                                 <div className="text-Error-E500main justify-center text-center text-[13px] leading-normal font-medium">
                                   ۳۰٪
                                 </div>
                               </div>
-                              <div className="bg-Gray-N100 relative h-px self-stretch" />
+                              <div className="bg-Gray-N100 h-px self-stretch" />
                               <div className="inline-flex items-center justify-center self-stretch rounded-xl p-2">
                                 <div className="text-Gray-N700 flex-1 justify-center text-right text-[13px] leading-none font-normal">
-                                  از 12:00 ظهر 1 روز قبل از پرواز تا 3 ساعت قبل از پرواز
+                                  از ۱۲:۰۰ ظهر ۱ روز قبل از پرواز تا ۳ ساعت قبل از پرواز
                                 </div>
                                 <div className="text-Error-E500main justify-center text-center text-[13px] leading-normal font-medium">
                                   ۳۰%
