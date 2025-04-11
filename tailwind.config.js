@@ -83,7 +83,21 @@ module.exports = {
       borderRadius: {
         'oval': '100% 100% 70% 70% / 0% 0% 2% 2%',
         'oval-mobile': '100% 100% 60% 60% / 0% 0% 1.5% 1.5%',
-      }
+      },
+      keyframes: {
+        "accordion-down": {
+          from: { height: "0" },
+          to: { height: "var(--radix-accordion-content-height)" },
+        },
+        "accordion-up": {
+          from: { height: "var(--radix-accordion-content-height)" },
+          to: { height: "0" },
+        },
+      },
+      animation: {
+        "accordion-down": "accordion-down 0.3s ease-out",
+        "accordion-up": "accordion-up 0.3s ease-out",
+      },
     },
   },
   plugins: [],
