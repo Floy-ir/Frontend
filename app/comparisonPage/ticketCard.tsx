@@ -5,6 +5,7 @@ import Image from "next/image"
 import { useState } from "react"
 import { Button } from "@/components/Button/Button"
 import { englishToFarsiNumber } from "@/utils/numbers"
+
 type FlightData = {
     name: string;
     iconPath: string;
@@ -15,6 +16,7 @@ type FlightData = {
     child: { number: string; price: string };
     infant: { number: string; price: string };
   };
+  
 export default function TicketCard({flightData}:{flightData: FlightData[];}) {
 
     const [openPriceDetails, setOpenPriceDetails] = useState<boolean[]>(new Array(flightData.length).fill(false)) // for each card's price details
@@ -29,6 +31,7 @@ export default function TicketCard({flightData}:{flightData: FlightData[];}) {
               {flightData.map((flight, index) => (
                 <div key={index} className="flex w-full flex-col items-start">
                   <div className="bg-Shade-White outline-Gray-N200 relative mb-3 inline-flex w-full flex-col items-center justify-center gap-3 self-stretch rounded-xl px-4 py-3 outline-1 outline-offset-[-1px]">
+                    
                     {/* badge */}
                     <div className="bg-Success-s50 absolute top-0 left-0 inline-flex items-center justify-center gap-1 rounded-tl-sm rounded-br-sm px-2.5 py-1">
                       <div className="text-Success-s700 justify-center text-right text-[8px] font-semibold">
@@ -40,7 +43,7 @@ export default function TicketCard({flightData}:{flightData: FlightData[];}) {
                     <div className="bg-Gray-N50 outline-Gray-N100 flex flex-col items-end justify-center gap-1 self-stretch rounded-lg px-3 py-2 outline-1 outline-offset-[-1px]">
                       <div className="inline-flex items-center justify-between self-stretch">
                         {/* name and icon */}
-                        <div className="flex items-center justify-end gap-1">
+                        <div className="flex items-center justify-end gap-2">
                           <div className="outline-Gray-N200 flex h-6 w-6 items-center justify-center rounded-[57.60px] bg-white outline-[1.20px] outline-offset-[-1.20px]">
                             <Image
                               alt={flight.name}
@@ -78,11 +81,12 @@ export default function TicketCard({flightData}:{flightData: FlightData[];}) {
                           <div className="text-Gray-N500 justify-start text-right text-[11px] font-semibold">تومان</div>
                         </div>
                       </div>
-
+                      <div className={`overflow-hidden transition-all duration-1000 ease-in-out w-full
+                      ${openPriceDetails[index] ? "mt-2 max-h-[1000px]" : "max-h-0"} `}>
                       {openPriceDetails[index] && (
-                        <div className="mt-2 w-full overflow-hidden transition-all duration-500 ease-in-out">
+                        <div className="  w-full">
                           {/* divider */}
-                          <div className="bg-Gray-N200 mb-2 h-px w-full self-stretch" />
+                          <div className="bg-Gray-N200 mb-4 h-px w-full self-stretch" />
                           <div className="flex flex-col items-end gap-2">
                             <div className="flex w-full items-center justify-end gap-3">
                               <div className="text-Gray-N700 text-[11px] leading-none font-normal">
@@ -90,7 +94,7 @@ export default function TicketCard({flightData}:{flightData: FlightData[];}) {
                                 بزرگسال ({englishToFarsiNumber(flight.adult.number)}){" "}
                               </div>
                               <div className="text-Gray-N700 text-left text-sm leading-normal font-normal">
-                                {flight.adult.price}
+                              {englishToFarsiNumber(flight.adult.price)}
                               </div>
                               <div className="text-Gray-N500 justify-start text-right text-[11px] font-semibold">
                                 تومان
@@ -103,7 +107,7 @@ export default function TicketCard({flightData}:{flightData: FlightData[];}) {
                                 کودک ({englishToFarsiNumber(flight.child.number)}){" "}
                               </div>
                               <div className="text-Gray-N700 text-left text-sm leading-normal font-normal">
-                                {flight.child.price}
+                              {englishToFarsiNumber(flight.child.price)}
                               </div>
                               <div className="text-Gray-N500 justify-start text-right text-[11px] font-semibold">
                                 تومان
@@ -116,13 +120,14 @@ export default function TicketCard({flightData}:{flightData: FlightData[];}) {
                                 نوزاد ({englishToFarsiNumber(flight.infant.number)}){" "}
                               </div>
                               <div className="text-Gray-N700 text-left text-sm leading-normal font-normal">
-                                {flight.infant.price}
+                              {englishToFarsiNumber(flight.infant.price)}
                               </div>
                               <div className="text-Gray-N500 justify-start text-[11px] font-semibold">تومان</div>
                             </div>
                           </div>
                         </div>
                       )}
+                      </div>
                     </div>
 
                     {/* divider */}
@@ -140,8 +145,8 @@ export default function TicketCard({flightData}:{flightData: FlightData[];}) {
                             setOpenRefundRules(newRefundRules)
                           }}
                         >
-                          <InfoCircle size="14" color="#748297" />
-                          <div className="text-Gray-N600 justify-center text-right text-[11px] font-normal">
+                          <InfoCircle size="14" color={`${openRefundRules[index] ? "#5A28EE" : "#748297"}`} />
+                          <div className={`${openRefundRules[index] ? "text-Primary-P500main" : "text-Gray-N600"} justify-center text-right text-[11px] font-normal`}>
                             قوانین استرداد
                           </div>
                         </div>
@@ -166,7 +171,7 @@ export default function TicketCard({flightData}:{flightData: FlightData[];}) {
                       </div>
                     </div>
                     <div
-                      className={`overflow-hidden transition-all duration-100 ease-in-out ${
+                      className={`overflow-hidden transition-all duration-1000 ease-in-out ${
                         openRefundRules[index] ? "my-3 max-h-[1000px]" : "max-h-0"
                       } flex w-full flex-col`}
                     >
