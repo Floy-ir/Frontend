@@ -18,17 +18,17 @@ function JalaliCalendar({ className, classNames, showOutsideDays = false, fromDa
 
   // Use a placeholder if not mounted yet
   if (!mounted) {
-    return <div className="w-fit p-3 min-h-[300px] min-w-[300px] bg-gray-100 animate-pulse rounded" />
+    return <div className="w-full p-3 min-h-[300px] bg-gray-100 animate-pulse rounded" />
   }
 
   return (
     <DayPicker
       showOutsideDays={showOutsideDays}
       disabled={{ before: fromDate }}
-      className={cn("w-fit", className || "")}
+      className={cn(className || "")}
       classNames={{
-        month: "space-y-4",
-        months: "flex flex-col sm:flex-row space-y-4 sm:space-y-0 relative",
+        months: "flex flex-col sm:flex-row space-y-4 sm:space-y-0 relative w-full",
+        month: "space-y-4 w-full",
         month_caption: "flex justify-center pt-1 relative items-center",
         month_grid: "w-full border-collapse space-y-1",
         caption_label: "text-sm font-medium",
