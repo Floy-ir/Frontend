@@ -83,6 +83,9 @@ importers:
       '@t3-oss/env-nextjs':
         specifier: ^0.10.1
         version: 0.10.1(typescript@5.4.5)(zod@3.24.1)
+      '@tanstack/react-query':
+        specifier: ^5.74.3
+        version: 5.74.3(react@19.0.0)
       '@vercel/otel':
         specifier: ^1.8.3
         version: 1.10.0(@opentelemetry/api-logs@0.45.1)(@opentelemetry/api@1.7.0)(@opentelemetry/resources@1.18.1(@opentelemetry/api@1.7.0))(@opentelemetry/sdk-metrics@1.30.1(@opentelemetry/api@1.7.0))(@opentelemetry/sdk-trace-base@1.30.1(@opentelemetry/api@1.7.0))
@@ -3130,6 +3133,14 @@ packages:
 
   '@tailwindcss/postcss@4.0.0':
     resolution: {integrity: sha512-lI2bPk4TvwavHdehjr5WiC6HnZ59hacM6ySEo4RM/H7tsjWd8JpqiNW9ThH7rO/yKtrn4mGBoXshpvn8clXjPg==}
+
+  '@tanstack/query-core@5.74.3':
+    resolution: {integrity: sha512-Mqk+5o3qTuAiZML248XpNH8r2cOzl15+LTbUsZQEwvSvn1GU4VQhvqzAbil36p+MBxpr/58oBSnRzhrBevDhfg==}
+
+  '@tanstack/react-query@5.74.3':
+    resolution: {integrity: sha512-QrycUn0wxjVPzITvQvOxFRdhlAwIoOQSuav7qWD4SWCoKCdLbyRZ2vji2GuBq/glaxbF4wBx3fqcYRDOt8KDTA==}
+    peerDependencies:
+      react: ^18 || ^19
 
   '@testing-library/dom@10.4.0':
     resolution: {integrity: sha512-pemlzrSESWbdAloYml3bAJMEfNh1Z7EduzqPKprCH5S341frlpYnUEW0H72dLxa6IsYr+mPno20GiSm+h9dEdQ==}
@@ -11325,6 +11336,13 @@ snapshots:
       lightningcss: 1.29.1
       postcss: 8.5.1
       tailwindcss: 4.0.0
+
+  '@tanstack/query-core@5.74.3': {}
+
+  '@tanstack/react-query@5.74.3(react@19.0.0)':
+    dependencies:
+      '@tanstack/query-core': 5.74.3
+      react: 19.0.0
 
   '@testing-library/dom@10.4.0':
     dependencies:

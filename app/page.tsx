@@ -39,7 +39,7 @@ export default function Web() {
   return (
     <>
       {/* Background Image with Oval Bottom */}
-      <div className="absolute inset-0 w-full h-[400x] md:h-[478px] -z-10 overflow-hidden rounded-oval-mobile md:rounded-oval">
+      <div className="absolute inset-0 w-full h-[775px] max-h-[775px] md:h-[775px] xl:h-[478px] -z-10 overflow-hidden rounded-oval-mobile md:rounded-oval">
         {/* Main image container */}
         <Image
           src="/images/landing2.webp"

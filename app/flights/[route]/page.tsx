@@ -1,10 +1,12 @@
-import React from "react"
-import { getCityByCode } from "@/config/cities"
-import { formatDate } from "@/utils/dateUtils"
-import { SearchNormal } from "iconsax-react"
-import Link from "next/link"
-import { FlightSearchHeader } from "@/components/FlightSearchHeader/FlightSearchHeader"
+import React from 'react'
+import { getCityByCode } from '@/config/cities'
+import { formatDate } from '@/utils/dateUtils'
+import { FlightSearchHeader } from '@/components/FlightSearchHeader/FlightSearchHeader'
+import { FlightResultsList } from './FlightResultsList'
+import { Button } from '@/components/ui/button'
+import { FlightFilters } from '@/components/FlightFilters'
 import Timeline from "@/components/FlightsPage/price-timeline"
+
 type RouteParams = {
   params: {
     route: string
@@ -17,56 +19,160 @@ type RouteParams = {
   }
 }
 
-export default function FlightResultsPage({ params, searchParams }: RouteParams) {
-  // Parse route parameter (e.g., "THR-MHD")
-  const { route } = params
-  const routeParts = route.split("-")
-  const originCode = routeParts[0] || ""
-  const destinationCode = routeParts[1] || ""
+export default function FlightResults({ params, searchParams }: RouteParams) {
+  // Parse route from URL (format: THR-MHD)
+  const [originCode, destinationCode] = params.route.split('-')
+  // Get city names from codes
+  const originCity = getCityByCode(originCode || '')?.label || originCode
+  const destinationCity = getCityByCode(destinationCode || '')?.label || destinationCode
+  
+  // Get passenger counts and date from URL
+  const adult = parseInt(searchParams.adult || '1')
+  const child = parseInt(searchParams.child || '0')
+  const infant = parseInt(searchParams.infant || '0')
+  const passengerCount = adult + child + infant
+  const departureDate = searchParams.departing || formatDate(new Date())
+  
+  // For timeline component
+  const selectedDate = searchParams.departing
 
-  // Get city details
-  const originCity = getCityByCode(originCode)
-  const destinationCity = getCityByCode(destinationCode)
-
-  // Parse search parameters
-  const { adult = "1", child = "0", infant = "0", departing = "" } = searchParams
-
-  // Calculate total passengers
-  const totalPassengers = Number(adult) + Number(child) + Number(infant)
-
-  // Format date for display
-  const departureDate = departing ? new Date(departing) : null
-
-  // Format date for header - this would need localization in a real app
-  const dateDisplay = departureDate ? "جمعه - ۴ اسفند" : "تاریخ نامشخص"
-
-  //date for timeline
-  const selectedDate = departing
+  // Sample flight data for demonstration
+  const sampleFlights = [
+    {
+      id: '1',
+      departureTime: '۱۱:۳۰',
+      arrivalTime: '۰۹:۳۰',
+      duration: { hours: 1, minutes: 30 },
+      airline: {
+        name: 'آتا',
+        logo: '/images/logo.webp'
+      },
+      flightInfo: {
+        aircraft: 'Boeing 737-300',
+        baggage: '۲۰ kg',
+        ticketType: 'سیستمی',
+        cabinClass: 'اکونومی'
+      },
+      price: {
+        amount: 3534678,
+        formattedAmount: '3,534,678',
+        agency: 'علی بابا',
+        agencyLogo: '/images/logo.webp',
+        label: 'ارزان‌ترین'
+      },
+      otherSellersCount: 3
+    },
+    {
+      id: '2',
+      departureTime: '۱۳:۴۵',
+      arrivalTime: '۱۵:۱۵',
+      duration: { hours: 1, minutes: 30 },
+      airline: {
+        name: 'ایران ایر',
+        logo: '/images/logo.webp'
+      },
+      flightInfo: {
+        aircraft: 'Airbus A320',
+        baggage: '۲۵ kg',
+        ticketType: 'چارتری',
+        cabinClass: 'اکونومی'
+      },
+      price: {
+        amount: 3689000,
+        formattedAmount: '3,689,000',
+        agency: 'فلای تودی',
+        agencyLogo: '/images/logo.webp',
+        label: 'ارزان‌ترین'
+      },
+      otherSellersCount: 5
+    },
+    {
+      id: '3',
+      departureTime: '۱۷:۲۰',
+      arrivalTime: '۱۸:۵۰',
+      duration: { hours: 1, minutes: 30 },
+      airline: {
+        name: 'آسمان',
+        logo: '/images/logo.webp'
+      },
+      flightInfo: {
+        aircraft: 'Boeing 737-400',
+        baggage: '۲۰ kg',
+        ticketType: 'سیستمی',
+        cabinClass: 'بیزینس'
+      },
+      price: {
+        amount: 4150000,
+        formattedAmount: '4,150,000',
+        agency: 'مستر بلیط',
+        agencyLogo: '/images/logo.webp',
+        label: 'ارزان‌ترین'
+      },
+      otherSellersCount: 2
+    }
+  ]
 
   return (
-    <div className="flex flex-col justify-center">
-      {/* Search header summary bar */}
+    <div className="flex flex-col min-h-screen bg-Gray/N100">
+      {/* Search header */}
       <FlightSearchHeader
-        originCity={originCity?.label || originCode}
-        destinationCity={destinationCity?.label || destinationCode}
-        date={departureDate ? formatDate(departureDate) : "تاریخ نامشخص"}
-        passengerCount={totalPassengers}
+        originCity={originCity || ''}
+        destinationCity={destinationCity || ''}
+        date={departureDate}
+        passengerCount={passengerCount}
         originCode={originCode}
         destinationCode={destinationCode}
-        adult={parseInt(adult || "1")}
-        child={parseInt(child || "0")}
-        infant={parseInt(infant || "0")}
+        adult={adult}
+        child={child}
+        infant={infant}
       />
-      <div className="mx-0 mt-0 flex flex-col items-center lg:mx-[376px] lg:mt-6">
-        <Timeline
-          originCityCode={originCode}
-          destinationCityCode={destinationCode}
-          selectedDate={selectedDate}
-          adult={adult}
-          child={child}
-          infant={infant}
-          autoScrollToSelected={true}
-        />
+
+      {/* Main content */}
+      <div className="container max-w-266 mx-auto px-4 py-6">
+        {/* Timeline component from HEAD branch */}
+        <div className="mb-6">
+          <Timeline
+            originCityCode={originCode}
+            destinationCityCode={destinationCode}
+            selectedDate={selectedDate}
+            adult={String(adult)}
+            child={String(child)}
+            infant={String(infant)}
+            autoScrollToSelected={true}
+          />
+        </div>
+
+        <div className="flex flex-row items-center justify-between mb-8">
+          <p className="text-Gray-N800 text-sm font-semibold text-right">
+            ۳ نتیجه
+          </p>
+          <div className="flex flex-row items-center gap-2">
+            <Button variant="outline" size="sm" className="self-stretch">
+              گرانترین
+            </Button>
+            <Button variant="outline" size="sm" className="self-stretch">
+              ارزانترین
+            </Button>
+            <Button variant="outline" size="sm" className="self-stretch">
+              دیرترین
+            </Button>
+            <Button variant="outline" size="sm" className="self-stretch">
+              نزدیک ترین
+            </Button>
+          </div>
+        </div>
+
+        <div className="flex flex-row gap-4">
+          {/* Flight filters sidebar */}
+          <div className="hidden md:block">
+            <FlightFilters />
+          </div>
+
+          {/* Flight results list */}
+          <div className="flex-1">
+            <FlightResultsList flights={sampleFlights} />
+          </div>
+        </div>
       </div>
     </div>
   )
