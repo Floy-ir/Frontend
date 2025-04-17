@@ -30,7 +30,7 @@ export default function TicketCard({ flightData }: { flightData: FlightData[] })
   return (
     <div className="flex w-full flex-col items-end lg:w-2/5">
       <div
-        className="bg-Shade-White mt-0 inline-flex w-full flex-col items-end justify-center gap-2 self-stretch md:rounded-xl px-4 py-3  lg:mt-4"
+        className="bg-Shade-White mt-0 inline-flex w-full flex-col items-end justify-center gap-2 self-stretch px-4 py-3 md:rounded-xl lg:mt-4"
         dir="ltr"
       >
         {/* airline and tags */}
@@ -57,7 +57,7 @@ export default function TicketCard({ flightData }: { flightData: FlightData[] })
               </div>
             </div>
           </div>
-          
+
           {/* airline image */}
           <div className="outline-Gray-N200 border-Gray-N200 flex h-9 w-9 items-center justify-center rounded-full border bg-white outline-[1.20px] outline-offset-[-1.20px]">
             <Image alt="airline" width={37} height={37} src={"/images/alibaba-icon.png"} />
@@ -88,7 +88,7 @@ export default function TicketCard({ flightData }: { flightData: FlightData[] })
                 <span className="text-Gray-N500 text-[13px] leading-3 font-normal"> دقیقه</span>
               </div>
               {/* image */}
-              <div className="flex items-center justify-center gap-1.5">
+              <div className="flex items-center justify-center gap-1.5 lg:w-45 md:w-90 w-45">
                 <Image alt="airline" width={196} height={6} src={"/images/airplane.png"} />
               </div>
             </div>
@@ -117,7 +117,7 @@ export default function TicketCard({ flightData }: { flightData: FlightData[] })
             <Button
               intent="text"
               size="small"
-              className="text-Primary-P500main justify-center text-center text-[15px] -mb-2 leading-none font-semibold"
+              className="text-Primary-P500main -mb-2 justify-center text-center text-[15px] leading-none font-semibold"
             >
               جزییات
               <ArrowDown2 size="14" color="#5A28EE" />
