@@ -62,6 +62,16 @@ export default function ComparisonDialog() {
       infant: { number: "1", price: "420,000" },
       adult: { number: "1", price: "2,500,000" },
     },
+    {
+      name: "Iran Air",
+      iconPath: "/images/alibaba-icon.png",
+      price: "۲،۸۰۰،۰۰۰",
+      remainingSeats: "4",
+      redirectUrl: "https://www.alibaba.ir",
+      child: { number: "1", price: "850,000" },
+      infant: { number: "1", price: "420,000" },
+      adult: { number: "1", price: "2,500,000" },
+    }
   ]
 
   return (
@@ -83,7 +93,7 @@ export default function ComparisonDialog() {
 
 
 
-        <div className="mb-7 flex flex-col lg:flex-row items-start gap-4 md:px-24 lg:px-6.5 md:pt-6.5">
+        <div className="mb-7 flex overflow-y-auto flex-col lg:flex-row items-start gap-4 md:px-24 lg:px-6.5 md:pt-6.5">
           {/* flight info */}
           <FlightInfo flightData={flightData} />
 

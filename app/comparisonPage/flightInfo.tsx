@@ -30,7 +30,7 @@ export default function TicketCard({ flightData }: { flightData: FlightData[] })
   return (
     <div className="flex w-full flex-col items-end lg:w-2/5">
       <div
-        className="bg-Shade-White mt-0 inline-flex w-full flex-col items-end justify-center gap-2 self-stretch px-4 py-3 md:rounded-xl lg:mt-4"
+        className="bg-Shade-White mt-0 inline-flex w-full flex-col items-end justify-center gap-2 self-stretch px-4 py-3 md:rounded-xl lg:mt-11"
         dir="ltr"
       >
         {/* airline and tags */}
