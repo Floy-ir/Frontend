@@ -27,9 +27,10 @@ type RouteParams = {
 export default function FlightResults({ params, searchParams }: RouteParams) {
   // Parse route from URL (format: THR-MHD)
   const [originCode, destinationCode] = params.route.split("-")
+  
   // Get city names from codes
-  const originCity = getCityByCode(originCode || "")?.label || originCode
-  const destinationCity = getCityByCode(destinationCode || "")?.label || destinationCode
+  const originCity = getCityByCode(originCode || "")?.label || originCode || ""
+  const destinationCity = getCityByCode(destinationCode || "")?.label || destinationCode || ""
 
   // Get passenger counts and date from URL
   const adult = parseInt(searchParams.adult || "1")
@@ -38,8 +39,11 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
   const passengerCount = adult + child + infant
   const departureDate = searchParams.departing || formatDate(new Date())
 
-  // For timeline component
-  const selectedDate = searchParams.departing
+  // For timeline component - ensure it's always a string
+  const selectedDate = searchParams.departing || formatDate(new Date())
+
+  // State for sorting
+  const [sortKey, setSortKey] = React.useState<"cheapest" | "mostExpensive" | "earliest" | "latest">("cheapest")
 
   // Sample flight data for demonstration
   const sampleFlights = [
@@ -117,8 +121,21 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
     },
   ]
 
-  const [sortKey, setSortKey] = React.useState("cheapest")
+  // Sort options
+  const sortOptions = [
+    { key: "cheapest" as const, label: "ارزان‌ترین" },
+    { key: "mostExpensive" as const, label: "گران‌ترین" },
+    { key: "earliest" as const, label: "نزدیک‌ترین" },
+    { key: "latest" as const, label: "دیر‌ترین" },
+  ]
 
+  // Get current sort label
+  const getCurrentSortLabel = () => {
+    const option = sortOptions.find(option => option.key === sortKey)
+    return option?.label || "ارزان‌ترین"
+  }
+
+  // Sort flights based on selected sort key
   const sortedFlights = [...sampleFlights].sort((a, b) => {
     switch (sortKey) {
       case "cheapest":
@@ -138,12 +155,12 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
     <div className="bg-Gray/N100 flex min-h-screen flex-col">
       {/* Search header */}
       <FlightSearchHeader
-        originCity={originCity || ""}
-        destinationCity={destinationCity || ""}
+        originCity={originCity}
+        destinationCity={destinationCity}
         date={departureDate}
         passengerCount={passengerCount}
-        originCode={originCode}
-        destinationCode={destinationCode}
+        originCode={originCode || ""}
+        destinationCode={destinationCode || ""}
         adult={adult}
         child={child}
         infant={infant}
@@ -158,13 +175,7 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
               </div>
               <div className="flex items-center justify-center gap-1">
                 <div className="text-Gray-N700 text-sm leading-normal font-medium">
-                  {sortKey === "cheapest"
-                    ? "ارزان‌ترین"
-                    : sortKey === "mostExpensive"
-                    ? "گران‌ترین"
-                    : sortKey === "earliest"
-                    ? "نزدیک‌ترین"
-                    : "دیر‌ترین"}
+                  {getCurrentSortLabel()}
                 </div>
               </div>
               <div className="flex items-center justify-start py-1">
@@ -183,12 +194,7 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
               </DialogTitle>
               {/* Sort Options */}
               <div className="bg-Shade-White flex flex-col items-center justify-center self-stretch px-5">
-                {[
-                  { key: "earliest", label: "نزدیک‌ترین" },
-                  { key: "cheapest", label: "ارزان‌ترین" },
-                  { key: "latest", label: "دیر‌ترین" },
-                  { key: "mostExpensive", label: "گران‌ترین" },
-                ].map(({ key, label }) => (
+                {sortOptions.map(({ key, label }) => (
                   <div key={key} className="flex w-full flex-col items-center justify-center gap-4 py-3">
                     <label className="flex w-full cursor-pointer items-center justify-start gap-2">
                       <Checkbox
@@ -221,8 +227,8 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
         {/* Timeline component from HEAD branch */}
         <div className="mb-6">
           <Timeline
-            originCityCode={originCode}
-            destinationCityCode={destinationCode}
+            originCityCode={originCode || ""}
+            destinationCityCode={destinationCode || ""}
             selectedDate={selectedDate}
             adult={String(adult)}
             child={String(child)}
@@ -235,12 +241,7 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
           <p className="text-Gray-N800 text-right text-sm font-semibold">۳ نتیجه</p>
           {/* desktop sort */}
           <div className="hidden flex-row items-center justify-end gap-3 md:flex">
-            {[
-              { key: "cheapest", label: "ارزان‌ترین" },
-              { key: "mostExpensive", label: "گران‌ترین" },
-              { key: "earliest", label: "نزدیک‌ترین" },
-              { key: "latest", label: "دیر‌ترین" },
-            ].map(({ key, label }) => (
+            {sortOptions.map(({ key, label }) => (
               <button
                 key={key}
                 onClick={() => setSortKey(key)}
