@@ -40,8 +40,8 @@ const badgeStyles = cva(
 
 // Common text styles
 const textStyles = {
-  normal: "font-['Anjoman_Max_FN'] font-normal",
-  semibold: "font-['Anjoman_Max_FN'] font-semibold",
+  normal: " font-normal",
+  semibold: " font-semibold",
   small: "text-[10px] leading-3",
   medium: "text-[11px] leading-none",
   large: "text-lg leading-loose",
@@ -169,8 +169,8 @@ const PriceInfo = ({ price }: { price: FlightCardProps["price"] }) => (
         </div>
       </div>
       <div className="flex items-center justify-end gap-1">
-        <div className="text-Gray-N700 justify-start text-right font-['Anjoman_Max_FN'] text-base leading-7 font-semibold">
-          {price.formattedAmount}
+        <div className="text-Gray-N700 justify-start text-right  text-base leading-7 font-semibold">
+          {englishToFarsiNumber(price.formattedAmount)}
         </div>
         <div className={`text-Gray-N500 justify-start text-right ${textStyles.medium} ${textStyles.semibold}`}>
           تومان
@@ -326,31 +326,113 @@ export function FlightCard({
     <article className={twMerge(flightCardVariants({ intent, className }))}>
       {/* Mobile/Tablet Layout */}
       <div className="flex flex-col md:hidden">
-        <div className="flex flex-col gap-3 px-4 pt-4 pb-2">
+        <div data-layer="Frame 1000002364" className="self-stretch px-4 pt-4 pb-2 bg-Shade-White rounded-xl outline outline-1 outline-offset-[-1px] outline-Gray-N200 inline-flex flex-col justify-center items-center gap-3 overflow-hidden">
           {/* Flight info section */}
-          <FlightDetailsSection
-            departureTime={departureTime}
-            arrivalTime={arrivalTime}
-            duration={duration}
-            airline={airline}
-            flightInfo={flightInfo}
-            isMobile={true}
-          />
+          <div data-layer="Frame 1000002337" className="self-stretch inline-flex flex-row-reverse justify-center items-center gap-6">
+            <div data-layer="Frame 1000002339" className="flex-1 inline-flex flex-col justify-center items-end">
+              <div data-layer="Frame 1000002403" className="self-stretch inline-flex flex-row-reverse justify-start items-center">
+                <time className="flex-1 text-center justify-start text-Gray-N800 text-lg font-semibold leading-loose">
+                  {departureTime}
+                </time>
+                <div data-layer="Frame 1000002345" className="flex-1 relative flex justify-center items-center">
+                  <div data-layer="Rectangle 1" className="size-1.5 bg-Gray-N300 rounded-[1px]" />
+                  <div data-layer="Divider" data-bg="White" data-size="Thin" data-type="Horizontal" className="flex-1 h-px relative bg-Gray-N200" />
+                  <div data-layer="Rectangle 2" className="size-1.5 rounded-[33px] border border-Gray-N300" />
+                  <div data-layer="vuesax/bold/airplane" className="size-3 left-[33px] top-[9px] absolute origin-top-left -rotate-90">
+                    <div data-layer="Vector" className="w-2.5 h-[9.19px] left-[1px] top-[1.41px] absolute bg-Gray-N500" />
+                    <div data-layer="Vector" className="size-3 left-[12px] top-[12px] absolute origin-top-left -rotate-180 opacity-0 bg-Gray-N500" />
+                  </div>
+                </div>
+                <time className="flex-1 text-center justify-start text-Gray-N800 text-lg font-semibold leading-loose">
+                  {arrivalTime}
+                </time>
+              </div>
+              <div data-layer="Frame 1000002344" className="self-stretch flex flex-col justify-end items-center gap-2">
+                <div data-layer="Duration" className="text-center justify-start">
+                  <FormatDuration hours={duration.hours} minutes={duration.minutes} />
+                </div>
+              </div>
+            </div>
+
+            {/* Airline logo and name */}
+            <div data-layer="Frame 1000002402" className="inline-flex flex-col justify-center items-center gap-2">
+              <div className="size-9 relative rounded-[48px] border border-Gray-N200 overflow-hidden">
+                <Image src={airline.logo} alt={`${airline.name} logo`} fill className="object-contain" />
+              </div>
+              <div className="text-right justify-start text-Gray-N600 text-[11px] font-semibold leading-none">
+                {airline.name}
+              </div>
+            </div>
+          </div>
 
           {/* Flight info badges */}
-          <FlightInfoBadges flightInfo={flightInfo} />
+          <div data-layer="Frame 1000002341" className="self-stretch inline-flex justify-start items-start gap-1 flex-wrap content-start">
+            {flightInfo.cabinClass && <InfoBadge text={flightInfo.cabinClass} />}
+            {flightInfo.baggage && <BaggageBadge text={flightInfo.baggage} />}
+            {flightInfo.ticketType && <InfoBadge text={flightInfo.ticketType} />}
+            {flightInfo.aircraft && <InfoBadge text={flightInfo.aircraft} />}
+          </div>
 
           {/* Divider */}
-          <div className="bg-Gray-N100 relative my-2 h-px self-stretch" />
+          <div data-layer="Divider" className="self-stretch h-px relative bg-Gray-N100" />
 
           {/* Price and action section */}
-          <PriceActionSection
-            price={price}
-            onBuy={onBuy}
-            onViewOtherSellers={onViewOtherSellers}
-            otherSellersCount={otherSellersCount}
-            isMobile={true}
-          />
+          <div data-layer="Frame 1000002366" className="self-stretch flex flex-col justify-start items-start gap-2">
+            <div data-layer="Frame 1000002350" className="self-stretch flex flex-col justify-center items-center gap-3">
+              <div data-layer="Frame 1000002406" className="self-stretch px-3 py-2 relative bg-Gray-N50 rounded-lg outline outline-1 outline-offset-[-1px] outline-Gray-N200 flex flex-col justify-center items-end gap-1">
+                {price.label && (
+                  <div className="self-stretch text-right justify-center text-Gray-N500 text-[10px] font-normal leading-3">
+                    {price.label}
+                  </div>
+                )}
+                <div data-layer="Frame 1000002410" className="self-stretch inline-flex flex-row-reverse justify-between items-center">
+                  <div data-layer="Frame 1000002342" className="flex flex-row-reverse justify-end items-center gap-1">
+                    <div className="text-right justify-start text-Gray-N500 text-[11px] font-semibold leading-none">
+                      تومان
+                    </div>
+                    <div className="text-right justify-start text-Gray-N700 text-base font-semibold leading-7">
+                      {englishToFarsiNumber(price.formattedAmount)}
+                    </div>
+                  </div>
+                  <div data-layer="Frame 1000002408" className="flex flex-row-reverse justify-end items-center gap-1">
+                    <div className="inline-flex flex-col justify-center items-end gap-1">
+                      <div className="self-stretch text-right justify-start text-Gray-N600 text-[11px] font-semibold leading-none">
+                        {price.agency}
+                      </div>
+                    </div>
+                    <div className="size-5 relative bg-white rounded-[48px] outline outline-1 outline-offset-[-1px] outline-Gray-N200 overflow-hidden">
+                      {price.agencyLogo && (
+                        <Image
+                          src={price.agencyLogo}
+                          alt={`${price.agency} logo`}
+                          width={10}
+                          height={13}
+                          className="absolute"
+                          style={{ left: "5.40px", top: "4px" }}
+                        />
+                      )}
+                    </div>
+                    <div className="inline-flex flex-col justify-center items-end gap-1">
+                      <div className="self-stretch text-right justify-start text-Gray-N600 text-[11px] font-normal leading-none">
+                        در
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div data-layer="Frame 1000002404" className="self-stretch flex flex-col justify-start items-start gap-2">
+                <Button intent="primary" size="small" className="self-stretch px-5 py-3.5" onClick={onBuy}>
+                  خرید
+                </Button>
+                {otherSellersCount > 0 && (
+                  <Button intent="text" size="small" className="self-stretch px-5 py-3.5" onClick={onViewOtherSellers}>
+                    مشاهده {englishToFarsiNumber(otherSellersCount)} فروشنده
+                  </Button>
+                )}
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 

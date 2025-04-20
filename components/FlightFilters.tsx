@@ -23,12 +23,12 @@ const FilterSection = ({ title, children, count = 0, isOpen = true }: { title: s
           </div>
           {count > 0 && (
             <div className="w-10 h-5 bg-Primary-P50 rounded-[80px] flex justify-center items-center gap-2">
-              <div className="text-Primary-P500main text-[13px] font-medium font-['Anjoman_Max_FN'] leading-normal">
+              <div className="text-Primary-P500main text-[13px] font-medium  leading-normal">
                 {count}
               </div>
             </div>
           )}
-          <div className="flex-1 text-right text-Gray-N600 text-sm font-semibold font-['Anjoman_Max_FN'] leading-normal">
+          <div className="flex-1 text-right text-Gray-N600 text-sm font-semibold  leading-normal">
             {title}
           </div>
         </div>
@@ -57,12 +57,12 @@ const FilterCheckbox = ({
 }) => (
   <div className="self-stretch inline-flex justify-end items-center gap-2">
     {extraText && (
-      <div className="text-right text-Gray-N500 text-[13px] font-normal font-['Anjoman_Max_FN'] leading-none">
+      <div className="text-right text-Gray-N500 text-[13px] font-normal  leading-none">
         {extraText}
       </div>
     )}
     <div className="flex-1 inline-flex flex-col justify-start items-end gap-1">
-      <div className="self-stretch text-right text-Gray-N700 text-sm font-medium font-['Anjoman_Max_FN'] leading-normal">
+      <div className="self-stretch text-right text-Gray-N700 text-sm font-medium  leading-normal">
         {label}
       </div>
     </div>
@@ -116,10 +116,10 @@ const RangeSlider = ({
         {/* This is a simplified slider - for a real implementation, use a proper range slider component */}
       </div>
       <div className="self-stretch h-6 inline-flex justify-between items-center">
-        <div className="text-Gray-N500 text-sm font-medium font-['Anjoman_Max_FN'] leading-normal">
+        <div className="text-Gray-N500 text-sm font-medium  leading-normal">
           {minLabel}
         </div>
-        <div className="text-right text-Gray-N500 text-sm font-medium font-['Anjoman_Max_FN'] leading-normal">
+        <div className="text-right text-Gray-N500 text-sm font-medium  leading-normal">
           {maxLabel}
         </div>
       </div>
@@ -181,20 +181,20 @@ export function FlightFilters() {
         <div className="flex-1 flex justify-end items-center gap-[7px]">
           {activeFiltersCount > 0 && (
             <div className="flex-1 h-5 rounded-[80px] flex justify-start items-center gap-2 cursor-pointer" onClick={clearFilters}>
-              <div className="text-Primary-P500main text-[13px] font-medium font-['Anjoman_Max_FN'] leading-normal">
+              <div className="text-Primary-P500main text-[13px] font-medium  leading-normal">
                 حذف فیلتر‌ها
               </div>
             </div>
           )}
           {activeFiltersCount > 0 && (
             <div className="size-5 bg-Primary-P50 rounded-[80px] flex justify-center items-center gap-2">
-              <div className="text-Primary-P500main text-[13px] font-medium font-['Anjoman_Max_FN'] leading-normal">
+              <div className="text-Primary-P500main text-[13px] font-medium  leading-normal">
                 {activeFiltersCount}
               </div>
             </div>
           )}
           <div className="flex justify-center items-center gap-1">
-            <div className="text-right text-Gray-N600 text-base font-semibold font-['Anjoman_Max_FN'] leading-7">
+            <div className="text-right text-Gray-N600 text-base font-semibold  leading-7">
               فیلتر‌ها
             </div>
           </div>

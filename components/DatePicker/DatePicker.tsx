@@ -163,13 +163,18 @@ export function DatePicker({
       ...(maxDate && { after: maxDate })
     };
     
+    // Add direct handler for mobile
+    const handleMobileSelect = (day: Date | undefined) => {
+      handleDateSelect(day)
+    }
+    
     return (
       <div className="w-full h-full">
         {/* @ts-ignore - Ignoring type issues to allow for the calendar to work properly */}
         <JalaliCalendar
           mode="single" 
           selected={selectedDate}
-          onSelect={handleDateSelect}
+          onSelect={handleMobileSelect}
           disabled={disabledDates}
           className="w-full mx-auto"
           classNames={{
@@ -183,7 +188,7 @@ export function DatePicker({
             cell: "text-center flex-1 p-0 relative",
             day: "w-12 h-12 p-0 flex items-center justify-center text-base rounded-full mx-auto",
             day_today: "bg-Primary-P50",
-            day_selected: "bg-Primary-P300 text-white font-bold"
+            day_selected: "!bg-Primary-P300 !text-white !font-bold hover:!bg-Primary-P300"
           }}
           {...calendarProps}
         />
@@ -340,8 +345,17 @@ export function DatePicker({
                 align-items: center !important;
                 margin: 0 auto !important;
               }
-              .rdp-day_selected {
-                background-color: var(--Primary-P300) !important;
+              .rdp-day_selected, 
+              .rdp-day_selected:hover,
+              .rdp-day_selected:focus {
+                background-color: var(--Primary-P300, #4472FF) !important;
+                color: white !important;
+                font-weight: bold !important;
+              }
+              
+              /* Additional styling to force selected state */
+              [aria-selected="true"] {
+                background-color: #4472FF !important;
                 color: white !important;
                 font-weight: bold !important;
               }

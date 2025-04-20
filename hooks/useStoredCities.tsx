@@ -19,23 +19,19 @@ export function useStoredCities() {
   
   // Add a new recent selection
   const addRecentSelection = useCallback((value: string, label: string) => {
-    if (isBrowser) {
-      CitiesStorageService.addRecentSelection(value, label);
-      setRecentSelections(CitiesStorageService.getRecentSelections());
-    }
+    CitiesStorageService.addRecentSelection(value, label);
+    setRecentSelections(CitiesStorageService.getRecentSelections());
   }, []);
   
   // Add a new search 
   const saveSearch = useCallback((origin: string, destination: string, date: string) => {
-    if (isBrowser) {
-      CitiesStorageService.addLastSearch(origin, destination, date);
-    }
+    CitiesStorageService.addLastSearch(origin, destination, date);
   }, []);
   
   return {
     recentSelections,
     addRecentSelection,
     saveSearch,
-    lastSearches: isBrowser ? CitiesStorageService.getLastSearches() : [],
+    lastSearches: CitiesStorageService.getLastSearches(),
   };
 } 

@@ -46,23 +46,24 @@ export function FlightResultsList({ flights }: FlightResultsListProps) {
   }
 
   return (
-    <div className="space-y-4">
-      {flights.map((flight) => (
-        <FlightCard
-          key={flight.id}
-          departureTime={flight.departureTime}
-          arrivalTime={flight.arrivalTime}
-          duration={flight.duration}
-          airline={flight.airline}
-          flightInfo={flight.flightInfo}
-          price={flight.price}
-        //   intent={flight.id === '1' ? 'highlighted' : 'default'}
-          onBuy={() => handleBuy(flight.id)}
-          onViewOtherSellers={() => handleViewSellers(flight.id)}
-          otherSellersCount={flight.otherSellersCount}
-          className="max-h-[188px] md:max-h-full max-w-[738px]"
-        />
-      ))}
+    <div className="flex flex-col gap-3 md:gap-4 w-full items-center">
+      <div className="w-full max-w-[328px] md:max-w-[738px] flex flex-col gap-3 md:gap-4">
+        {flights.map((flight) => (
+          <FlightCard
+            key={flight.id}
+            departureTime={flight.departureTime}
+            arrivalTime={flight.arrivalTime}
+            duration={flight.duration}
+            airline={flight.airline}
+            flightInfo={flight.flightInfo}
+            price={flight.price}
+            onBuy={() => handleBuy(flight.id)}
+            onViewOtherSellers={() => handleViewSellers(flight.id)}
+            otherSellersCount={flight.otherSellersCount}
+            className="w-full"
+          />
+        ))}
+      </div>
     </div>
   )
 } 

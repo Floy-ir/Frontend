@@ -1,7 +1,7 @@
 "use client"
 import { Drawer, DrawerContent, DrawerTrigger } from "@/components/ui/drawer"
 import { Checkbox } from "@/components/ui/checkbox"
-import React, { useState } from "react"
+import React, { useState, use } from "react"
 import { getCityByCode } from "@/config/cities"
 import { formatDate } from "@/utils/dateUtils"
 import { FlightSearchHeader } from "@/components/FlightSearchHeader/FlightSearchHeader"
@@ -13,34 +13,39 @@ import { ArrowUp2, Sort } from "iconsax-react"
 import { DialogTitle } from "@radix-ui/react-dialog"
 
 type RouteParams = {
-  params: {
+  params: Promise<{
     route: string
-  }
-  searchParams: {
+  }>
+  searchParams: Promise<{
     adult?: string
     child?: string
     infant?: string
     departing?: string
-  }
+  }>
 }
 
 export default function FlightResults({ params, searchParams }: RouteParams) {
+  // Unwrap params Promise using React.use()
+  const unwrappedParams = use(params)
+  // Unwrap searchParams Promise using React.use()
+  const unwrappedSearchParams = use(searchParams)
+  
   // Parse route from URL (format: THR-MHD)
-  const [originCode, destinationCode] = params.route.split("-")
+  const [originCode, destinationCode] = unwrappedParams.route.split("-")
   
   // Get city names from codes
   const originCity = getCityByCode(originCode || "")?.label || originCode || ""
   const destinationCity = getCityByCode(destinationCode || "")?.label || destinationCode || ""
 
   // Get passenger counts and date from URL
-  const adult = parseInt(searchParams.adult || "1")
-  const child = parseInt(searchParams.child || "0")
-  const infant = parseInt(searchParams.infant || "0")
+  const adult = parseInt(unwrappedSearchParams.adult || "1")
+  const child = parseInt(unwrappedSearchParams.child || "0")
+  const infant = parseInt(unwrappedSearchParams.infant || "0")
   const passengerCount = adult + child + infant
-  const departureDate = searchParams.departing || formatDate(new Date())
+  const departureDate = unwrappedSearchParams.departing || formatDate(new Date())
 
   // For timeline component - ensure it's always a string
-  const selectedDate = searchParams.departing || formatDate(new Date())
+  const selectedDate = unwrappedSearchParams.departing || formatDate(new Date())
 
   // State for sorting
   const [sortKey, setSortKey] = React.useState<"cheapest" | "mostExpensive" | "earliest" | "latest">("cheapest")
@@ -152,7 +157,7 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
   })
 
   return (
-    <div className="bg-Gray/N100 flex min-h-screen flex-col">
+    <div className="bg-Gray/N100 flex min-h-screen flex-col mb-8">
       {/* Search header */}
       <FlightSearchHeader
         originCity={originCity}
