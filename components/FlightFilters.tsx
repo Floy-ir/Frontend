@@ -3,6 +3,7 @@
 import React from 'react'
 import Image from 'next/image'
 import { Setting5 } from 'iconsax-react'
+import { RangeSlider } from '@/components/ui/range-slider'
 
 // Filter section with expandable header
 const FilterSection = ({ title, children, count = 0, isOpen = true }: { title: string, children: React.ReactNode, count?: number, isOpen?: boolean }) => {
@@ -92,41 +93,6 @@ const FilterCheckbox = ({
   </div>
 )
 
-// Range slider for price and time filters
-const RangeSlider = ({ 
-  minLabel, 
-  maxLabel, 
-  onChange, 
-  minValue, 
-  maxValue 
-}: {
-  minLabel: string;
-  maxLabel: string;
-  onChange?: (min: number, max: number) => void;
-  minValue?: number;
-  maxValue?: number;
-}) => {
-  return (
-    <div className="self-stretch py-3 flex flex-col justify-start items-center gap-1">
-      <div className="self-stretch py-2 relative inline-flex justify-center items-center">
-        <div className="flex-1 h-1 relative bg-Gray-N100 rounded-sm overflow-hidden">
-          <div className="h-1 absolute bg-Primary-P500main rounded-xs" 
-               style={{ width: '95%', left: '0' }} />
-        </div>
-        {/* This is a simplified slider - for a real implementation, use a proper range slider component */}
-      </div>
-      <div className="self-stretch h-6 inline-flex justify-between items-center">
-        <div className="text-Gray-N500 text-sm font-medium font-['Anjoman_Max_FN'] leading-normal">
-          {minLabel}
-        </div>
-        <div className="text-right text-Gray-N500 text-sm font-medium font-['Anjoman_Max_FN'] leading-normal">
-          {maxLabel}
-        </div>
-      </div>
-    </div>
-  )
-}
-
 export function FlightFilters() {
   const [filters, setFilters] = React.useState({
     ticketType: {
@@ -146,7 +112,9 @@ export function FlightFilters() {
       alibaba: false,
       flytoday: false,
       mrbilit: false
-    }
+    },
+    priceRange: [1534678, 3534678] as [number, number],
+    departureTime: [9 * 60 + 30, 11 * 60 + 30] as [number, number] // 09:30 - 11:30 in minutes
   })
 
   const updateFilter = (category: string, key: string, value: boolean) => {
@@ -159,18 +127,44 @@ export function FlightFilters() {
     }))
   }
 
+  const updateRangeFilter = (category: keyof typeof filters, values: [number, number]) => {
+    setFilters(prev => ({
+      ...prev,
+      [category]: values
+    }))
+  }
+
   const clearFilters = () => {
     setFilters({
       ticketType: { charter: false, system: false },
       cabinClass: { economy: false, business: false },
       airlines: { mahan: false, caspian: false, ata: false },
-      agencies: { alibaba: false, flytoday: false, mrbilit: false }
+      agencies: { alibaba: false, flytoday: false, mrbilit: false },
+      priceRange: [1534678, 3534678],
+      departureTime: [9 * 60 + 30, 11 * 60 + 30]
     })
+  }
+
+  // Format price values with commas
+  const formatPrice = (value: number): string => {
+    return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+  }
+
+  // Format time values as HH:MM
+  const formatTime = (minutes: number): string => {
+    const hours = Math.floor(minutes / 60)
+    const mins = minutes % 60
+    return `${hours.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}`
   }
 
   // Count active filters
   const activeFiltersCount = Object.values(filters).reduce(
-    (count, category) => count + Object.values(category).filter(Boolean).length, 
+    (count, category) => {
+      if (Array.isArray(category)) {
+        return count;
+      }
+      return count + Object.values(category).filter(Boolean).length
+    }, 
     0
   )
 
@@ -209,21 +203,29 @@ export function FlightFilters() {
         {/* Departure time */}
         <FilterSection title="ساعت پرواز رفت">
           <RangeSlider
-            minLabel="۰۹:۳۰"
-            maxLabel="۱۱:۳۰"
+            min={0}
+            max={24 * 60}
+            step={15}
+            defaultValue={[filters.departureTime[0], filters.departureTime[1]] as [number, number]}
+            formatValue={formatTime}
+            onChange={(values: [number, number]) => updateRangeFilter('departureTime', values)}
           />
         </FilterSection>
 
         {/* Price range */}
         <FilterSection title="بازه قیمت (تومان)">
           <RangeSlider
-            minLabel="۱,534,678"
-            maxLabel="3,534,678"
+            min={500000}
+            max={5000000}
+            step={10000}
+            defaultValue={[filters.priceRange[0], filters.priceRange[1]] as [number, number]}
+            formatValue={formatPrice}
+            onChange={(values: [number, number]) => updateRangeFilter('priceRange', values)}
           />
         </FilterSection>
 
         {/* Ticket type */}
-        <FilterSection title="نوع بلیط" count={2}>
+        <FilterSection title="نوع بلیط" count={Object.values(filters.ticketType).filter(Boolean).length}>
           <FilterCheckbox 
             label="چارتر" 
             checked={filters.ticketType.charter}
