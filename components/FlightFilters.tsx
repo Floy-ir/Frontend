@@ -179,14 +179,20 @@ export function FlightFilters() {
     0
   )
 
+  // Convert English digits to Persian digits
+  const toPersianDigits = (str: string) => {
+    const persianDigits = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
+    return str.replace(/[0-9]/g, (match) => persianDigits[parseInt(match)]);
+  }
+  
   // Format price with commas
   const formatPrice = (price: number) => {
-    return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+    return toPersianDigits(price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
   }
   
   // Format time as HH:MM
   const formatTime = (hour: number) => {
-    return `${hour.toString().padStart(2, '0')}:00`
+    return toPersianDigits(`${hour.toString().padStart(2, '0')}:00`);
   }
 
   return (
@@ -226,12 +232,11 @@ export function FlightFilters() {
           <FancySlider
             value={flightTimeRange}
             onValueChange={setFlightTimeRange}
-            min={0}
+            min={4}
             max={24}
             step={1}
-            leftLabel={formatTime(flightTimeRange[0])}
-            rightLabel={formatTime(flightTimeRange[1])}
-            rtl={true}
+            leftLabel={formatTime(flightTimeRange[1]) as string}
+            rightLabel={formatTime(flightTimeRange[0]) as string}
           />
         </FilterSection>
 
@@ -243,9 +248,8 @@ export function FlightFilters() {
             min={500000}
             max={5000000}
             step={100000}
-            leftLabel={formatPrice(priceRange[0])}
-            rightLabel={formatPrice(priceRange[1])}
-            rtl={true}
+            leftLabel={formatPrice(priceRange[1]) as string}
+            rightLabel={formatPrice(priceRange[0]) as string}
           />
         </FilterSection>
 
