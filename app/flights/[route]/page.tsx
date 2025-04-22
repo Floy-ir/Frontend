@@ -231,7 +231,7 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
       <div className="container mx-auto max-w-266 p-0 md:px-4 md:py-6">
         {/* Timeline component from HEAD branch */}
         <div className="mb-6">
-          <Timeline
+          {/* <Timeline
             originCityCode={originCode || ""}
             destinationCityCode={destinationCode || ""}
             selectedDate={selectedDate}
@@ -239,13 +239,13 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
             child={String(child)}
             infant={String(infant)}
             autoScrollToSelected={true}
-          />
+          /> */}
         </div>
 
         <div className="mb-8 flex flex-row items-center justify-between">
-          <p className="text-Gray-N800 text-right text-sm font-semibold">۳ نتیجه</p>
+          {/* <p className="text-Gray-N800 text-right text-sm font-semibold">۳ نتیجه</p> */}
           {/* desktop sort */}
-          <div className="hidden flex-row items-center justify-end gap-3 md:flex">
+          {/* <div className="hidden flex-row items-center justify-end gap-3 md:flex">
             {sortOptions.map(({ key, label }) => (
               <button
                 key={key}
@@ -259,18 +259,18 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                 <span className="text-sm leading-normal">{label}</span>
               </button>
             ))}
-          </div>
+          </div> */}
         </div>
 
         <div className="flex flex-row gap-4">
           {/* Flight filters sidebar */}
           <div className="hidden md:block">
-            <FlightFilters />
+            {/* <FlightFilters /> */}
           </div>
 
           {/* Flight results list */}
           <div className="flex-1">
-            <FlightResultsList flights={sortedFlights} />
+            {/* <FlightResultsList flights={sortedFlights} /> */}
           </div>
         </div>
       </div>
