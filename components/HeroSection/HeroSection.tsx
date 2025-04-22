@@ -8,7 +8,7 @@ export function HeroSection() {
 
 
   return (
-    <section className="relative flex mt-4 mb-10 w-full md:mt-11 md:h-[487px]">
+    <section className="relative flex mt-4 mb-10 w-full md:mt-11 md:h-[800px] lg-xl:h-[800px] xl:h-[487px]">
       <div className="flex w-full flex-col items-start">
         {/* Main Title */}
         <div className="mb-6 flex w-full flex-col items-start gap-[9px] md:mb-10 md:inline-flex md:w-auto md:flex-row md:items-baseline">
