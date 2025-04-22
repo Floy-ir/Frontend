@@ -1,8 +1,9 @@
 'use client'
 
-import React from 'react'
+import React, { useState } from 'react'
 import Image from 'next/image'
 import { Setting5 } from 'iconsax-react'
+import { FancySlider } from "@/components/ui/fancy-slider"
 
 // Filter section with expandable header
 const FilterSection = ({ title, children, count = 0, isOpen = true }: { title: string, children: React.ReactNode, count?: number, isOpen?: boolean }) => {
@@ -149,6 +150,10 @@ export function FlightFilters() {
     }
   })
 
+  // Add state for flight time and price ranges
+  const [flightTimeRange, setFlightTimeRange] = useState<[number, number]>([9, 20])
+  const [priceRange, setPriceRange] = useState<[number, number]>([1500000, 3500000])
+
   const updateFilter = (category: string, key: string, value: boolean) => {
     setFilters(prev => ({
       ...prev,
@@ -173,6 +178,16 @@ export function FlightFilters() {
     (count, category) => count + Object.values(category).filter(Boolean).length, 
     0
   )
+
+  // Format price with commas
+  const formatPrice = (price: number) => {
+    return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+  }
+  
+  // Format time as HH:MM
+  const formatTime = (hour: number) => {
+    return `${hour.toString().padStart(2, '0')}:00`
+  }
 
   return (
     <div className="w-[305px] rounded-2xl outline-1 outline-offset-[-1px] outline-Gray-N200 inline-flex flex-col justify-start items-start overflow-hidden">
@@ -208,17 +223,29 @@ export function FlightFilters() {
       <div className="self-stretch px-5 py-4 bg-Shade-White flex flex-col justify-center items-center gap-3">
         {/* Departure time */}
         <FilterSection title="ساعت پرواز رفت">
-          <RangeSlider
-            minLabel="۰۹:۳۰"
-            maxLabel="۱۱:۳۰"
+          <FancySlider
+            value={flightTimeRange}
+            onValueChange={setFlightTimeRange}
+            min={0}
+            max={24}
+            step={1}
+            leftLabel={formatTime(flightTimeRange[0])}
+            rightLabel={formatTime(flightTimeRange[1])}
+            rtl={true}
           />
         </FilterSection>
 
         {/* Price range */}
         <FilterSection title="بازه قیمت (تومان)">
-          <RangeSlider
-            minLabel="۱,534,678"
-            maxLabel="3,534,678"
+          <FancySlider
+            value={priceRange}
+            onValueChange={setPriceRange}
+            min={500000}
+            max={5000000}
+            step={100000}
+            leftLabel={formatPrice(priceRange[0])}
+            rightLabel={formatPrice(priceRange[1])}
+            rtl={true}
           />
         </FilterSection>
 
