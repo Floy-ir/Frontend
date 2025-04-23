@@ -108,7 +108,7 @@ export function FlightSearchHeader({
       ) : (
         // Search form container
         <div>
-          <div className="border-y-none md:border-Gray-N200 fixed inset-0 mx-0 z-[20] min-h-screen w-full bg-white py-6 md:relative md:inset-auto md:z-auto md:min-h-[110px] md:border-y">
+          <div className="border-y-none md:border-Gray-N200 fixed inset-0 mx-0 z-21 min-h-screen w-full bg-white py-6 md:relative md:inset-auto md:z-auto md:min-h-[110px] md:border-y">
             <div className="container mx-auto px-0 lg:px-4 h-full w-full">
               <FlightSearchForm
                 onClose={handleCloseForm}
