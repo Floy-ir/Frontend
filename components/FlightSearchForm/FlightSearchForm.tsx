@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState } from "react"
-import { ArrowSwapHorizontal, Add, ArrowRight } from "iconsax-react"
+import { ArrowSwapHorizontal, Add, ArrowRight, CloseCircle } from "iconsax-react"
 import { useRouter } from "next/navigation"
 
 import { ComboboxSelect } from "@/components/ComboboxSelect/ComboboxSelect"
@@ -108,22 +108,23 @@ export function FlightSearchForm({
   }
 
   return (
-    <div className="flex flex-col lg:flex-row items-center lg:justify-center h-full">
+    <div className="relative flex h-full flex-col items-center lg:flex-row lg:justify-center">
       <div className={`flex w-full flex-col items-start gap-4 lg:flex-row lg:items-center lg:gap-6 ${className}`}>
-        {/* title and Arrow */}
-        <div className="mx-4 flex w-full items-center justify-start gap-4 lg:hidden">
-          <ArrowRight
-            size="24"
-            color="#748297"
-            onClick={onClose}
-            className="cursor-pointer"
-          />
+        {/* mobile title and Arrow */}
+        <div className="mx-4 flex w-full items-center justify-start gap-4 md:hidden">
+          <ArrowRight size="24" color="#748297" onClick={onClose} className="cursor-pointer" />
           <div className="text-Gray-N600 text-sm leading-normal font-semibold">تغییر جستجو</div>
         </div>
-        <div className="bg-Gray-N200 block h-px w-full lg:hidden"></div>
+        <div className="bg-Gray-N200 block h-px w-full md:hidden"></div>
+        {/* close icon */}
+        <ArrowRight size="24" color="#748297" onClick={onClose} className="hidden md:block lg:hidden cursor-pointer mx-4 " />
+
+        {/* <div className="absolute md:left-[16px] lg:hidden hidden md:block flex-row">
+          <CloseCircle size="27" color="#748297" onClick={onClose} className="cursor-pointer" />
+        </div> */}
 
         {/* Form Fields */}
-        <div className="flex w-full flex-col items-start gap-1 px-4 lg:flex-row lg:items-center lg:gap-6 lg:px-0">
+        <div className="flex w-full flex-col items-start gap-1 px-4 mt-4 lg:mt-0 lg:flex-row lg:items-center lg:gap-6 lg:px-0">
           {/* Origin/Destination Section - Mobile & Tablet layout (until 1169px) */}
           <div className="flex w-full flex-col lg:hidden">
             <div className="flex w-full flex-row-reverse items-center gap-4">
@@ -206,7 +207,6 @@ export function FlightSearchForm({
                 value={origin}
                 onChange={handleOriginChange}
                 recentSelections={recentSelections}
-                
               />
             </div>
 
@@ -301,14 +301,12 @@ export function FlightSearchForm({
       </div>
 
       {/* Search Button */}
-      <div className="w-full px-4 lg:w-1/3 flex items-center justify-center">
-        <Button
-          intent="primary"
-          size="large"
-          className=" mt-4 w-full lg:mt-0 lg:w-50"
-          onClick={handleSearch}
-        >
+      <div className="flex w-full items-center justify-center px-4 lg:w-1/3 gap-4 mt-4 lg:mt-0">
+        <Button intent="primary" size="large" className="w-3/5" onClick={handleSearch}>
           جستجوی پرواز
+        </Button>
+        <Button intent="secondary" size="large" className="w-2/5 hidden lg:flex" onClick={handleSearch}>
+           بستن
         </Button>
       </div>
     </div>
