@@ -325,8 +325,8 @@ export function FlightCard({
   return (
     <article className={twMerge(flightCardVariants({ intent, className }))}>
       {/* Mobile/Tablet Layout */}
-      <div className="flex flex-col md:hidden">
-        <div data-layer="Frame 1000002364" className="self-stretch px-4 pt-4 pb-2 bg-Shade-White rounded-xl outline outline-1 outline-offset-[-1px] outline-Gray-N200 inline-flex flex-col justify-center items-center gap-3 overflow-hidden">
+      <div className="flex flex-col lg:hidden">
+        <div data-layer="Frame 1000002364" className="self-stretch px-4 pt-4 pb-2 bg-Shade-White rounded-xl outline-1 outline-offset-[-1px] outline-Gray-N200 inline-flex flex-col justify-center items-center gap-3 overflow-hidden">
           {/* Flight info section */}
           <div data-layer="Frame 1000002337" className="self-stretch inline-flex flex-row-reverse justify-center items-center gap-6">
             <div data-layer="Frame 1000002339" className="flex-1 inline-flex flex-col justify-center items-end">
@@ -437,7 +437,7 @@ export function FlightCard({
       </div>
 
       {/* Desktop Layout */}
-      <div className="hidden w-full items-start justify-between gap-8 self-stretch px-6 pt-4 pb-2 md:inline-flex">
+      <div className="hidden w-full items-start justify-between gap-8 self-stretch px-6 pt-4 pb-2 lg:inline-flex">
         {/* Flight details - Right */}
         <FlightDetailsSection
           departureTime={departureTime}
