@@ -8,6 +8,7 @@ import { getCityByCode } from "@/config/cities"
 import { PassengerCount } from "@/components/PassengerSelector/PassengerSelector"
 import { formatToJalali } from "@/utils/dateUtils"
 import { englishToFarsiNumber } from "@/utils/numbers"
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 
 type FlightSearchHeaderProps = {
   originCity: string
@@ -69,29 +70,29 @@ export function FlightSearchHeader({
         // Flight summary header
         <div className="border-Gray-N200 flex w-full items-center justify-center gap-3 border-t border-b bg-white px-4 py-4 md:px-0">
           {/* info */}
-          <div className="flex flex-col sm-md:flex-row md:flex-row items-center sm:justify-start md:justify-end gap-1">
-            
+          <div className="sm-md:flex-row flex flex-col items-center gap-1 sm:justify-start md:flex-row md:justify-end">
             {/* city */}
-            <div className="text-right w-full md:w-[129px] text-Gray-N700  text-base leading-7 font-semibold">
+            <div className="text-Gray-N700 w-full text-right text-base leading-7 font-semibold md:w-[129px]">
               پرواز {originCity} به {destinationCity}
             </div>
 
             {/* dot */}
-            <div className="bg-Gray-N200 size-1 rounded-[33px] shrink-0 hidden md:block ml-1"></div>
+            <div className="bg-Gray-N200 ml-1 hidden size-1 shrink-0 rounded-[33px] md:block"></div>
 
-            <div className="flex items-center sm:justify-start md:justify-end gap-2">
+            <div className="flex items-center gap-2 sm:justify-start md:justify-end">
               {/* date */}
-              <div className="text-Gray-N500 text-right text-[13px] leading-normal font-medium shrink-0">{persianDate}</div>
+              <div className="text-Gray-N500 shrink-0 text-right text-[13px] leading-normal font-medium">
+                {persianDate}
+              </div>
 
               {/* divider */}
-              <div className="bg-Gray-N200 size-1 rounded-[33px] shrink-0"></div>
+              <div className="bg-Gray-N200 size-1 shrink-0 rounded-[33px]"></div>
 
               {/* passengers */}
-              <div className="text-Gray-N500 text-right text-[13px] leading-normal font-medium  shrink-0">
+              <div className="text-Gray-N500 shrink-0 text-right text-[13px] leading-normal font-medium">
                 {englishToFarsiNumber(passengerCount)} مسافر
               </div>
             </div>
-
           </div>
 
           <Button
@@ -106,16 +107,19 @@ export function FlightSearchHeader({
         </div>
       ) : (
         // Search form container
-        <div className="border-Gray-N200 w-full border-y bg-white py-6">
-          <div className="container mx-auto px-4">
-            <FlightSearchForm
-              onClose={handleCloseForm}
-              initialOrigin={originFullName}
-              initialDestination={destinationFullName}
-              initialDepartureDate={parsedDate}
-              initialPassengers={initialPassengers}
-            />
+        <div>
+          <div className="border-y-none md:border-Gray-N200 fixed inset-0 mx-0 z-[20] min-h-screen w-full bg-white py-6 md:relative md:inset-auto md:z-auto md:min-h-[110px] md:border-y">
+            <div className="container mx-auto px-0 lg:px-4 h-full w-full">
+              <FlightSearchForm
+                onClose={handleCloseForm}
+                initialOrigin={originFullName}
+                initialDestination={destinationFullName}
+                initialDepartureDate={parsedDate}
+                initialPassengers={initialPassengers}
+              />
+            </div>
           </div>
+          
         </div>
       )}
     </>

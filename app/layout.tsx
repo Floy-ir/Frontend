@@ -21,7 +21,8 @@ export default function RootLayout({
     <html lang="fa" dir="rtl">
       <body className={`${anjomanMaxVF.variable} font-anjoman-max`}>
         {/* Global Header with dynamic active state */}
-        <ActiveMenuProvider />
+        
+        {/* <ActiveMenuProvider /> */}
         
         {/* Main Content */}
         <main className="min-h-screen">

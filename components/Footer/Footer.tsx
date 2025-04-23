@@ -17,7 +17,7 @@ const Footer: React.FC = () => {
       {/* tablet and desktop */}
       <footer className="hidden w-full flex-col items-center justify-center text-gray-600 md:flex">
         {/* Main footer container */}
-        <div className=" flex w-full flex-col justify-between bg-white px-28">
+        <div className=" flex w-full flex-col justify-between bg-white px-2">
           <div className="mt-10 mb-9 flex w-full flex-row justify-between">
             {/* First Grid */}
             <div className="my-2 grid grid-cols-3 gap-10 text-right">

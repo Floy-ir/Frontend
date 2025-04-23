@@ -228,7 +228,7 @@ export function Header({ menuItems, className, forceScrolledStyle = false }: Hea
       </header>
       
       {/* Spacer div to prevent layout shifts - matches header height */}
-      <div className="h-22 w-full"></div>
+      <div className="h-16 md:h-22 w-full"></div>
     </>
   )
 }
