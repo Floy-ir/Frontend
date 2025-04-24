@@ -135,32 +135,44 @@ const RangeSlider = ({
   )
 }
 
-export function FlightFilters({ onFilterChange }: { onFilterChange?: (count: number) => void }) {
-  const [filters, setFilters] = React.useState({
+export function FlightFilters({ 
+  filters,
+  updateFilter,
+  clearFilters,
+  flightTimeRange,
+  setFlightTimeRange,
+  priceRange,
+  setPriceRange,
+  activeFiltersCount
+}: { 
+  filters: {
     ticketType: {
-      charter: true,
-      system: false
-    },
+      charter: boolean;
+      system: boolean;
+    };
     cabinClass: {
-      economy: true,
-      business: false
-    },
+      economy: boolean;
+      business: boolean;
+    };
     airlines: {
-      mahan: false,
-      caspian: false,
-      ata: false
-    },
+      mahan: boolean;
+      caspian: boolean;
+      ata: boolean;
+    };
     agencies: {
-      alibaba: false,
-      flytoday: false,
-      mrbilit: false
-    }
-  })
-
-  // Add state for flight time and price ranges
-  const [flightTimeRange, setFlightTimeRange] = useState<[number, number]>([9, 20])
-  const [priceRange, setPriceRange] = useState<[number, number]>([1500000, 3500000])
-  
+      alibaba: boolean;
+      flytoday: boolean;
+      mrbilit: boolean;
+    };
+  };
+  updateFilter: (category: string, key: string, value: boolean) => void;
+  clearFilters: () => void;
+  flightTimeRange: [number, number];
+  setFlightTimeRange: (range: [number, number]) => void;
+  priceRange: [number, number];
+  setPriceRange: (range: [number, number]) => void;
+  activeFiltersCount: number;
+}) {
   // Check if component is rendered in a drawer
   const [isInDrawer, setIsInDrawer] = useState(false)
   
@@ -178,36 +190,6 @@ export function FlightFilters({ onFilterChange }: { onFilterChange?: (count: num
     
     return () => window.removeEventListener('resize', checkIfInDrawer)
   }, [])
-
-  const updateFilter = (category: string, key: string, value: boolean) => {
-    setFilters(prev => ({
-      ...prev,
-      [category]: {
-        ...prev[category as keyof typeof prev],
-        [key]: value
-      }
-    }))
-  }
-
-  const clearFilters = () => {
-    setFilters({
-      ticketType: { charter: false, system: false },
-      cabinClass: { economy: false, business: false },
-      airlines: { mahan: false, caspian: false, ata: false },
-      agencies: { alibaba: false, flytoday: false, mrbilit: false }
-    })
-  }
-
-  // Count active filters
-  const activeFiltersCount = Object.values(filters).reduce(
-    (count, category) => count + Object.values(category).filter(Boolean).length,
-    0
-  )
-
-  // Report filter count changes to parent
-  React.useEffect(() => {
-    onFilterChange?.(activeFiltersCount)
-  }, [activeFiltersCount, onFilterChange])
 
   // Format price with commas
   const formatPrice = (price: number) => {

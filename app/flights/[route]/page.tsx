@@ -51,8 +51,57 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
   // State for sorting
   const [sortKey, setSortKey] = React.useState<"cheapest" | "mostExpensive" | "earliest" | "latest">("cheapest")
   
-  // State to track active filters
-  const [activeFiltersCount, setActiveFiltersCount] = React.useState(0)
+  // Shared filters state
+  const [filters, setFilters] = React.useState({
+    ticketType: {
+      charter: true,
+      system: false
+    },
+    cabinClass: {
+      economy: true,
+      business: false
+    },
+    airlines: {
+      mahan: false,
+      caspian: false,
+      ata: false
+    },
+    agencies: {
+      alibaba: false,
+      flytoday: false,
+      mrbilit: false
+    }
+  })
+  
+  // Calculate active filters count
+  const activeFiltersCount = Object.values(filters).reduce(
+    (count, category) => count + Object.values(category).filter(Boolean).length,
+    0
+  )
+  
+  // Handler for filter changes
+  const updateFilter = (category: string, key: string, value: boolean) => {
+    setFilters(prev => ({
+      ...prev,
+      [category]: {
+        ...prev[category as keyof typeof prev],
+        [key]: value
+      }
+    }))
+  }
+  
+  const clearFilters = () => {
+    setFilters({
+      ticketType: { charter: false, system: false },
+      cabinClass: { economy: false, business: false },
+      airlines: { mahan: false, caspian: false, ata: false },
+      agencies: { alibaba: false, flytoday: false, mrbilit: false }
+    })
+  }
+  
+  // Flight time and price ranges
+  const [flightTimeRange, setFlightTimeRange] = useState<[number, number]>([9, 20])
+  const [priceRange, setPriceRange] = useState<[number, number]>([1500000, 3500000])
 
   // Sample flight data for demonstration
   const sampleFlights = [
@@ -264,7 +313,16 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                 </div>
               </DialogTitle>
               <div className="w-full">
-                <FlightFilters onFilterChange={count => setActiveFiltersCount(count)} />
+                <FlightFilters 
+                  filters={filters}
+                  updateFilter={updateFilter}
+                  clearFilters={clearFilters}
+                  flightTimeRange={flightTimeRange}
+                  setFlightTimeRange={setFlightTimeRange}
+                  priceRange={priceRange}
+                  setPriceRange={setPriceRange}
+                  activeFiltersCount={activeFiltersCount}
+                />
               </div>
             </div>
           </DrawerContent>
@@ -308,7 +366,16 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
         <div className="flex flex-row gap-4">
           {/* Flight filters sidebar */}
           <div className="hidden lg:block">
-            <FlightFilters onFilterChange={count => setActiveFiltersCount(count)} />
+            <FlightFilters 
+              filters={filters}
+              updateFilter={updateFilter}
+              clearFilters={clearFilters}
+              flightTimeRange={flightTimeRange}
+              setFlightTimeRange={setFlightTimeRange}
+              priceRange={priceRange}
+              setPriceRange={setPriceRange}
+              activeFiltersCount={activeFiltersCount}
+            />
           </div>
 
           {/* Flight results list */}
