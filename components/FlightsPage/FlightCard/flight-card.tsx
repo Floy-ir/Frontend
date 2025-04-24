@@ -124,7 +124,7 @@ const BaggageBadge = ({ text }: { text: string }) => (
 const FlightInfoBadges = ({ flightInfo }: { flightInfo: FlightCardProps["flightInfo"] }) => (
   <div className="inline-flex flex-wrap content-start items-start justify-start gap-2 self-stretch">
     {flightInfo.cabinClass && <InfoBadge text={flightInfo.cabinClass} />}
-    {flightInfo.baggage && <BaggageBadge text={flightInfo.baggage} />}
+    {flightInfo.baggage && <BaggageBadge text={englishToFarsiNumber(flightInfo.baggage)} />}
     {flightInfo.ticketType && <InfoBadge text={flightInfo.ticketType} />}
     {flightInfo.aircraft && <InfoBadge text={flightInfo.aircraft} />}
   </div>
@@ -391,7 +391,7 @@ export function FlightCard({
             className="inline-flex flex-wrap content-start items-start justify-start gap-1 self-stretch mt-3"
           >
             {flightInfo.cabinClass && <InfoBadge text={flightInfo.cabinClass} />}
-            {flightInfo.baggage && <BaggageBadge text={flightInfo.baggage} />}
+            {flightInfo.baggage && <BaggageBadge text={englishToFarsiNumber(flightInfo.baggage)} />}
             {flightInfo.ticketType && <InfoBadge text={flightInfo.ticketType} />}
             {flightInfo.aircraft && <InfoBadge text={flightInfo.aircraft} />}
           </div>
