@@ -174,7 +174,7 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
       {/* Main content */}
       <div className="container mx-auto max-w-266 p-0 md:px-4 md:py-6">
         {/* Timeline component from HEAD branch */}
-        <div className="mb-0 md:mb-8 ">
+        <div className="mb-0 md:mb-8">
           <Timeline
             originCityCode={originCode || ""}
             destinationCityCode={destinationCode || ""}
@@ -186,7 +186,7 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
           />
         </div>
 
-        <div className="mb-6 flex-row items-start justify-between hidden md:flex">
+        <div className="mb-6 hidden flex-row items-start justify-between md:flex">
           <p className="text-Gray-N800 hidden text-right text-sm font-semibold md:block">۳ نتیجه</p>
 
           {/* desktop sort */}
@@ -206,51 +206,54 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
             ))}
           </div>
         </div>
-        
+
         {/* mobile sort */}
-          <Drawer>
-            <DrawerTrigger asChild>
-              <div className="px-3 m-5 py-1  bg-Shade-White rounded-2xl outline-2 outline-offset-[-2px] outline-Gray-N100 inline-flex md:hidden justify-center items-center gap-1 overflow-hidden">
-                <Sort size="16" color="#1E1E1E"/>
-                <div className="ContainerValues size- flex justify-center items-center gap-1">
-                  <div className="justify-start text-Gray-N700 text-sm font-medium  leading-normal">
-                    {sortKey ? getCurrentSortLabel() : "مرتب سازی"}
-                  </div>
+        <Drawer>
+          <DrawerTrigger asChild>
+            <div className="bg-Shade-White outline-Gray-N100 m-5 inline-flex items-center justify-center gap-1 rounded-2xl px-3 py-1 outline-2 outline-offset-[-2px] md:hidden">
+              <Sort size="16" color="#1E1E1E" />
+
+              <div className="flex items-center justify-center gap-2">
+                <div className="text-Gray-N700 text-sm leading-normal font-medium"> مرتب سازی: </div>
+                <div className="text-Gray-N700 text-sm leading-normal font-medium">
+                  {sortKey ? getCurrentSortLabel() : " ارزان‌ترین "}
                 </div>
               </div>
-            </DrawerTrigger>
-            <DrawerContent className="bg-Shade-White rounded-t-2xl">
-              <div className="inline-flex h-full w-full flex-col items-start justify-start">
-                <DialogTitle className="bg-Shade-White border-Gray-N100 inline-flex items-center justify-center self-stretch border-b px-5 py-4">
-                  <div className="flex flex-1 items-center justify-center">
-                    <div className="flex items-center justify-center gap-1">
-                      <div className="text-Gray-N600 text-right text-base leading-7 font-semibold">ترتیب نمایش</div>
-                    </div>
+            </div>
+          </DrawerTrigger>
+
+          <DrawerContent className="bg-Shade-White rounded-t-2xl">
+            <div className="inline-flex h-full w-full flex-col items-start justify-start">
+              <DialogTitle className="bg-Shade-White border-Gray-N100 inline-flex items-center justify-center self-stretch border-b px-5 py-4">
+                <div className="flex flex-1 items-center justify-center">
+                  <div className="flex items-center justify-center gap-1">
+                    <div className="text-Gray-N600 text-right text-base leading-7 font-semibold">ترتیب نمایش</div>
                   </div>
-                </DialogTitle>
-                {/* Sort Options */}
-                <div className="bg-Shade-White flex flex-col items-center justify-center self-stretch px-5">
-                  {sortOptions.map(({ key, label }) => (
-                    <div key={key} className="flex w-full flex-col items-center justify-center gap-4 py-3">
-                      <label className="flex w-full cursor-pointer items-center justify-start gap-2">
-                        <Checkbox
-                          checked={sortKey === key}
-                          onCheckedChange={() => {
-                            setSortKey(key)
-                            const drawer = document.querySelector("[data-state=open]") as HTMLElement
-                            if (drawer) drawer.click()
-                          }}
-                          className="data-[state=checked]:bg-Primary-P500main data-[state=checked]:border-Primary-P500main rounded-full"
-                        />
-                        <span className="text-Gray-N700 text-sm font-medium">{label}</span>
-                      </label>
-                      <div className="bg-Gray-N100 h-px w-full" />
-                    </div>
-                  ))}
                 </div>
+              </DialogTitle>
+              {/* Sort Options */}
+              <div className="bg-Shade-White flex flex-col items-center justify-center self-stretch px-5">
+                {sortOptions.map(({ key, label }) => (
+                  <div key={key} className="flex w-full flex-col items-center justify-center gap-4 py-3">
+                    <label className="flex w-full cursor-pointer items-center justify-start gap-2">
+                      <Checkbox
+                        checked={sortKey === key}
+                        onCheckedChange={() => {
+                          setSortKey(key)
+                          const drawer = document.querySelector("[data-state=open]") as HTMLElement
+                          if (drawer) drawer.click()
+                        }}
+                        className="data-[state=checked]:bg-Primary-P500main data-[state=checked]:border-Primary-P500main rounded-full"
+                      />
+                      <span className="text-Gray-N700 text-sm font-medium">{label}</span>
+                    </label>
+                    <div className="bg-Gray-N100 h-px w-full" />
+                  </div>
+                ))}
               </div>
-            </DrawerContent>
-          </Drawer>
+            </div>
+          </DrawerContent>
+        </Drawer>
 
         <div className="flex flex-row gap-4">
           {/* Flight filters sidebar */}
