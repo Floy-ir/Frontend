@@ -202,7 +202,7 @@ export function FlightFilters({
   }
 
   return (
-    <div className={`${isInDrawer ? 'w-full max-h-[calc(80vh-60px)] overflow-y-auto' : 'w-[305px] outline-1 outline-offset-[-1px] outline-Gray-N200'} rounded-2xl inline-flex flex-col justify-start items-start overflow-hidden`}>
+    <div className={`${isInDrawer ? 'w-full' : 'w-[305px] outline-1 outline-offset-[-1px] outline-Gray-N200'} rounded-2xl inline-flex flex-col justify-start items-start overflow-hidden`}>
       {/* Header - hide in drawer since drawer already has a header */}
       {!isInDrawer && (
         <div className="self-stretch h-[68px] px-5 py-3 bg-Shade-White border-b border-Gray-N100 inline-flex justify-center items-center gap-3">
