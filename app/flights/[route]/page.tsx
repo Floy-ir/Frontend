@@ -264,7 +264,7 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
 
         <div className="flex flex-row gap-4">
           {/* Flight filters sidebar */}
-          <div className="hidden md:block">
+          <div className="hidden lg:block">
             <FlightFilters />
           </div>
 
