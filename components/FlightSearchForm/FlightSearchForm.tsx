@@ -117,14 +117,19 @@ export function FlightSearchForm({
         </div>
         <div className="bg-Gray-N200 block h-px w-full md:hidden"></div>
         {/* close icon */}
-        <ArrowRight size="24" color="#748297" onClick={onClose} className="hidden md:block lg:hidden cursor-pointer mx-4 " />
+        <ArrowRight
+          size="24"
+          color="#748297"
+          onClick={onClose}
+          className="mx-4 hidden cursor-pointer md:block lg:hidden"
+        />
 
         {/* <div className="absolute md:left-[16px] lg:hidden hidden md:block flex-row">
           <CloseCircle size="27" color="#748297" onClick={onClose} className="cursor-pointer" />
         </div> */}
 
         {/* Form Fields */}
-        <div className="flex w-full flex-col items-start gap-1 px-4 mt-4 lg:mt-0 lg:flex-row lg:items-center lg:gap-6 lg:px-0">
+        <div className="mt-4 flex w-full flex-col items-start gap-1 px-4 lg:mt-0 lg:flex-row lg:items-center lg:gap-6 lg:px-0">
           {/* Origin/Destination Section - Mobile & Tablet layout (until 1169px) */}
           <div className="flex w-full flex-col lg:hidden">
             <div className="flex w-full flex-row-reverse items-center gap-4">
@@ -301,12 +306,12 @@ export function FlightSearchForm({
       </div>
 
       {/* Search Button */}
-      <div className="flex w-full items-center justify-center px-4 lg:w-1/3 gap-4 mt-4 lg:mt-0">
+      <div className="mt-4 flex w-full items-center justify-center gap-4 px-4 lg:mt-0 lg:w-1/3">
         <Button intent="primary" size="large" className="w-3/5" onClick={handleSearch}>
           جستجوی پرواز
         </Button>
-        <Button intent="secondary" size="large" className="w-2/5 hidden lg:flex" onClick={handleSearch}>
-           بستن
+        <Button intent="secondary" size="large" className="hidden w-2/5 lg:flex" onClick={handleSearch}>
+          بستن
         </Button>
       </div>
     </div>

@@ -242,7 +242,7 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
           />
         </div>
 
-        <div className="mb-8 flex flex-row items-center justify-between ">
+        <div className="mb-8 flex flex-row items-center justify-between px-3 md:px-0">
           <p className="text-Gray-N800 text-right text-sm font-semibold">۳ نتیجه</p>
           {/* desktop sort */}
           <div className="hidden flex-row items-center justify-end gap-3 md:flex">

@@ -70,18 +70,18 @@ export function FlightSearchHeader({
         // Flight summary header
         <div className="border-Gray-N200 flex w-full items-center justify-center gap-3 border-t border-b bg-white px-4 py-4 md:px-0">
           {/* info */}
-          <div className="sm-md:flex-row flex flex-col items-center gap-1 sm:justify-start md:flex-row md:justify-end">
+          <div className="sm-md:flex-row flex flex-col items-start sm-md:items-center md:items-center gap-2 sm:justify-start md:flex-row md:justify-end">
             {/* city */}
-            <div className="text-Gray-N700 w-full text-right text-base leading-7 font-semibold md:w-[129px]">
+            <div className="text-Gray-N700  text-right text-base lg:text-[17px] leading-7 font-semibold shrink-0 ">
               پرواز {originCity} به {destinationCity}
             </div>
 
             {/* dot */}
-            <div className="bg-Gray-N200 ml-1 hidden size-1 shrink-0 rounded-[33px] md:block"></div>
+            <div className="bg-Gray-N200 ml-1 hidden size-1 shrink-0 rounded-[33px] sm-md:block md:block"></div>
 
             <div className="flex items-center gap-2 sm:justify-start md:justify-end">
               {/* date */}
-              <div className="text-Gray-N500 shrink-0 text-right text-[13px] leading-normal font-medium">
+              <div className="text-Gray-N500 shrink-0 text-right text-[13px] lg:text-[15px] leading-normal font-medium">
                 {persianDate}
               </div>
 
@@ -89,7 +89,7 @@ export function FlightSearchHeader({
               <div className="bg-Gray-N200 size-1 shrink-0 rounded-[33px]"></div>
 
               {/* passengers */}
-              <div className="text-Gray-N500 shrink-0 text-right text-[13px] leading-normal font-medium">
+              <div className="text-Gray-N500 shrink-0 text-right text-[13px] lg:text-[15px] leading-normal font-medium">
                 {englishToFarsiNumber(passengerCount)} مسافر
               </div>
             </div>
