@@ -1,7 +1,7 @@
 'use client'
 
 import React from 'react'
-import { FlightCard } from '@/components/FlightCard'
+import { FlightCard } from '@/components/FlightsPage/FlightCard'
 
 // Type for sample flight data
 type FlightData = {

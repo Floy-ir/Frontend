@@ -10,6 +10,7 @@ import { Drawer, DrawerContent, DrawerTrigger } from "@/components/ui/drawer"
 import { getCityByCode } from "@/config/cities"
 import { formatDate } from "@/utils/dateUtils"
 import { FlightResultsList } from "./FlightResultsList"
+import NoTicketFound from "@/components/FlightsPage/NoTicketFound"
 
 type RouteParams = {
   params: Promise<{
@@ -176,7 +177,11 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
       otherSellersCount: 2,
     },
   ]
-
+  
+  const sampleFlights1 = [
+    {}
+  ]
+  
   // Sort options
   const sortOptions = [
     { key: "cheapest" as const, label: "ارزان‌ترین" },
@@ -191,21 +196,28 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
     return option?.label || "ارزان‌ترین"
   }
 
-  // Sort flights based on selected sort key
-  const sortedFlights = [...sampleFlights].sort((a, b) => {
-    switch (sortKey) {
-      case "cheapest":
-        return a.price.amount - b.price.amount
-      case "mostExpensive":
-        return b.price.amount - a.price.amount
-      case "earliest":
-        return a.departureTime.localeCompare(b.departureTime)
-      case "latest":
-        return b.departureTime.localeCompare(a.departureTime)
-      default:
-        return 0
-    }
-  })
+  // Sort flights based on selected sort key, safely handling empty/incomplete objects
+  const sortedFlights = [...sampleFlights1]
+    .filter(f => f && f.id)
+    .sort((a, b) => {
+      const priceA = a.price?.amount || 0;
+      const priceB = b.price?.amount || 0;
+      const depTimeA = a.departureTime || "";
+      const depTimeB = b.departureTime || "";
+
+      switch (sortKey) {
+        case "cheapest":
+          return priceA - priceB;
+        case "mostExpensive":
+          return priceB - priceA;
+        case "earliest":
+          return depTimeA.localeCompare(depTimeB);
+        case "latest":
+          return depTimeB.localeCompare(depTimeA);
+        default:
+          return 0;
+      }
+    })
 
   return (
     <div className="bg-Gray/N100 mb-8 flex min-h-screen flex-col">
@@ -224,113 +236,129 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
 
       {/* Main content */}
       <div className="container mx-auto max-w-266 p-0 lg:px-4 lg:py-6">
-        {/* Timeline component from HEAD branch */}
-        <div className="mb-0 lg:mb-8">
-          <Timeline
-            originCityCode={originCode || ""}
-            destinationCityCode={destinationCode || ""}
-            selectedDate={selectedDate}
-            adult={String(adult)}
-            child={String(child)}
-            infant={String(infant)}
-            autoScrollToSelected={true}
-          />
-        </div>
-
-        <div className="mb-6 hidden flex-row items-start justify-between lg:flex">
-          <p className="text-Gray-N800 hidden text-right text-sm font-semibold lg:block">۳ نتیجه</p>
-
-          {/* desktop sort */}
-          <div className="hidden flex-row items-center justify-end gap-3 lg:flex">
-            {sortOptions.map(({ key, label }) => (
-              <button
-                key={key}
-                onClick={() => setSortKey(key)}
-                className={`flex items-center justify-center gap-1 overflow-hidden rounded-2xl px-3 py-1 outline-2 outline-offset-[-2px] ${
-                  sortKey === key
-                    ? "bg-Primary-P50 text-Primary-P500main outline-Primary-P500main font-semibold"
-                    : "bg-Shade-White text-Gray-N700 outline-Gray-N100 font-medium"
-                }`}
-              >
-                <span className="text-sm leading-normal">{label}</span>
-              </button>
-            ))}
-          </div>
-        </div>
-
-       
-          {/* mobile sort */}
-        <Drawer>
-          <DrawerTrigger asChild>
-            <div className="bg-Shade-White outline-Gray-N100 m-5 inline-flex items-center justify-center gap-1 rounded-2xl px-3 py-1 outline-2 outline-offset-[-2px] lg:hidden">
-              <Sort size="16" color="#1E1E1E" />
-
-              <div className="flex items-center justify-center gap-2">
-                <div className="text-Gray-N700 text-sm leading-normal font-medium"> مرتب سازی: </div>
-                <div className="text-Gray-N700 text-sm leading-normal font-medium">
-                  {sortKey ? getCurrentSortLabel() : " ارزان‌ترین "}
-                </div>
-              </div>
+        {sortedFlights.length > 0 ? (
+          <>
+            {/* Timeline component from HEAD branch */}
+            <div className="mb-0 lg:mb-8">
+              <Timeline
+                originCityCode={originCode || ""}
+                destinationCityCode={destinationCode || ""}
+                selectedDate={selectedDate}
+                adult={String(adult)}
+                child={String(child)}
+                infant={String(infant)}
+                autoScrollToSelected={true}
+              />
             </div>
-          </DrawerTrigger>
 
-          <DrawerContent className="bg-Shade-White rounded-t-2xl">
-            <div className="inline-flex h-full w-full flex-col items-start justify-start">
-              <DialogTitle className="bg-Shade-White border-Gray-N100 inline-flex items-center justify-center self-stretch border-b px-5 py-4">
-                <div className="flex flex-1 items-center justify-center">
-                  <div className="flex items-center justify-center gap-1">
-                    <div className="text-Gray-N600 text-right text-base leading-7 font-semibold">ترتیب نمایش</div>
-                  </div>
-                  <div className="flex justify-center items-center gap-1">
-                    <div className="text-Gray-N600 text-right text-base font-semibold leading-7">ترتیب نمایش</div>
-                  </div>
-                  <div className="flex-1"></div>
-                </div>
-              </DialogTitle>
-              {/* Sort Options */}
-              <div className="bg-Shade-White flex flex-col items-center justify-center self-stretch px-5 overflow-y-auto max-h-[calc(80vh-60px)]">
+            <div className="mb-6 hidden flex-row items-start justify-between lg:flex">
+              <p className="text-Gray-N800 hidden text-right text-sm font-semibold lg:block">{sortedFlights.length} نتیجه</p>
+
+              {/* desktop sort */}
+              <div className="hidden flex-row items-center justify-end gap-3 lg:flex">
                 {sortOptions.map(({ key, label }) => (
-                  <div key={key} className="flex w-full flex-col items-center justify-center gap-4 py-3">
-                    <label className="flex w-full cursor-pointer items-center justify-start gap-2">
-                      <Checkbox
-                        checked={sortKey === key}
-                        onCheckedChange={() => {
-                          setSortKey(key)
-                          const drawer = document.querySelector("[data-state=open]") as HTMLElement
-                          if (drawer) drawer.click()
-                        }}
-                        className="data-[state=checked]:bg-Primary-P500main data-[state=checked]:border-Primary-P500main rounded-full"
-                      />
-                      <span className="text-Gray-N700 text-sm font-medium">{label}</span>
-                    </label>
-                    <div className="bg-Gray-N100 h-px w-full" />
-                  </div>
+                  <button
+                    key={key}
+                    onClick={() => setSortKey(key)}
+                    className={`flex items-center justify-center gap-1 overflow-hidden rounded-2xl px-3 py-1 outline-2 outline-offset-[-2px] ${
+                      sortKey === key
+                        ? "bg-Primary-P50 text-Primary-P500main outline-Primary-P500main font-semibold"
+                        : "bg-Shade-White text-Gray-N700 outline-Gray-N100 font-medium"
+                    }`}
+                  >
+                    <span className="text-sm leading-normal">{label}</span>
+                  </button>
                 ))}
               </div>
             </div>
-          </DrawerContent>
-        </Drawer>
-        <div className="flex flex-row gap-4">
 
-          {/* Flight filters sidebar */}
-          <div className="hidden lg:block">
-            <FlightFilters
-              filters={filters}
-              updateFilter={updateFilter}
-              clearFilters={clearFilters}
-              flightTimeRange={flightTimeRange}
-              setFlightTimeRange={setFlightTimeRange}
-              priceRange={priceRange}
-              setPriceRange={setPriceRange}
-              activeFiltersCount={activeFiltersCount}
-            />
-          </div>
+            {/* mobile sort */}
+            <Drawer>
+              <DrawerTrigger asChild>
+                <div className="bg-Shade-White outline-Gray-N100 m-5 inline-flex items-center justify-center gap-1 rounded-2xl px-3 py-1 outline-2 outline-offset-[-2px] lg:hidden">
+                  <Sort size="16" color="#1E1E1E" />
+                  <div className="flex items-center justify-center gap-2">
+                    <div className="text-Gray-N700 text-sm leading-normal font-medium"> مرتب سازی: </div>
+                    <div className="text-Gray-N700 text-sm leading-normal font-medium">
+                      {sortKey ? getCurrentSortLabel() : " ارزان‌ترین "}
+                    </div>
+                  </div>
+                </div>
+              </DrawerTrigger>
+              <DrawerContent className="bg-Shade-White rounded-t-2xl">
+                <div className="inline-flex h-full w-full flex-col items-start justify-start">
+                  <DialogTitle className="bg-Shade-White border-Gray-N100 inline-flex items-center justify-center self-stretch border-b px-5 py-4">
+                    <div className="flex flex-1 items-center justify-center">
+                      <div className="flex items-center justify-center gap-1">
+                        <div className="text-Gray-N600 text-right text-base leading-7 font-semibold">ترتیب نمایش</div>
+                      </div>
+                      <div className="flex justify-center items-center gap-1">
+                        <div className="text-Gray-N600 text-right text-base font-semibold leading-7">ترتیب نمایش</div>
+                      </div>
+                      <div className="flex-1"></div>
+                    </div>
+                  </DialogTitle>
+                  {/* Sort Options */}
+                  <div className="bg-Shade-White flex flex-col items-center justify-center self-stretch px-5 overflow-y-auto max-h-[calc(80vh-60px)]">
+                    {sortOptions.map(({ key, label }) => (
+                      <div key={key} className="flex w-full flex-col items-center justify-center gap-4 py-3">
+                        <label className="flex w-full cursor-pointer items-center justify-start gap-2">
+                          <Checkbox
+                            checked={sortKey === key}
+                            onCheckedChange={() => {
+                              setSortKey(key)
+                              const drawer = document.querySelector("[data-state=open]") as HTMLElement
+                              if (drawer) drawer.click()
+                            }}
+                            className="data-[state=checked]:bg-Primary-P500main data-[state=checked]:border-Primary-P500main rounded-full"
+                          />
+                          <span className="text-Gray-N700 text-sm font-medium">{label}</span>
+                        </label>
+                        <div className="bg-Gray-N100 h-px w-full" />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </DrawerContent>
+            </Drawer>
 
-          {/* Flight results list */}
-          <div className="flex-1">
-            <FlightResultsList flights={sortedFlights} />
+            <div className="flex flex-row gap-4">
+              {/* Flight filters sidebar */}
+              <div className="hidden lg:block">
+                <FlightFilters
+                  filters={filters}
+                  updateFilter={updateFilter}
+                  clearFilters={clearFilters}
+                  flightTimeRange={flightTimeRange}
+                  setFlightTimeRange={setFlightTimeRange}
+                  priceRange={priceRange}
+                  setPriceRange={setPriceRange}
+                  activeFiltersCount={activeFiltersCount}
+                />
+              </div>
+
+              {/* Flight results list */}
+              <div className="flex-1">
+                <FlightResultsList flights={sortedFlights} />
+              </div>
+            </div>
+          </>
+        ) : (
+          <div className="flex flex-col items-center justify-center container mx-auto max-w-266 p-0 lg:px-4 lg:py-6">
+            <div className="mb-8 max-w-[1010px]">
+              <Timeline
+                originCityCode={originCode || ""}
+                destinationCityCode={destinationCode || ""}
+                selectedDate={selectedDate}
+                adult={String(adult)}
+                child={String(child)}
+                infant={String(infant)}
+                autoScrollToSelected={true}
+              />
+            </div>
+            <NoTicketFound />
           </div>
-        </div>
+        )}
       </div>
     </div>
   )
