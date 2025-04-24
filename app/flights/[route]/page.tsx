@@ -4,13 +4,13 @@ import { Sort } from "iconsax-react"
 import React, { use, useState } from "react"
 import { FlightFilters } from "@/components/FlightFilters"
 import { FlightSearchHeader } from "@/components/FlightSearchHeader/FlightSearchHeader"
+import NoTicketFound from "@/components/FlightsPage/NoTicketFound"
 import Timeline from "@/components/FlightsPage/price-timeline"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Drawer, DrawerContent, DrawerTrigger } from "@/components/ui/drawer"
 import { getCityByCode } from "@/config/cities"
 import { formatDate } from "@/utils/dateUtils"
 import { FlightResultsList } from "./FlightResultsList"
-import NoTicketFound from "@/components/FlightsPage/NoTicketFound"
 
 type RouteParams = {
   params: Promise<{
@@ -54,22 +54,22 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
   const [filters, setFilters] = React.useState({
     ticketType: {
       charter: true,
-      system: false
+      system: false,
     },
     cabinClass: {
       economy: true,
-      business: false
+      business: false,
     },
     airlines: {
       mahan: false,
       caspian: false,
-      ata: false
+      ata: false,
     },
     agencies: {
       alibaba: false,
       flytoday: false,
-      mrbilit: false
-    }
+      mrbilit: false,
+    },
   })
 
   // Calculate active filters count
@@ -80,12 +80,12 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
 
   // Handler for filter changes
   const updateFilter = (category: string, key: string, value: boolean) => {
-    setFilters(prev => ({
+    setFilters((prev) => ({
       ...prev,
       [category]: {
         ...prev[category as keyof typeof prev],
-        [key]: value
-      }
+        [key]: value,
+      },
     }))
   }
 
@@ -94,7 +94,7 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
       ticketType: { charter: false, system: false },
       cabinClass: { economy: false, business: false },
       airlines: { mahan: false, caspian: false, ata: false },
-      agencies: { alibaba: false, flytoday: false, mrbilit: false }
+      agencies: { alibaba: false, flytoday: false, mrbilit: false },
     })
   }
 
@@ -177,11 +177,9 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
       otherSellersCount: 2,
     },
   ]
-  
-  const sampleFlights1 = [
-    {}
-  ]
-  
+
+  const sampleFlights1 = [{}]
+
   // Sort options
   const sortOptions = [
     { key: "cheapest" as const, label: "ارزان‌ترین" },
@@ -197,25 +195,25 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
   }
 
   // Sort flights based on selected sort key, safely handling empty/incomplete objects
-  const sortedFlights = [...sampleFlights1]
-    .filter(f => f && f.id)
+  const sortedFlights = [...sampleFlights]
+    .filter((f) => f && f.id)
     .sort((a, b) => {
-      const priceA = a.price?.amount || 0;
-      const priceB = b.price?.amount || 0;
-      const depTimeA = a.departureTime || "";
-      const depTimeB = b.departureTime || "";
+      const priceA = a.price?.amount || 0
+      const priceB = b.price?.amount || 0
+      const depTimeA = a.departureTime || ""
+      const depTimeB = b.departureTime || ""
 
       switch (sortKey) {
         case "cheapest":
-          return priceA - priceB;
+          return priceA - priceB
         case "mostExpensive":
-          return priceB - priceA;
+          return priceB - priceA
         case "earliest":
-          return depTimeA.localeCompare(depTimeB);
+          return depTimeA.localeCompare(depTimeB)
         case "latest":
-          return depTimeB.localeCompare(depTimeA);
+          return depTimeB.localeCompare(depTimeA)
         default:
-          return 0;
+          return 0
       }
     })
 
@@ -252,7 +250,9 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
             </div>
 
             <div className="mb-6 hidden flex-row items-start justify-between lg:flex">
-              <p className="text-Gray-N800 hidden text-right text-sm font-semibold lg:block">{sortedFlights.length} نتیجه</p>
+              <p className="text-Gray-N800 hidden text-right text-sm font-semibold lg:block">
+                {sortedFlights.length} نتیجه
+              </p>
 
               {/* desktop sort */}
               <div className="hidden flex-row items-center justify-end gap-3 lg:flex">
@@ -292,14 +292,14 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                       <div className="flex items-center justify-center gap-1">
                         <div className="text-Gray-N600 text-right text-base leading-7 font-semibold">ترتیب نمایش</div>
                       </div>
-                      <div className="flex justify-center items-center gap-1">
-                        <div className="text-Gray-N600 text-right text-base font-semibold leading-7">ترتیب نمایش</div>
+                      <div className="flex items-center justify-center gap-1">
+                        <div className="text-Gray-N600 text-right text-base leading-7 font-semibold">ترتیب نمایش</div>
                       </div>
                       <div className="flex-1"></div>
                     </div>
                   </DialogTitle>
                   {/* Sort Options */}
-                  <div className="bg-Shade-White flex flex-col items-center justify-center self-stretch px-5 overflow-y-auto max-h-[calc(80vh-60px)]">
+                  <div className="bg-Shade-White flex max-h-[calc(80vh-60px)] flex-col items-center justify-center self-stretch overflow-y-auto px-5">
                     {sortOptions.map(({ key, label }) => (
                       <div key={key} className="flex w-full flex-col items-center justify-center gap-4 py-3">
                         <label className="flex w-full cursor-pointer items-center justify-start gap-2">
@@ -344,8 +344,8 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
             </div>
           </>
         ) : (
-          <div className="flex flex-col items-center justify-center container mx-auto max-w-266 p-0 lg:px-4 lg:py-6">
-            <div className="mb-8 max-w-[1010px]">
+          <div className="container mx-auto flex max-w-266 flex-col items-center justify-center p-0 lg:px-4 lg:py-6">
+            <div className="`mb-8 max-w-[1010px]">
               <Timeline
                 originCityCode={originCode || ""}
                 destinationCityCode={destinationCode || ""}
