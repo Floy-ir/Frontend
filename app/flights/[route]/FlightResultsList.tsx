@@ -47,7 +47,7 @@ export function FlightResultsList({ flights }: FlightResultsListProps) {
 
   return (
     <div className="flex flex-col gap-3 md:gap-4 w-full items-center">
-      <div className="w-full max-w-[328px] md:max-w-[738px] flex flex-col gap-3 md:gap-4">
+      <div className="w-full max-w-[328px] sm-md:max-w-[400px] md:max-w-[738px] flex flex-col gap-3 sm-md:gap-4 md:gap-4">
         {flights.map((flight) => (
           <FlightCard
             key={flight.id}

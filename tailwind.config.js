@@ -100,6 +100,9 @@ module.exports = {
       },
       screens:{
         'lg-xl': {'min': '1050px', 'max': '1279px'},
+        'sm-md': {'min': '500px', 'max': '770px'},
+
+
       },
     },
   },

@@ -189,7 +189,7 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
 
   // Get current sort label
   const getCurrentSortLabel = () => {
-    const option = sortOptions.find(option => option.key === sortKey)
+    const option = sortOptions.find((option) => option.key === sortKey)
     return option?.label || "ارزان‌ترین"
   }
 
@@ -210,7 +210,7 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
   })
 
   return (
-    <div className="bg-Gray/N100 flex min-h-screen flex-col mb-8">
+    <div className="bg-Gray/N100 mb-8 flex min-h-screen flex-col">
       {/* Search header */}
       <FlightSearchHeader
         originCity={originCity}
@@ -223,32 +223,65 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
         child={child}
         infant={infant}
       />
-      <div className="bg-Shade-White flex w-full flex-row-reverse items-center justify-center gap-2 px-4 py-3 md:hidden">
-        {/* mobile sort */}
+
+      {/* Main content */}
+      <div className="container mx-auto max-w-266 p-0 lg:px-4 lg:py-6">
+        {/* Timeline component from HEAD branch */}
+        <div className="mb-0 lg:mb-8">
+          <Timeline
+            originCityCode={originCode || ""}
+            destinationCityCode={destinationCode || ""}
+            selectedDate={selectedDate}
+            adult={String(adult)}
+            child={String(child)}
+            infant={String(infant)}
+            autoScrollToSelected={true}
+          />
+        </div>
+
+        <div className="mb-6 hidden flex-row items-start justify-between lg:flex">
+          <p className="text-Gray-N800 hidden text-right text-sm font-semibold lg:block">۳ نتیجه</p>
+
+          {/* desktop sort */}
+          <div className="hidden flex-row items-center justify-end gap-3 lg:flex">
+            {sortOptions.map(({ key, label }) => (
+              <button
+                key={key}
+                onClick={() => setSortKey(key)}
+                className={`flex items-center justify-center gap-1 overflow-hidden rounded-2xl px-3 py-1 outline-2 outline-offset-[-2px] ${
+                  sortKey === key
+                    ? "bg-Primary-P50 text-Primary-P500main outline-Primary-P500main font-semibold"
+                    : "bg-Shade-White text-Gray-N700 outline-Gray-N100 font-medium"
+                }`}
+              >
+                <span className="text-sm leading-normal">{label}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+
+       
+          {/* mobile sort */}
         <Drawer>
           <DrawerTrigger asChild>
-            <div className="bg-Shade-White flex flex-1 items-center justify-center gap-[7px]">
-              <div className="flex items-center justify-start gap-2 py-1">
-                <Sort size="16" color="#1E1E1E" />
-              </div>
-              <div className="flex items-center justify-center gap-1">
+            <div className="bg-Shade-White outline-Gray-N100 m-5 inline-flex items-center justify-center gap-1 rounded-2xl px-3 py-1 outline-2 outline-offset-[-2px] lg:hidden">
+              <Sort size="16" color="#1E1E1E" />
+
+              <div className="flex items-center justify-center gap-2">
+                <div className="text-Gray-N700 text-sm leading-normal font-medium"> مرتب سازی: </div>
                 <div className="text-Gray-N700 text-sm leading-normal font-medium">
-                  {getCurrentSortLabel()}
+                  {sortKey ? getCurrentSortLabel() : " ارزان‌ترین "}
                 </div>
-              </div>
-              <div className="flex items-center justify-start py-1">
-                <ArrowUp2 size="12" color="#1E1E1E" className="rotate-180" />
               </div>
             </div>
           </DrawerTrigger>
-          <DrawerContent className="bg-Shade-White rounded-t-2xl max-h-[80vh]">
-            <div className="inline-flex h-full w-full flex-col items-start justify-start max-h-[80vh]">
-              <DialogTitle className="bg-Shade-White border-Gray-N100 inline-flex items-center justify-center self-stretch border-b px-5 py-4 sticky top-0 z-10">
-                <div className="self-stretch inline-flex justify-center items-center gap-2">
-                  <div className="flex-1 flex justify-start items-center gap-2">
-                    <DrawerClose className="cursor-pointer">
-                      <CloseCircle size="24" color="#334155" variant="Outline" />
-                    </DrawerClose>
+
+          <DrawerContent className="bg-Shade-White rounded-t-2xl">
+            <div className="inline-flex h-full w-full flex-col items-start justify-start">
+              <DialogTitle className="bg-Shade-White border-Gray-N100 inline-flex items-center justify-center self-stretch border-b px-5 py-4">
+                <div className="flex flex-1 items-center justify-center">
+                  <div className="flex items-center justify-center gap-1">
+                    <div className="text-Gray-N600 text-right text-base leading-7 font-semibold">ترتیب نمایش</div>
                   </div>
                   <div className="flex justify-center items-center gap-1">
                     <div className="text-Gray-N600 text-right text-base font-semibold leading-7">ترتیب نمایش</div>
@@ -279,115 +312,8 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
             </div>
           </DrawerContent>
         </Drawer>
-
-        {/* Divider */}
-        <div className="bg-Gray-N200 h-full w-px rounded-[33px]" />
-
-        {/* Filter section */}
-        <Drawer>
-          <DrawerTrigger asChild>
-            <div className="flex flex-1 items-center justify-center gap-[7px] cursor-pointer">
-              <div className="flex items-center justify-start gap-2 py-1">
-                <Setting5 size="16" color="#1E1E1E" />
-              </div>
-              <div className="flex items-center justify-center gap-1">
-                <div className="text-Gray-N700 text-sm leading-normal font-medium">فیلتر‌ها</div>
-                {activeFiltersCount > 0 && (
-                  <div className="size-5 bg-Primary-P50 rounded-[80px] flex justify-center items-center gap-2">
-                    <div className="text-Primary-P500main text-[13px] font-medium leading-normal">
-                      {englishToFarsiNumber(activeFiltersCount)}
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
-          </DrawerTrigger>
-          <DrawerContent className="bg-Shade-White rounded-t-2xl max-h-[80vh]">
-            <div className="inline-flex h-full w-full flex-col items-start justify-start max-h-[80vh]">
-              <DialogTitle className="bg-Shade-White border-Gray-N100 inline-flex items-center self-stretch border-b px-5 py-4 sticky top-0 z-10">
-                <div className="self-stretch inline-flex justify-between items-center w-full gap-2">
-                  <div
-                    className={`text-Primary-P500main text-[13px] font-medium leading-normal cursor-pointer ${activeFiltersCount === 0 ? 'invisible' : ''}`}
-                    onClick={clearFilters}
-                  >
-                    حذف فیلتر‌ها
-                  </div>
-                  
-                  <div className="flex-1 flex justify-center items-center text-center">
-                    <div className="flex justify-center items-center">
-                      <div className="text-Gray-N600 text-center text-base font-semibold leading-7 ml-2">فیلتر‌ها</div>
-                    </div>
-                    {activeFiltersCount > 0 && (
-                      <div className="size-5 bg-Primary-P50 rounded-[80px] flex justify-center items-center gap-2 ">
-                        <div className="text-Primary-P500main text-[13px] font-medium leading-normal">
-                          {englishToFarsiNumber(activeFiltersCount)}
-                        </div>
-                      </div>
-                    )}
-
-                  </div>
-                  
-                  <div className="flex justify-start items-center gap-2">
-                    <DrawerClose className="cursor-pointer">
-                      <CloseCircle size="24" color="#334155" variant="Outline" />
-                    </DrawerClose>
-                  </div>
-                </div>
-              </DialogTitle>
-              <div className="w-full">
-                <div className="max-h-[calc(80vh-60px)] overflow-y-auto">
-                  {/* Active filter chips are now part of the FlightFilters component */}
-                  <FlightFilters
-                    filters={filters}
-                    updateFilter={updateFilter}
-                    clearFilters={clearFilters}
-                    flightTimeRange={flightTimeRange}
-                    setFlightTimeRange={setFlightTimeRange}
-                    priceRange={priceRange}
-                    setPriceRange={setPriceRange}
-                    activeFiltersCount={activeFiltersCount}
-                  />
-                </div>
-              </div>
-            </div>
-          </DrawerContent>
-        </Drawer>
-      </div>
-      {/* Main content */}
-      <div className="container mx-auto max-w-266 p-0 md:px-4 md:py-6">
-        {/* Timeline component from HEAD branch */}
-        <div className="mb-6">
-          <Timeline
-            originCityCode={originCode || ""}
-            destinationCityCode={destinationCode || ""}
-            selectedDate={selectedDate}
-            adult={String(adult)}
-            child={String(child)}
-            infant={String(infant)}
-            autoScrollToSelected={true}
-          />
-        </div>
-
-        <div className="mb-8 flex flex-row items-center justify-between">
-          <p className="text-Gray-N800 text-right text-sm font-semibold">۳ نتیجه</p>
-          {/* desktop sort */}
-          <div className="hidden flex-row items-center justify-end gap-3 md:flex">
-            {sortOptions.map(({ key, label }) => (
-              <button
-                key={key}
-                onClick={() => setSortKey(key)}
-                className={`flex items-center justify-center gap-1 overflow-hidden rounded-2xl px-3 py-1 outline-2 outline-offset-[-2px] ${sortKey === key
-                    ? "bg-Primary-P50 text-Primary-P500main outline-Primary-P500main font-semibold"
-                    : "bg-Shade-White text-Gray-N700 outline-Gray-N100 font-medium"
-                  }`}
-              >
-                <span className="text-sm leading-normal">{label}</span>
-              </button>
-            ))}
-          </div>
-        </div>
-
         <div className="flex flex-row gap-4">
+
           {/* Flight filters sidebar */}
           <div className="hidden lg:block">
             <FlightFilters
