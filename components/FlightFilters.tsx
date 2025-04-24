@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react'
 import Image from 'next/image'
-import { Setting5 } from 'iconsax-react'
+import { Setting5, CloseCircle } from 'iconsax-react'
 import { FancySlider } from "@/components/ui/fancy-slider"
 import { englishToFarsiNumber } from "@/utils/numbers"
 
@@ -135,56 +135,61 @@ const RangeSlider = ({
   )
 }
 
-export function FlightFilters() {
-  const [filters, setFilters] = React.useState({
+export function FlightFilters({ 
+  filters,
+  updateFilter,
+  clearFilters,
+  flightTimeRange,
+  setFlightTimeRange,
+  priceRange,
+  setPriceRange,
+  activeFiltersCount
+}: { 
+  filters: {
     ticketType: {
-      charter: true,
-      system: false
-    },
+      charter: boolean;
+      system: boolean;
+    };
     cabinClass: {
-      economy: true,
-      business: false
-    },
+      economy: boolean;
+      business: boolean;
+    };
     airlines: {
-      mahan: false,
-      caspian: false,
-      ata: false
-    },
+      mahan: boolean;
+      caspian: boolean;
+      ata: boolean;
+    };
     agencies: {
-      alibaba: false,
-      flytoday: false,
-      mrbilit: false
+      alibaba: boolean;
+      flytoday: boolean;
+      mrbilit: boolean;
+    };
+  };
+  updateFilter: (category: string, key: string, value: boolean) => void;
+  clearFilters: () => void;
+  flightTimeRange: [number, number];
+  setFlightTimeRange: (range: [number, number]) => void;
+  priceRange: [number, number];
+  setPriceRange: (range: [number, number]) => void;
+  activeFiltersCount: number;
+}) {
+  // Check if component is rendered in a drawer
+  const [isInDrawer, setIsInDrawer] = useState(false)
+  
+  // Set drawer state on component mount
+  React.useEffect(() => {
+    // Check if parent element has a drawer class or if viewport is small
+    const checkIfInDrawer = () => {
+      const isSmallScreen = window.innerWidth < 1100
+      const parentHasDrawerClass = !!document.querySelector('.drawer-content')?.contains(document.querySelector('.self-stretch.px-5.py-4'))
+      setIsInDrawer(isSmallScreen || parentHasDrawerClass)
     }
-  })
-
-  // Add state for flight time and price ranges
-  const [flightTimeRange, setFlightTimeRange] = useState<[number, number]>([9, 20])
-  const [priceRange, setPriceRange] = useState<[number, number]>([1500000, 3500000])
-
-  const updateFilter = (category: string, key: string, value: boolean) => {
-    setFilters(prev => ({
-      ...prev,
-      [category]: {
-        ...prev[category as keyof typeof prev],
-        [key]: value
-      }
-    }))
-  }
-
-  const clearFilters = () => {
-    setFilters({
-      ticketType: { charter: false, system: false },
-      cabinClass: { economy: false, business: false },
-      airlines: { mahan: false, caspian: false, ata: false },
-      agencies: { alibaba: false, flytoday: false, mrbilit: false }
-    })
-  }
-
-  // Count active filters
-  const activeFiltersCount = Object.values(filters).reduce(
-    (count, category) => count + Object.values(category).filter(Boolean).length,
-    0
-  )
+    
+    checkIfInDrawer()
+    window.addEventListener('resize', checkIfInDrawer)
+    
+    return () => window.removeEventListener('resize', checkIfInDrawer)
+  }, [])
 
   // Format price with commas
   const formatPrice = (price: number) => {
@@ -196,40 +201,156 @@ export function FlightFilters() {
     return englishToFarsiNumber(`${hour.toString().padStart(2, '0')}:00`);
   }
 
+  // Filter chips component
+  const FilterChips = () => {
+    if (activeFiltersCount === 0) return null;
+    
+    return (
+      <div className="self-stretch px-5 py-3 bg-Shade-White border-b border-Gray-N100 inline-flex justify-center items-center gap-3">
+        <div className="flex-1 flex justify-end items-center gap-[7px] flex-wrap">
+          {/* Ticket Type Filters */}
+          {Object.entries(filters.ticketType).map(([key, value]) => 
+            value && (
+              <div key={`ticketType-${key}`} className="px-3 py-1 bg-Shade-White rounded-2xl outline outline-2 outline-offset-[-2px] outline-Gray-N100 flex justify-center items-center gap-1 overflow-hidden">
+                <div className="py-1 flex justify-start items-center gap-2 cursor-pointer" onClick={() => updateFilter('ticketType', key, false)}>
+                  <div className="size-4 relative rounded-[48px] overflow-hidden">
+                    <CloseCircle size="16" color="#94A3B8" />
+                  </div>
+                </div>
+                <div className="flex justify-center items-center gap-1">
+                  <div className="text-Gray-N700 text-sm font-medium leading-normal">
+                    {key === 'charter' ? 'چارتری' : 'سیستمی'}
+                  </div>
+                </div>
+              </div>
+            )
+          )}
+          
+          {/* Cabin Class Filters */}
+          {Object.entries(filters.cabinClass).map(([key, value]) => 
+            value && (
+              <div key={`cabinClass-${key}`} className="px-3 py-1 bg-Shade-White rounded-2xl outline outline-2 outline-offset-[-2px] outline-Gray-N100 flex justify-center items-center gap-1 overflow-hidden">
+                <div className="py-1 flex justify-start items-center gap-2 cursor-pointer" onClick={() => updateFilter('cabinClass', key, false)}>
+                  <div className="size-4 relative rounded-[48px] overflow-hidden">
+                    <CloseCircle size="16" color="#94A3B8" />
+                  </div>
+                </div>
+                <div className="flex justify-center items-center gap-1">
+                  <div className="text-Gray-N700 text-sm font-medium leading-normal">
+                    {key === 'economy' ? 'اکونومی' : 'بیزینس'}
+                  </div>
+                </div>
+              </div>
+            )
+          )}
+          
+          {/* Airlines Filters */}
+          {Object.entries(filters.airlines).map(([key, value]) => 
+            value && (
+              <div key={`airlines-${key}`} className="px-3 py-1 bg-Shade-White rounded-2xl outline outline-2 outline-offset-[-2px] outline-Gray-N100 flex justify-center items-center gap-1 overflow-hidden">
+                <div className="py-1 flex justify-start items-center gap-2 cursor-pointer" onClick={() => updateFilter('airlines', key, false)}>
+                  <div className="size-4 relative rounded-[48px] overflow-hidden">
+                    <CloseCircle size="16" color="#94A3B8" />
+                  </div>
+                </div>
+                <div className="flex justify-center items-center gap-1">
+                  <div className="text-Gray-N700 text-sm font-medium leading-normal">
+                    {key === 'mahan' ? 'ماهان' : key === 'caspian' ? 'کاسپین' : 'آتا'}
+                  </div>
+                </div>
+              </div>
+            )
+          )}
+          
+          {/* Agencies Filters */}
+          {Object.entries(filters.agencies).map(([key, value]) => 
+            value && (
+              <div key={`agencies-${key}`} className="px-3 py-1 bg-Shade-White rounded-2xl outline outline-2 outline-offset-[-2px] outline-Gray-N100 flex justify-center items-center gap-1 overflow-hidden">
+                <div className="py-1 flex justify-start items-center gap-2 cursor-pointer" onClick={() => updateFilter('agencies', key, false)}>
+                  <div className="size-4 relative rounded-[48px] overflow-hidden">
+                    <CloseCircle size="16" color="#94A3B8" />
+                  </div>
+                </div>
+                <div className="flex justify-center items-center gap-1">
+                  <div className="text-Gray-N700 text-sm font-medium leading-normal">
+                    {key === 'alibaba' ? 'علی بابا' : key === 'flytoday' ? 'فلای تودی' : 'مستر بلیط'}
+                  </div>
+                </div>
+              </div>
+            )
+          )}
+          
+          {/* Price Range Filter */}
+          {(priceRange[0] !== 1500000 || priceRange[1] !== 3500000) && (
+            <div className="px-3 py-1 bg-Shade-White rounded-2xl outline outline-2 outline-offset-[-2px] outline-Gray-N100 flex justify-center items-center gap-1 overflow-hidden">
+              <div className="py-1 flex justify-start items-center gap-2 cursor-pointer" onClick={() => setPriceRange([1500000, 3500000])}>
+                <div className="size-4 relative rounded-[48px] overflow-hidden">
+                  <CloseCircle size="16" color="#94A3B8" />
+                </div>
+              </div>
+              <div className="flex justify-center items-center gap-1">
+                <div className="text-Gray-N700 text-sm font-medium leading-normal">
+                  بازه قیمت (تومان): {englishToFarsiNumber(Math.floor(priceRange[0] / 1000))} تا {englishToFarsiNumber(Math.floor(priceRange[1] / 1000))} هزار
+                </div>
+              </div>
+            </div>
+          )}
+          
+          {/* Flight Time Range Filter */}
+          {(flightTimeRange[0] !== 9 || flightTimeRange[1] !== 20) && (
+            <div className="px-3 py-1 bg-Shade-White rounded-2xl outline outline-2 outline-offset-[-2px] outline-Gray-N100 flex justify-center items-center gap-1 overflow-hidden">
+              <div className="py-1 flex justify-start items-center gap-2 cursor-pointer" onClick={() => setFlightTimeRange([9, 20])}>
+                <div className="size-4 relative rounded-[48px] overflow-hidden">
+                  <CloseCircle size="16" color="#94A3B8" />
+                </div>
+              </div>
+              <div className="flex justify-center items-center gap-1">
+                <div className="text-Gray-N700 text-sm font-medium leading-normal">
+                  ساعت پرواز: {englishToFarsiNumber(flightTimeRange[0])} تا {englishToFarsiNumber(flightTimeRange[1])}
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  };
+
   return (
-    <div className="w-[305px] rounded-2xl outline-1 outline-offset-[-1px] outline-Gray-N200 inline-flex flex-col justify-start items-start overflow-hidden">
-      {/* Header */}
-      <div className="self-stretch h-[68px] px-5 py-3 bg-Shade-White border-b border-Gray-N100 inline-flex justify-center items-center gap-3">
-        <div className="flex-1 flex justify-between items-center gap-[7px]">
-          <div className="flex justify-center items-center gap-1">
-            <div className="py-1 flex justify-start items-center gap-2">
-              <Setting5 color="#334155" size={16} className="text-Gray-N700" />
+    <div className={`${isInDrawer ? 'w-full' : 'w-[305px] outline-1 outline-offset-[-1px] outline-Gray-N200'} rounded-2xl inline-flex flex-col justify-start items-start overflow-hidden`}>
+      {/* Header - hide in drawer since drawer already has a header */}
+      {!isInDrawer && (
+        <div className="self-stretch h-[68px] px-5 py-3 bg-Shade-White border-b border-Gray-N100 inline-flex justify-center items-center gap-3">
+          <div className="flex-1 flex justify-between items-center gap-[7px]">
+            <div className="flex justify-center items-center gap-1">
+              <div className="py-1 flex justify-start items-center gap-2">
+                <Setting5 color="#334155" size={16} className="text-Gray-N700" />
+              </div>
+              <div className="text-right text-Gray-N600 text-base font-semibold  leading-7">
+                فیلتر‌ها
+              </div>
+              {activeFiltersCount > 0 && (
+                <div className="size-5 bg-Primary-P50 rounded-[80px] flex justify-center items-center gap-2">
+                  <div className="text-Primary-P500main text-[13px] font-medium  leading-normal">
+                    {englishToFarsiNumber(activeFiltersCount)}
+                  </div>
+                </div>
+              )}
             </div>
-            <div className="text-right text-Gray-N600 text-base font-semibold  leading-7">
-              فیلتر‌ها
-            </div>
+
             {activeFiltersCount > 0 && (
-              <div className="size-5 bg-Primary-P50 rounded-[80px] flex justify-center items-center gap-2">
+              <div className=" h-5 rounded-[80px] cursor-pointer" onClick={clearFilters}>
                 <div className="text-Primary-P500main text-[13px] font-medium  leading-normal">
-                  {englishToFarsiNumber(activeFiltersCount)}
+                  حذف فیلتر‌ها
                 </div>
               </div>
             )}
           </div>
-
-
-
-          {activeFiltersCount > 0 && (
-            <div className=" h-5 rounded-[80px] cursor-pointer" onClick={clearFilters}>
-              <div className="text-Primary-P500main text-[13px] font-medium  leading-normal">
-                حذف فیلتر‌ها
-              </div>
-            </div>
-          )}
-
-
         </div>
-      </div>
+      )}
+
+      {/* Filter chips */}
+      {isInDrawer && <FilterChips />}
 
       {/* Filter sections */}
       <div className="self-stretch px-5 py-4 bg-Shade-White flex flex-col justify-center items-center gap-3">

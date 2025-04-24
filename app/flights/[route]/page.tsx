@@ -1,15 +1,16 @@
 "use client"
-import { Drawer, DrawerContent, DrawerTrigger } from "@/components/ui/drawer"
+import { Drawer, DrawerContent, DrawerTrigger, DrawerClose } from "@/components/ui/drawer"
 import { Checkbox } from "@/components/ui/checkbox"
 import React, { useState, use } from "react"
 import { getCityByCode } from "@/config/cities"
 import { formatDate } from "@/utils/dateUtils"
+import { englishToFarsiNumber } from "@/utils/numbers"
 import { FlightSearchHeader } from "@/components/FlightSearchHeader/FlightSearchHeader"
 import { FlightResultsList } from "./FlightResultsList"
 import { Button } from "@/components/ui/button"
 import { FlightFilters } from "@/components/FlightFilters"
 import Timeline from "@/components/FlightsPage/price-timeline"
-import { ArrowUp2, Sort } from "iconsax-react"
+import { ArrowUp2, Sort, Setting5, CloseCircle } from "iconsax-react"
 import { DialogTitle } from "@radix-ui/react-dialog"
 
 type RouteParams = {
@@ -49,6 +50,58 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
 
   // State for sorting
   const [sortKey, setSortKey] = React.useState<"cheapest" | "mostExpensive" | "earliest" | "latest">("cheapest")
+
+  // Shared filters state
+  const [filters, setFilters] = React.useState({
+    ticketType: {
+      charter: true,
+      system: false
+    },
+    cabinClass: {
+      economy: true,
+      business: false
+    },
+    airlines: {
+      mahan: false,
+      caspian: false,
+      ata: false
+    },
+    agencies: {
+      alibaba: false,
+      flytoday: false,
+      mrbilit: false
+    }
+  })
+
+  // Calculate active filters count
+  const activeFiltersCount = Object.values(filters).reduce(
+    (count, category) => count + Object.values(category).filter(Boolean).length,
+    0
+  )
+
+  // Handler for filter changes
+  const updateFilter = (category: string, key: string, value: boolean) => {
+    setFilters(prev => ({
+      ...prev,
+      [category]: {
+        ...prev[category as keyof typeof prev],
+        [key]: value
+      }
+    }))
+  }
+
+  const clearFilters = () => {
+    setFilters({
+      ticketType: { charter: false, system: false },
+      cabinClass: { economy: false, business: false },
+      airlines: { mahan: false, caspian: false, ata: false },
+      agencies: { alibaba: false, flytoday: false, mrbilit: false }
+    })
+  }
+
+  // Flight time and price ranges
+  const [flightTimeRange, setFlightTimeRange] = useState<[number, number]>([9, 20])
+  const [priceRange, setPriceRange] = useState<[number, number]>([1500000, 3500000])
 
   // Sample flight data for demonstration
   const sampleFlights = [
@@ -172,9 +225,9 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
       />
 
       {/* Main content */}
-      <div className="container mx-auto max-w-266 p-0 md:px-4 md:py-6">
+      <div className="container mx-auto max-w-266 p-0 lg:px-4 lg:py-6">
         {/* Timeline component from HEAD branch */}
-        <div className="mb-0 md:mb-8">
+        <div className="mb-0 lg:mb-8">
           <Timeline
             originCityCode={originCode || ""}
             destinationCityCode={destinationCode || ""}
@@ -186,11 +239,11 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
           />
         </div>
 
-        <div className="mb-6 hidden flex-row items-start justify-between md:flex">
-          <p className="text-Gray-N800 hidden text-right text-sm font-semibold md:block">۳ نتیجه</p>
+        <div className="mb-6 hidden flex-row items-start justify-between lg:flex">
+          <p className="text-Gray-N800 hidden text-right text-sm font-semibold lg:block">۳ نتیجه</p>
 
           {/* desktop sort */}
-          <div className="hidden flex-row items-center justify-end gap-3 md:flex">
+          <div className="hidden flex-row items-center justify-end gap-3 lg:flex">
             {sortOptions.map(({ key, label }) => (
               <button
                 key={key}
@@ -207,15 +260,17 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
           </div>
         </div>
 
-        {/* mobile sort */}
+       <div className="flex flex-col items-center">
+          {/* mobile sort */}
+          <div className="w-2/3 items-start">
         <Drawer>
           <DrawerTrigger asChild>
-            <div className="bg-Shade-White outline-Gray-N100 m-5 inline-flex items-center justify-center gap-1 rounded-2xl px-3 py-1 outline-2 outline-offset-[-2px] md:hidden">
+            <div className="bg-Shade-White w-45 outline-Gray-N100 m-5  inline-flex items-center justify-center gap-1 rounded-2xl px-3 py-1 outline-2 outline-offset-[-2px] lg:hidden">
               <Sort size="16" color="#1E1E1E" />
 
               <div className="flex items-center justify-center gap-2">
-                <div className="text-Gray-N700 text-sm leading-normal font-medium"> مرتب سازی: </div>
-                <div className="text-Gray-N700 text-sm leading-normal font-medium">
+                <div className="text-Gray-N700 text-sm leading-normal font-medium shrink-0"> مرتب سازی: </div>
+                <div className="text-Gray-N700 text-sm leading-normal font-medium shrink-0">
                   {sortKey ? getCurrentSortLabel() : " ارزان‌ترین "}
                 </div>
               </div>
@@ -229,10 +284,14 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                   <div className="flex items-center justify-center gap-1">
                     <div className="text-Gray-N600 text-right text-base leading-7 font-semibold">ترتیب نمایش</div>
                   </div>
+                  <div className="flex justify-center items-center gap-1">
+                    <div className="text-Gray-N600 text-right text-base font-semibold leading-7">ترتیب نمایش</div>
+                  </div>
+                  <div className="flex-1"></div>
                 </div>
               </DialogTitle>
               {/* Sort Options */}
-              <div className="bg-Shade-White flex flex-col items-center justify-center self-stretch px-5">
+              <div className="bg-Shade-White flex flex-col items-center justify-center self-stretch px-5 overflow-y-auto max-h-[calc(80vh-60px)]">
                 {sortOptions.map(({ key, label }) => (
                   <div key={key} className="flex w-full flex-col items-center justify-center gap-4 py-3">
                     <label className="flex w-full cursor-pointer items-center justify-start gap-2">
@@ -254,17 +313,29 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
             </div>
           </DrawerContent>
         </Drawer>
-
+        </div>
+        
         <div className="flex flex-row gap-4">
+
           {/* Flight filters sidebar */}
-          <div className="hidden md:block">
-            <FlightFilters />
+          <div className="hidden lg:block">
+            <FlightFilters
+              filters={filters}
+              updateFilter={updateFilter}
+              clearFilters={clearFilters}
+              flightTimeRange={flightTimeRange}
+              setFlightTimeRange={setFlightTimeRange}
+              priceRange={priceRange}
+              setPriceRange={setPriceRange}
+              activeFiltersCount={activeFiltersCount}
+            />
           </div>
 
           {/* Flight results list */}
           <div className="flex-1">
             <FlightResultsList flights={sortedFlights} />
           </div>
+        </div>
         </div>
       </div>
     </div>
