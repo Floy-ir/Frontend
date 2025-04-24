@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { SearchNormal } from "iconsax-react"
 import { Button } from "@/components/Button/Button"
@@ -64,9 +64,19 @@ export function FlightSearchHeader({
     child: child || 0,
     infant: infant || 0,
   }
-
-  const isDesktop = typeof window !== "undefined" && window.innerWidth >= 768
-
+  const [isDesktop, setIsDesktop] = useState(false)
+  
+  useEffect(() => {
+    const handleResize = () => {
+      setIsDesktop(window.innerWidth >= 768)
+    }
+  
+    handleResize() // Run once on mount
+    window.addEventListener("resize", handleResize)
+  
+    return () => window.removeEventListener("resize", handleResize)
+  }, [])
+  console.log("FLIGHTS PAGE VERSION")
   return (
     <AnimatePresence mode="wait">
       {!showSearchForm ? (
@@ -171,6 +181,8 @@ export function FlightSearchHeader({
                 initialDestination={destinationFullName}
                 initialDepartureDate={parsedDate}
                 initialPassengers={initialPassengers}
+              contextPage="flights"
+
               />
             </div>
           </div>
@@ -184,6 +196,7 @@ export function FlightSearchHeader({
               initialDestination={destinationFullName}
               initialDepartureDate={parsedDate}
               initialPassengers={initialPassengers}
+              contextPage="flights"
             />
           </div>
         </div>

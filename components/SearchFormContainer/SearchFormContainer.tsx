@@ -44,7 +44,7 @@ export function SearchFormContainer() {
           </button>
         </div>
       </div>
-      <FlightSearchForm />
+      <FlightSearchForm contextPage = "landing"/>
     </div>
   )
 }

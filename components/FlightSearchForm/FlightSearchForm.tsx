@@ -1,13 +1,13 @@
 "use client"
 
-import React, { useState } from "react"
-import { ArrowSwapHorizontal, Add, ArrowRight, CloseCircle, ArrowUp, ArrowUp2 } from "iconsax-react"
+import { Add, ArrowRight, ArrowSwapHorizontal, ArrowUp2 } from "iconsax-react"
 import { useRouter } from "next/navigation"
+import React, { useState } from "react"
 
-import { ComboboxSelect } from "@/components/ComboboxSelect/ComboboxSelect"
 import { Button } from "@/components/Button/Button"
+import { ComboboxSelect } from "@/components/ComboboxSelect/ComboboxSelect"
 import { DatePicker } from "@/components/DatePicker/DatePicker"
-import { PassengerSelector, PassengerCount } from "@/components/PassengerSelector/PassengerSelector"
+import { PassengerCount, PassengerSelector } from "@/components/PassengerSelector/PassengerSelector"
 import { getCityByName, getCityOptions } from "@/config/cities"
 import { useStoredCities } from "@/hooks/useStoredCities"
 import { formatDate } from "@/utils/dateUtils"
@@ -20,6 +20,7 @@ type FlightSearchFormProps = {
   initialPassengers?: PassengerCount
   onClose?: () => void
   className?: string
+  contextPage?: "landing" | "flights"
 }
 
 export function FlightSearchForm({
@@ -29,6 +30,7 @@ export function FlightSearchForm({
   initialPassengers = { adult: 1, child: 0, infant: 0 },
   onClose,
   className = "",
+  contextPage,
 }: FlightSearchFormProps) {
   const router = useRouter()
   const [origin, setOrigin] = useState(initialOrigin)
@@ -107,28 +109,26 @@ export function FlightSearchForm({
     router.push(createFlightSearchUrl(originCity.code, destinationCity.code, departureDate, passengers))
   }
 
-  return (
-    <div className="flex flex-col w-full m-0 items-center">
-      <div className="relative flex h-full flex-col items-center w-full lg:flex-row lg:justify-center lg:px-30">
+  console.log(contextPage)
 
-        <div className={`flex w-full flex-col items-start gap-4 lg:flex-row lg:items-center lg:gap-6  ${className}`}>
+  return (
+    <div className="m-0 flex w-full flex-col items-center">
+      <div
+        className={`relative flex h-full w-full flex-col items-center lg:flex-row lg:justify-center ${
+          contextPage == "flights" ? "px-0 lg:px-30" : ""
+        }`}
+      >
+        <div className={`flex w-full flex-col items-start gap-4 lg:flex-row lg:items-center lg:gap-6 ${className}`}>
           {/* mobile title and Arrow */}
-          <div className="mx-4 flex w-full items-center justify-start gap-4 md:hidden">
+          <div
+            className={`mx-4 w-full items-center justify-start gap-4 ${
+              contextPage == "flights" ? "flex md:hidden" : "hidden"
+            }`}
+          >
             <ArrowRight size="24" color="#748297" onClick={onClose} className="cursor-pointer" />
             <div className="text-Gray-N600 text-sm leading-normal font-semibold">تغییر جستجو</div>
           </div>
-          <div className="bg-Gray-N200 block h-px w-full md:hidden"></div>
-          {/* close icon */}
-          {/* <ArrowRight
-            size="24"
-            color="#748297"
-            onClick={onClose}
-            className="mx-4 hidden cursor-pointer md:block lg:hidden"
-          /> */}
-
-          {/* <div className="absolute md:left-[16px] lg:hidden hidden md:block flex-row">
-          <CloseCircle size="27" color="#748297" onClick={onClose} className="cursor-pointer" />
-        </div> */}
+          <div className={`bg-Gray-N200 h-px w-full ${contextPage == "flights" ? "block md:hidden" : "hidden"}`}></div>
 
           {/* Form Fields */}
           <div className="mt-4 flex w-full flex-col items-start gap-1 px-4 lg:mt-0 lg:flex-row lg:items-center lg:gap-6 lg:px-0">
@@ -314,12 +314,19 @@ export function FlightSearchForm({
           </Button>
         </div>
       </div>
-      
-      <div className="bg-Gray-N100 my-2 h-px w-full hidden md:flex md:mt-5"></div>
-        <Button intent="text" size="medium" className="-mb-4  hidden md:flex" onClick={onClose} leftIcon={<ArrowUp2 size="24" color="#5A28EE" />}>
-          بستن
-        </Button>
 
+      {/* <div
+        className={`bg-Gray-N100 my-2 h-px w-full md:mt-5 ${contextPage == "flights" ? "hidden md:block" : "hidden"}`}
+      ></div> */}
+      <Button
+        intent="text"
+        size="medium"
+        className={`-mb-5 -mt-1 ${contextPage == "flights" ? "hidden md:block" : "hidden"}`}
+        onClick={onClose}
+        leftIcon={<ArrowUp2 size="20" color="#5A28EE" />}
+      >
+        بستن
+      </Button>
     </div>
   )
 }
