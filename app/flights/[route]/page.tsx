@@ -4,12 +4,13 @@ import { Checkbox } from "@/components/ui/checkbox"
 import React, { useState, use } from "react"
 import { getCityByCode } from "@/config/cities"
 import { formatDate } from "@/utils/dateUtils"
+import { englishToFarsiNumber } from "@/utils/numbers"
 import { FlightSearchHeader } from "@/components/FlightSearchHeader/FlightSearchHeader"
 import { FlightResultsList } from "./FlightResultsList"
 import { Button } from "@/components/ui/button"
 import { FlightFilters } from "@/components/FlightFilters"
 import Timeline from "@/components/FlightsPage/price-timeline"
-import { ArrowUp2, Sort } from "iconsax-react"
+import { ArrowUp2, Sort, Setting5 } from "iconsax-react"
 import { DialogTitle } from "@radix-ui/react-dialog"
 
 type RouteParams = {
@@ -49,6 +50,9 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
 
   // State for sorting
   const [sortKey, setSortKey] = React.useState<"cheapest" | "mostExpensive" | "earliest" | "latest">("cheapest")
+  
+  // State to track active filters
+  const [activeFiltersCount, setActiveFiltersCount] = React.useState(0)
 
   // Sample flight data for demonstration
   const sampleFlights = [
@@ -198,7 +202,7 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                 </div>
               </DialogTitle>
               {/* Sort Options */}
-              <div className="bg-Shade-White flex flex-col items-center justify-center self-stretch px-5">
+              <div className="bg-Shade-White flex flex-col items-center justify-center self-stretch px-5 overflow-y-auto max-h-[calc(80vh-60px)]">
                 {sortOptions.map(({ key, label }) => (
                   <div key={key} className="flex w-full flex-col items-center justify-center gap-4 py-3">
                     <label className="flex w-full cursor-pointer items-center justify-start gap-2">
@@ -225,7 +229,46 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
         <div className="bg-Gray-N200 h-full w-px rounded-[33px]" />
 
         {/* Filter section */}
-        <div className="flex flex-1 items-center justify-center gap-[7px]">فیلتر‌ها</div>
+        <Drawer>
+          <DrawerTrigger asChild>
+            <div className="flex flex-1 items-center justify-center gap-[7px] cursor-pointer">
+              <div className="flex items-center justify-start gap-2 py-1">
+                <Setting5 size="16" color="#1E1E1E" />
+              </div>
+              <div className="flex items-center justify-center gap-1">
+                <div className="text-Gray-N700 text-sm leading-normal font-medium">فیلتر‌ها</div>
+                {activeFiltersCount > 0 && (
+                  <div className="size-5 bg-Primary-P50 rounded-[80px] flex justify-center items-center gap-2">
+                    <div className="text-Primary-P500main text-[13px] font-medium leading-normal">
+                      {englishToFarsiNumber(activeFiltersCount)}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          </DrawerTrigger>
+          <DrawerContent className="bg-Shade-White rounded-t-2xl max-h-[80vh]">
+            <div className="inline-flex h-full w-full flex-col items-start justify-start max-h-[80vh]">
+              <DialogTitle className="bg-Shade-White border-Gray-N100 inline-flex items-center justify-center self-stretch border-b px-5 py-4 sticky top-0 z-10">
+                <div className="flex flex-1 items-center justify-center">
+                  <div className="flex items-center justify-center gap-1">
+                    <div className="text-Gray-N600 text-right text-base leading-7 font-semibold">فیلتر‌ها</div>
+                    {activeFiltersCount > 0 && (
+                      <div className="size-5 bg-Primary-P50 rounded-[80px] flex justify-center items-center gap-2">
+                        <div className="text-Primary-P500main text-[13px] font-medium leading-normal">
+                          {englishToFarsiNumber(activeFiltersCount)}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </DialogTitle>
+              <div className="w-full">
+                <FlightFilters onFilterChange={count => setActiveFiltersCount(count)} />
+              </div>
+            </div>
+          </DrawerContent>
+        </Drawer>
       </div>
       {/* Main content */}
       <div className="container mx-auto max-w-266 p-0 md:px-4 md:py-6">
@@ -264,8 +307,8 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
 
         <div className="flex flex-row gap-4">
           {/* Flight filters sidebar */}
-          <div className="hidden md:block">
-            <FlightFilters />
+          <div className="hidden lg:block">
+            <FlightFilters onFilterChange={count => setActiveFiltersCount(count)} />
           </div>
 
           {/* Flight results list */}

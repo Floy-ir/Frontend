@@ -135,7 +135,7 @@ const RangeSlider = ({
   )
 }
 
-export function FlightFilters() {
+export function FlightFilters({ onFilterChange }: { onFilterChange?: (count: number) => void }) {
   const [filters, setFilters] = React.useState({
     ticketType: {
       charter: true,
@@ -160,6 +160,24 @@ export function FlightFilters() {
   // Add state for flight time and price ranges
   const [flightTimeRange, setFlightTimeRange] = useState<[number, number]>([9, 20])
   const [priceRange, setPriceRange] = useState<[number, number]>([1500000, 3500000])
+  
+  // Check if component is rendered in a drawer
+  const [isInDrawer, setIsInDrawer] = useState(false)
+  
+  // Set drawer state on component mount
+  React.useEffect(() => {
+    // Check if parent element has a drawer class or if viewport is small
+    const checkIfInDrawer = () => {
+      const isSmallScreen = window.innerWidth < 1100
+      const parentHasDrawerClass = !!document.querySelector('.drawer-content')?.contains(document.querySelector('.self-stretch.px-5.py-4'))
+      setIsInDrawer(isSmallScreen || parentHasDrawerClass)
+    }
+    
+    checkIfInDrawer()
+    window.addEventListener('resize', checkIfInDrawer)
+    
+    return () => window.removeEventListener('resize', checkIfInDrawer)
+  }, [])
 
   const updateFilter = (category: string, key: string, value: boolean) => {
     setFilters(prev => ({
@@ -186,6 +204,11 @@ export function FlightFilters() {
     0
   )
 
+  // Report filter count changes to parent
+  React.useEffect(() => {
+    onFilterChange?.(activeFiltersCount)
+  }, [activeFiltersCount, onFilterChange])
+
   // Format price with commas
   const formatPrice = (price: number) => {
     return englishToFarsiNumber(price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
@@ -197,39 +220,37 @@ export function FlightFilters() {
   }
 
   return (
-    <div className="w-[305px] rounded-2xl outline-1 outline-offset-[-1px] outline-Gray-N200 inline-flex flex-col justify-start items-start overflow-hidden">
-      {/* Header */}
-      <div className="self-stretch h-[68px] px-5 py-3 bg-Shade-White border-b border-Gray-N100 inline-flex justify-center items-center gap-3">
-        <div className="flex-1 flex justify-between items-center gap-[7px]">
-          <div className="flex justify-center items-center gap-1">
-            <div className="py-1 flex justify-start items-center gap-2">
-              <Setting5 color="#334155" size={16} className="text-Gray-N700" />
+    <div className={`${isInDrawer ? 'w-full max-h-[calc(80vh-60px)] overflow-y-auto' : 'w-[305px]'} rounded-2xl outline-1 outline-offset-[-1px] outline-Gray-N200 inline-flex flex-col justify-start items-start overflow-hidden`}>
+      {/* Header - hide in drawer since drawer already has a header */}
+      {!isInDrawer && (
+        <div className="self-stretch h-[68px] px-5 py-3 bg-Shade-White border-b border-Gray-N100 inline-flex justify-center items-center gap-3">
+          <div className="flex-1 flex justify-between items-center gap-[7px]">
+            <div className="flex justify-center items-center gap-1">
+              <div className="py-1 flex justify-start items-center gap-2">
+                <Setting5 color="#334155" size={16} className="text-Gray-N700" />
+              </div>
+              <div className="text-right text-Gray-N600 text-base font-semibold  leading-7">
+                فیلتر‌ها
+              </div>
+              {activeFiltersCount > 0 && (
+                <div className="size-5 bg-Primary-P50 rounded-[80px] flex justify-center items-center gap-2">
+                  <div className="text-Primary-P500main text-[13px] font-medium  leading-normal">
+                    {englishToFarsiNumber(activeFiltersCount)}
+                  </div>
+                </div>
+              )}
             </div>
-            <div className="text-right text-Gray-N600 text-base font-semibold  leading-7">
-              فیلتر‌ها
-            </div>
+
             {activeFiltersCount > 0 && (
-              <div className="size-5 bg-Primary-P50 rounded-[80px] flex justify-center items-center gap-2">
+              <div className=" h-5 rounded-[80px] cursor-pointer" onClick={clearFilters}>
                 <div className="text-Primary-P500main text-[13px] font-medium  leading-normal">
-                  {englishToFarsiNumber(activeFiltersCount)}
+                  حذف فیلتر‌ها
                 </div>
               </div>
             )}
           </div>
-
-
-
-          {activeFiltersCount > 0 && (
-            <div className=" h-5 rounded-[80px] cursor-pointer" onClick={clearFilters}>
-              <div className="text-Primary-P500main text-[13px] font-medium  leading-normal">
-                حذف فیلتر‌ها
-              </div>
-            </div>
-          )}
-
-
         </div>
-      </div>
+      )}
 
       {/* Filter sections */}
       <div className="self-stretch px-5 py-4 bg-Shade-White flex flex-col justify-center items-center gap-3">
