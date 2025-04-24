@@ -1,5 +1,5 @@
 "use client"
-import { Drawer, DrawerContent, DrawerTrigger } from "@/components/ui/drawer"
+import { Drawer, DrawerContent, DrawerTrigger, DrawerClose } from "@/components/ui/drawer"
 import { Checkbox } from "@/components/ui/checkbox"
 import React, { useState, use } from "react"
 import { getCityByCode } from "@/config/cities"
@@ -10,7 +10,7 @@ import { FlightResultsList } from "./FlightResultsList"
 import { Button } from "@/components/ui/button"
 import { FlightFilters } from "@/components/FlightFilters"
 import Timeline from "@/components/FlightsPage/price-timeline"
-import { ArrowUp2, Sort, Setting5 } from "iconsax-react"
+import { ArrowUp2, Sort, Setting5, CloseCircle } from "iconsax-react"
 import { DialogTitle } from "@radix-ui/react-dialog"
 
 type RouteParams = {
@@ -30,10 +30,10 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
   const unwrappedParams = use(params)
   // Unwrap searchParams Promise using React.use()
   const unwrappedSearchParams = use(searchParams)
-  
+
   // Parse route from URL (format: THR-MHD)
   const [originCode, destinationCode] = unwrappedParams.route.split("-")
-  
+
   // Get city names from codes
   const originCity = getCityByCode(originCode || "")?.label || originCode || ""
   const destinationCity = getCityByCode(destinationCode || "")?.label || destinationCode || ""
@@ -50,7 +50,7 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
 
   // State for sorting
   const [sortKey, setSortKey] = React.useState<"cheapest" | "mostExpensive" | "earliest" | "latest">("cheapest")
-  
+
   // Shared filters state
   const [filters, setFilters] = React.useState({
     ticketType: {
@@ -72,13 +72,13 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
       mrbilit: false
     }
   })
-  
+
   // Calculate active filters count
   const activeFiltersCount = Object.values(filters).reduce(
     (count, category) => count + Object.values(category).filter(Boolean).length,
     0
   )
-  
+
   // Handler for filter changes
   const updateFilter = (category: string, key: string, value: boolean) => {
     setFilters(prev => ({
@@ -89,7 +89,7 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
       }
     }))
   }
-  
+
   const clearFilters = () => {
     setFilters({
       ticketType: { charter: false, system: false },
@@ -98,7 +98,7 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
       agencies: { alibaba: false, flytoday: false, mrbilit: false }
     })
   }
-  
+
   // Flight time and price ranges
   const [flightTimeRange, setFlightTimeRange] = useState<[number, number]>([9, 20])
   const [priceRange, setPriceRange] = useState<[number, number]>([1500000, 3500000])
@@ -241,13 +241,19 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
               </div>
             </div>
           </DrawerTrigger>
-          <DrawerContent className="bg-Shade-White rounded-t-2xl">
-            <div className="inline-flex h-full w-full flex-col items-start justify-start">
-              <DialogTitle className="bg-Shade-White border-Gray-N100 inline-flex items-center justify-center self-stretch border-b px-5 py-4">
-                <div className="flex flex-1 items-center justify-center">
-                  <div className="flex items-center justify-center gap-1">
-                    <div className="text-Gray-N600 text-right text-base leading-7 font-semibold">ترتیب نمایش</div>
+          <DrawerContent className="bg-Shade-White rounded-t-2xl max-h-[80vh]">
+            <div className="inline-flex h-full w-full flex-col items-start justify-start max-h-[80vh]">
+              <DialogTitle className="bg-Shade-White border-Gray-N100 inline-flex items-center justify-center self-stretch border-b px-5 py-4 sticky top-0 z-10">
+                <div className="self-stretch inline-flex justify-center items-center gap-2">
+                  <div className="flex-1 flex justify-start items-center gap-2">
+                    <DrawerClose className="cursor-pointer">
+                      <CloseCircle size="24" color="#334155" variant="Outline" />
+                    </DrawerClose>
                   </div>
+                  <div className="flex justify-center items-center gap-1">
+                    <div className="text-Gray-N600 text-right text-base font-semibold leading-7">ترتیب نمایش</div>
+                  </div>
+                  <div className="flex-1"></div>
                 </div>
               </DialogTitle>
               {/* Sort Options */}
@@ -298,22 +304,38 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
           </DrawerTrigger>
           <DrawerContent className="bg-Shade-White rounded-t-2xl max-h-[80vh]">
             <div className="inline-flex h-full w-full flex-col items-start justify-start max-h-[80vh]">
-              <DialogTitle className="bg-Shade-White border-Gray-N100 inline-flex items-center justify-center self-stretch border-b px-5 py-4 sticky top-0 z-10">
-                <div className="flex flex-1 items-center justify-center">
-                  <div className="flex items-center justify-center gap-1">
-                    <div className="text-Gray-N600 text-right text-base leading-7 font-semibold">فیلتر‌ها</div>
+              <DialogTitle className="bg-Shade-White border-Gray-N100 inline-flex items-center self-stretch border-b px-5 py-4 sticky top-0 z-10">
+                <div className="self-stretch inline-flex justify-between items-center w-full gap-2">
+                  <div
+                    className={`text-Primary-P500main text-[13px] font-medium leading-normal cursor-pointer ${activeFiltersCount === 0 ? 'invisible' : ''}`}
+                    onClick={clearFilters}
+                  >
+                    حذف فیلتر‌ها
+                  </div>
+                  
+                  <div className="flex-1 flex justify-center items-center text-center">
+                    <div className="flex justify-center items-center">
+                      <div className="text-Gray-N600 text-center text-base font-semibold leading-7 ml-2">فیلتر‌ها</div>
+                    </div>
                     {activeFiltersCount > 0 && (
-                      <div className="size-5 bg-Primary-P50 rounded-[80px] flex justify-center items-center gap-2">
+                      <div className="size-5 bg-Primary-P50 rounded-[80px] flex justify-center items-center gap-2 ">
                         <div className="text-Primary-P500main text-[13px] font-medium leading-normal">
                           {englishToFarsiNumber(activeFiltersCount)}
                         </div>
                       </div>
                     )}
+
+                  </div>
+                  
+                  <div className="flex justify-start items-center gap-2">
+                    <DrawerClose className="cursor-pointer">
+                      <CloseCircle size="24" color="#334155" variant="Outline" />
+                    </DrawerClose>
                   </div>
                 </div>
               </DialogTitle>
               <div className="w-full">
-                <FlightFilters 
+                <FlightFilters
                   filters={filters}
                   updateFilter={updateFilter}
                   clearFilters={clearFilters}
@@ -351,11 +373,10 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
               <button
                 key={key}
                 onClick={() => setSortKey(key)}
-                className={`flex items-center justify-center gap-1 overflow-hidden rounded-2xl px-3 py-1 outline-2 outline-offset-[-2px] ${
-                  sortKey === key
+                className={`flex items-center justify-center gap-1 overflow-hidden rounded-2xl px-3 py-1 outline-2 outline-offset-[-2px] ${sortKey === key
                     ? "bg-Primary-P50 text-Primary-P500main outline-Primary-P500main font-semibold"
                     : "bg-Shade-White text-Gray-N700 outline-Gray-N100 font-medium"
-                }`}
+                  }`}
               >
                 <span className="text-sm leading-normal">{label}</span>
               </button>
@@ -366,7 +387,7 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
         <div className="flex flex-row gap-4">
           {/* Flight filters sidebar */}
           <div className="hidden lg:block">
-            <FlightFilters 
+            <FlightFilters
               filters={filters}
               updateFilter={updateFilter}
               clearFilters={clearFilters}
