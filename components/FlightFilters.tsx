@@ -7,7 +7,7 @@ import { FancySlider } from "@/components/ui/fancy-slider"
 import { englishToFarsiNumber } from "@/utils/numbers"
 
 // Filter section with expandable header
-const FilterSection = ({ title, children, count = 0, isOpen = true }: { title: string, children: React.ReactNode, count?: number, isOpen?: boolean }) => {
+const FilterSection = ({ title, children, count = 0, isOpen = true, isLast = false }: { title: string, children: React.ReactNode, count?: number, isOpen?: boolean, isLast?: boolean }) => {
   const [expanded, setExpanded] = React.useState(isOpen)
 
   return (
@@ -41,7 +41,7 @@ const FilterSection = ({ title, children, count = 0, isOpen = true }: { title: s
 
       {expanded && children}
 
-      <div className="self-stretch h-px bg-Gray-N100" />
+      {!isLast && <div className="self-stretch h-px bg-Gray-N100" />}
     </div>
   )
 }
@@ -61,23 +61,6 @@ const FilterCheckbox = ({
   extraText?: string;
 }) => (
   <div className="self-stretch inline-flex justify-end items-center gap-2">
-    {extraText && (
-      <div className="text-right text-Gray-N500 text-[13px] font-normal  leading-none">
-        {extraText}
-      </div>
-    )}
-    <div className="flex-1 inline-flex flex-col justify-start items-end gap-1">
-      <div className="self-stretch text-right text-Gray-N700 text-sm font-medium  leading-normal">
-        {label}
-      </div>
-    </div>
-    {logo && (
-      <div className="self-stretch flex justify-start items-center gap-2">
-        <div className="size-8 p-2 rounded-[48px] border border-Gray-N200 overflow-hidden">
-          <Image src={logo} alt={label} width={32} height={32} className="object-contain" />
-        </div>
-      </div>
-    )}
     <div className="p-[3px] flex justify-center items-center gap-2">
       <div
         className={`size-[18px] relative rounded-sm overflow-hidden flex items-center justify-center
@@ -94,6 +77,26 @@ const FilterCheckbox = ({
         )}
       </div>
     </div>
+    {logo && (
+      <div className="self-stretch flex justify-start items-center gap-2">
+        <div className="size-8 p-2 rounded-[48px] border border-Gray-N200 overflow-hidden">
+          <Image src={logo} alt={label} width={32} height={32} className="object-contain" />
+        </div>
+      </div>
+    )}
+
+
+    <div className="flex-1 inline-flex flex-col justify-start items-end gap-1">
+      <div className="self-stretch text-right text-Gray-N700 text-sm font-medium  leading-normal">
+        {label}
+      </div>
+    </div>
+    {extraText && (
+      <div className="text-right text-Gray-N500 text-[13px] font-normal  leading-none">
+        {englishToFarsiNumber(extraText)}
+      </div>
+    )}
+
   </div>
 )
 
@@ -257,7 +260,7 @@ export function FlightFilters() {
         </FilterSection>
 
         {/* Ticket type */}
-        <FilterSection title="نوع بلیط" count={2}>
+        <FilterSection title="نوع بلیط" count={Object.values(filters.ticketType).filter(Boolean).length}>
           <FilterCheckbox
             label="چارتر"
             checked={filters.ticketType.charter}
@@ -310,7 +313,7 @@ export function FlightFilters() {
         </FilterSection>
 
         {/* Airlines */}
-        <FilterSection title="شرکت‌های هواپیمایی">
+        <FilterSection title="شرکت‌های هواپیمایی" isLast={true}>
           <FilterCheckbox
             label="ماهان"
             logo="/images/logo.webp"
