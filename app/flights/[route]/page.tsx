@@ -260,17 +260,16 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
           </div>
         </div>
 
-       <div className="flex flex-col items-center">
+       
           {/* mobile sort */}
-          <div className="w-2/3 items-start">
         <Drawer>
           <DrawerTrigger asChild>
-            <div className="bg-Shade-White w-45 outline-Gray-N100 m-5  inline-flex items-center justify-center gap-1 rounded-2xl px-3 py-1 outline-2 outline-offset-[-2px] lg:hidden">
+            <div className="bg-Shade-White outline-Gray-N100 m-5 inline-flex items-center justify-center gap-1 rounded-2xl px-3 py-1 outline-2 outline-offset-[-2px] lg:hidden">
               <Sort size="16" color="#1E1E1E" />
 
               <div className="flex items-center justify-center gap-2">
-                <div className="text-Gray-N700 text-sm leading-normal font-medium shrink-0"> مرتب سازی: </div>
-                <div className="text-Gray-N700 text-sm leading-normal font-medium shrink-0">
+                <div className="text-Gray-N700 text-sm leading-normal font-medium"> مرتب سازی: </div>
+                <div className="text-Gray-N700 text-sm leading-normal font-medium">
                   {sortKey ? getCurrentSortLabel() : " ارزان‌ترین "}
                 </div>
               </div>
@@ -313,8 +312,6 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
             </div>
           </DrawerContent>
         </Drawer>
-        </div>
-        
         <div className="flex flex-row gap-4">
 
           {/* Flight filters sidebar */}
@@ -335,7 +332,6 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
           <div className="flex-1">
             <FlightResultsList flights={sortedFlights} />
           </div>
-        </div>
         </div>
       </div>
     </div>

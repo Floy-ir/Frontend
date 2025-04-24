@@ -98,8 +98,8 @@ const Timeline = ({
     <div className="relative max-w-screen items-center justify-center">
       {/* Gradient */}
       <div className="pointer-events-none absolute inset-0 z-9 flex w-full justify-between">
-        <div className="h-full w-[69px] bg-gradient-to-l from-white to-transparent md:rounded-2xl"></div>
-        <div className="h-full w-[69px] bg-gradient-to-r from-white to-transparent md:rounded-2xl"></div>
+        <div className="h-full w-[69px] bg-gradient-to-l from-white to-transparent lg:rounded-2xl"></div>
+        <div className="h-full w-[69px] bg-gradient-to-r from-white to-transparent lg:rounded-2xl"></div>
       </div>
 
       {/* buttons */}
@@ -125,13 +125,13 @@ const Timeline = ({
             scrollRef.current.scrollBy({ left: 200, behavior: "smooth" })
           }
         }}
-        className="absolute top-1/3 right-4 z-10 hidden cursor-pointer md:block"
+        className="absolute top-1/3 right-4 z-10 hidden cursor-pointer lg:block"
       />
 
       {/* Timeline scroll area */}
       <div
         ref={scrollRef}
-        className="bg-Shade-White outline-Gray-N100 relative inline-flex h-[64px] w-full snap-x snap-mandatory flex-nowrap items-center gap-3 overflow-x-auto scroll-smooth py-3 outline outline-offset-[-1px] md:h-[80px] md:rounded-2xl"
+        className="bg-Shade-White outline-Gray-N100 relative inline-flex h-[74px] w-full snap-x snap-mandatory flex-nowrap items-center gap-3 overflow-x-auto scroll-smooth py-3 outline outline-offset-[-1px] md:h-[85px] lg:rounded-2xl"
       >
         <div className="flex snap-end gap-3 px-3">
           {data.map((item, index) => {
