@@ -106,7 +106,7 @@ export function Header({ menuItems, className, forceScrolledStyle = false }: Hea
 
   // Header classes - apply rounded corners only when not scrolled
   const headerClasses = twMerge(
-    "w-full fixed top-0 left-0 right-0 z-50 transition-all duration-300",
+    "w-full fixed top-0 left-0 right-0 z-20 transition-all duration-300",
     // Only rounded when at the top and not scrolled
     !visible ? "-translate-y-full" : "translate-y-0",
     visible && isScrolled ? "bg-white border-b border-Gray-N200" : "bg-transparent",
@@ -228,7 +228,7 @@ export function Header({ menuItems, className, forceScrolledStyle = false }: Hea
       </header>
       
       {/* Spacer div to prevent layout shifts - matches header height */}
-      <div className="h-22 w-full"></div>
+      <div className="h-16 md:h-22 w-full"></div>
     </>
   )
 }

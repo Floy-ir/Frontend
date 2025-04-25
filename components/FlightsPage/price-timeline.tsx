@@ -125,13 +125,13 @@ const Timeline = ({
             scrollRef.current.scrollBy({ left: 200, behavior: "smooth" })
           }
         }}
-        className="absolute top-1/3 right-4 z-10 hidden cursor-pointer md:block"
+        className="absolute top-1/3 right-4 z-10 hidden cursor-pointer lg:block"
       />
 
       {/* Timeline scroll area */}
       <div
         ref={scrollRef}
-        className="bg-Shade-White outline-Gray-N100 relative inline-flex h-[64px] w-full snap-x snap-mandatory flex-nowrap items-center gap-3 overflow-x-auto scroll-smooth py-3 outline outline-offset-[-1px] md:h-[80px] lg:w-[1036px] lg:rounded-2xl"
+        className="bg-Shade-White outline-Gray-N100 relative inline-flex h-[74px] w-full snap-x snap-mandatory flex-nowrap items-center gap-3 overflow-x-auto scroll-smooth py-3 outline outline-offset-[-1px] md:h-[85px] lg:rounded-2xl"
       >
         <div className="flex snap-end gap-3 px-3">
           {data.map((item, index) => {
