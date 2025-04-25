@@ -100,8 +100,8 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
   }
 
   // Flight time and price ranges
-  const [flightTimeRange, setFlightTimeRange] = useState<[number, number]>([9, 20])
-  const [priceRange, setPriceRange] = useState<[number, number]>([1500000, 3500000])
+  const [flightTimeRange, setFlightTimeRange] = useState<[number, number]>([4, 24])
+  const [priceRange, setPriceRange] = useState<[number, number]>([500000, 5000000])
 
   // Sample flight data for demonstration
   const sampleFlights = [

@@ -281,7 +281,7 @@ export function FlightFilters({
           )}
           
           {/* Price Range Filter */}
-          {(priceRange[0] !== 1500000 || priceRange[1] !== 3500000) && (
+          {(priceRange[0] !== 500000 || priceRange[1] !== 5000000) && (
             <div className="px-3 py-1 bg-Shade-White rounded-2xl outline outline-2 outline-offset-[-2px] outline-Gray-N100 flex justify-center items-center gap-1 overflow-hidden">
               <div className="py-1 flex justify-start items-center gap-2 cursor-pointer" onClick={() => setPriceRange([1500000, 3500000])}>
                 <div className="size-4 relative rounded-[48px] overflow-hidden">
@@ -297,9 +297,9 @@ export function FlightFilters({
           )}
           
           {/* Flight Time Range Filter */}
-          {(flightTimeRange[0] !== 9 || flightTimeRange[1] !== 20) && (
+          {(flightTimeRange[0] !== 4 || flightTimeRange[1] !== 24) && (
             <div className="px-3 py-1 bg-Shade-White rounded-2xl outline outline-2 outline-offset-[-2px] outline-Gray-N100 flex justify-center items-center gap-1 overflow-hidden">
-              <div className="py-1 flex justify-start items-center gap-2 cursor-pointer" onClick={() => setFlightTimeRange([9, 20])}>
+              <div className="py-1 flex justify-start items-center gap-2 cursor-pointer" onClick={() => setFlightTimeRange([4, 24])}>
                 <div className="size-4 relative rounded-[48px] overflow-hidden">
                   <CloseCircle size="16" color="#94A3B8" />
                 </div>
