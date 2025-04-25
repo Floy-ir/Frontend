@@ -10,7 +10,7 @@ export default function Companies() {
             {/* </div> */}
 
             {/* <div className="flex flex-1 flex-col items-start justify-start gap-2 h-4"> */}
-            <Image className="" src="/images/safarmarket.png" alt="safarmarket" width={100} height={10} />
+            <Image className="" src="/images/MrBilit.png" alt="safarmarket" width={100} height={10} />
             {/* </div> */}
 
             {/* <div className="flex flex-1 flex-col items-start justify-start gap-2 h-4"> */}

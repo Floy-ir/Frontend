@@ -1,8 +1,7 @@
 "use client"
-import { useEffect } from "react"
-import { useSearchParams, useRouter } from "next/navigation"
 import { ArrowForwardSquare } from "iconsax-react"
-import React from "react"
+import { useRouter, useSearchParams } from "next/navigation"
+import React, { useEffect } from "react"
 
 export default function Redirect() {
   const searchParams = useSearchParams()
@@ -12,9 +11,13 @@ export default function Redirect() {
 
   useEffect(() => {
     if (redirectUrl) {
-      const fixedUrl = redirectUrl.startsWith("http") ? redirectUrl : `https://${redirectUrl}`
-      window.open(fixedUrl, "_blank")
-      // window.location.href = fixedUrl
+      const timeout = setTimeout(() => {
+        const fixedUrl = redirectUrl.startsWith("http") ? redirectUrl : `https://${redirectUrl}`
+        window.open(fixedUrl, "_blank")
+        router.back()
+      }, 1000)
+
+      return () => clearTimeout(timeout)
     } else {
       router.replace("/") // fallback if redirect_url is not present
     }
