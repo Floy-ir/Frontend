@@ -315,6 +315,7 @@ const PriceActionSection = ({
               intent="text"
               size="small"
               className="self-stretch"
+              onClick={onViewOtherSellers}
             >
               مشاهده {englishToFarsiNumber(otherSellersCount)} فروشنده
             </Button>

@@ -1,7 +1,8 @@
 'use client'
 
 import { useRouter } from "next/navigation"
-import React from 'react'
+import React, { useState } from 'react'
+import ComparisonDialog from "@/components/FlightsPage/comparisonPage/page"
 import { FlightCard } from '@/components/FlightsPage/FlightCard'
 
 // Type for sample flight data
@@ -41,6 +42,7 @@ export function FlightResultsList({ flights }: FlightResultsListProps) {
   // Handle actions
 
   const router = useRouter();
+  const [showComparison, setShowComparison] = useState(false);
 
  const handleBuy = (_flightId: string, price: FlightData['price']) => {
     const url = new URL(window.location.href)
@@ -69,7 +71,7 @@ export function FlightResultsList({ flights }: FlightResultsListProps) {
 
   const handleViewSellers = (flightId: string) => {
     console.log(`View sellers for flight ${flightId}`)
-    // Show other sellers modal or expand card
+    setShowComparison(true)
   }
 
   return (
@@ -91,6 +93,9 @@ export function FlightResultsList({ flights }: FlightResultsListProps) {
           />
         ))}
       </div>
+      {showComparison && (
+        <ComparisonDialog open={showComparison} onOpenChange={setShowComparison} />
+      )}
     </div>
   )
 } 

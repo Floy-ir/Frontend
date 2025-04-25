@@ -2,13 +2,17 @@
 
 import { DialogClose } from "@radix-ui/react-dialog"
 import { CloseCircle } from "iconsax-react"
-import { useState } from "react"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import FlightInfo from "./flightInfo"
 import TicketCard from "./ticketCard"
 
-export default function ComparisonDialog() {
-  const [open, setOpen] = useState(true)
+export default function ComparisonDialog({
+  open,
+  onOpenChange,
+}: {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+}) {
 
   // Sample flight data
   const flightData = [
@@ -75,7 +79,7 @@ export default function ComparisonDialog() {
   ]
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="bg-Gray-N100 gap-0 border-none p-0 shadow-none m-0 w-full h-full  
                       lg:h-[641px] lg:max-w-[968px] rounded-none lg:rounded-2xl ">
         
