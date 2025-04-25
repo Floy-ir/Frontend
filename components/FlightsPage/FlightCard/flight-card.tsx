@@ -73,6 +73,9 @@ export interface FlightCardProps extends VariantProps<typeof flightCardVariants>
     agency: string
     agencyLogo: string
     label?: string
+    base_redirect_url: string
+    one_adult_redirect_url: string
+    two_Adults_redirect_url: string
   }
   onBuy: () => void
   onViewOtherSellers?: () => void
@@ -335,6 +338,7 @@ export function FlightCard({
   otherSellersCount = 0,
   className,
 }: FlightCardProps) {
+
   return (
     <article className={twMerge(flightCardVariants({ intent, className }))}>
       {/* Mobile/Tablet Layout */}

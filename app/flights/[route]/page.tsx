@@ -125,6 +125,9 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
         agency: "علی بابا",
         agencyLogo: "/images/logo.webp",
         label: "ارزان‌ترین",
+        base_redirect_url:"https://www.alibaba.ir/flights/AWZ-THR?adult={adult_count}&child={child_count}&infant={infant_count}&departing=1404-02-09",
+        one_adult_redirect_url:"https://www.alibaba.ir/flights/AWZ-THR/wj1cf4r/passengers",
+        two_Adults_redirect_url:"https://www.alibaba.ir/flights/AWZ-THR/mtbv5go/passengers"
       },
       otherSellersCount: 3,
     },
@@ -149,6 +152,9 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
         agency: "فلای تودی",
         agencyLogo: "/images/logo.webp",
         label: "ارزان‌ترین",
+        base_redirect_url:"https://www.alibaba.ir/flights/AWZ-THR?adult={adult_count}&child={child_count}&infant={infant_count}&departing=1404-02-09",
+        one_adult_redirect_url:"https://www.alibaba.ir/flights/AWZ-THR/wj1cf4r/passengers",
+        two_Adults_redirect_url:"https://www.alibaba.ir/flights/AWZ-THR/jb1bsc/passengers"
       },
       otherSellersCount: 5,
     },
@@ -173,6 +179,9 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
         agency: "مستر بلیط",
         agencyLogo: "/images/logo.webp",
         label: "ارزان‌ترین",
+        base_redirect_url:"https://www.alibaba.ir/flights/AWZ-THR?adult={adult_count}&child={child_count}&infant={infant_count}&departing=1404-02-09",
+        one_adult_redirect_url:"https://www.alibaba.ir/flights/AWZ-THR/wj1cf4r/passengers",
+        two_Adults_redirect_url:"https://www.alibaba.ir/flights/AWZ-THR/jb1bsc/passengers"
       },
       otherSellersCount: 2,
     },

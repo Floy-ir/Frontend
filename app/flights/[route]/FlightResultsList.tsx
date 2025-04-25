@@ -1,5 +1,6 @@
 'use client'
 
+import { useRouter } from "next/navigation"
 import React from 'react'
 import { FlightCard } from '@/components/FlightsPage/FlightCard'
 
@@ -25,6 +26,9 @@ type FlightData = {
     agency: string
     agencyLogo: string
     label?: string
+    base_redirect_url: string
+    one_adult_redirect_url: string
+    two_Adults_redirect_url: string
   }
   otherSellersCount: number
 }
@@ -35,9 +39,32 @@ type FlightResultsListProps = {
 
 export function FlightResultsList({ flights }: FlightResultsListProps) {
   // Handle actions
-  const handleBuy = (flightId: string) => {
-    console.log(`Buy flight ${flightId}`)
-    // Navigate to booking page or open modal
+
+  const router = useRouter();
+
+ const handleBuy = (_flightId: string, price: FlightData['price']) => {
+    const url = new URL(window.location.href)
+    const adult = url.searchParams.get("adult") || "1"
+    const child = url.searchParams.get("child") || "0"
+    const infant = url.searchParams.get("infant") || "0"
+
+    let redirectUrl = ""
+
+    if (adult === "1" && child === "0" && infant === "0") {
+      redirectUrl = price.one_adult_redirect_url
+    } else if (adult === "2" && child === "0" && infant === "0") {
+      redirectUrl = price.two_Adults_redirect_url
+    } else {
+      redirectUrl = price.base_redirect_url
+        .replace("{adult_count}", adult)
+        .replace("{child_count}", child)
+        .replace("{infant_count}", infant)
+    }
+
+    const encodedRedirectUrl = redirectUrl
+    const encodedAgency = price.agency
+
+    router.push(`/redirect?redirect_url=${encodedRedirectUrl}&agency=${encodedAgency}`)
   }
 
   const handleViewSellers = (flightId: string) => {
@@ -57,7 +84,7 @@ export function FlightResultsList({ flights }: FlightResultsListProps) {
             airline={flight.airline}
             flightInfo={flight.flightInfo}
             price={flight.price}
-            onBuy={() => handleBuy(flight.id)}
+            onBuy={() => handleBuy(flight.id, flight.price)}
             onViewOtherSellers={() => handleViewSellers(flight.id)}
             otherSellersCount={flight.otherSellersCount}
             className="w-full"
