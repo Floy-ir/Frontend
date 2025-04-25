@@ -3,10 +3,10 @@ import { ArrowDown2, ArrowUp2 } from "iconsax-react"
 import Image from "next/image"
 import { useState } from "react"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
-import frame from "../../public/images/Frame 4402.svg"
+import aparat from "../../public/images/Frame 4402.svg"
 import instagram from "../../public/images/instagram.svg"
 import linkdin from "../../public/images/linkedin-svgrepo-com 1.svg"
-import send from "../../public/images/send-2.svg"
+import telegram from "../../public/images/send-2.svg"
 import youtube from "../../public/images/youtube.svg"
 import { Button } from "../Button/Button"
 const Footer: React.FC = () => {
@@ -51,23 +51,23 @@ const Footer: React.FC = () => {
             {/* Second Grid */}
             <div className="flex flex-col items-end justify-end gap-8.5">
               <h1 className="text-5xl leading-[87px] font-semibold text-[#4641fb]">فلوی</h1>
-              <h3 className="text-sm text-[#748297]">تلفن پشتیبانی: ۰۲۱۱۲۳۴۵۶۷۸</h3>
+              {/* <h3 className="text-sm text-[#748297]">تلفن پشتیبانی: ۰۲۱۱۲۳۴۵۶۷۸</h3> */}
               <div className="flex md:gap-4 lg:gap-8">
                 <div className="flex items-center justify-center rounded-lg bg-slate-100 md:h-8 md:w-8 lg:h-10 lg:w-10">
                   <Image src={instagram} alt="LinkedIn" width={24} height={24} />
                 </div>
                 <div className="flex items-center justify-center rounded-lg bg-slate-100 md:h-8 md:w-8 lg:h-10 lg:w-10">
-                  <Image src={send} alt="YouTube" width={24} height={24} />
+                  <Image src={telegram} alt="telegram" width={24} height={24} />
                 </div>
                 <div className="flex items-center justify-center rounded-lg bg-slate-100 md:h-8 md:w-8 lg:h-10 lg:w-10">
-                  <Image src={youtube} alt="Send" width={24} height={24} />
+                  <Image src={youtube} alt="YouTube" width={24} height={24} />
                 </div>
                 <div className="flex items-center justify-center rounded-lg bg-slate-100 md:h-8 md:w-8 lg:h-10 lg:w-10">
                   <Image src={linkdin} alt="Instagram" width={24} height={24} />
                 </div>
-                <div className="flex items-center justify-center rounded-lg bg-slate-100 md:h-8 md:w-8 lg:h-10 lg:w-10">
-                  <Image src={frame} alt="Instagram" width={24} height={24} />
-                </div>
+                {/* <div className="flex items-center justify-center rounded-lg bg-slate-100 md:h-8 md:w-8 lg:h-10 lg:w-10">
+                  <Image src={aparat} alt="aparat" width={24} height={24} />
+                </div> */}
               </div>
             </div>
           </div>
@@ -82,11 +82,12 @@ const Footer: React.FC = () => {
               فلوی{" "}
             </div>
             <p className="text-Gray-N500 flex flex-col items-start justify-start text-right text-[13px] leading-normal">
-              فلوی یک پلتفرم جستجوی بلیط است که امکان مقایسه و رزرو آسان بلیط پرواز، هتل، قطار و دیگر خدمات سفر را از
+              فلوی یک پلتفرم جستجوی بلیط است که امکان مقایسه و خرید آسان بلیط هواپیما، هتل، قطار و دیگر خدمات سفر را از
               میان صدها منبع معتبر فراهم می‌کند. ما با ارائه داده‌های به‌روز و قیمت‌های رقابتی، به کاربران کمک می‌کنیم
               تا بهترین انتخاب را برای سفرهای خود داشته باشند. هدف ما ساده‌سازی فرآیند جستجو و رزرو، صرفه‌جویی در زمان و
               هزینه، و ایجاد تجربه‌ای لذت‌بخش برای مسافران است.
             </p>
+            // todo: write this
           </div>
         </div>
 
@@ -146,7 +147,7 @@ const Footer: React.FC = () => {
                   <Image src={instagram} alt="LinkedIn" width={24} height={24} />
                 </div>
                 <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-slate-100">
-                  <Image src={send} alt="YouTube" width={24} height={24} />
+                  <Image src={telegram} alt="YouTube" width={24} height={24} />
                 </div>
                 <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-slate-100">
                   <Image src={youtube} alt="Send" width={24} height={24} />
@@ -155,7 +156,7 @@ const Footer: React.FC = () => {
                   <Image src={linkdin} alt="Instagram" width={24} height={24} />
                 </div>
                 <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-slate-100">
-                  <Image src={frame} alt="Instagram" width={24} height={24} />
+                  <Image src={aparat} alt="Instagram" width={24} height={24} />
                 </div>
               </div>
             </div>

@@ -5,11 +5,17 @@ import React from "react"
 import { Button } from "@/components/Button/Button"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import img from "@/public/images/Frame 1000002391.svg"
-export default function ExpirationModal() {
+export default function ExpirationModal({
+  open,
+  onOpenChange,
+}: {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+}) {
   const router = useRouter()
 
   return (
-    <Dialog open>
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="w-[320px] rounded-xl border border-gray-200 bg-white px-10 pshadow-lg md:w-[414px]" onInteractOutside={(e) => e.preventDefault()} onEscapeKeyDown={(e) => e.preventDefault()}>
         {/* Icon */}
         <DialogHeader className="flex items-center justify-center py-4">
@@ -27,12 +33,19 @@ export default function ExpirationModal() {
           <p className="text-center text-base text-gray-600">زمان زیادی گذشته است و اطلاعات ممکن است به روز نباشد.</p>
 
           {/* Buttons */}
-          <div className="flex w-full flex-col items-center justify-center gap-2 md:flex-row">
-            <Button intent="secondary" size="large" className="w-full md:w-1/2" onClick={() => router.push("/")}>
+          <div className="flex w-full flex-col items-center justify-center gap-2 md:flex-row mb-4">
+            <Button intent="secondary" size="large" className="w-full md:w-1/2" onClick={() => {
+              onOpenChange(false)
+              router.push("/")
+            }}>
               بازگشت به صفحه اصلی
             </Button>
 
-            <Button intent="primary" size="large" className="w-full md:w-1/2" onClick={() => router.refresh()}>
+            <Button intent="primary" size="large" className="w-full md:w-1/2" onClick={() => {
+              onOpenChange(false)
+              router.refresh()
+              // todo: call the api instead of refresh
+            }}>
               به‌روزرسانی
             </Button>
           </div>
