@@ -283,7 +283,7 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
             </div>
 
             {/* mobile sort and filter options */}
-            <div className="flex items-center justify-between px-5 mb-4 lg:hidden">
+            <div className="flex items-center justify-start px-5 my-4 lg:hidden">
               {/* Mobile sort drawer trigger */}
               <Drawer>
                 <DrawerTrigger asChild>
@@ -334,7 +334,14 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
               {/* Mobile filter drawer trigger */}
               <Drawer>
                 <DrawerTrigger asChild>
-                  <div data-layer="Chip" data-filled="False" data-l-icon="true" data-r-icon="true" data-size="Small" data-states="Default" data-type="Deletable" className="Chip h-8 px-3 py-1 bg-Shade-White rounded-2xl outline outline-2 outline-offset-[-2px] outline-Gray-N100 inline-flex justify-center items-center gap-1 overflow-hidden cursor-pointer">
+                  <div data-layer="Chip" data-filled="False" data-l-icon="true" data-r-icon="true" data-size="Small" data-states="Default" data-type="Deletable" className="Chip h-8 px-3 py-1 bg-Shade-White rounded-2xl outline outline-2 outline-offset-[-2px] outline-Gray-N100 inline-flex justify-center items-center gap-1 overflow-hidden cursor-pointer mr-1">
+
+                    <div data-layer="L icon" className="LIcon size- py-1 flex justify-start items-center gap-2">
+                      <Setting5 size="16" color="#1E1E1E" />
+                    </div>
+                    <div data-layer="Container - Values" className="ContainerValues size- flex justify-center items-center gap-1">
+                      <div data-layer="برچسب" className="justify-start text-Gray-N700 text-sm font-medium leading-normal">فیلتر‌ها</div>
+                    </div>
                     <div data-layer="Delete" className="Delete size- py-1 flex justify-start items-center gap-2">
                       {activeFiltersCount > 0 && (
                         <div data-layer="Badge" data-color="Blue" data-fixed-with="No" data-show-icon="true" data-size="Small" data-type="Solid color" data-value-type="Number" className="Badge size- min-w-5 px-1.5 py-0.5 bg-Primary-P500main rounded-[48px] flex justify-center items-center overflow-hidden">
@@ -342,12 +349,7 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                         </div>
                       )}
                     </div>
-                    <div data-layer="Container - Values" className="ContainerValues size- flex justify-center items-center gap-1">
-                      <div data-layer="برچسب" className="justify-start text-Gray-N700 text-sm font-medium leading-normal">فیلتر‌ها</div>
-                    </div>
-                    <div data-layer="L icon" className="LIcon size- py-1 flex justify-start items-center gap-2">
-                      <Setting5 size="16" color="#1E1E1E" />
-                    </div>
+                 
                   </div>
                 </DrawerTrigger>
                 <DrawerContent className="bg-Shade-White rounded-t-2xl max-h-[80vh]">
