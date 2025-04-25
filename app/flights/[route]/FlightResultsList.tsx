@@ -1,9 +1,10 @@
 'use client'
 
 import { useRouter } from "next/navigation"
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import ComparisonDialog from "@/components/FlightsPage/comparisonPage/page"
 import { FlightCard } from '@/components/FlightsPage/FlightCard'
+import ExpirationModal from "@/components/FlightsPage/expiration-modal/page"
 
 // Type for sample flight data
 type FlightData = {
@@ -43,6 +44,16 @@ export function FlightResultsList({ flights }: FlightResultsListProps) {
 
   const router = useRouter();
   const [showComparison, setShowComparison] = useState(false);
+  const [showExpirationModal, setShowExpirationModal] = useState(false)
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setShowExpirationModal(true)
+    }, 60000)
+    // todo: 5min? 10min?
+
+    return () => clearInterval(interval)
+  }, [])
 
  const handleBuy = (_flightId: string, price: FlightData['price']) => {
     const url = new URL(window.location.href)
@@ -96,6 +107,9 @@ export function FlightResultsList({ flights }: FlightResultsListProps) {
       {showComparison && (
         <ComparisonDialog open={showComparison} onOpenChange={setShowComparison} />
       )}
+      {showExpirationModal && (
+        <ExpirationModal open={showExpirationModal} onOpenChange={setShowExpirationModal} />
+      )}
     </div>
   )
-} 
+}
