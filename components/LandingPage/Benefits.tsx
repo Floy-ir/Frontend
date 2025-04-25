@@ -34,7 +34,7 @@ export default function Benefits() {
               />
             </div>
             <span className="text-Gray-N700 text-right  text-base leading-7 font-medium">
-              سریع‌ترین روش خرید!
+              سریع‌ترین روش خرید
             </span>
           </div>
 
