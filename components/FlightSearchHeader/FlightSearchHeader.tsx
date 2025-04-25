@@ -76,7 +76,7 @@ export function FlightSearchHeader({
   
     return () => window.removeEventListener("resize", handleResize)
   }, [])
-  console.log("FLIGHTS PAGE VERSION")
+  
   return (
     <AnimatePresence mode="wait">
       {!showSearchForm ? (
