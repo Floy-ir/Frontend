@@ -1,13 +1,15 @@
 "use client";
 
+import { CalendarSearch } from "iconsax-react";
+
 export default function NoTicketFound() {
   return (
-    <div className="max-w-[432px] p-4 rounded-2xl inline-flex flex-col justify-center items-center gap-4">
-      <div className="self-stretch text-center justify-center text-Primary-P500main text-base font-bold leading-7">
+    <div className="max-w-[400px] p-4 rounded-2xl inline-flex flex-col justify-center items-center gap-4">
+      {/* <div className="self-stretch text-center justify-center text-Primary-P500main text-base font-bold leading-7">
         پروازی یافت نشد
       </div>
-      <div className="self-stretch h-px relative bg-Gray-N200" />
-      <div className="self-stretch text-right justify-center text-Gray-N600 text-base font-normal leading-7">
+      <div className="self-stretch h-px relative bg-Gray-N200" /> */}
+      {/* <div className="self-stretch text-right justify-center text-Gray-N600 text-base font-normal leading-7">
         در صورتی که میخواهید از موجودی پرواز در این روز مطلع شوید شماره موبایل خود را وارد کنید
       </div>
       <div className="self-stretch flex flex-col justify-center items-end gap-2">
@@ -30,7 +32,11 @@ export default function NoTicketFound() {
         <span className="text-right justify-center text-Shade-White text-[13px] font-semibold leading-none">
           ثبت‌
         </span>
-      </button>
+      </button> */}
+      <CalendarSearch size="100" color="#5A28EE"/>
+      <div className="flex justify-center text-center break-words leading-8">
+         برای این تاریخ پروازی پیدا نکردیم! لطفا تاریخ دیگه ای رو امتحان کنین.
+      </div>
     </div> 
   );
 }

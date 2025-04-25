@@ -98,11 +98,10 @@ module.exports = {
         "accordion-down": "accordion-down 0.3s ease-out",
         "accordion-up": "accordion-up 0.3s ease-out",
       },
-      screens:{
-        'lg-xl': {'min': '1050px', 'max': '1279px'},
-        'sm-md': {'min': '500px', 'max': '770px'},
-
-
+      screens: {
+        'lg-xl': { min: '1050px', max: '1279px' },
+        'sm-md': { min: '500px', max: '770px' },
+        'md-lg': { min: '720px', max: '1023px' },
       },
     },
   },
