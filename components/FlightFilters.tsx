@@ -178,14 +178,15 @@ export function FlightFilters({
   
   // Set drawer state on component mount
   React.useEffect(() => {
-    // Check if parent element has a drawer class or if viewport is small
     const checkIfInDrawer = () => {
       const isSmallScreen = window.innerWidth < 1100
-      const parentHasDrawerClass = !!document.querySelector('.drawer-content')?.contains(document.querySelector('.self-stretch.px-5.py-4'))
-      setIsInDrawer(isSmallScreen || parentHasDrawerClass)
+      const drawerContent = document.querySelector('.drawer-content')
+      const isInDrawerContent = drawerContent?.contains(document.querySelector('.self-stretch.px-5.py-4')) || false
+      setIsInDrawer(isSmallScreen || isInDrawerContent)
     }
     
-    checkIfInDrawer()
+    // Run check after a small delay to ensure DOM is ready
+    setTimeout(checkIfInDrawer, 0)
     window.addEventListener('resize', checkIfInDrawer)
     
     return () => window.removeEventListener('resize', checkIfInDrawer)

@@ -5,6 +5,7 @@ import React, { useEffect, useState } from 'react'
 import ComparisonDialog from "@/components/FlightsPage/comparisonPage/page"
 import { FlightCard } from '@/components/FlightsPage/FlightCard'
 import ExpirationModal from "@/components/FlightsPage/expiration-modal/page"
+import { EXPIRATION_MODAL_SETTINGS } from "@/app/config/settings"
 
 // Type for sample flight data
 type FlightData = {
@@ -49,8 +50,7 @@ export function FlightResultsList({ flights }: FlightResultsListProps) {
   useEffect(() => {
     const interval = setInterval(() => {
       setShowExpirationModal(true)
-    }, 60000)
-    // todo: 5min? 10min?
+    }, EXPIRATION_MODAL_SETTINGS.SHOW_AFTER_MS)
 
     return () => clearInterval(interval)
   }, [])
