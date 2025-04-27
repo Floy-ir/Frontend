@@ -83,11 +83,17 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
     },
   })
 
+  // Flight time and price ranges
+  const [flightTimeRange, setFlightTimeRange] = useState<[number, number]>([4, 24])
+  const [priceRange, setPriceRange] = useState<[number, number]>([500000, 5000000])
+
   // Calculate active filters count
   const activeFiltersCount = Object.values(filters).reduce(
     (count, category) => count + Object.values(category).filter(Boolean).length,
     0
-  )
+  ) + 
+  ((priceRange[0] !== 500000 || priceRange[1] !== 5000000) ? 1 : 0) + 
+  ((flightTimeRange[0] !== 4 || flightTimeRange[1] !== 24) ? 1 : 0)
 
   // Handler for filter changes
   const updateFilter = (category: string, key: string, value: boolean) => {
@@ -125,10 +131,6 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
       agencies: { alibaba: false, flytoday: false, mrbilit: false },
     })
   }
-
-  // Flight time and price ranges
-  const [flightTimeRange, setFlightTimeRange] = useState<[number, number]>([4, 24])
-  const [priceRange, setPriceRange] = useState<[number, number]>([500000, 5000000])
 
   // Sample flight data for demonstration
   const sampleFlights = [
@@ -363,13 +365,13 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                   </DrawerContent>
                 </Drawer>
 
-                {/* All Filters Chip */}
+                {/* All Filters Chip - always first */}
                 <Drawer>
                   <DrawerTrigger asChild>
                     <div className="bg-Shade-White outline-Gray-N100 inline-flex items-center justify-center gap-1 rounded-2xl px-3 py-1 outline-2 outline-offset-[-2px] whitespace-nowrap cursor-pointer mr-1">
                       <Setting5 size="16" color="#1E1E1E" />
                       <div className="flex items-center gap-1">
-                        <div className="text-Gray-N700 text-sm font-medium leading-normal">همه فیلتر‌ها</div>
+                        <div className="text-Gray-N700 text-sm font-medium leading-normal">فیلتر‌ها</div>
                         {activeFiltersCount > 0 && (
                           <div className="size-5 bg-Primary-P50 rounded-[80px] flex justify-center items-center">
                             <div className="text-Primary-P500main text-[11px] font-semibold leading-none">
@@ -396,213 +398,393 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                   </DrawerContent>
                 </Drawer>
 
-                {/* Price Range Filter Chip */}
-                <Drawer>
-                  <DrawerTrigger asChild>
-                    <div
-                      className="bg-Shade-White outline-Gray-N100 inline-flex items-center justify-center gap-1 rounded-2xl px-3 py-1 outline-2 outline-offset-[-2px] whitespace-nowrap cursor-pointer mr-1"
-                      onClick={() => setActiveFilterSection('priceRange')}
-                    >
-                      <div className="flex items-center gap-1">
-                        <div className="text-Gray-N700 text-sm font-medium leading-normal">قیمت</div>
-                        {(priceRange[0] !== 500000 || priceRange[1] !== 5000000) && (
-                          <div className="size-5 bg-Primary-P50 rounded-[80px] flex justify-center items-center">
-                            <div className="text-Primary-P500main text-[11px] font-semibold leading-none">✓</div>
+                {/* Active filters first */}
+                {/* Price Range Filter Chip - if active */}
+                {(priceRange[0] !== 500000 || priceRange[1] !== 5000000) && (
+                  <Drawer>
+                    <DrawerTrigger asChild>
+                      <div
+                        className="bg-Primary-P50 outline-Primary-P500main inline-flex items-center justify-center gap-1 rounded-2xl px-3 py-1 outline-2 outline-offset-[-2px] whitespace-nowrap cursor-pointer mr-1"
+                        onClick={() => setActiveFilterSection('priceRange')}
+                      >
+                        <div className="flex items-center gap-1">
+                          <div className="text-Primary-P500main text-sm font-medium leading-normal">
+                            قیمت: {englishToFarsiNumber(Math.floor(priceRange[0] / 1000))} تا {englishToFarsiNumber(Math.floor(priceRange[1] / 1000))} هزار
                           </div>
-                        )}
+                        </div>
                       </div>
-                    </div>
-                  </DrawerTrigger>
-                  <DrawerContent className="bg-Shade-White rounded-t-2xl max-h-[80vh]">
-                    <FilterDrawerContent
-                      title="بازه قیمت"
-                      activeFiltersCount={(priceRange[0] !== 500000 || priceRange[1] !== 5000000) ? 1 : 0}
-                      clearFilters={() => setPriceRange([500000, 5000000])}
-                      activeSection="priceRange"
-                      filters={filters}
-                      updateFilter={updateFilter}
-                      flightTimeRange={flightTimeRange}
-                      setFlightTimeRange={setFlightTimeRange}
-                      priceRange={priceRange}
-                      setPriceRange={setPriceRange}
-                    />
-                  </DrawerContent>
-                </Drawer>
+                    </DrawerTrigger>
+                    <DrawerContent className="bg-Shade-White rounded-t-2xl max-h-[80vh]">
+                      <FilterDrawerContent
+                        title="بازه قیمت"
+                        activeFiltersCount={(priceRange[0] !== 500000 || priceRange[1] !== 5000000) ? 1 : 0}
+                        clearFilters={() => setPriceRange([500000, 5000000])}
+                        activeSection="priceRange"
+                        filters={filters}
+                        updateFilter={updateFilter}
+                        flightTimeRange={flightTimeRange}
+                        setFlightTimeRange={setFlightTimeRange}
+                        priceRange={priceRange}
+                        setPriceRange={setPriceRange}
+                      />
+                    </DrawerContent>
+                  </Drawer>
+                )}
 
-                {/* Flight Time Filter Chip */}
-                <Drawer>
-                  <DrawerTrigger asChild>
-                    <div
-                      className="bg-Shade-White outline-Gray-N100 inline-flex items-center justify-center gap-1 rounded-2xl px-3 py-1 outline-2 outline-offset-[-2px] whitespace-nowrap cursor-pointer mr-1"
-                      onClick={() => setActiveFilterSection('flightTime')}
-                    >
-                      <div className="flex items-center gap-1">
-                        <div className="text-Gray-N700 text-sm font-medium leading-normal">ساعت پرواز</div>
-                        {(flightTimeRange[0] !== 4 || flightTimeRange[1] !== 24) && (
-                          <div className="size-5 bg-Primary-P50 rounded-[80px] flex justify-center items-center">
-                            <div className="text-Primary-P500main text-[11px] font-semibold leading-none">✓</div>
+                {/* Flight Time Filter Chip - if active */}
+                {(flightTimeRange[0] !== 4 || flightTimeRange[1] !== 24) && (
+                  <Drawer>
+                    <DrawerTrigger asChild>
+                      <div
+                        className="bg-Primary-P50 outline-Primary-P500main inline-flex items-center justify-center gap-1 rounded-2xl px-3 py-1 outline-2 outline-offset-[-2px] whitespace-nowrap cursor-pointer mr-1"
+                        onClick={() => setActiveFilterSection('flightTime')}
+                      >
+                        <div className="flex items-center gap-1">
+                          <div className="text-Primary-P500main text-sm font-medium leading-normal">
+                            ساعت پرواز: {englishToFarsiNumber(flightTimeRange[0])} تا {englishToFarsiNumber(flightTimeRange[1])}
                           </div>
-                        )}
+                        </div>
                       </div>
-                    </div>
-                  </DrawerTrigger>
-                  <DrawerContent className="bg-Shade-White rounded-t-2xl max-h-[80vh]">
-                    <FilterDrawerContent
-                      title="ساعت پرواز رفت"
-                      activeFiltersCount={(flightTimeRange[0] !== 4 || flightTimeRange[1] !== 24) ? 1 : 0}
-                      clearFilters={() => setFlightTimeRange([4, 24])}
-                      activeSection="flightTime"
-                      filters={filters}
-                      updateFilter={updateFilter}
-                      flightTimeRange={flightTimeRange}
-                      setFlightTimeRange={setFlightTimeRange}
-                      priceRange={priceRange}
-                      setPriceRange={setPriceRange}
-                    />
-                  </DrawerContent>
-                </Drawer>
+                    </DrawerTrigger>
+                    <DrawerContent className="bg-Shade-White rounded-t-2xl max-h-[80vh]">
+                      <FilterDrawerContent
+                        title="ساعت پرواز رفت"
+                        activeFiltersCount={(flightTimeRange[0] !== 4 || flightTimeRange[1] !== 24) ? 1 : 0}
+                        clearFilters={() => setFlightTimeRange([4, 24])}
+                        activeSection="flightTime"
+                        filters={filters}
+                        updateFilter={updateFilter}
+                        flightTimeRange={flightTimeRange}
+                        setFlightTimeRange={setFlightTimeRange}
+                        priceRange={priceRange}
+                        setPriceRange={setPriceRange}
+                      />
+                    </DrawerContent>
+                  </Drawer>
+                )}
 
-                {/* Ticket Type Filter Chip */}
-                <Drawer>
-                  <DrawerTrigger asChild>
-                    <div
-                      className="bg-Shade-White outline-Gray-N100 inline-flex items-center justify-center gap-1 rounded-2xl px-3 py-1 outline-2 outline-offset-[-2px] whitespace-nowrap cursor-pointer mr-1"
-                      onClick={() => setActiveFilterSection('ticketType')}
-                    >
-                      <div className="flex items-center gap-1">
-                        <div className="text-Gray-N700 text-sm font-medium leading-normal">نوع بلیط</div>
-                        {Object.values(filters.ticketType).filter(Boolean).length > 0 && (
-                          <div className="size-5 bg-Primary-P50 rounded-[80px] flex justify-center items-center">
-                            <div className="text-Primary-P500main text-[11px] font-semibold leading-none">
-                              {englishToFarsiNumber(Object.values(filters.ticketType).filter(Boolean).length)}
-                            </div>
+                {/* Ticket Type Filter Chip - if active */}
+                {Object.values(filters.ticketType).some(Boolean) && (
+                  <Drawer>
+                    <DrawerTrigger asChild>
+                      <div
+                        className="bg-Primary-P50 outline-Primary-P500main inline-flex items-center justify-center gap-1 rounded-2xl px-3 py-1 outline-2 outline-offset-[-2px] whitespace-nowrap cursor-pointer mr-1"
+                        onClick={() => setActiveFilterSection('ticketType')}
+                      >
+                        <div className="flex items-center gap-1">
+                          <div className="text-Primary-P500main text-sm font-medium leading-normal">
+                            نوع بلیط: {[
+                              filters.ticketType.charter ? 'چارتر' : null,
+                              filters.ticketType.system ? 'سیستمی' : null
+                            ].filter(Boolean).join('، ')}
                           </div>
-                        )}
+                        </div>
                       </div>
-                    </div>
-                  </DrawerTrigger>
-                  <DrawerContent className="bg-Shade-White rounded-t-2xl max-h-[80vh]">
-                    <FilterDrawerContent
-                      title="نوع بلیط"
-                      activeFiltersCount={Object.values(filters.ticketType).filter(Boolean).length}
-                      clearFilters={() => updateFilter('ticketType', 'all', false)}
-                      activeSection="ticketType"
-                      filters={filters}
-                      updateFilter={updateFilter}
-                      flightTimeRange={flightTimeRange}
-                      setFlightTimeRange={setFlightTimeRange}
-                      priceRange={priceRange}
-                      setPriceRange={setPriceRange}
-                    />
-                  </DrawerContent>
-                </Drawer>
+                    </DrawerTrigger>
+                    <DrawerContent className="bg-Shade-White rounded-t-2xl max-h-[80vh]">
+                      <FilterDrawerContent
+                        title="نوع بلیط"
+                        activeFiltersCount={Object.values(filters.ticketType).filter(Boolean).length}
+                        clearFilters={() => updateFilter('ticketType', 'all', false)}
+                        activeSection="ticketType"
+                        filters={filters}
+                        updateFilter={updateFilter}
+                        flightTimeRange={flightTimeRange}
+                        setFlightTimeRange={setFlightTimeRange}
+                        priceRange={priceRange}
+                        setPriceRange={setPriceRange}
+                      />
+                    </DrawerContent>
+                  </Drawer>
+                )}
 
-                {/* Cabin Class Filter Chip */}
-                <Drawer>
-                  <DrawerTrigger asChild>
-                    <div
-                      className="bg-Shade-White outline-Gray-N100 inline-flex items-center justify-center gap-1 rounded-2xl px-3 py-1 outline-2 outline-offset-[-2px] whitespace-nowrap cursor-pointer mr-1"
-                      onClick={() => setActiveFilterSection('cabinClass')}
-                    >
-                      <div className="flex items-center gap-1">
-                        <div className="text-Gray-N700 text-sm font-medium leading-normal">کلاس پروازی</div>
-                        {Object.values(filters.cabinClass).filter(Boolean).length > 0 && (
-                          <div className="size-5 bg-Primary-P50 rounded-[80px] flex justify-center items-center">
-                            <div className="text-Primary-P500main text-[11px] font-semibold leading-none">
-                              {englishToFarsiNumber(Object.values(filters.cabinClass).filter(Boolean).length)}
-                            </div>
+                {/* Cabin Class Filter Chip - if active */}
+                {Object.values(filters.cabinClass).some(Boolean) && (
+                  <Drawer>
+                    <DrawerTrigger asChild>
+                      <div
+                        className="bg-Primary-P50 outline-Primary-P500main inline-flex items-center justify-center gap-1 rounded-2xl px-3 py-1 outline-2 outline-offset-[-2px] whitespace-nowrap cursor-pointer mr-1"
+                        onClick={() => setActiveFilterSection('cabinClass')}
+                      >
+                        <div className="flex items-center gap-1">
+                          <div className="text-Primary-P500main text-sm font-medium leading-normal">
+                            کلاس پروازی: {[
+                              filters.cabinClass.economy ? 'اکونومی' : null,
+                              filters.cabinClass.business ? 'بیزینس' : null
+                            ].filter(Boolean).join('، ')}
                           </div>
-                        )}
+                        </div>
                       </div>
-                    </div>
-                  </DrawerTrigger>
-                  <DrawerContent className="bg-Shade-White rounded-t-2xl max-h-[80vh]">
-                    <FilterDrawerContent
-                      title="کلاس پروازی"
-                      activeFiltersCount={Object.values(filters.cabinClass).filter(Boolean).length}
-                      clearFilters={() => updateFilter('cabinClass', 'all', false)}
-                      activeSection="cabinClass"
-                      filters={filters}
-                      updateFilter={updateFilter}
-                      flightTimeRange={flightTimeRange}
-                      setFlightTimeRange={setFlightTimeRange}
-                      priceRange={priceRange}
-                      setPriceRange={setPriceRange}
-                    />
-                  </DrawerContent>
-                </Drawer>
+                    </DrawerTrigger>
+                    <DrawerContent className="bg-Shade-White rounded-t-2xl max-h-[80vh]">
+                      <FilterDrawerContent
+                        title="کلاس پروازی"
+                        activeFiltersCount={Object.values(filters.cabinClass).filter(Boolean).length}
+                        clearFilters={() => updateFilter('cabinClass', 'all', false)}
+                        activeSection="cabinClass"
+                        filters={filters}
+                        updateFilter={updateFilter}
+                        flightTimeRange={flightTimeRange}
+                        setFlightTimeRange={setFlightTimeRange}
+                        priceRange={priceRange}
+                        setPriceRange={setPriceRange}
+                      />
+                    </DrawerContent>
+                  </Drawer>
+                )}
 
-                {/* Airlines Filter Chip */}
-                <Drawer>
-                  <DrawerTrigger asChild>
-                    <div
-                      className="bg-Shade-White outline-Gray-N100 inline-flex items-center justify-center gap-1 rounded-2xl px-3 py-1 outline-2 outline-offset-[-2px] whitespace-nowrap cursor-pointer mr-1"
-                      onClick={() => setActiveFilterSection('airlines')}
-                    >
-                      <div className="flex items-center gap-1">
-                        <div className="text-Gray-N700 text-sm font-medium leading-normal">ایرلاین‌ها</div>
-                        {Object.values(filters.airlines).filter(Boolean).length > 0 && (
-                          <div className="size-5 bg-Primary-P50 rounded-[80px] flex justify-center items-center">
-                            <div className="text-Primary-P500main text-[11px] font-semibold leading-none">
-                              {englishToFarsiNumber(Object.values(filters.airlines).filter(Boolean).length)}
-                            </div>
+                {/* Airlines Filter Chip - if active */}
+                {Object.values(filters.airlines).some(Boolean) && (
+                  <Drawer>
+                    <DrawerTrigger asChild>
+                      <div
+                        className="bg-Primary-P50 outline-Primary-P500main inline-flex items-center justify-center gap-1 rounded-2xl px-3 py-1 outline-2 outline-offset-[-2px] whitespace-nowrap cursor-pointer mr-1"
+                        onClick={() => setActiveFilterSection('airlines')}
+                      >
+                        <div className="flex items-center gap-1">
+                          <div className="text-Primary-P500main text-sm font-medium leading-normal">
+                            ایرلاین‌ها: {[
+                              filters.airlines.mahan ? 'ماهان' : null,
+                              filters.airlines.caspian ? 'کاسپین' : null,
+                              filters.airlines.ata ? 'آتا' : null
+                            ].filter(Boolean).join('، ')}
                           </div>
-                        )}
+                        </div>
                       </div>
-                    </div>
-                  </DrawerTrigger>
-                  <DrawerContent className="bg-Shade-White rounded-t-2xl max-h-[80vh]">
-                    <FilterDrawerContent
-                      title="شرکت‌های هواپیمایی"
-                      activeFiltersCount={Object.values(filters.airlines).filter(Boolean).length}
-                      clearFilters={() => updateFilter('airlines', 'all', false)}
-                      activeSection="airlines"
-                      filters={filters}
-                      updateFilter={updateFilter}
-                      flightTimeRange={flightTimeRange}
-                      setFlightTimeRange={setFlightTimeRange}
-                      priceRange={priceRange}
-                      setPriceRange={setPriceRange}
-                    />
-                  </DrawerContent>
-                </Drawer>
+                    </DrawerTrigger>
+                    <DrawerContent className="bg-Shade-White rounded-t-2xl max-h-[80vh]">
+                      <FilterDrawerContent
+                        title="شرکت‌های هواپیمایی"
+                        activeFiltersCount={Object.values(filters.airlines).filter(Boolean).length}
+                        clearFilters={() => updateFilter('airlines', 'all', false)}
+                        activeSection="airlines"
+                        filters={filters}
+                        updateFilter={updateFilter}
+                        flightTimeRange={flightTimeRange}
+                        setFlightTimeRange={setFlightTimeRange}
+                        priceRange={priceRange}
+                        setPriceRange={setPriceRange}
+                      />
+                    </DrawerContent>
+                  </Drawer>
+                )}
 
-                {/* Agencies Filter Chip */}
-                <Drawer>
-                  <DrawerTrigger asChild>
-                    <div
-                      className="bg-Shade-White outline-Gray-N100 inline-flex items-center justify-center gap-1 rounded-2xl px-3 py-1 outline-2 outline-offset-[-2px] whitespace-nowrap cursor-pointer mr-1"
-                      onClick={() => setActiveFilterSection('agencies')}
-                    >
-                      <div className="flex items-center gap-1">
-                        <div className="text-Gray-N700 text-sm font-medium leading-normal">وبسایت‌ها</div>
-                        {Object.values(filters.agencies).filter(Boolean).length > 0 && (
-                          <div className="size-5 bg-Primary-P50 rounded-[80px] flex justify-center items-center">
-                            <div className="text-Primary-P500main text-[11px] font-semibold leading-none">
-                              {englishToFarsiNumber(Object.values(filters.agencies).filter(Boolean).length)}
-                            </div>
+                {/* Agencies Filter Chip - if active */}
+                {Object.values(filters.agencies).some(Boolean) && (
+                  <Drawer>
+                    <DrawerTrigger asChild>
+                      <div
+                        className="bg-Primary-P50 outline-Primary-P500main inline-flex items-center justify-center gap-1 rounded-2xl px-3 py-1 outline-2 outline-offset-[-2px] whitespace-nowrap cursor-pointer mr-1"
+                        onClick={() => setActiveFilterSection('agencies')}
+                      >
+                        <div className="flex items-center gap-1">
+                          <div className="text-Primary-P500main text-sm font-medium leading-normal">
+                            وبسایت‌ها: {[
+                              filters.agencies.alibaba ? 'علی بابا' : null,
+                              filters.agencies.flytoday ? 'فلای تودی' : null,
+                              filters.agencies.mrbilit ? 'مستر بلیط' : null
+                            ].filter(Boolean).join('، ')}
                           </div>
-                        )}
+                        </div>
                       </div>
-                    </div>
-                  </DrawerTrigger>
-                  <DrawerContent className="bg-Shade-White rounded-t-2xl max-h-[80vh]">
-                    <FilterDrawerContent
-                      title="وبسایت‌ها"
-                      activeFiltersCount={Object.values(filters.agencies).filter(Boolean).length}
-                      clearFilters={() => updateFilter('agencies', 'all', false)}
-                      activeSection="agencies"
-                      filters={filters}
-                      updateFilter={updateFilter}
-                      flightTimeRange={flightTimeRange}
-                      setFlightTimeRange={setFlightTimeRange}
-                      priceRange={priceRange}
-                      setPriceRange={setPriceRange}
-                    />
-                  </DrawerContent>
-                </Drawer>
+                    </DrawerTrigger>
+                    <DrawerContent className="bg-Shade-White rounded-t-2xl max-h-[80vh]">
+                      <FilterDrawerContent
+                        title="وبسایت‌ها"
+                        activeFiltersCount={Object.values(filters.agencies).filter(Boolean).length}
+                        clearFilters={() => updateFilter('agencies', 'all', false)}
+                        activeSection="agencies"
+                        filters={filters}
+                        updateFilter={updateFilter}
+                        flightTimeRange={flightTimeRange}
+                        setFlightTimeRange={setFlightTimeRange}
+                        priceRange={priceRange}
+                        setPriceRange={setPriceRange}
+                      />
+                    </DrawerContent>
+                  </Drawer>
+                )}
 
+                {/* Inactive filters after active ones */}
+                {/* Price Range Filter Chip - if inactive */}
+                {(priceRange[0] === 500000 && priceRange[1] === 5000000) && (
+                  <Drawer>
+                    <DrawerTrigger asChild>
+                      <div
+                        className="bg-Shade-White outline-Gray-N100 inline-flex items-center justify-center gap-1 rounded-2xl px-3 py-1 outline-2 outline-offset-[-2px] whitespace-nowrap cursor-pointer mr-1"
+                        onClick={() => setActiveFilterSection('priceRange')}
+                      >
+                        <div className="flex items-center gap-1">
+                          <div className="text-Gray-N700 text-sm font-medium leading-normal">قیمت</div>
+                        </div>
+                      </div>
+                    </DrawerTrigger>
+                    <DrawerContent className="bg-Shade-White rounded-t-2xl max-h-[80vh]">
+                      <FilterDrawerContent
+                        title="بازه قیمت"
+                        activeFiltersCount={(priceRange[0] !== 500000 || priceRange[1] !== 5000000) ? 1 : 0}
+                        clearFilters={() => setPriceRange([500000, 5000000])}
+                        activeSection="priceRange"
+                        filters={filters}
+                        updateFilter={updateFilter}
+                        flightTimeRange={flightTimeRange}
+                        setFlightTimeRange={setFlightTimeRange}
+                        priceRange={priceRange}
+                        setPriceRange={setPriceRange}
+                      />
+                    </DrawerContent>
+                  </Drawer>
+                )}
 
+                {/* Flight Time Filter Chip - if inactive */}
+                {(flightTimeRange[0] === 4 && flightTimeRange[1] === 24) && (
+                  <Drawer>
+                    <DrawerTrigger asChild>
+                      <div
+                        className="bg-Shade-White outline-Gray-N100 inline-flex items-center justify-center gap-1 rounded-2xl px-3 py-1 outline-2 outline-offset-[-2px] whitespace-nowrap cursor-pointer mr-1"
+                        onClick={() => setActiveFilterSection('flightTime')}
+                      >
+                        <div className="flex items-center gap-1">
+                          <div className="text-Gray-N700 text-sm font-medium leading-normal">ساعت پرواز</div>
+                        </div>
+                      </div>
+                    </DrawerTrigger>
+                    <DrawerContent className="bg-Shade-White rounded-t-2xl max-h-[80vh]">
+                      <FilterDrawerContent
+                        title="ساعت پرواز رفت"
+                        activeFiltersCount={(flightTimeRange[0] !== 4 || flightTimeRange[1] !== 24) ? 1 : 0}
+                        clearFilters={() => setFlightTimeRange([4, 24])}
+                        activeSection="flightTime"
+                        filters={filters}
+                        updateFilter={updateFilter}
+                        flightTimeRange={flightTimeRange}
+                        setFlightTimeRange={setFlightTimeRange}
+                        priceRange={priceRange}
+                        setPriceRange={setPriceRange}
+                      />
+                    </DrawerContent>
+                  </Drawer>
+                )}
+
+                {/* Ticket Type Filter Chip - if inactive */}
+                {!Object.values(filters.ticketType).some(Boolean) && (
+                  <Drawer>
+                    <DrawerTrigger asChild>
+                      <div
+                        className="bg-Shade-White outline-Gray-N100 inline-flex items-center justify-center gap-1 rounded-2xl px-3 py-1 outline-2 outline-offset-[-2px] whitespace-nowrap cursor-pointer mr-1"
+                        onClick={() => setActiveFilterSection('ticketType')}
+                      >
+                        <div className="flex items-center gap-1">
+                          <div className="text-Gray-N700 text-sm font-medium leading-normal">نوع بلیط</div>
+                        </div>
+                      </div>
+                    </DrawerTrigger>
+                    <DrawerContent className="bg-Shade-White rounded-t-2xl max-h-[80vh]">
+                      <FilterDrawerContent
+                        title="نوع بلیط"
+                        activeFiltersCount={Object.values(filters.ticketType).filter(Boolean).length}
+                        clearFilters={() => updateFilter('ticketType', 'all', false)}
+                        activeSection="ticketType"
+                        filters={filters}
+                        updateFilter={updateFilter}
+                        flightTimeRange={flightTimeRange}
+                        setFlightTimeRange={setFlightTimeRange}
+                        priceRange={priceRange}
+                        setPriceRange={setPriceRange}
+                      />
+                    </DrawerContent>
+                  </Drawer>
+                )}
+
+                {/* Cabin Class Filter Chip - if inactive */}
+                {!Object.values(filters.cabinClass).some(Boolean) && (
+                  <Drawer>
+                    <DrawerTrigger asChild>
+                      <div
+                        className="bg-Shade-White outline-Gray-N100 inline-flex items-center justify-center gap-1 rounded-2xl px-3 py-1 outline-2 outline-offset-[-2px] whitespace-nowrap cursor-pointer mr-1"
+                        onClick={() => setActiveFilterSection('cabinClass')}
+                      >
+                        <div className="flex items-center gap-1">
+                          <div className="text-Gray-N700 text-sm font-medium leading-normal">کلاس پروازی</div>
+                        </div>
+                      </div>
+                    </DrawerTrigger>
+                    <DrawerContent className="bg-Shade-White rounded-t-2xl max-h-[80vh]">
+                      <FilterDrawerContent
+                        title="کلاس پروازی"
+                        activeFiltersCount={Object.values(filters.cabinClass).filter(Boolean).length}
+                        clearFilters={() => updateFilter('cabinClass', 'all', false)}
+                        activeSection="cabinClass"
+                        filters={filters}
+                        updateFilter={updateFilter}
+                        flightTimeRange={flightTimeRange}
+                        setFlightTimeRange={setFlightTimeRange}
+                        priceRange={priceRange}
+                        setPriceRange={setPriceRange}
+                      />
+                    </DrawerContent>
+                  </Drawer>
+                )}
+
+                {/* Airlines Filter Chip - if inactive */}
+                {!Object.values(filters.airlines).some(Boolean) && (
+                  <Drawer>
+                    <DrawerTrigger asChild>
+                      <div
+                        className="bg-Shade-White outline-Gray-N100 inline-flex items-center justify-center gap-1 rounded-2xl px-3 py-1 outline-2 outline-offset-[-2px] whitespace-nowrap cursor-pointer mr-1"
+                        onClick={() => setActiveFilterSection('airlines')}
+                      >
+                        <div className="flex items-center gap-1">
+                          <div className="text-Gray-N700 text-sm font-medium leading-normal">ایرلاین‌ها</div>
+                        </div>
+                      </div>
+                    </DrawerTrigger>
+                    <DrawerContent className="bg-Shade-White rounded-t-2xl max-h-[80vh]">
+                      <FilterDrawerContent
+                        title="شرکت‌های هواپیمایی"
+                        activeFiltersCount={Object.values(filters.airlines).filter(Boolean).length}
+                        clearFilters={() => updateFilter('airlines', 'all', false)}
+                        activeSection="airlines"
+                        filters={filters}
+                        updateFilter={updateFilter}
+                        flightTimeRange={flightTimeRange}
+                        setFlightTimeRange={setFlightTimeRange}
+                        priceRange={priceRange}
+                        setPriceRange={setPriceRange}
+                      />
+                    </DrawerContent>
+                  </Drawer>
+                )}
+
+                {/* Agencies Filter Chip - if inactive */}
+                {!Object.values(filters.agencies).some(Boolean) && (
+                  <Drawer>
+                    <DrawerTrigger asChild>
+                      <div
+                        className="bg-Shade-White outline-Gray-N100 inline-flex items-center justify-center gap-1 rounded-2xl px-3 py-1 outline-2 outline-offset-[-2px] whitespace-nowrap cursor-pointer mr-1"
+                        onClick={() => setActiveFilterSection('agencies')}
+                      >
+                        <div className="flex items-center gap-1">
+                          <div className="text-Gray-N700 text-sm font-medium leading-normal">وبسایت‌ها</div>
+                        </div>
+                      </div>
+                    </DrawerTrigger>
+                    <DrawerContent className="bg-Shade-White rounded-t-2xl max-h-[80vh]">
+                      <FilterDrawerContent
+                        title="وبسایت‌ها"
+                        activeFiltersCount={Object.values(filters.agencies).filter(Boolean).length}
+                        clearFilters={() => updateFilter('agencies', 'all', false)}
+                        activeSection="agencies"
+                        filters={filters}
+                        updateFilter={updateFilter}
+                        flightTimeRange={flightTimeRange}
+                        setFlightTimeRange={setFlightTimeRange}
+                        priceRange={priceRange}
+                        setPriceRange={setPriceRange}
+                      />
+                    </DrawerContent>
+                  </Drawer>
+                )}
               </div>
             </div>
 

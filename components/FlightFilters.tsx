@@ -210,88 +210,94 @@ export function FlightFilters({
       <div className="self-stretch px-5 py-3 bg-Shade-White border-b border-Gray-N100 inline-flex justify-center items-center gap-3">
         <div className="flex-1 flex justify-end items-center gap-[7px] flex-wrap">
           {/* Ticket Type Filters */}
-          {Object.entries(filters.ticketType).map(([key, value]) => 
-            value && (
-              <div key={`ticketType-${key}`} className="px-3 py-1 bg-Shade-White rounded-2xl outline outline-2 outline-offset-[-2px] outline-Gray-N100 flex justify-center items-center gap-1 overflow-hidden">
-                <div className="py-1 flex justify-start items-center gap-2 cursor-pointer" onClick={() => updateFilter('ticketType', key, false)}>
-                  <div className="size-4 relative rounded-[48px] overflow-hidden">
-                    <CloseCircle size="16" color="#94A3B8" />
-                  </div>
-                </div>
-                <div className="flex justify-center items-center gap-1">
-                  <div className="text-Gray-N700 text-sm font-medium leading-normal">
-                    {key === 'charter' ? 'چارتری' : 'سیستمی'}
-                  </div>
+          {Object.values(filters.ticketType).some(Boolean) && (
+            <div className="px-3 py-1 bg-Primary-P50 rounded-2xl outline outline-2 outline-offset-[-2px] outline-Primary-P500main flex justify-center items-center gap-1 overflow-hidden">
+              <div className="py-1 flex justify-start items-center gap-2 cursor-pointer" onClick={() => updateFilter('ticketType', 'all', false)}>
+                <div className="size-4 relative rounded-[48px] overflow-hidden">
+                  <CloseCircle size="16" color="#0046B5" />
                 </div>
               </div>
-            )
+              <div className="flex justify-center items-center gap-1">
+                <div className="text-Primary-P500main text-sm font-medium leading-normal">
+                  نوع بلیط: {[
+                    filters.ticketType.charter ? 'چارتر' : null,
+                    filters.ticketType.system ? 'سیستمی' : null
+                  ].filter(Boolean).join('، ')}
+                </div>
+              </div>
+            </div>
           )}
           
           {/* Cabin Class Filters */}
-          {Object.entries(filters.cabinClass).map(([key, value]) => 
-            value && (
-              <div key={`cabinClass-${key}`} className="px-3 py-1 bg-Shade-White rounded-2xl outline outline-2 outline-offset-[-2px] outline-Gray-N100 flex justify-center items-center gap-1 overflow-hidden">
-                <div className="py-1 flex justify-start items-center gap-2 cursor-pointer" onClick={() => updateFilter('cabinClass', key, false)}>
-                  <div className="size-4 relative rounded-[48px] overflow-hidden">
-                    <CloseCircle size="16" color="#94A3B8" />
-                  </div>
-                </div>
-                <div className="flex justify-center items-center gap-1">
-                  <div className="text-Gray-N700 text-sm font-medium leading-normal">
-                    {key === 'economy' ? 'اکونومی' : 'بیزینس'}
-                  </div>
+          {Object.values(filters.cabinClass).some(Boolean) && (
+            <div className="px-3 py-1 bg-Primary-P50 rounded-2xl outline outline-2 outline-offset-[-2px] outline-Primary-P500main flex justify-center items-center gap-1 overflow-hidden">
+              <div className="py-1 flex justify-start items-center gap-2 cursor-pointer" onClick={() => updateFilter('cabinClass', 'all', false)}>
+                <div className="size-4 relative rounded-[48px] overflow-hidden">
+                  <CloseCircle size="16" color="#0046B5" />
                 </div>
               </div>
-            )
+              <div className="flex justify-center items-center gap-1">
+                <div className="text-Primary-P500main text-sm font-medium leading-normal">
+                  کلاس پروازی: {[
+                    filters.cabinClass.economy ? 'اکونومی' : null,
+                    filters.cabinClass.business ? 'بیزینس' : null
+                  ].filter(Boolean).join('، ')}
+                </div>
+              </div>
+            </div>
           )}
           
           {/* Airlines Filters */}
-          {Object.entries(filters.airlines).map(([key, value]) => 
-            value && (
-              <div key={`airlines-${key}`} className="px-3 py-1 bg-Shade-White rounded-2xl outline outline-2 outline-offset-[-2px] outline-Gray-N100 flex justify-center items-center gap-1 overflow-hidden">
-                <div className="py-1 flex justify-start items-center gap-2 cursor-pointer" onClick={() => updateFilter('airlines', key, false)}>
-                  <div className="size-4 relative rounded-[48px] overflow-hidden">
-                    <CloseCircle size="16" color="#94A3B8" />
-                  </div>
-                </div>
-                <div className="flex justify-center items-center gap-1">
-                  <div className="text-Gray-N700 text-sm font-medium leading-normal">
-                    {key === 'mahan' ? 'ماهان' : key === 'caspian' ? 'کاسپین' : 'آتا'}
-                  </div>
+          {Object.values(filters.airlines).some(Boolean) && (
+            <div className="px-3 py-1 bg-Primary-P50 rounded-2xl outline outline-2 outline-offset-[-2px] outline-Primary-P500main flex justify-center items-center gap-1 overflow-hidden">
+              <div className="py-1 flex justify-start items-center gap-2 cursor-pointer" onClick={() => updateFilter('airlines', 'all', false)}>
+                <div className="size-4 relative rounded-[48px] overflow-hidden">
+                  <CloseCircle size="16" color="#0046B5" />
                 </div>
               </div>
-            )
+              <div className="flex justify-center items-center gap-1">
+                <div className="text-Primary-P500main text-sm font-medium leading-normal">
+                  ایرلاین‌ها: {[
+                    filters.airlines.mahan ? 'ماهان' : null,
+                    filters.airlines.caspian ? 'کاسپین' : null,
+                    filters.airlines.ata ? 'آتا' : null
+                  ].filter(Boolean).join('، ')}
+                </div>
+              </div>
+            </div>
           )}
           
           {/* Agencies Filters */}
-          {Object.entries(filters.agencies).map(([key, value]) => 
-            value && (
-              <div key={`agencies-${key}`} className="px-3 py-1 bg-Shade-White rounded-2xl outline outline-2 outline-offset-[-2px] outline-Gray-N100 flex justify-center items-center gap-1 overflow-hidden">
-                <div className="py-1 flex justify-start items-center gap-2 cursor-pointer" onClick={() => updateFilter('agencies', key, false)}>
-                  <div className="size-4 relative rounded-[48px] overflow-hidden">
-                    <CloseCircle size="16" color="#94A3B8" />
-                  </div>
-                </div>
-                <div className="flex justify-center items-center gap-1">
-                  <div className="text-Gray-N700 text-sm font-medium leading-normal">
-                    {key === 'alibaba' ? 'علی بابا' : key === 'flytoday' ? 'فلای تودی' : 'مستر بلیط'}
-                  </div>
+          {Object.values(filters.agencies).some(Boolean) && (
+            <div className="px-3 py-1 bg-Primary-P50 rounded-2xl outline outline-2 outline-offset-[-2px] outline-Primary-P500main flex justify-center items-center gap-1 overflow-hidden">
+              <div className="py-1 flex justify-start items-center gap-2 cursor-pointer" onClick={() => updateFilter('agencies', 'all', false)}>
+                <div className="size-4 relative rounded-[48px] overflow-hidden">
+                  <CloseCircle size="16" color="#0046B5" />
                 </div>
               </div>
-            )
+              <div className="flex justify-center items-center gap-1">
+                <div className="text-Primary-P500main text-sm font-medium leading-normal">
+                  وبسایت‌ها: {[
+                    filters.agencies.alibaba ? 'علی بابا' : null,
+                    filters.agencies.flytoday ? 'فلای تودی' : null,
+                    filters.agencies.mrbilit ? 'مستر بلیط' : null
+                  ].filter(Boolean).join('، ')}
+                </div>
+              </div>
+            </div>
           )}
           
           {/* Price Range Filter */}
           {(priceRange[0] !== 500000 || priceRange[1] !== 5000000) && (
-            <div className="px-3 py-1 bg-Shade-White rounded-2xl outline outline-2 outline-offset-[-2px] outline-Gray-N100 flex justify-center items-center gap-1 overflow-hidden">
-              <div className="py-1 flex justify-start items-center gap-2 cursor-pointer" onClick={() => setPriceRange([1500000, 3500000])}>
+            <div className="px-3 py-1 bg-Primary-P50 rounded-2xl outline outline-2 outline-offset-[-2px] outline-Primary-P500main flex justify-center items-center gap-1 overflow-hidden">
+              <div className="py-1 flex justify-start items-center gap-2 cursor-pointer" onClick={() => setPriceRange([500000, 5000000])}>
                 <div className="size-4 relative rounded-[48px] overflow-hidden">
-                  <CloseCircle size="16" color="#94A3B8" />
+                  <CloseCircle size="16" color="#0046B5" />
                 </div>
               </div>
               <div className="flex justify-center items-center gap-1">
-                <div className="text-Gray-N700 text-sm font-medium leading-normal">
-                  بازه قیمت (تومان): {englishToFarsiNumber(Math.floor(priceRange[0] / 1000))} تا {englishToFarsiNumber(Math.floor(priceRange[1] / 1000))} هزار
+                <div className="text-Primary-P500main text-sm font-medium leading-normal">
+                  قیمت: {englishToFarsiNumber(Math.floor(priceRange[0] / 1000))} تا {englishToFarsiNumber(Math.floor(priceRange[1] / 1000))} هزار
                 </div>
               </div>
             </div>
@@ -299,14 +305,14 @@ export function FlightFilters({
           
           {/* Flight Time Range Filter */}
           {(flightTimeRange[0] !== 4 || flightTimeRange[1] !== 24) && (
-            <div className="px-3 py-1 bg-Shade-White rounded-2xl outline outline-2 outline-offset-[-2px] outline-Gray-N100 flex justify-center items-center gap-1 overflow-hidden">
+            <div className="px-3 py-1 bg-Primary-P50 rounded-2xl outline outline-2 outline-offset-[-2px] outline-Primary-P500main flex justify-center items-center gap-1 overflow-hidden">
               <div className="py-1 flex justify-start items-center gap-2 cursor-pointer" onClick={() => setFlightTimeRange([4, 24])}>
                 <div className="size-4 relative rounded-[48px] overflow-hidden">
-                  <CloseCircle size="16" color="#94A3B8" />
+                  <CloseCircle size="16" color="#0046B5" />
                 </div>
               </div>
               <div className="flex justify-center items-center gap-1">
-                <div className="text-Gray-N700 text-sm font-medium leading-normal">
+                <div className="text-Primary-P500main text-sm font-medium leading-normal">
                   ساعت پرواز: {englishToFarsiNumber(flightTimeRange[0])} تا {englishToFarsiNumber(flightTimeRange[1])}
                 </div>
               </div>
