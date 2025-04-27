@@ -27,6 +27,14 @@ type RouteParams = {
   }>
 }
 
+// Define the structure for filters state
+interface FilterState {
+  ticketType: { charter: boolean; system: boolean };
+  cabinClass: { economy: boolean; business: boolean };
+  airlines: { mahan: boolean; caspian: boolean; ata: boolean };
+  agencies: { alibaba: boolean; flytoday: boolean; mrbilit: boolean };
+}
+
 export default function FlightResults({ params, searchParams }: RouteParams) {
   // Unwrap params Promise using React.use()
   const unwrappedParams = use(params)
@@ -54,7 +62,7 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
   const [sortKey, setSortKey] = React.useState<"cheapest" | "mostExpensive" | "earliest" | "latest">("cheapest")
 
   // Shared filters state
-  const [filters, setFilters] = React.useState({
+  const [filters, setFilters] = React.useState<FilterState>({
     ticketType: {
       charter: true,
       system: false,
@@ -83,13 +91,30 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
 
   // Handler for filter changes
   const updateFilter = (category: string, key: string, value: boolean) => {
-    setFilters((prev) => ({
-      ...prev,
-      [category]: {
-        ...prev[category as keyof typeof prev],
-        [key]: value,
-      },
-    }))
+    if (key === 'all' && value === false) {
+      // Clear all filters in the specific category
+      setFilters((prev) => {
+        const updatedCategory: Record<string, boolean> = {};
+        // Set all keys in this category to false
+        Object.keys(prev[category as keyof typeof prev]).forEach(k => {
+          updatedCategory[k] = false;
+        });
+        
+        return {
+          ...prev,
+          [category]: updatedCategory
+        };
+      });
+    } else {
+      // Regular single filter update
+      setFilters((prev) => ({
+        ...prev,
+        [category]: {
+          ...prev[category as keyof typeof prev],
+          [key]: value,
+        },
+      }));
+    }
   }
 
   const clearFilters = () => {
@@ -640,13 +665,137 @@ const FilterDrawerContent = ({
   activeFiltersCount: number,
   clearFilters: () => void,
   activeSection: string,
-  filters: any,
+  filters: FilterState,
   updateFilter: (category: string, key: string, value: boolean) => void,
   flightTimeRange: [number, number],
   setFlightTimeRange: (range: [number, number]) => void,
   priceRange: [number, number],
   setPriceRange: (range: [number, number]) => void
 }) => {
+
+  // Filter chips component to display selected filters at the top
+  const FilterChips = () => {
+    const totalActiveFilters = 
+      Object.values(filters.ticketType).filter(Boolean).length +
+      Object.values(filters.cabinClass).filter(Boolean).length +
+      Object.values(filters.airlines).filter(Boolean).length +
+      Object.values(filters.agencies).filter(Boolean).length +
+      ((priceRange[0] !== 500000 || priceRange[1] !== 5000000) ? 1 : 0) +
+      ((flightTimeRange[0] !== 4 || flightTimeRange[1] !== 24) ? 1 : 0);
+      
+    if (totalActiveFilters === 0) return null;
+    
+    return (
+      <div className="self-stretch px-5 py-3 bg-Shade-White border-b border-Gray-N100 inline-flex justify-center items-center gap-3">
+        <div className="flex-1 flex justify-end items-center gap-[7px] flex-wrap">
+          {/* Ticket Type Filters */}
+          {Object.entries(filters.ticketType).map(([key, value]) => 
+            value && (
+              <div key={`ticketType-${key}`} className="px-3 py-1 bg-Shade-White rounded-2xl outline outline-2 outline-offset-[-2px] outline-Gray-N100 flex justify-center items-center gap-1 overflow-hidden">
+                <div className="py-1 flex justify-start items-center gap-2 cursor-pointer" onClick={() => updateFilter('ticketType', key, false)}>
+                  <div className="size-4 relative rounded-[48px] overflow-hidden">
+                    <CloseCircle size="16" color="#94A3B8" />
+                  </div>
+                </div>
+                <div className="flex justify-center items-center gap-1">
+                  <div className="text-Gray-N700 text-sm font-medium leading-normal">
+                    {key === 'charter' ? 'چارتری' : 'سیستمی'}
+                  </div>
+                </div>
+              </div>
+            )
+          )}
+          
+          {/* Cabin Class Filters */}
+          {Object.entries(filters.cabinClass).map(([key, value]) => 
+            value && (
+              <div key={`cabinClass-${key}`} className="px-3 py-1 bg-Shade-White rounded-2xl outline outline-2 outline-offset-[-2px] outline-Gray-N100 flex justify-center items-center gap-1 overflow-hidden">
+                <div className="py-1 flex justify-start items-center gap-2 cursor-pointer" onClick={() => updateFilter('cabinClass', key, false)}>
+                  <div className="size-4 relative rounded-[48px] overflow-hidden">
+                    <CloseCircle size="16" color="#94A3B8" />
+                  </div>
+                </div>
+                <div className="flex justify-center items-center gap-1">
+                  <div className="text-Gray-N700 text-sm font-medium leading-normal">
+                    {key === 'economy' ? 'اکونومی' : 'بیزینس'}
+                  </div>
+                </div>
+              </div>
+            )
+          )}
+          
+          {/* Airlines Filters */}
+          {Object.entries(filters.airlines).map(([key, value]) => 
+            value && (
+              <div key={`airlines-${key}`} className="px-3 py-1 bg-Shade-White rounded-2xl outline outline-2 outline-offset-[-2px] outline-Gray-N100 flex justify-center items-center gap-1 overflow-hidden">
+                <div className="py-1 flex justify-start items-center gap-2 cursor-pointer" onClick={() => updateFilter('airlines', key, false)}>
+                  <div className="size-4 relative rounded-[48px] overflow-hidden">
+                    <CloseCircle size="16" color="#94A3B8" />
+                  </div>
+                </div>
+                <div className="flex justify-center items-center gap-1">
+                  <div className="text-Gray-N700 text-sm font-medium leading-normal">
+                    {key === 'mahan' ? 'ماهان' : key === 'caspian' ? 'کاسپین' : 'آتا'}
+                  </div>
+                </div>
+              </div>
+            )
+          )}
+          
+          {/* Agencies Filters */}
+          {Object.entries(filters.agencies).map(([key, value]) => 
+            value && (
+              <div key={`agencies-${key}`} className="px-3 py-1 bg-Shade-White rounded-2xl outline outline-2 outline-offset-[-2px] outline-Gray-N100 flex justify-center items-center gap-1 overflow-hidden">
+                <div className="py-1 flex justify-start items-center gap-2 cursor-pointer" onClick={() => updateFilter('agencies', key, false)}>
+                  <div className="size-4 relative rounded-[48px] overflow-hidden">
+                    <CloseCircle size="16" color="#94A3B8" />
+                  </div>
+                </div>
+                <div className="flex justify-center items-center gap-1">
+                  <div className="text-Gray-N700 text-sm font-medium leading-normal">
+                    {key === 'alibaba' ? 'علی بابا' : key === 'flytoday' ? 'فلای تودی' : 'مستر بلیط'}
+                  </div>
+                </div>
+              </div>
+            )
+          )}
+          
+          {/* Price Range Filter */}
+          {(priceRange[0] !== 500000 || priceRange[1] !== 5000000) && (
+            <div className="px-3 py-1 bg-Shade-White rounded-2xl outline outline-2 outline-offset-[-2px] outline-Gray-N100 flex justify-center items-center gap-1 overflow-hidden">
+              <div className="py-1 flex justify-start items-center gap-2 cursor-pointer" onClick={() => setPriceRange([500000, 5000000])}>
+                <div className="size-4 relative rounded-[48px] overflow-hidden">
+                  <CloseCircle size="16" color="#94A3B8" />
+                </div>
+              </div>
+              <div className="flex justify-center items-center gap-1">
+                <div className="text-Gray-N700 text-sm font-medium leading-normal">
+                  بازه قیمت (تومان): {englishToFarsiNumber(Math.floor(priceRange[0] / 1000))} تا {englishToFarsiNumber(Math.floor(priceRange[1] / 1000))} هزار
+                </div>
+              </div>
+            </div>
+          )}
+          
+          {/* Flight Time Range Filter */}
+          {(flightTimeRange[0] !== 4 || flightTimeRange[1] !== 24) && (
+            <div className="px-3 py-1 bg-Shade-White rounded-2xl outline outline-2 outline-offset-[-2px] outline-Gray-N100 flex justify-center items-center gap-1 overflow-hidden">
+              <div className="py-1 flex justify-start items-center gap-2 cursor-pointer" onClick={() => setFlightTimeRange([4, 24])}>
+                <div className="size-4 relative rounded-[48px] overflow-hidden">
+                  <CloseCircle size="16" color="#94A3B8" />
+                </div>
+              </div>
+              <div className="flex justify-center items-center gap-1">
+                <div className="text-Gray-N700 text-sm font-medium leading-normal">
+                  ساعت پرواز: {englishToFarsiNumber(flightTimeRange[0])} تا {englishToFarsiNumber(flightTimeRange[1])}
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div className="inline-flex h-full w-full flex-col items-start justify-start max-h-[80vh]">
       <DialogTitle className="bg-Shade-White border-Gray-N100 inline-flex items-center self-stretch border-b px-5 py-4 sticky top-0 z-10">
@@ -657,7 +806,7 @@ const FilterDrawerContent = ({
           >
             حذف فیلتر‌ها
           </div>
-
+          
           <div className="flex-1 flex justify-center items-center text-center">
             <div className="flex justify-center items-center">
               <div className="text-Gray-N600 text-center text-base font-semibold leading-7 ml-2">{title}</div>
@@ -670,7 +819,7 @@ const FilterDrawerContent = ({
               </div>
             )}
           </div>
-
+          
           <div className="flex justify-start items-center gap-2">
             <DrawerClose className="cursor-pointer">
               <CloseCircle size="24" color="#334155" variant="Outline" />
@@ -678,10 +827,15 @@ const FilterDrawerContent = ({
           </div>
         </div>
       </DialogTitle>
+      
+      {/* Conditionally render FilterChips only for the All Filters drawer */}
+      {activeSection === 'all' && <FilterChips />}
+      
       <div className="w-full">
-        <div className="max-h-[calc(80vh-60px)] overflow-y-auto">
+        <div className="max-h-[calc(80vh-120px)] overflow-y-auto"> {/* Adjusted max-height */} 
           {/* Filtered content based on activeSection */}
           <div className="self-stretch px-5 py-4 bg-Shade-White flex flex-col justify-center items-center gap-3">
+            {/* Flight Time Range - Always show in All Filters */}
             {(activeSection === 'all' || activeSection === 'flightTime') && (
               <FilterSection title="ساعت پرواز رفت">
                 <FancySlider
@@ -690,12 +844,13 @@ const FilterDrawerContent = ({
                   min={4}
                   max={24}
                   step={1}
-                  leftLabel={formatTime(flightTimeRange[1]) as string}
-                  rightLabel={formatTime(flightTimeRange[0]) as string}
+                  leftLabel={formatTime(flightTimeRange[1])}
+                  rightLabel={formatTime(flightTimeRange[0])}
                 />
               </FilterSection>
             )}
 
+            {/* Price Range - Always show in All Filters */}
             {(activeSection === 'all' || activeSection === 'priceRange') && (
               <FilterSection title="بازه قیمت (تومان)">
                 <FancySlider
@@ -704,12 +859,13 @@ const FilterDrawerContent = ({
                   min={500000}
                   max={5000000}
                   step={100000}
-                  leftLabel={formatPrice(priceRange[1]) as string}
-                  rightLabel={formatPrice(priceRange[0]) as string}
+                  leftLabel={formatPrice(priceRange[1])}
+                  rightLabel={formatPrice(priceRange[0])}
                 />
               </FilterSection>
             )}
 
+            {/* Ticket Type - Always show in All Filters */}
             {(activeSection === 'all' || activeSection === 'ticketType') && (
               <FilterSection title="نوع بلیط" count={Object.values(filters.ticketType).filter(Boolean).length}>
                 <FilterCheckbox
@@ -725,6 +881,7 @@ const FilterDrawerContent = ({
               </FilterSection>
             )}
 
+            {/* Cabin Class - Always show in All Filters */}
             {(activeSection === 'all' || activeSection === 'cabinClass') && (
               <FilterSection title="کلاس پروازی" count={Object.values(filters.cabinClass).filter(Boolean).length}>
                 <FilterCheckbox
@@ -740,8 +897,9 @@ const FilterDrawerContent = ({
               </FilterSection>
             )}
 
+            {/* Agencies - Always show in All Filters */}
             {(activeSection === 'all' || activeSection === 'agencies') && (
-              <FilterSection title="وبسایت‌ها">
+              <FilterSection title="وبسایت‌ها" count={Object.values(filters.agencies).filter(Boolean).length}>
                 <FilterCheckbox
                   label="علی‌بابا"
                   logo="/images/logo.webp"
@@ -766,8 +924,13 @@ const FilterDrawerContent = ({
               </FilterSection>
             )}
 
+            {/* Airlines - Always show in All Filters */}
             {(activeSection === 'all' || activeSection === 'airlines') && (
-              <FilterSection title="شرکت‌های هواپیمایی" isLast={true}>
+              <FilterSection 
+                title="شرکت‌های هواپیمایی" 
+                count={Object.values(filters.airlines).filter(Boolean).length}
+                isLast={true}
+              >
                 <FilterCheckbox
                   label="ماهان"
                   logo="/images/logo.webp"

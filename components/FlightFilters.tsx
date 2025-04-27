@@ -190,7 +190,7 @@ export function FlightFilters({
     window.addEventListener('resize', checkIfInDrawer)
     
     return () => window.removeEventListener('resize', checkIfInDrawer)
-  }, [])
+  })
 
   // Format price with commas
   const formatPrice = (price: number) => {
