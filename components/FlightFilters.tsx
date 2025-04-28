@@ -416,7 +416,7 @@ export function FlightFilters({
         </FilterSection>
 
         {/* Websites */}
-        <FilterSection title="وبسایت‌ها">
+        <FilterSection title="وبسایت‌ها" count={Object.values(filters.agencies).filter(Boolean).length}>
           <FilterCheckbox
             label="علی‌بابا"
             logo="/images/logo.webp"
@@ -441,7 +441,7 @@ export function FlightFilters({
         </FilterSection>
 
         {/* Airlines */}
-        <FilterSection title="شرکت‌های هواپیمایی" isLast={true}>
+        <FilterSection title="شرکت‌های هواپیمایی" count={Object.values(filters.airlines).filter(Boolean).length} isLast={true}>
           <FilterCheckbox
             label="ماهان"
             logo="/images/logo.webp"
