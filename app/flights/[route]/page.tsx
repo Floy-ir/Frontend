@@ -130,6 +130,9 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
       airlines: { mahan: false, caspian: false, ata: false },
       agencies: { alibaba: false, flytoday: false, mrbilit: false },
     })
+    // Reset range slider values
+    setFlightTimeRange([4, 24])
+    setPriceRange([500000, 5000000])
   }
 
   // Sample flight data for demonstration
