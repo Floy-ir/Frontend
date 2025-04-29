@@ -858,135 +858,21 @@ const FilterDrawerContent = ({
   setPriceRange: (range: [number, number]) => void
 }) => {
 
-  // Filter chips component to display selected filters at the top
-  const FilterChips = () => {
-    const totalActiveFilters = 
-      Object.values(filters.ticketType).filter(Boolean).length +
-      Object.values(filters.cabinClass).filter(Boolean).length +
-      Object.values(filters.airlines).filter(Boolean).length +
-      Object.values(filters.agencies).filter(Boolean).length +
-      ((priceRange[0] !== 500000 || priceRange[1] !== 5000000) ? 1 : 0) +
-      ((flightTimeRange[0] !== 4 || flightTimeRange[1] !== 24) ? 1 : 0);
-      
-    if (totalActiveFilters === 0) return null;
-    
-    return (
-      <div className="self-stretch px-5 py-3 bg-Shade-White border-b border-Gray-N100 inline-flex justify-center items-center gap-3">
-        <div className="flex-1 flex justify-end items-center gap-[7px] flex-wrap">
-          {/* Ticket Type Filters */}
-          {Object.entries(filters.ticketType).map(([key, value]) => 
-            value && (
-              <div key={`ticketType-${key}`} className="px-3 py-1 bg-Shade-White rounded-2xl outline outline-2 outline-offset-[-2px] outline-Gray-N100 flex justify-center items-center gap-1 overflow-hidden">
-                <div className="py-1 flex justify-start items-center gap-2 cursor-pointer" onClick={() => updateFilter('ticketType', key, false)}>
-                  <div className="size-4 relative rounded-[48px] overflow-hidden">
-                    <CloseCircle size="16" color="#94A3B8" />
-                  </div>
-                </div>
-                <div className="flex justify-center items-center gap-1">
-                  <div className="text-Gray-N700 text-sm font-medium leading-normal">
-                    {key === 'charter' ? 'چارتری' : 'سیستمی'}
-                  </div>
-                </div>
-              </div>
-            )
-          )}
-          
-          {/* Cabin Class Filters */}
-          {Object.entries(filters.cabinClass).map(([key, value]) => 
-            value && (
-              <div key={`cabinClass-${key}`} className="px-3 py-1 bg-Shade-White rounded-2xl outline outline-2 outline-offset-[-2px] outline-Gray-N100 flex justify-center items-center gap-1 overflow-hidden">
-                <div className="py-1 flex justify-start items-center gap-2 cursor-pointer" onClick={() => updateFilter('cabinClass', key, false)}>
-                  <div className="size-4 relative rounded-[48px] overflow-hidden">
-                    <CloseCircle size="16" color="#94A3B8" />
-                  </div>
-                </div>
-                <div className="flex justify-center items-center gap-1">
-                  <div className="text-Gray-N700 text-sm font-medium leading-normal">
-                    {key === 'economy' ? 'اکونومی' : 'بیزینس'}
-                  </div>
-                </div>
-              </div>
-            )
-          )}
-          
-          {/* Airlines Filters */}
-          {Object.entries(filters.airlines).map(([key, value]) => 
-            value && (
-              <div key={`airlines-${key}`} className="px-3 py-1 bg-Shade-White rounded-2xl outline outline-2 outline-offset-[-2px] outline-Gray-N100 flex justify-center items-center gap-1 overflow-hidden">
-                <div className="py-1 flex justify-start items-center gap-2 cursor-pointer" onClick={() => updateFilter('airlines', key, false)}>
-                  <div className="size-4 relative rounded-[48px] overflow-hidden">
-                    <CloseCircle size="16" color="#94A3B8" />
-                  </div>
-                </div>
-                <div className="flex justify-center items-center gap-1">
-                  <div className="text-Gray-N700 text-sm font-medium leading-normal">
-                    {key === 'mahan' ? 'ماهان' : key === 'caspian' ? 'کاسپین' : 'آتا'}
-                  </div>
-                </div>
-              </div>
-            )
-          )}
-          
-          {/* Agencies Filters */}
-          {Object.entries(filters.agencies).map(([key, value]) => 
-            value && (
-              <div key={`agencies-${key}`} className="px-3 py-1 bg-Shade-White rounded-2xl outline outline-2 outline-offset-[-2px] outline-Gray-N100 flex justify-center items-center gap-1 overflow-hidden">
-                <div className="py-1 flex justify-start items-center gap-2 cursor-pointer" onClick={() => updateFilter('agencies', key, false)}>
-                  <div className="size-4 relative rounded-[48px] overflow-hidden">
-                    <CloseCircle size="16" color="#94A3B8" />
-                  </div>
-                </div>
-                <div className="flex justify-center items-center gap-1">
-                  <div className="text-Gray-N700 text-sm font-medium leading-normal">
-                    {key === 'alibaba' ? 'علی بابا' : key === 'flytoday' ? 'فلای تودی' : 'مستر بلیط'}
-                  </div>
-                </div>
-              </div>
-            )
-          )}
-          
-          {/* Price Range Filter */}
-          {(priceRange[0] !== 500000 || priceRange[1] !== 5000000) && (
-            <div className="px-3 py-1 bg-Shade-White rounded-2xl outline outline-2 outline-offset-[-2px] outline-Gray-N100 flex justify-center items-center gap-1 overflow-hidden">
-              <div className="py-1 flex justify-start items-center gap-2 cursor-pointer" onClick={() => setPriceRange([500000, 5000000])}>
-                <div className="size-4 relative rounded-[48px] overflow-hidden">
-                  <CloseCircle size="16" color="#94A3B8" />
-                </div>
-              </div>
-              <div className="flex justify-center items-center gap-1">
-                <div className="text-Gray-N700 text-sm font-medium leading-normal">
-                  بازه قیمت (تومان): {englishToFarsiNumber(Math.floor(priceRange[0] / 1000))} تا {englishToFarsiNumber(Math.floor(priceRange[1] / 1000))} هزار
-                </div>
-              </div>
-            </div>
-          )}
-          
-          {/* Flight Time Range Filter */}
-          {(flightTimeRange[0] !== 4 || flightTimeRange[1] !== 24) && (
-            <div className="px-3 py-1 bg-Shade-White rounded-2xl outline outline-2 outline-offset-[-2px] outline-Gray-N100 flex justify-center items-center gap-1 overflow-hidden">
-              <div className="py-1 flex justify-start items-center gap-2 cursor-pointer" onClick={() => setFlightTimeRange([4, 24])}>
-                <div className="size-4 relative rounded-[48px] overflow-hidden">
-                  <CloseCircle size="16" color="#94A3B8" />
-                </div>
-              </div>
-              <div className="flex justify-center items-center gap-1">
-                <div className="text-Gray-N700 text-sm font-medium leading-normal">
-                  ساعت پرواز: {englishToFarsiNumber(flightTimeRange[0])} تا {englishToFarsiNumber(flightTimeRange[1])}
-                </div>
-              </div>
-            </div>
-          )}
-        </div>
-      </div>
-    );
-  };
+  // Calculate total active filters for chips display
+  const totalActiveFiltersForChips = 
+    Object.values(filters.ticketType).filter(Boolean).length +
+    Object.values(filters.cabinClass).filter(Boolean).length +
+    Object.values(filters.airlines).filter(Boolean).length +
+    Object.values(filters.agencies).filter(Boolean).length +
+    ((priceRange[0] !== 500000 || priceRange[1] !== 5000000) ? 1 : 0) +
+    ((flightTimeRange[0] !== 4 || flightTimeRange[1] !== 24) ? 1 : 0);
 
   return (
     <div className="inline-flex h-full w-full flex-col items-start justify-start max-h-[80vh]">
       <DialogTitle className="bg-Shade-White border-Gray-N100 inline-flex items-center self-stretch border-b px-5 py-4 sticky top-0 z-10">
-        <div className="self-stretch inline-flex justify-between items-center w-full gap-2">
+        <div className="self-stretch inline-flex justify-center items-center w-full gap-2 relative">
           <div
-            className={`text-Primary-P500main text-[13px] font-medium leading-normal cursor-pointer ${activeFiltersCount === 0 ? 'invisible' : ''}`}
+            className={`absolute left-5 text-Primary-P500main text-[13px] font-medium leading-normal cursor-pointer ${activeFiltersCount === 0 ? 'invisible' : ''}`}
             onClick={clearFilters}
           >
             حذف فیلتر‌ها
@@ -1005,7 +891,7 @@ const FilterDrawerContent = ({
             )}
           </div>
           
-          <div className="flex justify-start items-center gap-2">
+          <div className="absolute right-5 flex justify-start items-center gap-2">
             <DrawerClose className="cursor-pointer">
               <CloseCircle size="24" color="#334155" variant="Outline" />
             </DrawerClose>
@@ -1013,133 +899,239 @@ const FilterDrawerContent = ({
         </div>
       </DialogTitle>
       
-      {/* Conditionally render FilterChips only for the All Filters drawer */}
-      {activeSection === 'all' && <FilterChips />}
-      
-      <div className="w-full">
-        <div className="max-h-[calc(80vh-120px)] overflow-y-auto"> {/* Adjusted max-height */} 
-          {/* Filtered content based on activeSection */}
-          <div className="self-stretch px-5 py-4 bg-Shade-White flex flex-col justify-center items-center gap-3">
-            {/* Flight Time Range - Always show in All Filters */}
-            {(activeSection === 'all' || activeSection === 'flightTime') && (
-              <FilterSection title="ساعت پرواز رفت">
-                <FancySlider
-                  value={flightTimeRange}
-                  onValueChange={setFlightTimeRange}
-                  min={4}
-                  max={24}
-                  step={1}
-                  leftLabel={formatTime(flightTimeRange[1])}
-                  rightLabel={formatTime(flightTimeRange[0])}
-                />
-              </FilterSection>
-            )}
-
-            {/* Price Range - Always show in All Filters */}
-            {(activeSection === 'all' || activeSection === 'priceRange') && (
-              <FilterSection title="بازه قیمت (تومان)">
-                <FancySlider
-                  value={priceRange}
-                  onValueChange={setPriceRange}
-                  min={500000}
-                  max={5000000}
-                  step={100000}
-                  leftLabel={formatPrice(priceRange[1])}
-                  rightLabel={formatPrice(priceRange[0])}
-                />
-              </FilterSection>
-            )}
-
-            {/* Ticket Type - Always show in All Filters */}
-            {(activeSection === 'all' || activeSection === 'ticketType') && (
-              <FilterSection title="نوع بلیط" count={Object.values(filters.ticketType).filter(Boolean).length}>
-                <FilterCheckbox
-                  label="چارتر"
-                  checked={filters.ticketType.charter}
-                  onChange={(v) => updateFilter('ticketType', 'charter', v)}
-                />
-                <FilterCheckbox
-                  label="سیستمی"
-                  checked={filters.ticketType.system}
-                  onChange={(v) => updateFilter('ticketType', 'system', v)}
-                />
-              </FilterSection>
-            )}
-
-            {/* Cabin Class - Always show in All Filters */}
-            {(activeSection === 'all' || activeSection === 'cabinClass') && (
-              <FilterSection title="کلاس پروازی" count={Object.values(filters.cabinClass).filter(Boolean).length}>
-                <FilterCheckbox
-                  label="اکونومی"
-                  checked={filters.cabinClass.economy}
-                  onChange={(v) => updateFilter('cabinClass', 'economy', v)}
-                />
-                <FilterCheckbox
-                  label="بیزینس"
-                  checked={filters.cabinClass.business}
-                  onChange={(v) => updateFilter('cabinClass', 'business', v)}
-                />
-              </FilterSection>
-            )}
-
-            {/* Agencies - Always show in All Filters */}
-            {(activeSection === 'all' || activeSection === 'agencies') && (
-              <FilterSection title="وبسایت‌ها" count={Object.values(filters.agencies).filter(Boolean).length}>
-                <FilterCheckbox
-                  label="علی‌بابا"
-                  logo="/images/logo.webp"
-                  extraText="از ۲,346,890"
-                  checked={filters.agencies.alibaba}
-                  onChange={(v) => updateFilter('agencies', 'alibaba', v)}
-                />
-                <FilterCheckbox
-                  label="فلای تودی"
-                  logo="/images/logo.webp"
-                  extraText="از ۲,346,890"
-                  checked={filters.agencies.flytoday}
-                  onChange={(v) => updateFilter('agencies', 'flytoday', v)}
-                />
-                <FilterCheckbox
-                  label="مستر بلیط"
-                  logo="/images/logo.webp"
-                  extraText="از ۲,346,890"
-                  checked={filters.agencies.mrbilit}
-                  onChange={(v) => updateFilter('agencies', 'mrbilit', v)}
-                />
-              </FilterSection>
-            )}
-
-            {/* Airlines - Always show in All Filters */}
-            {(activeSection === 'all' || activeSection === 'airlines') && (
-              <FilterSection 
-                title="شرکت‌های هواپیمایی" 
-                count={Object.values(filters.airlines).filter(Boolean).length}
-                isLast={true}
-              >
-                <FilterCheckbox
-                  label="ماهان"
-                  logo="/images/logo.webp"
-                  extraText="از ۲,346,890"
-                  checked={filters.airlines.mahan}
-                  onChange={(v) => updateFilter('airlines', 'mahan', v)}
-                />
-                <FilterCheckbox
-                  label="کاسپین"
-                  logo="/images/logo.webp"
-                  extraText="از ۲,346,890"
-                  checked={filters.airlines.caspian}
-                  onChange={(v) => updateFilter('airlines', 'caspian', v)}
-                />
-                <FilterCheckbox
-                  label="آتا"
-                  logo="/images/logo.webp"
-                  extraText="از ۲,346,890"
-                  checked={filters.airlines.ata}
-                  onChange={(v) => updateFilter('airlines', 'ata', v)}
-                />
-              </FilterSection>
-            )}
+      <div className="w-full max-h-[calc(80vh-60px)] overflow-y-auto">
+        {/* Active Filter Chips Section (Horizontally Scrollable) */}
+        {activeSection === 'all' && totalActiveFiltersForChips > 0 && (
+          <div className="px-5 py-1 border-b border-Gray-N100 w-full">
+            <div className="flex items-center gap-[7px] overflow-x-auto whitespace-nowrap p-2" style={{ WebkitOverflowScrolling: 'touch', scrollbarWidth: 'thin' }}>
+              {/* Ticket Type Filters */}
+              {Object.entries(filters.ticketType).map(([key, value]) => 
+                value && (
+                  <div key={`ticketType-${key}`} className="px-3 py-1 bg-Shade-White rounded-2xl outline outline-2 outline-offset-[-2px] outline-Gray-N100 flex-shrink-0 flex justify-center items-center gap-1 overflow-hidden">
+                    <div className="py-1 flex justify-start items-center gap-2 cursor-pointer" onClick={() => updateFilter('ticketType', key, false)}>
+                      <div className="size-4 relative rounded-[48px] overflow-hidden">
+                        <CloseCircle size="16" color="#94A3B8" />
+                      </div>
+                    </div>
+                    <div className="flex justify-center items-center gap-1">
+                      <div className="text-Gray-N700 text-sm font-medium leading-normal">
+                        {key === 'charter' ? 'چارتری' : 'سیستمی'}
+                      </div>
+                    </div>
+                  </div>
+                )
+              )}
+              
+              {/* Cabin Class Filters */}
+              {Object.entries(filters.cabinClass).map(([key, value]) => 
+                value && (
+                  <div key={`cabinClass-${key}`} className="px-3 py-1 bg-Shade-White rounded-2xl outline outline-2 outline-offset-[-2px] outline-Gray-N100 flex-shrink-0 flex justify-center items-center gap-1 overflow-hidden">
+                    <div className="py-1 flex justify-start items-center gap-2 cursor-pointer" onClick={() => updateFilter('cabinClass', key, false)}>
+                      <div className="size-4 relative rounded-[48px] overflow-hidden">
+                        <CloseCircle size="16" color="#94A3B8" />
+                      </div>
+                    </div>
+                    <div className="flex justify-center items-center gap-1">
+                      <div className="text-Gray-N700 text-sm font-medium leading-normal">
+                        {key === 'economy' ? 'اکونومی' : 'بیزینس'}
+                      </div>
+                    </div>
+                  </div>
+                )
+              )}
+              
+              {/* Airlines Filters */}
+              {Object.entries(filters.airlines).map(([key, value]) => 
+                value && (
+                  <div key={`airlines-${key}`} className="px-3 py-1 bg-Shade-White rounded-2xl outline outline-2 outline-offset-[-2px] outline-Gray-N100 flex-shrink-0 flex justify-center items-center gap-1 overflow-hidden">
+                    <div className="py-1 flex justify-start items-center gap-2 cursor-pointer" onClick={() => updateFilter('airlines', key, false)}>
+                      <div className="size-4 relative rounded-[48px] overflow-hidden">
+                        <CloseCircle size="16" color="#94A3B8" />
+                      </div>
+                    </div>
+                    <div className="flex justify-center items-center gap-1">
+                      <div className="text-Gray-N700 text-sm font-medium leading-normal">
+                        {key === 'mahan' ? 'ماهان' : key === 'caspian' ? 'کاسپین' : 'آتا'}
+                      </div>
+                    </div>
+                  </div>
+                )
+              )}
+              
+              {/* Agencies Filters */}
+              {Object.entries(filters.agencies).map(([key, value]) => 
+                value && (
+                  <div key={`agencies-${key}`} className="px-3 py-1 bg-Shade-White rounded-2xl outline outline-2 outline-offset-[-2px] outline-Gray-N100 flex-shrink-0 flex justify-center items-center gap-1 overflow-hidden">
+                    <div className="py-1 flex justify-start items-center gap-2 cursor-pointer" onClick={() => updateFilter('agencies', key, false)}>
+                      <div className="size-4 relative rounded-[48px] overflow-hidden">
+                        <CloseCircle size="16" color="#94A3B8" />
+                      </div>
+                    </div>
+                    <div className="flex justify-center items-center gap-1">
+                      <div className="text-Gray-N700 text-sm font-medium leading-normal">
+                        {key === 'alibaba' ? 'علی بابا' : key === 'flytoday' ? 'فلای تودی' : 'مستر بلیط'}
+                      </div>
+                    </div>
+                  </div>
+                )
+              )}
+              
+              {/* Price Range Filter */}
+              {(priceRange[0] !== 500000 || priceRange[1] !== 5000000) && (
+                <div className="px-3 py-1 bg-Shade-White rounded-2xl outline outline-2 outline-offset-[-2px] outline-Gray-N100 flex-shrink-0 flex justify-center items-center gap-1 overflow-hidden">
+                  <div className="py-1 flex justify-start items-center gap-2 cursor-pointer" onClick={() => setPriceRange([500000, 5000000])}>
+                    <div className="size-4 relative rounded-[48px] overflow-hidden">
+                      <CloseCircle size="16" color="#94A3B8" />
+                    </div>
+                  </div>
+                  <div className="flex justify-center items-center gap-1">
+                    <div className="text-Gray-N700 text-sm font-medium leading-normal">
+                      بازه قیمت (تومان): {englishToFarsiNumber(Math.floor(priceRange[0] / 1000))} تا {englishToFarsiNumber(Math.floor(priceRange[1] / 1000))} هزار
+                    </div>
+                  </div>
+                </div>
+              )}
+              
+              {/* Flight Time Range Filter */}
+              {(flightTimeRange[0] !== 4 || flightTimeRange[1] !== 24) && (
+                <div className="px-3 py-1 bg-Shade-White rounded-2xl outline outline-2 outline-offset-[-2px] outline-Gray-N100 flex-shrink-0 flex justify-center items-center gap-1 overflow-hidden">
+                  <div className="py-1 flex justify-start items-center gap-2 cursor-pointer" onClick={() => setFlightTimeRange([4, 24])}>
+                    <div className="size-4 relative rounded-[48px] overflow-hidden">
+                      <CloseCircle size="16" color="#94A3B8" />
+                    </div>
+                  </div>
+                  <div className="flex justify-center items-center gap-1">
+                    <div className="text-Gray-N700 text-sm font-medium leading-normal">
+                      ساعت پرواز: {englishToFarsiNumber(flightTimeRange[0])} تا {englishToFarsiNumber(flightTimeRange[1])}
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
+        )}
+        
+        <div className="self-stretch px-5 py-4 bg-Shade-White flex flex-col justify-center items-center gap-3">
+          {/* Filtered content based on activeSection */}
+          {/* Flight Time Range */}
+          {(activeSection === 'all' || activeSection === 'flightTime') && (
+            <FilterSection title="ساعت پرواز رفت">
+              <FancySlider
+                value={flightTimeRange}
+                onValueChange={setFlightTimeRange}
+                min={4}
+                max={24}
+                step={1}
+                leftLabel={formatTime(flightTimeRange[1])}
+                rightLabel={formatTime(flightTimeRange[0])}
+              />
+            </FilterSection>
+          )}
+
+          {/* Price Range */}
+          {(activeSection === 'all' || activeSection === 'priceRange') && (
+            <FilterSection title="بازه قیمت (تومان)">
+              <FancySlider
+                value={priceRange}
+                onValueChange={setPriceRange}
+                min={500000}
+                max={5000000}
+                step={100000}
+                leftLabel={formatPrice(priceRange[1])}
+                rightLabel={formatPrice(priceRange[0])}
+              />
+            </FilterSection>
+          )}
+
+          {/* Ticket Type */}
+          {(activeSection === 'all' || activeSection === 'ticketType') && (
+            <FilterSection title="نوع بلیط" count={Object.values(filters.ticketType).filter(Boolean).length}>
+              <FilterCheckbox
+                label="چارتر"
+                checked={filters.ticketType.charter}
+                onChange={(v) => updateFilter('ticketType', 'charter', v)}
+              />
+              <FilterCheckbox
+                label="سیستمی"
+                checked={filters.ticketType.system}
+                onChange={(v) => updateFilter('ticketType', 'system', v)}
+              />
+            </FilterSection>
+          )}
+
+          {/* Cabin Class */}
+          {(activeSection === 'all' || activeSection === 'cabinClass') && (
+            <FilterSection title="کلاس پروازی" count={Object.values(filters.cabinClass).filter(Boolean).length}>
+              <FilterCheckbox
+                label="اکونومی"
+                checked={filters.cabinClass.economy}
+                onChange={(v) => updateFilter('cabinClass', 'economy', v)}
+              />
+              <FilterCheckbox
+                label="بیزینس"
+                checked={filters.cabinClass.business}
+                onChange={(v) => updateFilter('cabinClass', 'business', v)}
+              />
+            </FilterSection>
+          )}
+
+          {/* Airlines */}
+          {(activeSection === 'all' || activeSection === 'airlines') && (
+            <FilterSection 
+              title="شرکت‌های هواپیمایی" 
+              count={Object.values(filters.airlines).filter(Boolean).length}
+              isLast={true}
+            >
+              <FilterCheckbox
+                label="ماهان"
+                logo="/images/logo.webp"
+                extraText="از ۲,346,890"
+                checked={filters.airlines.mahan}
+                onChange={(v) => updateFilter('airlines', 'mahan', v)}
+              />
+              <FilterCheckbox
+                label="کاسپین"
+                logo="/images/logo.webp"
+                extraText="از ۲,346,890"
+                checked={filters.airlines.caspian}
+                onChange={(v) => updateFilter('airlines', 'caspian', v)}
+              />
+              <FilterCheckbox
+                label="آتا"
+                logo="/images/logo.webp"
+                extraText="از ۲,346,890"
+                checked={filters.airlines.ata}
+                onChange={(v) => updateFilter('airlines', 'ata', v)}
+              />
+            </FilterSection>
+          )}
+
+          {/* Agencies */}
+          {(activeSection === 'all' || activeSection === 'agencies') && (
+            <FilterSection title="وبسایت‌ها" count={Object.values(filters.agencies).filter(Boolean).length}>
+              <FilterCheckbox
+                label="علی‌بابا"
+                logo="/images/logo.webp"
+                extraText="از ۲,346,890"
+                checked={filters.agencies.alibaba}
+                onChange={(v) => updateFilter('agencies', 'alibaba', v)}
+              />
+              <FilterCheckbox
+                label="فلای تودی"
+                logo="/images/logo.webp"
+                extraText="از ۲,346,890"
+                checked={filters.agencies.flytoday}
+                onChange={(v) => updateFilter('agencies', 'flytoday', v)}
+              />
+              <FilterCheckbox
+                label="مستر بلیط"
+                logo="/images/logo.webp"
+                extraText="از ۲,346,890"
+                checked={filters.agencies.mrbilit}
+                onChange={(v) => updateFilter('agencies', 'mrbilit', v)}
+              />
+            </FilterSection>
+          )}
         </div>
       </div>
     </div>
