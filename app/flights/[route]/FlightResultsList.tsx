@@ -49,7 +49,7 @@ export function FlightResultsList({ flights }: FlightResultsListProps) {
   useEffect(() => {
     const interval = setInterval(() => {
       setShowExpirationModal(true)
-    }, 60000)
+    }, 100000)
     // todo: 5min? 10min?
 
     return () => clearInterval(interval)

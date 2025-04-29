@@ -321,9 +321,9 @@ export function FlightSearchForm({
       <Button
         intent="text"
         size="medium"
-        className={`-mb-5 -mt-1 ${contextPage == "flights" ? "hidden md:block" : "hidden"}`}
+        className={`-mb-3 mt-2 text-Gray-N800 ${contextPage == "flights" ? "hidden md:block" : "hidden"}`}
         onClick={onClose}
-        leftIcon={<ArrowUp2 size="20" color="#5A28EE" />}
+        leftIcon={<ArrowUp2 size="20" color="#252525" />}
       >
         بستن
       </Button>

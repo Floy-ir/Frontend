@@ -98,16 +98,16 @@ const Timeline = ({
     <div className="relative max-w-screen items-center justify-center">
       {/* Gradient */}
       <div className="pointer-events-none absolute inset-0 z-9 flex w-full justify-between">
-        <div className="h-full w-[69px] bg-gradient-to-l from-white to-transparent lg:rounded-2xl"></div>
-        <div className="h-full w-[69px] bg-gradient-to-r from-white to-transparent lg:rounded-2xl"></div>
+        <div className="h-full w-[73px] bg-gradient-to-l from-white to-transparent lg:rounded-2xl"></div>
+        <div className="h-full w-[73px] bg-gradient-to-r from-white to-transparent lg:rounded-2xl"></div>
       </div>
 
       {/* buttons */}
       <Image
         src={img}
         alt="scroll left"
-        width={24}
-        height={24}
+        width={28}
+        height={28}
         onClick={() => {
           if (scrollRef.current) {
             scrollRef.current.scrollBy({ left: -200, behavior: "smooth" })
@@ -118,14 +118,14 @@ const Timeline = ({
       <Image
         src={img}
         alt="scroll right"
-        width={24}
-        height={24}
+        width={28}
+        height={28}
         onClick={() => {
           if (scrollRef.current) {
             scrollRef.current.scrollBy({ left: 200, behavior: "smooth" })
           }
         }}
-        className="absolute top-1/3 right-4 z-10 hidden cursor-pointer lg:block"
+        className="absolute top-1/3 right-4 z-10 hidden cursor-pointer md:block"
       />
 
       {/* Timeline scroll area */}
