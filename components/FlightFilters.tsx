@@ -179,7 +179,7 @@ export function FlightFilters({
   // Set drawer state on component mount
   React.useEffect(() => {
     const checkIfInDrawer = () => {
-      const isSmallScreen = window.innerWidth < 1100
+      const isSmallScreen = window.innerWidth < 1024
       const drawerContent = document.querySelector('.drawer-content')
       const isInDrawerContent = drawerContent?.contains(document.querySelector('.self-stretch.px-5.py-4')) || false
       setIsInDrawer(isSmallScreen || isInDrawerContent)
