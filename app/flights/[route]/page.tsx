@@ -29,10 +29,10 @@ type RouteParams = {
 
 // Define the structure for filters state
 interface FilterState {
-  ticketType: { charter: boolean; system: boolean };
-  cabinClass: { economy: boolean; business: boolean };
-  airlines: { mahan: boolean; caspian: boolean; ata: boolean };
-  agencies: { alibaba: boolean; flytoday: boolean; mrbilit: boolean };
+  ticketType: { charter: boolean; system: boolean }
+  cabinClass: { economy: boolean; business: boolean }
+  airlines: { mahan: boolean; caspian: boolean; ata: boolean }
+  agencies: { alibaba: boolean; flytoday: boolean; mrbilit: boolean }
 }
 
 export default function FlightResults({ params, searchParams }: RouteParams) {
@@ -44,23 +44,20 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
   // Parse route from URL (format: THR-MHD)
   const [originCode, destinationCode] = unwrappedParams.route.split("-")
 
-  
-const [originCity, setOriginCity] = useState("");
-const [destinationCity, setDestinationCity] = useState("");
+  const [originCity, setOriginCity] = useState("")
+  const [destinationCity, setDestinationCity] = useState("")
 
-useEffect(() => {
-  const fetchOrigin = async () => {
-    const origin = await getCityByCode(originCode || "");
-    const destination = await getCityByCode(destinationCode || "");
+  useEffect(() => {
+    const fetchOrigin = async () => {
+      const origin = await getCityByCode(originCode || "")
+      const destination = await getCityByCode(destinationCode || "")
 
-    setOriginCity(origin?.label || originCode || "");
-    setDestinationCity(destination?.label || destinationCode || "");
-  };
+      setOriginCity(origin?.label || originCode || "")
+      setDestinationCity(destination?.label || destinationCode || "")
+    }
 
-  fetchOrigin();
-}, []);
-
-
+    fetchOrigin()
+  }, [])
 
   // Get passenger counts and date from URL
   const adult = parseInt(unwrappedSearchParams.adult || "1")
@@ -102,29 +99,27 @@ useEffect(() => {
   const [priceRange, setPriceRange] = useState<[number, number]>([500000, 5000000])
 
   // Calculate active filters count
-  const activeFiltersCount = Object.values(filters).reduce(
-    (count, category) => count + Object.values(category).filter(Boolean).length,
-    0
-  ) + 
-  ((priceRange[0] !== 500000 || priceRange[1] !== 5000000) ? 1 : 0) + 
-  ((flightTimeRange[0] !== 4 || flightTimeRange[1] !== 24) ? 1 : 0)
+  const activeFiltersCount =
+    Object.values(filters).reduce((count, category) => count + Object.values(category).filter(Boolean).length, 0) +
+    (priceRange[0] !== 500000 || priceRange[1] !== 5000000 ? 1 : 0) +
+    (flightTimeRange[0] !== 4 || flightTimeRange[1] !== 24 ? 1 : 0)
 
   // Handler for filter changes
   const updateFilter = (category: string, key: string, value: boolean) => {
-    if (key === 'all' && value === false) {
+    if (key === "all" && value === false) {
       // Clear all filters in the specific category
       setFilters((prev) => {
-        const updatedCategory: Record<string, boolean> = {};
+        const updatedCategory: Record<string, boolean> = {}
         // Set all keys in this category to false
-        Object.keys(prev[category as keyof typeof prev]).forEach(k => {
-          updatedCategory[k] = false;
-        });
-        
+        Object.keys(prev[category as keyof typeof prev]).forEach((k) => {
+          updatedCategory[k] = false
+        })
+
         return {
           ...prev,
-          [category]: updatedCategory
-        };
-      });
+          [category]: updatedCategory,
+        }
+      })
     } else {
       // Regular single filter update
       setFilters((prev) => ({
@@ -133,7 +128,7 @@ useEffect(() => {
           ...prev[category as keyof typeof prev],
           [key]: value,
         },
-      }));
+      }))
     }
   }
 
@@ -172,9 +167,10 @@ useEffect(() => {
         agency: "علی بابا",
         agencyLogo: "/images/logo.webp",
         label: "ارزان‌ترین",
-        base_redirect_url: "https://www.alibaba.ir/flights/AWZ-THR?adult={adult_count}&child={child_count}&infant={infant_count}&departing=1404-02-09",
+        base_redirect_url:
+          "https://www.alibaba.ir/flights/AWZ-THR?adult={adult_count}&child={child_count}&infant={infant_count}&departing=1404-02-09",
         one_adult_redirect_url: "https://www.alibaba.ir/flights/AWZ-THR/wj1cf4r/passengers",
-        two_Adults_redirect_url: "https://www.alibaba.ir/flights/AWZ-THR/mtbv5go/passengers"
+        two_Adults_redirect_url: "https://www.alibaba.ir/flights/AWZ-THR/mtbv5go/passengers",
       },
       otherSellersCount: 3,
     },
@@ -199,9 +195,10 @@ useEffect(() => {
         agency: "فلای تودی",
         agencyLogo: "/images/logo.webp",
         label: "ارزان‌ترین",
-        base_redirect_url: "https://www.alibaba.ir/flights/AWZ-THR?adult={adult_count}&child={child_count}&infant={infant_count}&departing=1404-02-09",
+        base_redirect_url:
+          "https://www.alibaba.ir/flights/AWZ-THR?adult={adult_count}&child={child_count}&infant={infant_count}&departing=1404-02-09",
         one_adult_redirect_url: "https://www.alibaba.ir/flights/AWZ-THR/wj1cf4r/passengers",
-        two_Adults_redirect_url: "https://www.alibaba.ir/flights/AWZ-THR/jb1bsc/passengers"
+        two_Adults_redirect_url: "https://www.alibaba.ir/flights/AWZ-THR/jb1bsc/passengers",
       },
       otherSellersCount: 5,
     },
@@ -226,9 +223,10 @@ useEffect(() => {
         agency: "مستر بلیط",
         agencyLogo: "/images/logo.webp",
         label: "ارزان‌ترین",
-        base_redirect_url: "https://www.alibaba.ir/flights/AWZ-THR?adult={adult_count}&child={child_count}&infant={infant_count}&departing=1404-02-09",
+        base_redirect_url:
+          "https://www.alibaba.ir/flights/AWZ-THR?adult={adult_count}&child={child_count}&infant={infant_count}&departing=1404-02-09",
         one_adult_redirect_url: "https://www.alibaba.ir/flights/AWZ-THR/wj1cf4r/passengers",
-        two_Adults_redirect_url: "https://www.alibaba.ir/flights/AWZ-THR/jb1bsc/passengers"
+        two_Adults_redirect_url: "https://www.alibaba.ir/flights/AWZ-THR/jb1bsc/passengers",
       },
       otherSellersCount: 2,
     },
@@ -319,10 +317,11 @@ useEffect(() => {
                   <button
                     key={key}
                     onClick={() => setSortKey(key)}
-                    className={`flex items-center justify-center gap-1 overflow-hidden rounded-2xl px-3 py-1 outline-2 outline-offset-[-2px] ${sortKey === key
+                    className={`flex items-center justify-center gap-1 overflow-hidden rounded-2xl px-3 py-1 outline-2 outline-offset-[-2px] ${
+                      sortKey === key
                         ? "bg-Primary-P50 text-Primary-P500main outline-Primary-P500main font-semibold"
                         : "bg-Shade-White text-Gray-N700 outline-Gray-N100 font-medium"
-                      }`}
+                    }`}
                   >
                     <span className="text-sm leading-normal">{label}</span>
                   </button>
@@ -331,8 +330,7 @@ useEffect(() => {
             </div>
 
             {/* mobile sort and filter options */}
-            <div className="flex items-center justify-start px-5 my-4 lg:hidden">
-
+            <div className="my-4 flex items-center justify-start px-5 lg:hidden">
               {/* Filter Chips - Each opens a specific section */}
               <div className="flex gap-1 overflow-x-auto">
                 {/* Mobile sort drawer trigger */}
@@ -341,7 +339,10 @@ useEffect(() => {
                     <div className="bg-Shade-White outline-Gray-N100 inline-flex items-center justify-center gap-1 rounded-2xl px-3 py-1 outline-2 outline-offset-[-2px]">
                       <Sort size="16" color="#1E1E1E" />
                       <div className="flex items-center justify-center gap-2">
-                        <div className="text-Gray-N700 text-sm leading-normal font-medium text-nowrap"> مرتب سازی: </div>
+                        <div className="text-Gray-N700 text-sm leading-normal font-medium text-nowrap">
+                          {" "}
+                          مرتب سازی:{" "}
+                        </div>
                         <div className="text-Gray-N700 text-sm leading-normal font-medium">
                           {sortKey ? getCurrentSortLabel() : " ارزان‌ترین "}
                         </div>
@@ -353,7 +354,9 @@ useEffect(() => {
                       <DialogTitle className="bg-Shade-White border-Gray-N100 inline-flex items-center justify-center self-stretch border-b px-5 py-4">
                         <div className="flex flex-1 items-center justify-center">
                           <div className="flex items-center justify-center gap-1">
-                            <div className="text-Gray-N600 text-right text-base leading-7 font-semibold">ترتیب نمایش</div>
+                            <div className="text-Gray-N600 text-right text-base leading-7 font-semibold">
+                              ترتیب نمایش
+                            </div>
                           </div>
                           <div className="flex-1"></div>
                         </div>
@@ -385,13 +388,13 @@ useEffect(() => {
                 {/* All Filters Chip - always first */}
                 <Drawer>
                   <DrawerTrigger asChild>
-                    <div className="bg-Shade-White outline-Gray-N100 inline-flex items-center justify-center gap-1 rounded-2xl px-3 py-1 outline-2 outline-offset-[-2px] whitespace-nowrap cursor-pointer mr-1">
+                    <div className="bg-Shade-White outline-Gray-N100 mr-1 inline-flex cursor-pointer items-center justify-center gap-1 rounded-2xl px-3 py-1 whitespace-nowrap outline-2 outline-offset-[-2px]">
                       <Setting5 size="16" color="#1E1E1E" />
                       <div className="flex items-center gap-1">
-                        <div className="text-Gray-N700 text-sm font-medium leading-normal">فیلتر‌ها</div>
+                        <div className="text-Gray-N700 text-sm leading-normal font-medium">فیلتر‌ها</div>
                         {activeFiltersCount > 0 && (
-                          <div className="size-5 bg-Primary-P50 rounded-[80px] flex justify-center items-center">
-                            <div className="text-Primary-P500main text-[11px] font-semibold leading-none">
+                          <div className="bg-Primary-P50 flex size-5 items-center justify-center rounded-[80px]">
+                            <div className="text-Primary-P500main text-[11px] leading-none font-semibold">
                               {englishToFarsiNumber(activeFiltersCount)}
                             </div>
                           </div>
@@ -399,7 +402,7 @@ useEffect(() => {
                       </div>
                     </div>
                   </DrawerTrigger>
-                  <DrawerContent className="bg-Shade-White rounded-t-2xl max-h-[80vh]">
+                  <DrawerContent className="bg-Shade-White max-h-[80vh] rounded-t-2xl">
                     <FilterDrawerContent
                       title="فیلتر‌ها"
                       activeFiltersCount={activeFiltersCount}
@@ -421,20 +424,21 @@ useEffect(() => {
                   <Drawer>
                     <DrawerTrigger asChild>
                       <div
-                        className="bg-Primary-P50 outline-Primary-P500main inline-flex items-center justify-center gap-1 rounded-2xl px-3 py-1 outline-2 outline-offset-[-2px] whitespace-nowrap cursor-pointer mr-1"
-                        onClick={() => setActiveFilterSection('priceRange')}
+                        className="bg-Primary-P50 outline-Primary-P500main mr-1 inline-flex cursor-pointer items-center justify-center gap-1 rounded-2xl px-3 py-1 whitespace-nowrap outline-2 outline-offset-[-2px]"
+                        onClick={() => setActiveFilterSection("priceRange")}
                       >
                         <div className="flex items-center gap-1">
-                          <div className="text-Primary-P500main text-sm font-medium leading-normal">
-                            قیمت: {englishToFarsiNumber(Math.floor(priceRange[0] / 1000))} تا {englishToFarsiNumber(Math.floor(priceRange[1] / 1000))} هزار
+                          <div className="text-Primary-P500main text-sm leading-normal font-medium">
+                            قیمت: {englishToFarsiNumber(Math.floor(priceRange[0] / 1000))} تا{" "}
+                            {englishToFarsiNumber(Math.floor(priceRange[1] / 1000))} هزار
                           </div>
                         </div>
                       </div>
                     </DrawerTrigger>
-                    <DrawerContent className="bg-Shade-White rounded-t-2xl max-h-[80vh]">
+                    <DrawerContent className="bg-Shade-White max-h-[80vh] rounded-t-2xl">
                       <FilterDrawerContent
                         title="بازه قیمت"
-                        activeFiltersCount={(priceRange[0] !== 500000 || priceRange[1] !== 5000000) ? 1 : 0}
+                        activeFiltersCount={priceRange[0] !== 500000 || priceRange[1] !== 5000000 ? 1 : 0}
                         clearFilters={() => setPriceRange([500000, 5000000])}
                         activeSection="priceRange"
                         filters={filters}
@@ -453,20 +457,21 @@ useEffect(() => {
                   <Drawer>
                     <DrawerTrigger asChild>
                       <div
-                        className="bg-Primary-P50 outline-Primary-P500main inline-flex items-center justify-center gap-1 rounded-2xl px-3 py-1 outline-2 outline-offset-[-2px] whitespace-nowrap cursor-pointer mr-1"
-                        onClick={() => setActiveFilterSection('flightTime')}
+                        className="bg-Primary-P50 outline-Primary-P500main mr-1 inline-flex cursor-pointer items-center justify-center gap-1 rounded-2xl px-3 py-1 whitespace-nowrap outline-2 outline-offset-[-2px]"
+                        onClick={() => setActiveFilterSection("flightTime")}
                       >
                         <div className="flex items-center gap-1">
-                          <div className="text-Primary-P500main text-sm font-medium leading-normal">
-                            ساعت پرواز: {englishToFarsiNumber(flightTimeRange[0])} تا {englishToFarsiNumber(flightTimeRange[1])}
+                          <div className="text-Primary-P500main text-sm leading-normal font-medium">
+                            ساعت پرواز: {englishToFarsiNumber(flightTimeRange[0])} تا{" "}
+                            {englishToFarsiNumber(flightTimeRange[1])}
                           </div>
                         </div>
                       </div>
                     </DrawerTrigger>
-                    <DrawerContent className="bg-Shade-White rounded-t-2xl max-h-[80vh]">
+                    <DrawerContent className="bg-Shade-White max-h-[80vh] rounded-t-2xl">
                       <FilterDrawerContent
                         title="ساعت پرواز رفت"
-                        activeFiltersCount={(flightTimeRange[0] !== 4 || flightTimeRange[1] !== 24) ? 1 : 0}
+                        activeFiltersCount={flightTimeRange[0] !== 4 || flightTimeRange[1] !== 24 ? 1 : 0}
                         clearFilters={() => setFlightTimeRange([4, 24])}
                         activeSection="flightTime"
                         filters={filters}
@@ -485,24 +490,24 @@ useEffect(() => {
                   <Drawer>
                     <DrawerTrigger asChild>
                       <div
-                        className="bg-Primary-P50 outline-Primary-P500main inline-flex items-center justify-center gap-1 rounded-2xl px-3 py-1 outline-2 outline-offset-[-2px] whitespace-nowrap cursor-pointer mr-1"
-                        onClick={() => setActiveFilterSection('ticketType')}
+                        className="bg-Primary-P50 outline-Primary-P500main mr-1 inline-flex cursor-pointer items-center justify-center gap-1 rounded-2xl px-3 py-1 whitespace-nowrap outline-2 outline-offset-[-2px]"
+                        onClick={() => setActiveFilterSection("ticketType")}
                       >
                         <div className="flex items-center gap-1">
-                          <div className="text-Primary-P500main text-sm font-medium leading-normal">
-                            نوع بلیط: {[
-                              filters.ticketType.charter ? 'چارتر' : null,
-                              filters.ticketType.system ? 'سیستمی' : null
-                            ].filter(Boolean).join('، ')}
+                          <div className="text-Primary-P500main text-sm leading-normal font-medium">
+                            نوع بلیط:{" "}
+                            {[filters.ticketType.charter ? "چارتر" : null, filters.ticketType.system ? "سیستمی" : null]
+                              .filter(Boolean)
+                              .join("، ")}
                           </div>
                         </div>
                       </div>
                     </DrawerTrigger>
-                    <DrawerContent className="bg-Shade-White rounded-t-2xl max-h-[80vh]">
+                    <DrawerContent className="bg-Shade-White max-h-[80vh] rounded-t-2xl">
                       <FilterDrawerContent
                         title="نوع بلیط"
                         activeFiltersCount={Object.values(filters.ticketType).filter(Boolean).length}
-                        clearFilters={() => updateFilter('ticketType', 'all', false)}
+                        clearFilters={() => updateFilter("ticketType", "all", false)}
                         activeSection="ticketType"
                         filters={filters}
                         updateFilter={updateFilter}
@@ -520,24 +525,27 @@ useEffect(() => {
                   <Drawer>
                     <DrawerTrigger asChild>
                       <div
-                        className="bg-Primary-P50 outline-Primary-P500main inline-flex items-center justify-center gap-1 rounded-2xl px-3 py-1 outline-2 outline-offset-[-2px] whitespace-nowrap cursor-pointer mr-1"
-                        onClick={() => setActiveFilterSection('cabinClass')}
+                        className="bg-Primary-P50 outline-Primary-P500main mr-1 inline-flex cursor-pointer items-center justify-center gap-1 rounded-2xl px-3 py-1 whitespace-nowrap outline-2 outline-offset-[-2px]"
+                        onClick={() => setActiveFilterSection("cabinClass")}
                       >
                         <div className="flex items-center gap-1">
-                          <div className="text-Primary-P500main text-sm font-medium leading-normal">
-                            کلاس پروازی: {[
-                              filters.cabinClass.economy ? 'اکونومی' : null,
-                              filters.cabinClass.business ? 'بیزینس' : null
-                            ].filter(Boolean).join('، ')}
+                          <div className="text-Primary-P500main text-sm leading-normal font-medium">
+                            کلاس پروازی:{" "}
+                            {[
+                              filters.cabinClass.economy ? "اکونومی" : null,
+                              filters.cabinClass.business ? "بیزینس" : null,
+                            ]
+                              .filter(Boolean)
+                              .join("، ")}
                           </div>
                         </div>
                       </div>
                     </DrawerTrigger>
-                    <DrawerContent className="bg-Shade-White rounded-t-2xl max-h-[80vh]">
+                    <DrawerContent className="bg-Shade-White max-h-[80vh] rounded-t-2xl">
                       <FilterDrawerContent
                         title="کلاس پروازی"
                         activeFiltersCount={Object.values(filters.cabinClass).filter(Boolean).length}
-                        clearFilters={() => updateFilter('cabinClass', 'all', false)}
+                        clearFilters={() => updateFilter("cabinClass", "all", false)}
                         activeSection="cabinClass"
                         filters={filters}
                         updateFilter={updateFilter}
@@ -555,25 +563,28 @@ useEffect(() => {
                   <Drawer>
                     <DrawerTrigger asChild>
                       <div
-                        className="bg-Primary-P50 outline-Primary-P500main inline-flex items-center justify-center gap-1 rounded-2xl px-3 py-1 outline-2 outline-offset-[-2px] whitespace-nowrap cursor-pointer mr-1"
-                        onClick={() => setActiveFilterSection('airlines')}
+                        className="bg-Primary-P50 outline-Primary-P500main mr-1 inline-flex cursor-pointer items-center justify-center gap-1 rounded-2xl px-3 py-1 whitespace-nowrap outline-2 outline-offset-[-2px]"
+                        onClick={() => setActiveFilterSection("airlines")}
                       >
                         <div className="flex items-center gap-1">
-                          <div className="text-Primary-P500main text-sm font-medium leading-normal">
-                            ایرلاین‌ها: {[
-                              filters.airlines.mahan ? 'ماهان' : null,
-                              filters.airlines.caspian ? 'کاسپین' : null,
-                              filters.airlines.ata ? 'آتا' : null
-                            ].filter(Boolean).join('، ')}
+                          <div className="text-Primary-P500main text-sm leading-normal font-medium">
+                            ایرلاین‌ها:{" "}
+                            {[
+                              filters.airlines.mahan ? "ماهان" : null,
+                              filters.airlines.caspian ? "کاسپین" : null,
+                              filters.airlines.ata ? "آتا" : null,
+                            ]
+                              .filter(Boolean)
+                              .join("، ")}
                           </div>
                         </div>
                       </div>
                     </DrawerTrigger>
-                    <DrawerContent className="bg-Shade-White rounded-t-2xl max-h-[80vh]">
+                    <DrawerContent className="bg-Shade-White max-h-[80vh] rounded-t-2xl">
                       <FilterDrawerContent
                         title="شرکت‌های هواپیمایی"
                         activeFiltersCount={Object.values(filters.airlines).filter(Boolean).length}
-                        clearFilters={() => updateFilter('airlines', 'all', false)}
+                        clearFilters={() => updateFilter("airlines", "all", false)}
                         activeSection="airlines"
                         filters={filters}
                         updateFilter={updateFilter}
@@ -591,25 +602,28 @@ useEffect(() => {
                   <Drawer>
                     <DrawerTrigger asChild>
                       <div
-                        className="bg-Primary-P50 outline-Primary-P500main inline-flex items-center justify-center gap-1 rounded-2xl px-3 py-1 outline-2 outline-offset-[-2px] whitespace-nowrap cursor-pointer mr-1"
-                        onClick={() => setActiveFilterSection('agencies')}
+                        className="bg-Primary-P50 outline-Primary-P500main mr-1 inline-flex cursor-pointer items-center justify-center gap-1 rounded-2xl px-3 py-1 whitespace-nowrap outline-2 outline-offset-[-2px]"
+                        onClick={() => setActiveFilterSection("agencies")}
                       >
                         <div className="flex items-center gap-1">
-                          <div className="text-Primary-P500main text-sm font-medium leading-normal">
-                            وبسایت‌ها: {[
-                              filters.agencies.alibaba ? 'علی بابا' : null,
-                              filters.agencies.flytoday ? 'فلای تودی' : null,
-                              filters.agencies.mrbilit ? 'مستر بلیط' : null
-                            ].filter(Boolean).join('، ')}
+                          <div className="text-Primary-P500main text-sm leading-normal font-medium">
+                            وبسایت‌ها:{" "}
+                            {[
+                              filters.agencies.alibaba ? "علی بابا" : null,
+                              filters.agencies.flytoday ? "فلای تودی" : null,
+                              filters.agencies.mrbilit ? "مستر بلیط" : null,
+                            ]
+                              .filter(Boolean)
+                              .join("، ")}
                           </div>
                         </div>
                       </div>
                     </DrawerTrigger>
-                    <DrawerContent className="bg-Shade-White rounded-t-2xl max-h-[80vh]">
+                    <DrawerContent className="bg-Shade-White max-h-[80vh] rounded-t-2xl">
                       <FilterDrawerContent
                         title="وبسایت‌ها"
                         activeFiltersCount={Object.values(filters.agencies).filter(Boolean).length}
-                        clearFilters={() => updateFilter('agencies', 'all', false)}
+                        clearFilters={() => updateFilter("agencies", "all", false)}
                         activeSection="agencies"
                         filters={filters}
                         updateFilter={updateFilter}
@@ -624,22 +638,22 @@ useEffect(() => {
 
                 {/* Inactive filters after active ones */}
                 {/* Price Range Filter Chip - if inactive */}
-                {(priceRange[0] === 500000 && priceRange[1] === 5000000) && (
+                {priceRange[0] === 500000 && priceRange[1] === 5000000 && (
                   <Drawer>
                     <DrawerTrigger asChild>
                       <div
-                        className="bg-Shade-White outline-Gray-N100 inline-flex items-center justify-center gap-1 rounded-2xl px-3 py-1 outline-2 outline-offset-[-2px] whitespace-nowrap cursor-pointer mr-1"
-                        onClick={() => setActiveFilterSection('priceRange')}
+                        className="bg-Shade-White outline-Gray-N100 mr-1 inline-flex cursor-pointer items-center justify-center gap-1 rounded-2xl px-3 py-1 whitespace-nowrap outline-2 outline-offset-[-2px]"
+                        onClick={() => setActiveFilterSection("priceRange")}
                       >
                         <div className="flex items-center gap-1">
-                          <div className="text-Gray-N700 text-sm font-medium leading-normal">قیمت</div>
+                          <div className="text-Gray-N700 text-sm leading-normal font-medium">قیمت</div>
                         </div>
                       </div>
                     </DrawerTrigger>
-                    <DrawerContent className="bg-Shade-White rounded-t-2xl max-h-[80vh]">
+                    <DrawerContent className="bg-Shade-White max-h-[80vh] rounded-t-2xl">
                       <FilterDrawerContent
                         title="بازه قیمت"
-                        activeFiltersCount={(priceRange[0] !== 500000 || priceRange[1] !== 5000000) ? 1 : 0}
+                        activeFiltersCount={priceRange[0] !== 500000 || priceRange[1] !== 5000000 ? 1 : 0}
                         clearFilters={() => setPriceRange([500000, 5000000])}
                         activeSection="priceRange"
                         filters={filters}
@@ -654,22 +668,22 @@ useEffect(() => {
                 )}
 
                 {/* Flight Time Filter Chip - if inactive */}
-                {(flightTimeRange[0] === 4 && flightTimeRange[1] === 24) && (
+                {flightTimeRange[0] === 4 && flightTimeRange[1] === 24 && (
                   <Drawer>
                     <DrawerTrigger asChild>
                       <div
-                        className="bg-Shade-White outline-Gray-N100 inline-flex items-center justify-center gap-1 rounded-2xl px-3 py-1 outline-2 outline-offset-[-2px] whitespace-nowrap cursor-pointer mr-1"
-                        onClick={() => setActiveFilterSection('flightTime')}
+                        className="bg-Shade-White outline-Gray-N100 mr-1 inline-flex cursor-pointer items-center justify-center gap-1 rounded-2xl px-3 py-1 whitespace-nowrap outline-2 outline-offset-[-2px]"
+                        onClick={() => setActiveFilterSection("flightTime")}
                       >
                         <div className="flex items-center gap-1">
-                          <div className="text-Gray-N700 text-sm font-medium leading-normal">ساعت پرواز</div>
+                          <div className="text-Gray-N700 text-sm leading-normal font-medium">ساعت پرواز</div>
                         </div>
                       </div>
                     </DrawerTrigger>
-                    <DrawerContent className="bg-Shade-White rounded-t-2xl max-h-[80vh]">
+                    <DrawerContent className="bg-Shade-White max-h-[80vh] rounded-t-2xl">
                       <FilterDrawerContent
                         title="ساعت پرواز رفت"
-                        activeFiltersCount={(flightTimeRange[0] !== 4 || flightTimeRange[1] !== 24) ? 1 : 0}
+                        activeFiltersCount={flightTimeRange[0] !== 4 || flightTimeRange[1] !== 24 ? 1 : 0}
                         clearFilters={() => setFlightTimeRange([4, 24])}
                         activeSection="flightTime"
                         filters={filters}
@@ -688,19 +702,19 @@ useEffect(() => {
                   <Drawer>
                     <DrawerTrigger asChild>
                       <div
-                        className="bg-Shade-White outline-Gray-N100 inline-flex items-center justify-center gap-1 rounded-2xl px-3 py-1 outline-2 outline-offset-[-2px] whitespace-nowrap cursor-pointer mr-1"
-                        onClick={() => setActiveFilterSection('ticketType')}
+                        className="bg-Shade-White outline-Gray-N100 mr-1 inline-flex cursor-pointer items-center justify-center gap-1 rounded-2xl px-3 py-1 whitespace-nowrap outline-2 outline-offset-[-2px]"
+                        onClick={() => setActiveFilterSection("ticketType")}
                       >
                         <div className="flex items-center gap-1">
-                          <div className="text-Gray-N700 text-sm font-medium leading-normal">نوع بلیط</div>
+                          <div className="text-Gray-N700 text-sm leading-normal font-medium">نوع بلیط</div>
                         </div>
                       </div>
                     </DrawerTrigger>
-                    <DrawerContent className="bg-Shade-White rounded-t-2xl max-h-[80vh]">
+                    <DrawerContent className="bg-Shade-White max-h-[80vh] rounded-t-2xl">
                       <FilterDrawerContent
                         title="نوع بلیط"
                         activeFiltersCount={Object.values(filters.ticketType).filter(Boolean).length}
-                        clearFilters={() => updateFilter('ticketType', 'all', false)}
+                        clearFilters={() => updateFilter("ticketType", "all", false)}
                         activeSection="ticketType"
                         filters={filters}
                         updateFilter={updateFilter}
@@ -718,19 +732,19 @@ useEffect(() => {
                   <Drawer>
                     <DrawerTrigger asChild>
                       <div
-                        className="bg-Shade-White outline-Gray-N100 inline-flex items-center justify-center gap-1 rounded-2xl px-3 py-1 outline-2 outline-offset-[-2px] whitespace-nowrap cursor-pointer mr-1"
-                        onClick={() => setActiveFilterSection('cabinClass')}
+                        className="bg-Shade-White outline-Gray-N100 mr-1 inline-flex cursor-pointer items-center justify-center gap-1 rounded-2xl px-3 py-1 whitespace-nowrap outline-2 outline-offset-[-2px]"
+                        onClick={() => setActiveFilterSection("cabinClass")}
                       >
                         <div className="flex items-center gap-1">
-                          <div className="text-Gray-N700 text-sm font-medium leading-normal">کلاس پروازی</div>
+                          <div className="text-Gray-N700 text-sm leading-normal font-medium">کلاس پروازی</div>
                         </div>
                       </div>
                     </DrawerTrigger>
-                    <DrawerContent className="bg-Shade-White rounded-t-2xl max-h-[80vh]">
+                    <DrawerContent className="bg-Shade-White max-h-[80vh] rounded-t-2xl">
                       <FilterDrawerContent
                         title="کلاس پروازی"
                         activeFiltersCount={Object.values(filters.cabinClass).filter(Boolean).length}
-                        clearFilters={() => updateFilter('cabinClass', 'all', false)}
+                        clearFilters={() => updateFilter("cabinClass", "all", false)}
                         activeSection="cabinClass"
                         filters={filters}
                         updateFilter={updateFilter}
@@ -748,19 +762,19 @@ useEffect(() => {
                   <Drawer>
                     <DrawerTrigger asChild>
                       <div
-                        className="bg-Shade-White outline-Gray-N100 inline-flex items-center justify-center gap-1 rounded-2xl px-3 py-1 outline-2 outline-offset-[-2px] whitespace-nowrap cursor-pointer mr-1"
-                        onClick={() => setActiveFilterSection('airlines')}
+                        className="bg-Shade-White outline-Gray-N100 mr-1 inline-flex cursor-pointer items-center justify-center gap-1 rounded-2xl px-3 py-1 whitespace-nowrap outline-2 outline-offset-[-2px]"
+                        onClick={() => setActiveFilterSection("airlines")}
                       >
                         <div className="flex items-center gap-1">
-                          <div className="text-Gray-N700 text-sm font-medium leading-normal">ایرلاین‌ها</div>
+                          <div className="text-Gray-N700 text-sm leading-normal font-medium">ایرلاین‌ها</div>
                         </div>
                       </div>
                     </DrawerTrigger>
-                    <DrawerContent className="bg-Shade-White rounded-t-2xl max-h-[80vh]">
+                    <DrawerContent className="bg-Shade-White max-h-[80vh] rounded-t-2xl">
                       <FilterDrawerContent
                         title="شرکت‌های هواپیمایی"
                         activeFiltersCount={Object.values(filters.airlines).filter(Boolean).length}
-                        clearFilters={() => updateFilter('airlines', 'all', false)}
+                        clearFilters={() => updateFilter("airlines", "all", false)}
                         activeSection="airlines"
                         filters={filters}
                         updateFilter={updateFilter}
@@ -778,19 +792,19 @@ useEffect(() => {
                   <Drawer>
                     <DrawerTrigger asChild>
                       <div
-                        className="bg-Shade-White outline-Gray-N100 inline-flex items-center justify-center gap-1 rounded-2xl px-3 py-1 outline-2 outline-offset-[-2px] whitespace-nowrap cursor-pointer mr-1"
-                        onClick={() => setActiveFilterSection('agencies')}
+                        className="bg-Shade-White outline-Gray-N100 mr-1 inline-flex cursor-pointer items-center justify-center gap-1 rounded-2xl px-3 py-1 whitespace-nowrap outline-2 outline-offset-[-2px]"
+                        onClick={() => setActiveFilterSection("agencies")}
                       >
                         <div className="flex items-center gap-1">
-                          <div className="text-Gray-N700 text-sm font-medium leading-normal">وبسایت‌ها</div>
+                          <div className="text-Gray-N700 text-sm leading-normal font-medium">وبسایت‌ها</div>
                         </div>
                       </div>
                     </DrawerTrigger>
-                    <DrawerContent className="bg-Shade-White rounded-t-2xl max-h-[80vh]">
+                    <DrawerContent className="bg-Shade-White max-h-[80vh] rounded-t-2xl">
                       <FilterDrawerContent
                         title="وبسایت‌ها"
                         activeFiltersCount={Object.values(filters.agencies).filter(Boolean).length}
-                        clearFilters={() => updateFilter('agencies', 'all', false)}
+                        clearFilters={() => updateFilter("agencies", "all", false)}
                         activeSection="agencies"
                         filters={filters}
                         updateFilter={updateFilter}
@@ -858,165 +872,205 @@ const FilterDrawerContent = ({
   flightTimeRange,
   setFlightTimeRange,
   priceRange,
-  setPriceRange
+  setPriceRange,
 }: {
-  title: string,
-  activeFiltersCount: number,
-  clearFilters: () => void,
-  activeSection: string,
-  filters: FilterState,
-  updateFilter: (category: string, key: string, value: boolean) => void,
-  flightTimeRange: [number, number],
-  setFlightTimeRange: (range: [number, number]) => void,
-  priceRange: [number, number],
+  title: string
+  activeFiltersCount: number
+  clearFilters: () => void
+  activeSection: string
+  filters: FilterState
+  updateFilter: (category: string, key: string, value: boolean) => void
+  flightTimeRange: [number, number]
+  setFlightTimeRange: (range: [number, number]) => void
+  priceRange: [number, number]
   setPriceRange: (range: [number, number]) => void
 }) => {
-
   // Calculate total active filters for chips display
-  const totalActiveFiltersForChips = 
+  const totalActiveFiltersForChips =
     Object.values(filters.ticketType).filter(Boolean).length +
     Object.values(filters.cabinClass).filter(Boolean).length +
     Object.values(filters.airlines).filter(Boolean).length +
     Object.values(filters.agencies).filter(Boolean).length +
-    ((priceRange[0] !== 500000 || priceRange[1] !== 5000000) ? 1 : 0) +
-    ((flightTimeRange[0] !== 4 || flightTimeRange[1] !== 24) ? 1 : 0);
+    (priceRange[0] !== 500000 || priceRange[1] !== 5000000 ? 1 : 0) +
+    (flightTimeRange[0] !== 4 || flightTimeRange[1] !== 24 ? 1 : 0)
 
   return (
-    <div className="inline-flex h-full w-full flex-col items-start justify-start max-h-[80vh]">
-      <DialogTitle className="bg-Shade-White border-Gray-N100 inline-flex items-center self-stretch border-b px-5 py-4 sticky top-0 z-10">
-        <div className="self-stretch inline-flex justify-center items-center w-full gap-2 relative">
+    <div className="inline-flex h-full max-h-[80vh] w-full flex-col items-start justify-start">
+      <DialogTitle className="bg-Shade-White border-Gray-N100 sticky top-0 z-10 inline-flex items-center self-stretch border-b px-5 py-4">
+        <div className="relative inline-flex w-full items-center justify-center gap-2 self-stretch">
           <div
-            className={`absolute left-5 text-Primary-P500main text-[13px] font-medium leading-normal cursor-pointer ${activeFiltersCount === 0 ? 'invisible' : ''}`}
+            className={`text-Primary-P500main absolute left-5 cursor-pointer text-[13px] leading-normal font-medium ${
+              activeFiltersCount === 0 ? "invisible" : ""
+            }`}
             onClick={clearFilters}
           >
             حذف فیلتر‌ها
           </div>
-          
-          <div className="flex-1 flex justify-center items-center text-center">
-            <div className="flex justify-center items-center">
-              <div className="text-Gray-N600 text-center text-base font-semibold leading-7 ml-2">{title}</div>
+
+          <div className="flex flex-1 items-center justify-center text-center">
+            <div className="flex items-center justify-center">
+              <div className="text-Gray-N600 ml-2 text-center text-base leading-7 font-semibold">{title}</div>
             </div>
             {activeFiltersCount > 0 && (
-              <div className="size-5 bg-Primary-P50 rounded-[80px] flex justify-center items-center gap-2 ">
-                <div className="text-Primary-P500main text-[13px] font-medium leading-normal">
+              <div className="bg-Primary-P50 flex size-5 items-center justify-center gap-2 rounded-[80px]">
+                <div className="text-Primary-P500main text-[13px] leading-normal font-medium">
                   {englishToFarsiNumber(activeFiltersCount)}
                 </div>
               </div>
             )}
           </div>
-          
-          <div className="absolute right-5 flex justify-start items-center gap-2">
+
+          <div className="absolute right-5 flex items-center justify-start gap-2">
             <DrawerClose className="cursor-pointer">
               <CloseCircle size="24" color="#334155" variant="Outline" />
             </DrawerClose>
           </div>
         </div>
       </DialogTitle>
-      
-      <div className="w-full max-h-[calc(80vh-60px)] overflow-y-auto">
+
+      <div className="max-h-[calc(80vh-60px)] w-full overflow-y-auto">
         {/* Active Filter Chips Section (Horizontally Scrollable) */}
-        {activeSection === 'all' && totalActiveFiltersForChips > 0 && (
-          <div className="px-5 py-1 border-b border-Gray-N100 w-full">
-            <div className="flex items-center gap-[7px] overflow-x-auto whitespace-nowrap p-2" style={{ WebkitOverflowScrolling: 'touch', scrollbarWidth: 'thin' }}>
+        {activeSection === "all" && totalActiveFiltersForChips > 0 && (
+          <div className="border-Gray-N100 w-full border-b px-5 py-1">
+            <div
+              className="flex items-center gap-[7px] overflow-x-auto p-2 whitespace-nowrap"
+              style={{ WebkitOverflowScrolling: "touch", scrollbarWidth: "thin" }}
+            >
               {/* Ticket Type Filters */}
-              {Object.entries(filters.ticketType).map(([key, value]) => 
-                value && (
-                  <div key={`ticketType-${key}`} className="px-3 py-1 bg-Shade-White rounded-2xl outline-2 outline-offset-[-2px] outline-Gray-N100 flex-shrink-0 flex justify-center items-center gap-1 overflow-hidden">
-                    <div className="py-1 flex justify-start items-center gap-2 cursor-pointer" onClick={() => updateFilter('ticketType', key, false)}>
-                      <div className="size-4 relative rounded-[48px] overflow-hidden">
-                        <CloseCircle size="16" color="#94A3B8" />
+              {Object.entries(filters.ticketType).map(
+                ([key, value]) =>
+                  value && (
+                    <div
+                      key={`ticketType-${key}`}
+                      className="bg-Shade-White outline-Gray-N100 flex flex-shrink-0 items-center justify-center gap-1 overflow-hidden rounded-2xl px-3 py-1 outline-2 outline-offset-[-2px]"
+                    >
+                      <div
+                        className="flex cursor-pointer items-center justify-start gap-2 py-1"
+                        onClick={() => updateFilter("ticketType", key, false)}
+                      >
+                        <div className="relative size-4 overflow-hidden rounded-[48px]">
+                          <CloseCircle size="16" color="#94A3B8" />
+                        </div>
+                      </div>
+                      <div className="flex items-center justify-center gap-1">
+                        <div className="text-Gray-N700 text-sm leading-normal font-medium">
+                          {key === "charter" ? "چارتری" : "سیستمی"}
+                        </div>
                       </div>
                     </div>
-                    <div className="flex justify-center items-center gap-1">
-                      <div className="text-Gray-N700 text-sm font-medium leading-normal">
-                        {key === 'charter' ? 'چارتری' : 'سیستمی'}
-                      </div>
-                    </div>
-                  </div>
-                )
+                  )
               )}
-              
+
               {/* Cabin Class Filters */}
-              {Object.entries(filters.cabinClass).map(([key, value]) => 
-                value && (
-                  <div key={`cabinClass-${key}`} className="px-3 py-1 bg-Shade-White rounded-2xl  outline-2 outline-offset-[-2px] outline-Gray-N100 flex-shrink-0 flex justify-center items-center gap-1 overflow-hidden">
-                    <div className="py-1 flex justify-start items-center gap-2 cursor-pointer" onClick={() => updateFilter('cabinClass', key, false)}>
-                      <div className="size-4 relative rounded-[48px] overflow-hidden">
-                        <CloseCircle size="16" color="#94A3B8" />
+              {Object.entries(filters.cabinClass).map(
+                ([key, value]) =>
+                  value && (
+                    <div
+                      key={`cabinClass-${key}`}
+                      className="bg-Shade-White outline-Gray-N100 flex flex-shrink-0 items-center justify-center gap-1 overflow-hidden rounded-2xl px-3 py-1 outline-2 outline-offset-[-2px]"
+                    >
+                      <div
+                        className="flex cursor-pointer items-center justify-start gap-2 py-1"
+                        onClick={() => updateFilter("cabinClass", key, false)}
+                      >
+                        <div className="relative size-4 overflow-hidden rounded-[48px]">
+                          <CloseCircle size="16" color="#94A3B8" />
+                        </div>
+                      </div>
+                      <div className="flex items-center justify-center gap-1">
+                        <div className="text-Gray-N700 text-sm leading-normal font-medium">
+                          {key === "economy" ? "اکونومی" : "بیزینس"}
+                        </div>
                       </div>
                     </div>
-                    <div className="flex justify-center items-center gap-1">
-                      <div className="text-Gray-N700 text-sm font-medium leading-normal">
-                        {key === 'economy' ? 'اکونومی' : 'بیزینس'}
-                      </div>
-                    </div>
-                  </div>
-                )
+                  )
               )}
-              
+
               {/* Airlines Filters */}
-              {Object.entries(filters.airlines).map(([key, value]) => 
-                value && (
-                  <div key={`airlines-${key}`} className="px-3 py-1 bg-Shade-White rounded-2xl  outline-2 outline-offset-[-2px] outline-Gray-N100 flex-shrink-0 flex justify-center items-center gap-1 overflow-hidden">
-                    <div className="py-1 flex justify-start items-center gap-2 cursor-pointer" onClick={() => updateFilter('airlines', key, false)}>
-                      <div className="size-4 relative rounded-[48px] overflow-hidden">
-                        <CloseCircle size="16" color="#94A3B8" />
+              {Object.entries(filters.airlines).map(
+                ([key, value]) =>
+                  value && (
+                    <div
+                      key={`airlines-${key}`}
+                      className="bg-Shade-White outline-Gray-N100 flex flex-shrink-0 items-center justify-center gap-1 overflow-hidden rounded-2xl px-3 py-1 outline-2 outline-offset-[-2px]"
+                    >
+                      <div
+                        className="flex cursor-pointer items-center justify-start gap-2 py-1"
+                        onClick={() => updateFilter("airlines", key, false)}
+                      >
+                        <div className="relative size-4 overflow-hidden rounded-[48px]">
+                          <CloseCircle size="16" color="#94A3B8" />
+                        </div>
+                      </div>
+                      <div className="flex items-center justify-center gap-1">
+                        <div className="text-Gray-N700 text-sm leading-normal font-medium">
+                          {key === "mahan" ? "ماهان" : key === "caspian" ? "کاسپین" : "آتا"}
+                        </div>
                       </div>
                     </div>
-                    <div className="flex justify-center items-center gap-1">
-                      <div className="text-Gray-N700 text-sm font-medium leading-normal">
-                        {key === 'mahan' ? 'ماهان' : key === 'caspian' ? 'کاسپین' : 'آتا'}
-                      </div>
-                    </div>
-                  </div>
-                )
+                  )
               )}
-              
+
               {/* Agencies Filters */}
-              {Object.entries(filters.agencies).map(([key, value]) => 
-                value && (
-                  <div key={`agencies-${key}`} className="px-3 py-1 bg-Shade-White rounded-2xl  outline-2 outline-offset-[-2px] outline-Gray-N100 flex-shrink-0 flex justify-center items-center gap-1 overflow-hidden">
-                    <div className="py-1 flex justify-start items-center gap-2 cursor-pointer" onClick={() => updateFilter('agencies', key, false)}>
-                      <div className="size-4 relative rounded-[48px] overflow-hidden">
-                        <CloseCircle size="16" color="#94A3B8" />
+              {Object.entries(filters.agencies).map(
+                ([key, value]) =>
+                  value && (
+                    <div
+                      key={`agencies-${key}`}
+                      className="bg-Shade-White outline-Gray-N100 flex flex-shrink-0 items-center justify-center gap-1 overflow-hidden rounded-2xl px-3 py-1 outline-2 outline-offset-[-2px]"
+                    >
+                      <div
+                        className="flex cursor-pointer items-center justify-start gap-2 py-1"
+                        onClick={() => updateFilter("agencies", key, false)}
+                      >
+                        <div className="relative size-4 overflow-hidden rounded-[48px]">
+                          <CloseCircle size="16" color="#94A3B8" />
+                        </div>
+                      </div>
+                      <div className="flex items-center justify-center gap-1">
+                        <div className="text-Gray-N700 text-sm leading-normal font-medium">
+                          {key === "alibaba" ? "علی بابا" : key === "flytoday" ? "فلای تودی" : "مستر بلیط"}
+                        </div>
                       </div>
                     </div>
-                    <div className="flex justify-center items-center gap-1">
-                      <div className="text-Gray-N700 text-sm font-medium leading-normal">
-                        {key === 'alibaba' ? 'علی بابا' : key === 'flytoday' ? 'فلای تودی' : 'مستر بلیط'}
-                      </div>
-                    </div>
-                  </div>
-                )
+                  )
               )}
-              
+
               {/* Price Range Filter */}
               {(priceRange[0] !== 500000 || priceRange[1] !== 5000000) && (
-                <div className="px-3 py-1 bg-Shade-White rounded-2xl  outline-2 outline-offset-[-2px] outline-Gray-N100 flex-shrink-0 flex justify-center items-center gap-1 overflow-hidden">
-                  <div className="py-1 flex justify-start items-center gap-2 cursor-pointer" onClick={() => setPriceRange([500000, 5000000])}>
-                    <div className="size-4 relative rounded-[48px] overflow-hidden">
+                <div className="bg-Shade-White outline-Gray-N100 flex flex-shrink-0 items-center justify-center gap-1 overflow-hidden rounded-2xl px-3 py-1 outline-2 outline-offset-[-2px]">
+                  <div
+                    className="flex cursor-pointer items-center justify-start gap-2 py-1"
+                    onClick={() => setPriceRange([500000, 5000000])}
+                  >
+                    <div className="relative size-4 overflow-hidden rounded-[48px]">
                       <CloseCircle size="16" color="#94A3B8" />
                     </div>
                   </div>
-                  <div className="flex justify-center items-center gap-1">
-                    <div className="text-Gray-N700 text-sm font-medium leading-normal">
-                      بازه قیمت (تومان): {englishToFarsiNumber(Math.floor(priceRange[0] / 1000))} تا {englishToFarsiNumber(Math.floor(priceRange[1] / 1000))} هزار
+                  <div className="flex items-center justify-center gap-1">
+                    <div className="text-Gray-N700 text-sm leading-normal font-medium">
+                      بازه قیمت (تومان): {englishToFarsiNumber(Math.floor(priceRange[0] / 1000))} تا{" "}
+                      {englishToFarsiNumber(Math.floor(priceRange[1] / 1000))} هزار
                     </div>
                   </div>
                 </div>
               )}
-              
+
               {/* Flight Time Range Filter */}
               {(flightTimeRange[0] !== 4 || flightTimeRange[1] !== 24) && (
-                <div className="px-3 py-1 bg-Shade-White rounded-2xl  outline-2 outline-offset-[-2px] outline-Gray-N100 flex-shrink-0 flex justify-center items-center gap-1 overflow-hidden">
-                  <div className="py-1 flex justify-start items-center gap-2 cursor-pointer" onClick={() => setFlightTimeRange([4, 24])}>
-                    <div className="size-4 relative rounded-[48px] overflow-hidden">
+                <div className="bg-Shade-White outline-Gray-N100 flex flex-shrink-0 items-center justify-center gap-1 overflow-hidden rounded-2xl px-3 py-1 outline-2 outline-offset-[-2px]">
+                  <div
+                    className="flex cursor-pointer items-center justify-start gap-2 py-1"
+                    onClick={() => setFlightTimeRange([4, 24])}
+                  >
+                    <div className="relative size-4 overflow-hidden rounded-[48px]">
                       <CloseCircle size="16" color="#94A3B8" />
                     </div>
                   </div>
-                  <div className="flex justify-center items-center gap-1">
-                    <div className="text-Gray-N700 text-sm font-medium leading-normal">
-                      ساعت پرواز: {englishToFarsiNumber(flightTimeRange[0])} تا {englishToFarsiNumber(flightTimeRange[1])}
+                  <div className="flex items-center justify-center gap-1">
+                    <div className="text-Gray-N700 text-sm leading-normal font-medium">
+                      ساعت پرواز: {englishToFarsiNumber(flightTimeRange[0])} تا{" "}
+                      {englishToFarsiNumber(flightTimeRange[1])}
                     </div>
                   </div>
                 </div>
@@ -1024,11 +1078,11 @@ const FilterDrawerContent = ({
             </div>
           </div>
         )}
-        
-        <div className="self-stretch px-5 py-4 bg-Shade-White flex flex-col justify-center items-center gap-3">
+
+        <div className="bg-Shade-White flex flex-col items-center justify-center gap-3 self-stretch px-5 py-4">
           {/* Filtered content based on activeSection */}
           {/* Flight Time Range */}
-          {(activeSection === 'all' || activeSection === 'flightTime') && (
+          {(activeSection === "all" || activeSection === "flightTime") && (
             <FilterSection title="ساعت پرواز رفت">
               <FancySlider
                 value={flightTimeRange}
@@ -1043,7 +1097,7 @@ const FilterDrawerContent = ({
           )}
 
           {/* Price Range */}
-          {(activeSection === 'all' || activeSection === 'priceRange') && (
+          {(activeSection === "all" || activeSection === "priceRange") && (
             <FilterSection title="بازه قیمت (تومان)">
               <FancySlider
                 value={priceRange}
@@ -1058,41 +1112,41 @@ const FilterDrawerContent = ({
           )}
 
           {/* Ticket Type */}
-          {(activeSection === 'all' || activeSection === 'ticketType') && (
+          {(activeSection === "all" || activeSection === "ticketType") && (
             <FilterSection title="نوع بلیط" count={Object.values(filters.ticketType).filter(Boolean).length}>
               <FilterCheckbox
                 label="چارتر"
                 checked={filters.ticketType.charter}
-                onChange={(v) => updateFilter('ticketType', 'charter', v)}
+                onChange={(v) => updateFilter("ticketType", "charter", v)}
               />
               <FilterCheckbox
                 label="سیستمی"
                 checked={filters.ticketType.system}
-                onChange={(v) => updateFilter('ticketType', 'system', v)}
+                onChange={(v) => updateFilter("ticketType", "system", v)}
               />
             </FilterSection>
           )}
 
           {/* Cabin Class */}
-          {(activeSection === 'all' || activeSection === 'cabinClass') && (
+          {(activeSection === "all" || activeSection === "cabinClass") && (
             <FilterSection title="کلاس پروازی" count={Object.values(filters.cabinClass).filter(Boolean).length}>
               <FilterCheckbox
                 label="اکونومی"
                 checked={filters.cabinClass.economy}
-                onChange={(v) => updateFilter('cabinClass', 'economy', v)}
+                onChange={(v) => updateFilter("cabinClass", "economy", v)}
               />
               <FilterCheckbox
                 label="بیزینس"
                 checked={filters.cabinClass.business}
-                onChange={(v) => updateFilter('cabinClass', 'business', v)}
+                onChange={(v) => updateFilter("cabinClass", "business", v)}
               />
             </FilterSection>
           )}
 
           {/* Airlines */}
-          {(activeSection === 'all' || activeSection === 'airlines') && (
-            <FilterSection 
-              title="شرکت‌های هواپیمایی" 
+          {(activeSection === "all" || activeSection === "airlines") && (
+            <FilterSection
+              title="شرکت‌های هواپیمایی"
               count={Object.values(filters.airlines).filter(Boolean).length}
               isLast={true}
             >
@@ -1101,65 +1155,65 @@ const FilterDrawerContent = ({
                 logo="/images/logo.webp"
                 extraText="از ۲,346,890"
                 checked={filters.airlines.mahan}
-                onChange={(v) => updateFilter('airlines', 'mahan', v)}
+                onChange={(v) => updateFilter("airlines", "mahan", v)}
               />
               <FilterCheckbox
                 label="کاسپین"
                 logo="/images/logo.webp"
                 extraText="از ۲,346,890"
                 checked={filters.airlines.caspian}
-                onChange={(v) => updateFilter('airlines', 'caspian', v)}
+                onChange={(v) => updateFilter("airlines", "caspian", v)}
               />
               <FilterCheckbox
                 label="آتا"
                 logo="/images/logo.webp"
                 extraText="از ۲,346,890"
                 checked={filters.airlines.ata}
-                onChange={(v) => updateFilter('airlines', 'ata', v)}
+                onChange={(v) => updateFilter("airlines", "ata", v)}
               />
             </FilterSection>
           )}
 
           {/* Agencies */}
-          {(activeSection === 'all' || activeSection === 'agencies') && (
+          {(activeSection === "all" || activeSection === "agencies") && (
             <FilterSection title="وبسایت‌ها" count={Object.values(filters.agencies).filter(Boolean).length}>
               <FilterCheckbox
                 label="علی‌بابا"
                 logo="/images/logo.webp"
                 extraText="از ۲,346,890"
                 checked={filters.agencies.alibaba}
-                onChange={(v) => updateFilter('agencies', 'alibaba', v)}
+                onChange={(v) => updateFilter("agencies", "alibaba", v)}
               />
               <FilterCheckbox
                 label="فلای تودی"
                 logo="/images/logo.webp"
                 extraText="از ۲,346,890"
                 checked={filters.agencies.flytoday}
-                onChange={(v) => updateFilter('agencies', 'flytoday', v)}
+                onChange={(v) => updateFilter("agencies", "flytoday", v)}
               />
               <FilterCheckbox
                 label="مستر بلیط"
                 logo="/images/logo.webp"
                 extraText="از ۲,346,890"
                 checked={filters.agencies.mrbilit}
-                onChange={(v) => updateFilter('agencies', 'mrbilit', v)}
+                onChange={(v) => updateFilter("agencies", "mrbilit", v)}
               />
             </FilterSection>
           )}
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
 // Format price with commas
 const formatPrice = (price: number) => {
-  return englishToFarsiNumber(price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+  return englishToFarsiNumber(price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","))
 }
 
 // Format time as HH:MM
 const formatTime = (hour: number) => {
-  return englishToFarsiNumber(`${hour.toString().padStart(2, '0')}:00`);
+  return englishToFarsiNumber(`${hour.toString().padStart(2, "0")}:00`)
 }
 
 // Filter section with expandable header
@@ -1168,38 +1222,42 @@ const FilterSection = ({
   children,
   count = 0,
   isOpen = true,
-  isLast = false
+  isLast = false,
 }: {
-  title: string,
-  children: React.ReactNode,
-  count?: number,
-  isOpen?: boolean,
+  title: string
+  children: React.ReactNode
+  count?: number
+  isOpen?: boolean
   isLast?: boolean
 }) => {
   const [expanded, setExpanded] = React.useState(isOpen)
 
   return (
-    <div className="self-stretch flex flex-col justify-start items-start gap-4">
+    <div className="flex flex-col items-start justify-start gap-4 self-stretch">
       <div
-        className="self-stretch flex justify-between items-center gap-[7px] cursor-pointer"
+        className="flex cursor-pointer items-center justify-between gap-[7px] self-stretch"
         onClick={() => setExpanded(!expanded)}
       >
         <div className="flex items-center gap-2">
-          <div className="text-Gray-N600 text-sm font-semibold leading-normal">
-            {title}
-          </div>
+          <div className="text-Gray-N600 text-sm leading-normal font-semibold">{title}</div>
         </div>
         <div className="flex items-center gap-2">
           {count > 0 && (
-            <div className="w-10 h-5 bg-Primary-P50 rounded-[80px] flex justify-center items-center">
-              <div className="text-Primary-P500main text-[13px] font-medium leading-normal">
+            <div className="bg-Primary-P50 flex h-5 w-10 items-center justify-center rounded-[80px]">
+              <div className="text-Primary-P500main text-[13px] leading-normal font-medium">
                 {englishToFarsiNumber(count)}
               </div>
             </div>
           )}
           <div className="flex-shrink-0">
-            <svg width="12" height="7" viewBox="0 0 12 7" fill="none" xmlns="http://www.w3.org/2000/svg"
-              className={`transition-transform ${expanded ? 'rotate-180' : ''}`}>
+            <svg
+              width="12"
+              height="7"
+              viewBox="0 0 12 7"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+              className={`transition-transform ${expanded ? "rotate-180" : ""}`}
+            >
               <path d="M1 1L6 6L11 1" stroke="#384250" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
           </div>
@@ -1208,7 +1266,7 @@ const FilterSection = ({
 
       {expanded && children}
 
-      {!isLast && <div className="self-stretch h-px bg-Gray-N100" />}
+      {!isLast && <div className="bg-Gray-N100 h-px self-stretch" />}
     </div>
   )
 }
@@ -1219,22 +1277,20 @@ const FilterCheckbox = ({
   checked,
   onChange,
   logo,
-  extraText
+  extraText,
 }: {
-  label: string;
-  checked: boolean;
-  onChange: (value: boolean) => void;
-  logo?: string;
-  extraText?: string;
+  label: string
+  checked: boolean
+  onChange: (value: boolean) => void
+  logo?: string
+  extraText?: string
 }) => (
-  <div className="self-stretch inline-flex justify-end items-center gap-2">
-    <div className="p-[3px] flex justify-center items-center gap-2">
+  <div className="inline-flex items-center justify-end gap-2 self-stretch">
+    <div className="flex items-center justify-center gap-2 p-[3px]">
       <div
-        className={`size-[18px] relative rounded-sm overflow-hidden flex items-center justify-center
-          ${checked
-            ? "bg-Primary-P500main"
-            : "outline-1 outline-offset-[-1px] outline-Gray-N300"
-          }`}
+        className={`relative flex size-[18px] items-center justify-center overflow-hidden rounded-sm ${
+          checked ? "bg-Primary-P500main" : "outline-Gray-N300 outline-1 outline-offset-[-1px]"
+        }`}
         onClick={() => onChange(!checked)}
       >
         {checked && (
@@ -1245,20 +1301,18 @@ const FilterCheckbox = ({
       </div>
     </div>
     {logo && (
-      <div className="self-stretch flex justify-start items-center gap-2">
-        <div className="size-8 p-2 rounded-[48px] border border-Gray-N200 overflow-hidden">
+      <div className="flex items-center justify-start gap-2 self-stretch">
+        <div className="border-Gray-N200 size-8 overflow-hidden rounded-[48px] border p-2">
           <Image src={logo} alt={label} width={32} height={32} className="object-contain" />
         </div>
       </div>
     )}
 
-    <div className="flex-1 inline-flex flex-col justify-start items-end gap-1">
-      <div className="self-stretch text-right text-Gray-N700 text-sm font-medium leading-normal">
-        {label}
-      </div>
+    <div className="inline-flex flex-1 flex-col items-end justify-start gap-1">
+      <div className="text-Gray-N700 self-stretch text-right text-sm leading-normal font-medium">{label}</div>
     </div>
     {extraText && (
-      <div className="text-right text-Gray-N500 text-[13px] font-normal leading-none">
+      <div className="text-Gray-N500 text-right text-[13px] leading-none font-normal">
         {englishToFarsiNumber(extraText)}
       </div>
     )}

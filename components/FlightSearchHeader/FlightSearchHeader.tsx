@@ -53,26 +53,21 @@ export function FlightSearchHeader({
   const persianDate = parsedDate ? formatToJalali(parsedDate) : date
 
   // Get full city names if we have codes
-  // const originFullName = originCode ? getCityByCode(originCode)?.label || originCity : originCity
-  // const destinationFullName = destinationCode
-  //   ? getCityByCode(destinationCode)?.label || destinationCity
-  //   : destinationCity
-let originFullName;
-let destinationFullName;
-useEffect(() => {
-  const fetchOrigin = async () => {
-    const originCityObj = originCode ? await getCityByCode(originCode) : undefined;
-     originFullName = originCityObj?.label || originCity;
-    
-    const destinationCityObj = destinationCode ? await getCityByCode(destinationCode) : undefined;
-     destinationFullName = destinationCityObj?.label || destinationCity;
-  
-  };
 
-  fetchOrigin();
-}, []);
+  let originFullName
+  let destinationFullName
 
+  useEffect(() => {
+    const fetchOrigin = async () => {
+      const originCityObj = originCode ? await getCityByCode(originCode) : undefined
+      originFullName = originCityObj?.label || originCity
 
+      const destinationCityObj = destinationCode ? await getCityByCode(destinationCode) : undefined
+      destinationFullName = destinationCityObj?.label || destinationCity
+    }
+
+    fetchOrigin()
+  }, [])
 
   // Create passengers object
   const initialPassengers: PassengerCount = {
@@ -81,18 +76,18 @@ useEffect(() => {
     infant: infant || 0,
   }
   const [isDesktop, setIsDesktop] = useState(false)
-  
+
   useEffect(() => {
     const handleResize = () => {
       setIsDesktop(window.innerWidth >= 768)
     }
-  
+
     handleResize() // Run once on mount
     window.addEventListener("resize", handleResize)
-  
+
     return () => window.removeEventListener("resize", handleResize)
   }, [])
-  
+
   return (
     <AnimatePresence mode="wait">
       {!showSearchForm ? (
@@ -197,8 +192,7 @@ useEffect(() => {
                 initialDestination={destinationFullName}
                 initialDepartureDate={parsedDate}
                 initialPassengers={initialPassengers}
-              contextPage="flights"
-
+                contextPage="flights"
               />
             </div>
           </div>

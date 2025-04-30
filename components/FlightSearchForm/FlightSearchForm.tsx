@@ -8,7 +8,7 @@ import { Button } from "@/components/Button/Button"
 import { ComboboxSelect } from "@/components/ComboboxSelect/ComboboxSelect"
 import { DatePicker } from "@/components/DatePicker/DatePicker"
 import { PassengerCount, PassengerSelector } from "@/components/PassengerSelector/PassengerSelector"
-import type { CityOption } from "@/config/cities";
+import type { CityOption } from "@/config/cities"
 import { getCityByName, getCityOptions } from "@/config/cities"
 import { useStoredCities } from "@/hooks/useStoredCities"
 import { formatDate } from "@/utils/dateUtils"
@@ -38,15 +38,15 @@ export function FlightSearchForm({
   const [destination, setDestination] = useState(initialDestination)
   const [departureDate, setDepartureDate] = useState<Date | null>(initialDepartureDate)
   const [passengers, setPassengers] = useState<PassengerCount>(initialPassengers)
-  const [options, setOptions] = useState<Pick<CityOption, "value" | "label">[]>([]);
+  const [options, setOptions] = useState<Pick<CityOption, "value" | "label">[]>([])
   // Use our custom hook
   const { recentSelections, addRecentSelection, saveSearch } = useStoredCities()
 
   // Get city options from config
-  
+
   useEffect(() => {
-    getCityOptions().then(setOptions);
-  }, []);
+    getCityOptions().then(setOptions)
+  }, [])
   // Custom onChange handlers
   const handleOriginChange = (value: string) => {
     setOrigin(value)
@@ -322,7 +322,7 @@ export function FlightSearchForm({
       <Button
         intent="text"
         size="medium"
-        className={`-mb-5 -mt-1 ${contextPage == "flights" ? "hidden md:block" : "hidden"}`}
+        className={`-mt-1 -mb-5 ${contextPage == "flights" ? "hidden md:block" : "hidden"}`}
         onClick={onClose}
         leftIcon={<ArrowUp2 size="20" color="#5A28EE" />}
       >

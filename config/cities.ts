@@ -46,9 +46,8 @@ export function getCityByName(name: string): CityOption | undefined {
 export async function getCityByCode(code: string): Promise<CityOption | undefined> {
   const cities = await loadCities();
   // Map CityOption2 to CityOption and find by code (which is CityOption2.value)
-  const city = cities.find(city => city.value === code);
-  console.log(city)
-  console.log(cities)
+  const city = cities.find(city => city.code === code);
+
   if (!city) return undefined;
   return city
 }
