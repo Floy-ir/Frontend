@@ -2,12 +2,13 @@
 
 import { Add, ArrowRight, ArrowSwapHorizontal, ArrowUp2 } from "iconsax-react"
 import { useRouter } from "next/navigation"
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 
 import { Button } from "@/components/Button/Button"
 import { ComboboxSelect } from "@/components/ComboboxSelect/ComboboxSelect"
 import { DatePicker } from "@/components/DatePicker/DatePicker"
 import { PassengerCount, PassengerSelector } from "@/components/PassengerSelector/PassengerSelector"
+import type { CityOption } from "@/config/cities";
 import { getCityByName, getCityOptions } from "@/config/cities"
 import { useStoredCities } from "@/hooks/useStoredCities"
 import { formatDate } from "@/utils/dateUtils"
@@ -37,13 +38,15 @@ export function FlightSearchForm({
   const [destination, setDestination] = useState(initialDestination)
   const [departureDate, setDepartureDate] = useState<Date | null>(initialDepartureDate)
   const [passengers, setPassengers] = useState<PassengerCount>(initialPassengers)
-
+  const [options, setOptions] = useState<Pick<CityOption, "value" | "label">[]>([]);
   // Use our custom hook
   const { recentSelections, addRecentSelection, saveSearch } = useStoredCities()
 
   // Get city options from config
-  const cityOptions = getCityOptions()
-
+  
+  useEffect(() => {
+    getCityOptions().then(setOptions);
+  }, []);
   // Custom onChange handlers
   const handleOriginChange = (value: string) => {
     setOrigin(value)
@@ -109,8 +112,6 @@ export function FlightSearchForm({
     router.push(createFlightSearchUrl(originCity.code, destinationCity.code, departureDate, passengers))
   }
 
-  console.log(contextPage)
-
   return (
     <div className="m-0 flex w-full flex-col items-center">
       <div
@@ -158,7 +159,7 @@ export function FlightSearchForm({
                       noBorder
                       expandDropdown
                       placeholder="انتخاب شهر"
-                      options={cityOptions}
+                      options={options}
                       filled={true}
                       size="md"
                       dir="rtl"
@@ -179,7 +180,7 @@ export function FlightSearchForm({
                       noBorder
                       expandDropdown
                       placeholder="انتخاب شهر"
-                      options={cityOptions}
+                      options={options}
                       filled={true}
                       size="md"
                       dir="rtl"
@@ -205,7 +206,7 @@ export function FlightSearchForm({
                   noBorder
                   expandDropdown
                   placeholder="انتخاب شهر"
-                  options={cityOptions}
+                  options={options}
                   filled={true}
                   size="md"
                   dir="rtl"
@@ -238,7 +239,7 @@ export function FlightSearchForm({
                   noBorder
                   expandDropdown
                   placeholder="انتخاب شهر"
-                  options={cityOptions}
+                  options={options}
                   filled={true}
                   size="md"
                   dir="rtl"
