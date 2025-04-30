@@ -39,8 +39,12 @@ async function loadCities(): Promise<CityOption[]> {
 }
 
 // Helper functions
-export function getCityByName(name: string): CityOption | undefined {
-  return Cities.find(city => city.value === name || city.label === name);
+export async function getCityByName(name: string): Promise<CityOption | undefined> {
+  const cities = await loadCities();
+  const city = cities.find(city => city.value === name || city.label === name);
+  
+  if (!city) return undefined;
+  return city
 }
 
 export async function getCityByCode(code: string): Promise<CityOption | undefined> {

@@ -47,18 +47,23 @@ export function FlightSearchForm({
   useEffect(() => {
     getCityOptions().then(setOptions)
   }, [])
+  useEffect(() => {
+    // console.log("Origin on mount:", origin);
+    // console.log("Destination on mount:", destination);
+  }, []);
   // Custom onChange handlers
-  const handleOriginChange = (value: string) => {
+  const handleOriginChange = async (value: string) => {
+    console.log("hellooowofjl;asfje")
     setOrigin(value)
-    const cityOption = getCityByName(value)
+    const cityOption = await getCityByName(value)
     if (cityOption) {
       addRecentSelection(value, cityOption.label)
     }
   }
 
-  const handleDestinationChange = (value: string) => {
+  const handleDestinationChange = async (value: string) => {
     setDestination(value)
-    const cityOption = getCityByName(value)
+    const cityOption = await getCityByName(value)
     if (cityOption) {
       addRecentSelection(value, cityOption.label)
     }
@@ -82,15 +87,15 @@ export function FlightSearchForm({
   }
 
   // Handle search button click
-  const handleSearch = () => {
+  const handleSearch = async () => {
     // Don't proceed if required fields are missing
     if (!origin || !destination || !departureDate) {
       return
     }
 
     // Get the city objects with their codes
-    const originCity = getCityByName(origin)
-    const destinationCity = getCityByName(destination)
+    const originCity = await getCityByName(origin)
+    const destinationCity = await getCityByName(destination)
 
     // If we can't find the codes, don't proceed
     if (!originCity || !destinationCity) {

@@ -37,7 +37,7 @@ export function FlightSearchHeader({
   const [showSearchForm, setShowSearchForm] = useState(false)
 
   const toggleSearchForm = () => {
-    setShowSearchForm((prev) => !prev)
+    setShowSearchForm((prev) => !prev) 
   }
 
   // Handle closing the form
@@ -53,17 +53,19 @@ export function FlightSearchHeader({
   const persianDate = parsedDate ? formatToJalali(parsedDate) : date
 
   // Get full city names if we have codes
+  
 
-  let originFullName
-  let destinationFullName
+    const [originFullName, setOriginFullName] = useState("")
+    const [destinationFullName, setDestinationFullName] = useState("")
+  
 
   useEffect(() => {
     const fetchOrigin = async () => {
       const originCityObj = originCode ? await getCityByCode(originCode) : undefined
-      originFullName = originCityObj?.label || originCity
+      setOriginFullName(originCityObj?.label || destinationCity)
 
       const destinationCityObj = destinationCode ? await getCityByCode(destinationCode) : undefined
-      destinationFullName = destinationCityObj?.label || destinationCity
+      setDestinationFullName(destinationCityObj?.label || destinationCity) 
     }
 
     fetchOrigin()
