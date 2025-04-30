@@ -1,19 +1,19 @@
 "use client"
 import { DialogTitle } from "@radix-ui/react-dialog"
-import { Sort, Setting5, CloseCircle } from "iconsax-react"
-import React, { use, useState } from "react"
+import { CloseCircle, Setting5, Sort } from "iconsax-react"
+import Image from "next/image"
+import React, { use, useState, useEffect } from "react"
 import { FlightFilters } from "@/components/FlightFilters"
 import { FlightSearchHeader } from "@/components/FlightSearchHeader/FlightSearchHeader"
 import NoTicketFound from "@/components/FlightsPage/NoTicketFound"
 import Timeline from "@/components/FlightsPage/price-timeline"
 import { Checkbox } from "@/components/ui/checkbox"
-import { Drawer, DrawerContent, DrawerTrigger, DrawerClose } from "@/components/ui/drawer"
+import { Drawer, DrawerClose, DrawerContent, DrawerTrigger } from "@/components/ui/drawer"
+import { FancySlider } from "@/components/ui/fancy-slider"
 import { getCityByCode } from "@/config/cities"
 import { formatDate } from "@/utils/dateUtils"
 import { englishToFarsiNumber } from "@/utils/numbers"
 import { FlightResultsList } from "./FlightResultsList"
-import { FancySlider } from "@/components/ui/fancy-slider"
-import Image from "next/image"
 
 type RouteParams = {
   params: Promise<{
@@ -44,9 +44,23 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
   // Parse route from URL (format: THR-MHD)
   const [originCode, destinationCode] = unwrappedParams.route.split("-")
 
-  // Get city names from codes
-  const originCity = getCityByCode(originCode || "")?.label || originCode || ""
-  const destinationCity = getCityByCode(destinationCode || "")?.label || destinationCode || ""
+  
+const [originCity, setOriginCity] = useState("");
+const [destinationCity, setDestinationCity] = useState("");
+
+useEffect(() => {
+  const fetchOrigin = async () => {
+    const origin = await getCityByCode(originCode || "");
+    const destination = await getCityByCode(destinationCode || "");
+
+    setOriginCity(origin?.label || originCode || "");
+    setDestinationCity(destination?.label || destinationCode || "");
+  };
+
+  fetchOrigin();
+}, []);
+
+
 
   // Get passenger counts and date from URL
   const adult = parseInt(unwrappedSearchParams.adult || "1")
@@ -907,7 +921,7 @@ const FilterDrawerContent = ({
               {/* Ticket Type Filters */}
               {Object.entries(filters.ticketType).map(([key, value]) => 
                 value && (
-                  <div key={`ticketType-${key}`} className="px-3 py-1 bg-Shade-White rounded-2xl outline outline-2 outline-offset-[-2px] outline-Gray-N100 flex-shrink-0 flex justify-center items-center gap-1 overflow-hidden">
+                  <div key={`ticketType-${key}`} className="px-3 py-1 bg-Shade-White rounded-2xl outline-2 outline-offset-[-2px] outline-Gray-N100 flex-shrink-0 flex justify-center items-center gap-1 overflow-hidden">
                     <div className="py-1 flex justify-start items-center gap-2 cursor-pointer" onClick={() => updateFilter('ticketType', key, false)}>
                       <div className="size-4 relative rounded-[48px] overflow-hidden">
                         <CloseCircle size="16" color="#94A3B8" />
@@ -925,7 +939,7 @@ const FilterDrawerContent = ({
               {/* Cabin Class Filters */}
               {Object.entries(filters.cabinClass).map(([key, value]) => 
                 value && (
-                  <div key={`cabinClass-${key}`} className="px-3 py-1 bg-Shade-White rounded-2xl outline outline-2 outline-offset-[-2px] outline-Gray-N100 flex-shrink-0 flex justify-center items-center gap-1 overflow-hidden">
+                  <div key={`cabinClass-${key}`} className="px-3 py-1 bg-Shade-White rounded-2xl  outline-2 outline-offset-[-2px] outline-Gray-N100 flex-shrink-0 flex justify-center items-center gap-1 overflow-hidden">
                     <div className="py-1 flex justify-start items-center gap-2 cursor-pointer" onClick={() => updateFilter('cabinClass', key, false)}>
                       <div className="size-4 relative rounded-[48px] overflow-hidden">
                         <CloseCircle size="16" color="#94A3B8" />
@@ -943,7 +957,7 @@ const FilterDrawerContent = ({
               {/* Airlines Filters */}
               {Object.entries(filters.airlines).map(([key, value]) => 
                 value && (
-                  <div key={`airlines-${key}`} className="px-3 py-1 bg-Shade-White rounded-2xl outline outline-2 outline-offset-[-2px] outline-Gray-N100 flex-shrink-0 flex justify-center items-center gap-1 overflow-hidden">
+                  <div key={`airlines-${key}`} className="px-3 py-1 bg-Shade-White rounded-2xl  outline-2 outline-offset-[-2px] outline-Gray-N100 flex-shrink-0 flex justify-center items-center gap-1 overflow-hidden">
                     <div className="py-1 flex justify-start items-center gap-2 cursor-pointer" onClick={() => updateFilter('airlines', key, false)}>
                       <div className="size-4 relative rounded-[48px] overflow-hidden">
                         <CloseCircle size="16" color="#94A3B8" />
@@ -961,7 +975,7 @@ const FilterDrawerContent = ({
               {/* Agencies Filters */}
               {Object.entries(filters.agencies).map(([key, value]) => 
                 value && (
-                  <div key={`agencies-${key}`} className="px-3 py-1 bg-Shade-White rounded-2xl outline outline-2 outline-offset-[-2px] outline-Gray-N100 flex-shrink-0 flex justify-center items-center gap-1 overflow-hidden">
+                  <div key={`agencies-${key}`} className="px-3 py-1 bg-Shade-White rounded-2xl  outline-2 outline-offset-[-2px] outline-Gray-N100 flex-shrink-0 flex justify-center items-center gap-1 overflow-hidden">
                     <div className="py-1 flex justify-start items-center gap-2 cursor-pointer" onClick={() => updateFilter('agencies', key, false)}>
                       <div className="size-4 relative rounded-[48px] overflow-hidden">
                         <CloseCircle size="16" color="#94A3B8" />
@@ -978,7 +992,7 @@ const FilterDrawerContent = ({
               
               {/* Price Range Filter */}
               {(priceRange[0] !== 500000 || priceRange[1] !== 5000000) && (
-                <div className="px-3 py-1 bg-Shade-White rounded-2xl outline outline-2 outline-offset-[-2px] outline-Gray-N100 flex-shrink-0 flex justify-center items-center gap-1 overflow-hidden">
+                <div className="px-3 py-1 bg-Shade-White rounded-2xl  outline-2 outline-offset-[-2px] outline-Gray-N100 flex-shrink-0 flex justify-center items-center gap-1 overflow-hidden">
                   <div className="py-1 flex justify-start items-center gap-2 cursor-pointer" onClick={() => setPriceRange([500000, 5000000])}>
                     <div className="size-4 relative rounded-[48px] overflow-hidden">
                       <CloseCircle size="16" color="#94A3B8" />
@@ -994,7 +1008,7 @@ const FilterDrawerContent = ({
               
               {/* Flight Time Range Filter */}
               {(flightTimeRange[0] !== 4 || flightTimeRange[1] !== 24) && (
-                <div className="px-3 py-1 bg-Shade-White rounded-2xl outline outline-2 outline-offset-[-2px] outline-Gray-N100 flex-shrink-0 flex justify-center items-center gap-1 overflow-hidden">
+                <div className="px-3 py-1 bg-Shade-White rounded-2xl  outline-2 outline-offset-[-2px] outline-Gray-N100 flex-shrink-0 flex justify-center items-center gap-1 overflow-hidden">
                   <div className="py-1 flex justify-start items-center gap-2 cursor-pointer" onClick={() => setFlightTimeRange([4, 24])}>
                     <div className="size-4 relative rounded-[48px] overflow-hidden">
                       <CloseCircle size="16" color="#94A3B8" />

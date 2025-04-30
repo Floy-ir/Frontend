@@ -43,9 +43,12 @@ export function getCityByName(name: string): CityOption | undefined {
   return Cities.find(city => city.value === name || city.label === name);
 }
 
-export function getCityByCode(code: string): CityOption | undefined {
+export async function getCityByCode(code: string): Promise<CityOption | undefined> {
+  const cities = await loadCities();
   // Map CityOption2 to CityOption and find by code (which is CityOption2.value)
-  const city = Cities.find(city => city.value === code);
+  const city = cities.find(city => city.value === code);
+  console.log(city)
+  console.log(cities)
   if (!city) return undefined;
   return city
 }

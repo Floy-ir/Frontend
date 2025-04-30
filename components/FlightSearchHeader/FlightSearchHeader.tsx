@@ -1,15 +1,15 @@
 "use client"
 
-import React, { useEffect, useState } from "react"
-import { motion, AnimatePresence } from "framer-motion"
+import { AnimatePresence, motion } from "framer-motion"
 import { SearchNormal } from "iconsax-react"
+import React, { useEffect, useState } from "react"
 import { Button } from "@/components/Button/Button"
 import { FlightSearchForm } from "@/components/FlightSearchForm/FlightSearchForm"
-import { getCityByCode } from "@/config/cities"
 import { PassengerCount } from "@/components/PassengerSelector/PassengerSelector"
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import { getCityByCode } from "@/config/cities"
 import { formatToJalali } from "@/utils/dateUtils"
 import { englishToFarsiNumber } from "@/utils/numbers"
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 
 type FlightSearchHeaderProps = {
   originCity: string
@@ -53,10 +53,26 @@ export function FlightSearchHeader({
   const persianDate = parsedDate ? formatToJalali(parsedDate) : date
 
   // Get full city names if we have codes
-  const originFullName = originCode ? getCityByCode(originCode)?.label || originCity : originCity
-  const destinationFullName = destinationCode
-    ? getCityByCode(destinationCode)?.label || destinationCity
-    : destinationCity
+  // const originFullName = originCode ? getCityByCode(originCode)?.label || originCity : originCity
+  // const destinationFullName = destinationCode
+  //   ? getCityByCode(destinationCode)?.label || destinationCity
+  //   : destinationCity
+let originFullName;
+let destinationFullName;
+useEffect(() => {
+  const fetchOrigin = async () => {
+    const originCityObj = originCode ? await getCityByCode(originCode) : undefined;
+     originFullName = originCityObj?.label || originCity;
+    
+    const destinationCityObj = destinationCode ? await getCityByCode(destinationCode) : undefined;
+     destinationFullName = destinationCityObj?.label || destinationCity;
+  
+  };
+
+  fetchOrigin();
+}, []);
+
+
 
   // Create passengers object
   const initialPassengers: PassengerCount = {
