@@ -36,6 +36,58 @@ interface FilterState {
   agencies: { alibaba: boolean; flytoday: boolean; mrbilit: boolean };
 }
 
+// Add API client function
+const fetchFlightData = async (
+  originCode: string,
+  destinationCode: string,
+  departureDate: string,
+  filters: any = {}
+) => {
+  // Convert date to timestamp range (for this example, entire day)
+  const timestamp = new Date(departureDate).getTime() / 1000;
+  const startOfDay = Math.floor(timestamp);
+  const endOfDay = startOfDay + 86400; // 24 hours in seconds
+  
+  let url = `http://localhost:8000/flights/?origin=${originCode}&destination=${destinationCode}&departure_timestamp__gte=${startOfDay}&departure_timestamp__lte=${endOfDay}`;
+  
+  // Add filter parameters
+  if (filters.priceRange && (filters.priceRange[0] !== 0 || filters.priceRange[1] !== Infinity)) {
+    url += `&price__gte=${filters.priceRange[0]}&price__lte=${filters.priceRange[1]}`;
+  }
+  
+  if (filters.airlines && filters.airlines.length > 0) {
+    url += `&airlines=${filters.airlines.join(',')}`;
+  }
+  
+  if (filters.websites && filters.websites.length > 0) {
+    url += `&websites=${filters.websites.join(',')}`;
+  }
+  
+  if (filters.seatClasses && filters.seatClasses.length > 0) {
+    url += `&seat_classes=${filters.seatClasses.join(',')}`;
+  }
+  
+  try {
+    const response = await fetch(url);
+    if (!response.ok) throw new Error('Failed to fetch flight data');
+    return await response.json();
+  } catch (error) {
+    console.error('Error fetching flight data:', error);
+    return {
+      count: 0,
+      filters: {
+        min_price: 0,
+        max_price: 0,
+        allowed_weights: [],
+        seat_classes: [],
+        airlines: [],
+        websites: []
+      },
+      results: []
+    };
+  }
+};
+
 export default function FlightResults({ params, searchParams }: RouteParams) {
   const router = useRouter()
   const urlSearchParams = useSearchParams()
@@ -62,12 +114,16 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
   // For timeline component - ensure it's always a string
   const selectedDate = unwrappedSearchParams.departing || formatDate(new Date())
 
+  // State for API data
+  const [apiData, setApiData] = useState<any>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+
   // State for sorting
   const [sortKey, setSortKey] = React.useState<"cheapest" | "mostExpensive" | "earliest" | "latest">(
     (urlSearchParams.get("sort") as "cheapest" | "mostExpensive" | "earliest" | "latest") || "cheapest"
   )
 
-  // Parse filter values from URL
+  // Get initial filter state based on API data and URL params
   const getInitialFilterState = () => {
     const ticketParam = urlSearchParams.get("ticketType") || "";
     const cabinParam = urlSearchParams.get("cabinClass") || "";
@@ -84,14 +140,10 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
         business: cabinParam.includes("business"),
       },
       airlines: {
-        mahan: airlinesParam.includes("mahan"),
-        caspian: airlinesParam.includes("caspian"),
-        ata: airlinesParam.includes("ata"),
+        // Will be populated dynamically from API data
       },
       agencies: {
-        alibaba: agenciesParam.includes("alibaba"),
-        flytoday: agenciesParam.includes("flytoday"),
-        mrbilit: agenciesParam.includes("mrbilit"),
+        // Will be populated dynamically from API data
       },
     };
   };
@@ -112,7 +164,7 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
     return [4, 24];
   };
 
-  // Get price range from URL
+  // Get price range from URL or API data
   const getInitialPriceRange = (): [number, number] => {
     const priceParam = urlSearchParams.get("priceRange");
     if (priceParam) {
@@ -125,6 +177,13 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
         }
       }
     }
+    // If we have API data, use min/max price from it
+    if (apiData?.filters) {
+      return [
+        apiData.filters.min_price || 500000, 
+        apiData.filters.max_price || 5000000
+      ];
+    }
     return [500000, 5000000];
   };
 
@@ -134,6 +193,71 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
   // Flight time and price ranges
   const [flightTimeRange, setFlightTimeRange] = useState<[number, number]>(getInitialTimeRange());
   const [priceRange, setPriceRange] = useState<[number, number]>(getInitialPriceRange());
+
+  // Fetch data from API
+  useEffect(() => {
+    const loadFlightData = async () => {
+      setIsLoading(true);
+      try {
+        const filterParams = {
+          priceRange: priceRange !== [500000, 5000000] ? priceRange : undefined,
+          // Add other active filters
+        };
+        
+        const data = await fetchFlightData(
+          originCode || "",
+          destinationCode || "",
+          departureDate,
+          filterParams
+        );
+        
+        setApiData(data);
+        
+        // Update filter states with API data
+        if (data?.filters) {
+          // Only update price range if not explicitly set by user
+          if (priceRange[0] === 500000 && priceRange[1] === 5000000) {
+            setPriceRange([
+              data.filters.min_price || 500000,
+              data.filters.max_price || 5000000
+            ]);
+          }
+          
+          // Update airlines and agencies filters dynamically
+          setFilters(prev => {
+            const airlinesState: Record<string, boolean> = {};
+            const agenciesState: Record<string, boolean> = {};
+            
+            // Create entries for each airline from API
+            data.filters.airlines.forEach((airline: any) => {
+              const key = airline.uid;
+              const existingValue = urlSearchParams.get("airlines")?.includes(key) || false;
+              airlinesState[key] = existingValue;
+            });
+            
+            // Create entries for each website from API
+            data.filters.websites.forEach((website: any) => {
+              const key = website.uid;
+              const existingValue = urlSearchParams.get("agencies")?.includes(key) || false;
+              agenciesState[key] = existingValue;
+            });
+            
+            return {
+              ...prev,
+              airlines: airlinesState,
+              agencies: agenciesState
+            };
+          });
+        }
+      } catch (error) {
+        console.error("Error loading flight data:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    loadFlightData();
+  }, [originCode, destinationCode, departureDate, urlSearchParams.toString()]);
 
   // Update URL when filters change
   const updateURL = () => {
@@ -194,7 +318,10 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
     }
     
     // Update price range in URL if changed from default
-    if (priceRange[0] !== 500000 || priceRange[1] !== 5000000) {
+    const defaultMinPrice = apiData?.filters?.min_price || 500000;
+    const defaultMaxPrice = apiData?.filters?.max_price || 5000000;
+    
+    if (priceRange[0] !== defaultMinPrice || priceRange[1] !== defaultMaxPrice) {
       currentUrlParams.set("priceRange", `${priceRange[0]}-${priceRange[1]}`);
     } else {
       currentUrlParams.delete("priceRange");
@@ -209,13 +336,69 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
     updateURL();
   }, [filters, sortKey, flightTimeRange, priceRange]);
 
+  // Map API results to the expected flight format
+  const mapApiResultsToFlights = () => {
+    if (!apiData || !apiData.results) return [];
+    
+    return apiData.results.map((flight: any) => {
+      // Convert Unix timestamps to formatted time strings (using your utility functions)
+      const departureDate = new Date(flight.departure_timestamp * 1000);
+      const arrivalDate = new Date(flight.arrival_timestamp * 1000);
+      
+      // Format times to display format (assuming you have a utility for this)
+      const departureTime = englishToFarsiNumber(
+        departureDate.getHours().toString().padStart(2, '0') + ':' + 
+        departureDate.getMinutes().toString().padStart(2, '0')
+      );
+      
+      const arrivalTime = englishToFarsiNumber(
+        arrivalDate.getHours().toString().padStart(2, '0') + ':' + 
+        arrivalDate.getMinutes().toString().padStart(2, '0')
+      );
+      
+      // Calculate duration in hours and minutes
+      const durationMs = (flight.arrival_timestamp - flight.departure_timestamp) * 1000;
+      const durationHours = Math.floor(durationMs / (1000 * 60 * 60));
+      const durationMinutes = Math.floor((durationMs % (1000 * 60 * 60)) / (1000 * 60));
+      
+      return {
+        id: `${flight.departure_timestamp}-${flight.arrival_timestamp}`,
+        departureTime,
+        arrivalTime,
+        duration: { hours: durationHours, minutes: durationMinutes },
+        airline: {
+          name: flight.airline.name,
+          logo: flight.airline.image || "/images/logo.webp",
+        },
+        flightInfo: {
+          aircraft: flight.airline.name,
+          baggage: `${flight.allowed_weight} kg`,
+          ticketType: "سیستمی", // API doesn't seem to have this info, using default
+          cabinClass: flight.seat_class === "Business" ? "بیزینس" : "اکونومی",
+        },
+        price: {
+          amount: flight.cheapest_price,
+          formattedAmount: englishToFarsiNumber(Math.floor(flight.cheapest_price).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")),
+          agency: flight.cheapest_website.name_fa,
+          agencyLogo: flight.cheapest_website.image || "/images/logo.webp",
+          label: "ارزان‌ترین",
+          base_redirect_url: flight.cheapest_base_redirect_url,
+          one_adult_redirect_url: flight.cheapest_one_adult_redirect_url,
+          two_Adults_redirect_url: flight.cheapest_two_adult_redirect_url
+        },
+        otherSellersCount: flight.websites.length - 1,
+      };
+    });
+  };
+
   // Calculate active filters count
   const activeFiltersCount = Object.values(filters).reduce(
     (count, category) => count + Object.values(category).filter(Boolean).length,
     0
   ) + 
-  ((priceRange[0] !== 500000 || priceRange[1] !== 5000000) ? 1 : 0) + 
-  ((flightTimeRange[0] !== 4 || flightTimeRange[1] !== 24) ? 1 : 0)
+  ((priceRange[0] !== (apiData?.filters?.min_price || 500000) || 
+    priceRange[1] !== (apiData?.filters?.max_price || 5000000)) ? 1 : 0) + 
+  ((flightTimeRange[0] !== 4 || flightTimeRange[1] !== 24) ? 1 : 0);
 
   // Handler for filter changes
   const updateFilter = (category: string, key: string, value: boolean) => {
@@ -249,140 +432,43 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
     setFilters({
       ticketType: { charter: false, system: false },
       cabinClass: { economy: false, business: false },
-      airlines: { mahan: false, caspian: false, ata: false },
-      agencies: { alibaba: false, flytoday: false, mrbilit: false },
-    })
+      airlines: Object.keys(filters.airlines).reduce((obj, key) => ({ ...obj, [key]: false }), {}),
+      agencies: Object.keys(filters.agencies).reduce((obj, key) => ({ ...obj, [key]: false }), {})
+    });
+    
     // Reset range slider values
-    setFlightTimeRange([4, 24])
-    setPriceRange([500000, 5000000])
+    setFlightTimeRange([4, 24]);
+    setPriceRange([
+      apiData?.filters?.min_price || 500000, 
+      apiData?.filters?.max_price || 5000000
+    ]);
   }
 
-  // Sample flight data for demonstration
-  const sampleFlights = [
-    {
-      id: "1",
-      departureTime: "۱۱:۳۰",
-      arrivalTime: "۰۹:۳۰",
-      duration: { hours: 1, minutes: 30 },
-      airline: {
-        name: "آتا",
-        logo: "/images/logo.webp",
-      },
-      flightInfo: {
-        aircraft: "Boeing 737-300",
-        baggage: "۲۰ kg",
-        ticketType: "سیستمی",
-        cabinClass: "اکونومی",
-      },
-      price: {
-        amount: 3534678,
-        formattedAmount: "3,534,678",
-        agency: "علی بابا",
-        agencyLogo: "/images/logo.webp",
-        label: "ارزان‌ترین",
-        base_redirect_url: "https://www.alibaba.ir/flights/AWZ-THR?adult={adult_count}&child={child_count}&infant={infant_count}&departing=1404-02-09",
-        one_adult_redirect_url: "https://www.alibaba.ir/flights/AWZ-THR/wj1cf4r/passengers",
-        two_Adults_redirect_url: "https://www.alibaba.ir/flights/AWZ-THR/mtbv5go/passengers"
-      },
-      otherSellersCount: 3,
-    },
-    {
-      id: "2",
-      departureTime: "۱۳:۴۵",
-      arrivalTime: "۱۵:۱۵",
-      duration: { hours: 1, minutes: 30 },
-      airline: {
-        name: "ایران ایر",
-        logo: "/images/logo.webp",
-      },
-      flightInfo: {
-        aircraft: "Airbus A320",
-        baggage: "۲۵ kg",
-        ticketType: "چارتری",
-        cabinClass: "اکونومی",
-      },
-      price: {
-        amount: 3689000,
-        formattedAmount: "3,689,000",
-        agency: "فلای تودی",
-        agencyLogo: "/images/logo.webp",
-        label: "ارزان‌ترین",
-        base_redirect_url: "https://www.alibaba.ir/flights/AWZ-THR?adult={adult_count}&child={child_count}&infant={infant_count}&departing=1404-02-09",
-        one_adult_redirect_url: "https://www.alibaba.ir/flights/AWZ-THR/wj1cf4r/passengers",
-        two_Adults_redirect_url: "https://www.alibaba.ir/flights/AWZ-THR/jb1bsc/passengers"
-      },
-      otherSellersCount: 5,
-    },
-    {
-      id: "3",
-      departureTime: "۱۷:۲۰",
-      arrivalTime: "۱۸:۵۰",
-      duration: { hours: 1, minutes: 30 },
-      airline: {
-        name: "آسمان",
-        logo: "/images/logo.webp",
-      },
-      flightInfo: {
-        aircraft: "Boeing 737-400",
-        baggage: "۲۰ kg",
-        ticketType: "سیستمی",
-        cabinClass: "بیزینس",
-      },
-      price: {
-        amount: 4150000,
-        formattedAmount: "4,150,000",
-        agency: "مستر بلیط",
-        agencyLogo: "/images/logo.webp",
-        label: "ارزان‌ترین",
-        base_redirect_url: "https://www.alibaba.ir/flights/AWZ-THR?adult={adult_count}&child={child_count}&infant={infant_count}&departing=1404-02-09",
-        one_adult_redirect_url: "https://www.alibaba.ir/flights/AWZ-THR/wj1cf4r/passengers",
-        two_Adults_redirect_url: "https://www.alibaba.ir/flights/AWZ-THR/jb1bsc/passengers"
-      },
-      otherSellersCount: 2,
-    },
-  ]
+  // Convert API flights to our format
+  const mappedFlights = mapApiResultsToFlights();
 
-  const sampleFlights1 = [{}]
-
-  // Sort options
-  const sortOptions = [
-    { key: "cheapest" as const, label: "ارزان‌ترین" },
-    { key: "mostExpensive" as const, label: "گران‌ترین" },
-    { key: "earliest" as const, label: "نزدیک‌ترین" },
-    { key: "latest" as const, label: "دیر‌ترین" },
-  ]
-
-  // Get current sort label
-  const getCurrentSortLabel = () => {
-    const option = sortOptions.find((option) => option.key === sortKey)
-    return option?.label || "ارزان‌ترین"
-  }
-
-  // Track which filter section is active in the drawer
-  const [activeFilterSection, setActiveFilterSection] = useState<string | null>(null)
-
-  // Sort flights based on selected sort key, safely handling empty/incomplete objects
-  const sortedFlights = [...sampleFlights]
+  // Sort flights based on selected sort key
+  const sortedFlights = [...mappedFlights]
     .filter((f) => f && f.id)
     .sort((a, b) => {
-      const priceA = a.price?.amount || 0
-      const priceB = b.price?.amount || 0
-      const depTimeA = a.departureTime || ""
-      const depTimeB = b.departureTime || ""
+      const priceA = a.price?.amount || 0;
+      const priceB = b.price?.amount || 0;
+      const depTimeA = a.departureTime || "";
+      const depTimeB = b.departureTime || "";
 
       switch (sortKey) {
         case "cheapest":
-          return priceA - priceB
+          return priceA - priceB;
         case "mostExpensive":
-          return priceB - priceA
+          return priceB - priceA;
         case "earliest":
-          return depTimeA.localeCompare(depTimeB)
+          return depTimeA.localeCompare(depTimeB);
         case "latest":
-          return depTimeB.localeCompare(depTimeA)
+          return depTimeB.localeCompare(depTimeA);
         default:
-          return 0
+          return 0;
       }
-    })
+    });
 
   return (
     <div className="bg-Gray/N100 mb-8 flex min-h-screen flex-col">
@@ -401,7 +487,12 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
 
       {/* Main content */}
       <div className="container mx-auto max-w-266 p-0 lg:px-4 lg:py-6">
-        {sortedFlights.length > 0 ? (
+        {isLoading ? (
+          // Loading state
+          <div className="flex justify-center items-center h-[400px]">
+            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-Primary-P500main"></div>
+          </div>
+        ) : sortedFlights.length > 0 ? (
           <>
             {/* Timeline component from HEAD branch */}
             <div className="mb-0 lg:mb-8">
@@ -418,7 +509,7 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
 
             <div className="mb-6 hidden flex-row items-start justify-between lg:flex">
               <p className="text-Gray-N800 hidden text-right text-sm font-semibold lg:block">
-                {sortedFlights.length} نتیجه
+                {apiData?.count ? englishToFarsiNumber(apiData.count) : englishToFarsiNumber(sortedFlights.length)} نتیجه
               </p>
 
               {/* desktop sort */}
@@ -925,6 +1016,7 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                   priceRange={priceRange}
                   setPriceRange={setPriceRange}
                   activeFiltersCount={activeFiltersCount}
+                  apiData={apiData?.filters}
                 />
               </div>
 
