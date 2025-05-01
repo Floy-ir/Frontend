@@ -1,7 +1,7 @@
 "use client"
 import { DialogTitle } from "@radix-ui/react-dialog"
 import { Sort, Setting5, CloseCircle } from "iconsax-react"
-import React, { use, useState, useEffect } from "react"
+import React, { use, useState, useEffect, useRef } from "react"
 import { FlightFilters } from "@/components/FlightFilters"
 import { FlightSearchHeader } from "@/components/FlightSearchHeader/FlightSearchHeader"
 import NoTicketFound from "@/components/FlightsPage/NoTicketFound"
@@ -134,6 +134,90 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
   // Flight time and price ranges
   const [flightTimeRange, setFlightTimeRange] = useState<[number, number]>(getInitialTimeRange());
   const [priceRange, setPriceRange] = useState<[number, number]>(getInitialPriceRange());
+
+  // Track which drawer has uncommitted changes
+  const [dirtyDrawers, setDirtyDrawers] = useState<Record<string, boolean>>({
+    all: false,
+    ticketType: false,
+    cabinClass: false,
+    airlines: false,
+    agencies: false,
+    flightTime: false,
+    priceRange: false
+  });
+
+  // Track drawer changes that need to be applied
+  const drawerChangesRef = React.useRef<Record<string, any>>({});
+
+  // Helper function to mark a drawer as having changes
+  const markDrawerDirty = (drawer: string, isDirty: boolean) => {
+    setDirtyDrawers(prev => ({
+      ...prev,
+      [drawer]: isDirty
+    }));
+  };
+
+  // Store changes to be applied when a drawer closes
+  const storeDrawerChanges = (drawer: string, changes: any) => {
+    drawerChangesRef.current[drawer] = changes;
+    markDrawerDirty(drawer, true);
+  };
+
+  // Apply changes when a drawer closes
+  const applyDrawerChanges = (drawer: string) => {
+    if (dirtyDrawers[drawer] && drawerChangesRef.current[drawer]) {
+      const changes = drawerChangesRef.current[drawer];
+      
+      // Apply changes based on drawer type
+      if (drawer === 'priceRange' && changes.priceRange) {
+        setPriceRange(changes.priceRange);
+      } else if (drawer === 'flightTime' && changes.flightTimeRange) {
+        setFlightTimeRange(changes.flightTimeRange);
+      } else if (['ticketType', 'cabinClass', 'airlines', 'agencies'].includes(drawer) && changes.filters) {
+        // Apply filter changes
+        const category = drawer;
+        const newFilters = changes.filters;
+        
+        Object.entries(newFilters).forEach(([key, value]) => {
+          const typedCategory = category as keyof typeof filters;
+          // Need to use type assertion safely
+          if (typedCategory in filters && 
+              key in filters[typedCategory] && 
+              filters[typedCategory][key as keyof typeof filters[typeof typedCategory]] !== value) {
+            updateFilter(category, key, value as boolean);
+          }
+        });
+      } else if (drawer === 'all' && changes.all) {
+        // Apply all changes from the "all filters" drawer
+        const { filters: newFilters, priceRange: newPriceRange, flightTimeRange: newFlightTimeRange } = changes.all;
+        
+        // Update filters
+        Object.entries(newFilters).forEach(([category, categoryFilters]) => {
+          const typedCategory = category as keyof typeof filters;
+          if (typedCategory in filters) {
+            Object.entries(categoryFilters as Record<string, boolean>).forEach(([key, value]) => {
+              if (key in filters[typedCategory] && 
+                  filters[typedCategory][key as keyof typeof filters[typeof typedCategory]] !== value) {
+                updateFilter(category, key, value as boolean);
+              }
+            });
+          }
+        });
+        
+        // Update ranges
+        if (newPriceRange) {
+          setPriceRange(newPriceRange);
+        }
+        if (newFlightTimeRange) {
+          setFlightTimeRange(newFlightTimeRange);
+        }
+      }
+      
+      // Clear changes
+      drawerChangesRef.current[drawer] = null;
+      markDrawerDirty(drawer, false);
+    }
+  };
 
   // Update URL when filters change
   const updateURL = () => {
@@ -415,6 +499,128 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
       }
     })
 
+  // Create a drawer content ref to communicate with the FilterDrawerContent
+  const drawerContentRef = useRef<{
+    getLocalState: () => {
+      localFilters: FilterState,
+      localPriceRange: [number, number],
+      localFlightTimeRange: [number, number]
+    }
+  }>(null);
+
+  // Drawer open/close handler that applies the changes from local state
+  const handleDrawerOpenChange = (isOpen: boolean, drawerType: string) => {
+    // If drawer is closing, get and apply the local state
+    if (!isOpen && openDrawers[drawerType] && drawerContentRef.current) {
+      const { localFilters, localPriceRange, localFlightTimeRange } = drawerContentRef.current.getLocalState();
+      
+      // Apply the changes based on drawer type
+      if (drawerType === 'priceRange' && localPriceRange) {
+        setPriceRange(localPriceRange);
+      } 
+      else if (drawerType === 'flightTime' && localFlightTimeRange) {
+        setFlightTimeRange(localFlightTimeRange);
+      }
+      else if (drawerType === 'ticketType') {
+        // Update ticket type filters
+        if (localFilters.ticketType.charter !== filters.ticketType.charter) {
+          updateFilter('ticketType', 'charter', localFilters.ticketType.charter);
+        }
+        if (localFilters.ticketType.system !== filters.ticketType.system) {
+          updateFilter('ticketType', 'system', localFilters.ticketType.system);
+        }
+      }
+      else if (drawerType === 'cabinClass') {
+        // Update cabin class filters
+        if (localFilters.cabinClass.economy !== filters.cabinClass.economy) {
+          updateFilter('cabinClass', 'economy', localFilters.cabinClass.economy);
+        }
+        if (localFilters.cabinClass.business !== filters.cabinClass.business) {
+          updateFilter('cabinClass', 'business', localFilters.cabinClass.business);
+        }
+      }
+      else if (drawerType === 'airlines') {
+        // Update airlines filters
+        if (localFilters.airlines.mahan !== filters.airlines.mahan) {
+          updateFilter('airlines', 'mahan', localFilters.airlines.mahan);
+        }
+        if (localFilters.airlines.caspian !== filters.airlines.caspian) {
+          updateFilter('airlines', 'caspian', localFilters.airlines.caspian);
+        }
+        if (localFilters.airlines.ata !== filters.airlines.ata) {
+          updateFilter('airlines', 'ata', localFilters.airlines.ata);
+        }
+      }
+      else if (drawerType === 'agencies') {
+        // Update agencies filters
+        if (localFilters.agencies.alibaba !== filters.agencies.alibaba) {
+          updateFilter('agencies', 'alibaba', localFilters.agencies.alibaba);
+        }
+        if (localFilters.agencies.flytoday !== filters.agencies.flytoday) {
+          updateFilter('agencies', 'flytoday', localFilters.agencies.flytoday);
+        }
+        if (localFilters.agencies.mrbilit !== filters.agencies.mrbilit) {
+          updateFilter('agencies', 'mrbilit', localFilters.agencies.mrbilit);
+        }
+      }
+      else if (drawerType === 'all') {
+        // Apply all changes for the "all filters" drawer
+        
+        // Update ticket type filters
+        if (localFilters.ticketType.charter !== filters.ticketType.charter) {
+          updateFilter('ticketType', 'charter', localFilters.ticketType.charter);
+        }
+        if (localFilters.ticketType.system !== filters.ticketType.system) {
+          updateFilter('ticketType', 'system', localFilters.ticketType.system);
+        }
+        
+        // Update cabin class filters
+        if (localFilters.cabinClass.economy !== filters.cabinClass.economy) {
+          updateFilter('cabinClass', 'economy', localFilters.cabinClass.economy);
+        }
+        if (localFilters.cabinClass.business !== filters.cabinClass.business) {
+          updateFilter('cabinClass', 'business', localFilters.cabinClass.business);
+        }
+        
+        // Update airlines filters
+        if (localFilters.airlines.mahan !== filters.airlines.mahan) {
+          updateFilter('airlines', 'mahan', localFilters.airlines.mahan);
+        }
+        if (localFilters.airlines.caspian !== filters.airlines.caspian) {
+          updateFilter('airlines', 'caspian', localFilters.airlines.caspian);
+        }
+        if (localFilters.airlines.ata !== filters.airlines.ata) {
+          updateFilter('airlines', 'ata', localFilters.airlines.ata);
+        }
+        
+        // Update agencies filters
+        if (localFilters.agencies.alibaba !== filters.agencies.alibaba) {
+          updateFilter('agencies', 'alibaba', localFilters.agencies.alibaba);
+        }
+        if (localFilters.agencies.flytoday !== filters.agencies.flytoday) {
+          updateFilter('agencies', 'flytoday', localFilters.agencies.flytoday);
+        }
+        if (localFilters.agencies.mrbilit !== filters.agencies.mrbilit) {
+          updateFilter('agencies', 'mrbilit', localFilters.agencies.mrbilit);
+        }
+        
+        // Update ranges
+        if (localPriceRange) {
+          setPriceRange(localPriceRange);
+        }
+        if (localFlightTimeRange) {
+          setFlightTimeRange(localFlightTimeRange);
+        }
+      }
+    }
+    
+    // Update drawer open state
+    setOpenDrawers(prev => ({
+      ...prev,
+      [drawerType]: isOpen
+    }));
+  };
+
   return (
     <div className="bg-Gray/N100 mb-8 flex min-h-screen flex-col">
       {/* Search header */}
@@ -475,7 +681,8 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
               {/* Filter Chips - Each opens a specific section */}
               <div className="flex gap-1 overflow-x-auto">
                 {/* Mobile sort drawer trigger */}
-                <Drawer open={openDrawers.sort} onOpenChange={(open) => setOpenDrawers(prev => ({ ...prev, sort: open }))}>
+                <Drawer open={openDrawers.sort} 
+                  onOpenChange={(isOpen) => handleDrawerOpenChange(isOpen, 'sort')}>
                   <DrawerTrigger asChild>
                     <div className="bg-Shade-White outline-Gray-N100 inline-flex items-center justify-center gap-1 rounded-2xl px-3 py-1 outline-2 outline-offset-[-2px]"
                          onClick={() => openDrawer('sort')}>
@@ -522,7 +729,8 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                 </Drawer>
 
                 {/* All Filters Chip - always first */}
-                <Drawer open={openDrawers.all} onOpenChange={(open) => setOpenDrawers(prev => ({ ...prev, all: open }))}>
+                <Drawer open={openDrawers.all} 
+                  onOpenChange={(isOpen) => handleDrawerOpenChange(isOpen, 'all')}>
                   <DrawerTrigger asChild>
                     <div className="bg-Shade-White outline-Gray-N100 inline-flex items-center justify-center gap-1 rounded-2xl px-3 py-1 outline-2 outline-offset-[-2px] whitespace-nowrap cursor-pointer mr-1"
                          onClick={() => openDrawer('all')}>
@@ -541,6 +749,7 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                   </DrawerTrigger>
                   <DrawerContent className="bg-Shade-White rounded-t-2xl max-h-[80vh] pb-4">
                     <FilterDrawerContent
+                      ref={drawerContentRef}
                       title="فیلتر‌ها"
                       activeFiltersCount={activeFiltersCount}
                       clearFilters={clearFilters}
@@ -551,7 +760,6 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                       setFlightTimeRange={setFlightTimeRange}
                       priceRange={priceRange}
                       setPriceRange={setPriceRange}
-                      closeDrawer={() => closeDrawer('all')}
                     />
                   </DrawerContent>
                 </Drawer>
@@ -559,13 +767,16 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                 {/* Active filters first */}
                 {/* Price Range Filter Chip - if active */}
                 {(priceRange[0] !== 500000 || priceRange[1] !== 5000000) && (
-                  <Drawer open={openDrawers.priceRange} onOpenChange={(open) => setOpenDrawers(prev => ({ ...prev, priceRange: open }))}>
+                  <Drawer 
+                    open={openDrawers.priceRange}
+                    onOpenChange={(isOpen) => handleDrawerOpenChange(isOpen, 'priceRange')}
+                  >
                     <DrawerTrigger asChild>
                       <div
                         className="bg-Primary-P50 outline-Primary-P500main inline-flex items-center justify-center gap-1 rounded-2xl px-3 py-1 outline-2 outline-offset-[-2px] whitespace-nowrap cursor-pointer mr-1"
                         onClick={() => {
-                          setActiveFilterSection('priceRange')
-                          openDrawer('priceRange')
+                          setActiveFilterSection('priceRange');
+                          setOpenDrawers(prev => ({ ...prev, priceRange: true }));
                         }}
                       >
                         <div className="flex items-center gap-1">
@@ -577,6 +788,7 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                     </DrawerTrigger>
                     <DrawerContent className="bg-Shade-White rounded-t-2xl max-h-[80vh] pb-4">
                       <FilterDrawerContent
+                        ref={drawerContentRef}
                         title="بازه قیمت"
                         activeFiltersCount={(priceRange[0] !== 500000 || priceRange[1] !== 5000000) ? 1 : 0}
                         clearFilters={() => setPriceRange([500000, 5000000])}
@@ -587,7 +799,6 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                         setFlightTimeRange={setFlightTimeRange}
                         priceRange={priceRange}
                         setPriceRange={setPriceRange}
-                        closeDrawer={() => closeDrawer('priceRange')}
                       />
                     </DrawerContent>
                   </Drawer>
@@ -595,7 +806,8 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
 
                 {/* Flight Time Filter Chip - if active */}
                 {(flightTimeRange[0] !== 4 || flightTimeRange[1] !== 24) && (
-                  <Drawer open={openDrawers.flightTime} onOpenChange={(open) => setOpenDrawers(prev => ({ ...prev, flightTime: open }))}>
+                  <Drawer open={openDrawers.flightTime} 
+                    onOpenChange={(isOpen) => handleDrawerOpenChange(isOpen, 'flightTime')}>
                     <DrawerTrigger asChild>
                       <div
                         className="bg-Primary-P50 outline-Primary-P500main inline-flex items-center justify-center gap-1 rounded-2xl px-3 py-1 outline-2 outline-offset-[-2px] whitespace-nowrap cursor-pointer mr-1"
@@ -613,6 +825,7 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                     </DrawerTrigger>
                     <DrawerContent className="bg-Shade-White rounded-t-2xl max-h-[80vh] pb-4">
                       <FilterDrawerContent
+                        ref={drawerContentRef}
                         title="ساعت پرواز رفت"
                         activeFiltersCount={(flightTimeRange[0] !== 4 || flightTimeRange[1] !== 24) ? 1 : 0}
                         clearFilters={() => setFlightTimeRange([4, 24])}
@@ -623,7 +836,6 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                         setFlightTimeRange={setFlightTimeRange}
                         priceRange={priceRange}
                         setPriceRange={setPriceRange}
-                        closeDrawer={() => closeDrawer('flightTime')}
                       />
                     </DrawerContent>
                   </Drawer>
@@ -631,7 +843,8 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
 
                 {/* Ticket Type Filter Chip - if active */}
                 {Object.values(filters.ticketType).some(Boolean) && (
-                  <Drawer open={openDrawers.ticketType} onOpenChange={(open) => setOpenDrawers(prev => ({ ...prev, ticketType: open }))}>
+                  <Drawer open={openDrawers.ticketType} 
+                    onOpenChange={(isOpen) => handleDrawerOpenChange(isOpen, 'ticketType')}>
                     <DrawerTrigger asChild>
                       <div
                         className="bg-Primary-P50 outline-Primary-P500main inline-flex items-center justify-center gap-1 rounded-2xl px-3 py-1 outline-2 outline-offset-[-2px] whitespace-nowrap cursor-pointer mr-1"
@@ -652,6 +865,7 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                     </DrawerTrigger>
                     <DrawerContent className="bg-Shade-White rounded-t-2xl max-h-[80vh] pb-4">
                       <FilterDrawerContent
+                        ref={drawerContentRef}
                         title="نوع بلیط"
                         activeFiltersCount={Object.values(filters.ticketType).filter(Boolean).length}
                         clearFilters={() => updateFilter('ticketType', 'all', false)}
@@ -662,7 +876,6 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                         setFlightTimeRange={setFlightTimeRange}
                         priceRange={priceRange}
                         setPriceRange={setPriceRange}
-                        closeDrawer={() => closeDrawer('ticketType')}
                       />
                     </DrawerContent>
                   </Drawer>
@@ -670,7 +883,8 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
 
                 {/* Cabin Class Filter Chip - if active */}
                 {Object.values(filters.cabinClass).some(Boolean) && (
-                  <Drawer open={openDrawers.cabinClass} onOpenChange={(open) => setOpenDrawers(prev => ({ ...prev, cabinClass: open }))}>
+                  <Drawer open={openDrawers.cabinClass} 
+                    onOpenChange={(isOpen) => handleDrawerOpenChange(isOpen, 'cabinClass')}>
                     <DrawerTrigger asChild>
                       <div
                         className="bg-Primary-P50 outline-Primary-P500main inline-flex items-center justify-center gap-1 rounded-2xl px-3 py-1 outline-2 outline-offset-[-2px] whitespace-nowrap cursor-pointer mr-1"
@@ -691,6 +905,7 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                     </DrawerTrigger>
                     <DrawerContent className="bg-Shade-White rounded-t-2xl max-h-[80vh] pb-4">
                       <FilterDrawerContent
+                        ref={drawerContentRef}
                         title="کلاس پروازی"
                         activeFiltersCount={Object.values(filters.cabinClass).filter(Boolean).length}
                         clearFilters={() => updateFilter('cabinClass', 'all', false)}
@@ -701,7 +916,6 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                         setFlightTimeRange={setFlightTimeRange}
                         priceRange={priceRange}
                         setPriceRange={setPriceRange}
-                        closeDrawer={() => closeDrawer('cabinClass')}
                       />
                     </DrawerContent>
                   </Drawer>
@@ -709,7 +923,8 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
 
                 {/* Airlines Filter Chip - if active */}
                 {Object.values(filters.airlines).some(Boolean) && (
-                  <Drawer open={openDrawers.airlines} onOpenChange={(open) => setOpenDrawers(prev => ({ ...prev, airlines: open }))}>
+                  <Drawer open={openDrawers.airlines} 
+                    onOpenChange={(isOpen) => handleDrawerOpenChange(isOpen, 'airlines')}>
                     <DrawerTrigger asChild>
                       <div
                         className="bg-Primary-P50 outline-Primary-P500main inline-flex items-center justify-center gap-1 rounded-2xl px-3 py-1 outline-2 outline-offset-[-2px] whitespace-nowrap cursor-pointer mr-1"
@@ -731,6 +946,7 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                     </DrawerTrigger>
                     <DrawerContent className="bg-Shade-White rounded-t-2xl max-h-[80vh] pb-4">
                       <FilterDrawerContent
+                        ref={drawerContentRef}
                         title="شرکت‌های هواپیمایی"
                         activeFiltersCount={Object.values(filters.airlines).filter(Boolean).length}
                         clearFilters={() => updateFilter('airlines', 'all', false)}
@@ -741,7 +957,6 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                         setFlightTimeRange={setFlightTimeRange}
                         priceRange={priceRange}
                         setPriceRange={setPriceRange}
-                        closeDrawer={() => closeDrawer('airlines')}
                       />
                     </DrawerContent>
                   </Drawer>
@@ -749,7 +964,8 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
 
                 {/* Agencies Filter Chip - if active */}
                 {Object.values(filters.agencies).some(Boolean) && (
-                  <Drawer open={openDrawers.agencies} onOpenChange={(open) => setOpenDrawers(prev => ({ ...prev, agencies: open }))}>
+                  <Drawer open={openDrawers.agencies} 
+                    onOpenChange={(isOpen) => handleDrawerOpenChange(isOpen, 'agencies')}>
                     <DrawerTrigger asChild>
                       <div
                         className="bg-Primary-P50 outline-Primary-P500main inline-flex items-center justify-center gap-1 rounded-2xl px-3 py-1 outline-2 outline-offset-[-2px] whitespace-nowrap cursor-pointer mr-1"
@@ -771,6 +987,7 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                     </DrawerTrigger>
                     <DrawerContent className="bg-Shade-White rounded-t-2xl max-h-[80vh] pb-4">
                       <FilterDrawerContent
+                        ref={drawerContentRef}
                         title="وبسایت‌ها"
                         activeFiltersCount={Object.values(filters.agencies).filter(Boolean).length}
                         clearFilters={() => updateFilter('agencies', 'all', false)}
@@ -781,7 +998,6 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                         setFlightTimeRange={setFlightTimeRange}
                         priceRange={priceRange}
                         setPriceRange={setPriceRange}
-                        closeDrawer={() => closeDrawer('agencies')}
                       />
                     </DrawerContent>
                   </Drawer>
@@ -806,6 +1022,7 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                     </DrawerTrigger>
                     <DrawerContent className="bg-Shade-White rounded-t-2xl max-h-[80vh] pb-4">
                       <FilterDrawerContent
+                        ref={drawerContentRef}
                         title="بازه قیمت"
                         activeFiltersCount={(priceRange[0] !== 500000 || priceRange[1] !== 5000000) ? 1 : 0}
                         clearFilters={() => setPriceRange([500000, 5000000])}
@@ -816,7 +1033,6 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                         setFlightTimeRange={setFlightTimeRange}
                         priceRange={priceRange}
                         setPriceRange={setPriceRange}
-                        closeDrawer={() => closeDrawer('priceRange')}
                       />
                     </DrawerContent>
                   </Drawer>
@@ -840,6 +1056,7 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                     </DrawerTrigger>
                     <DrawerContent className="bg-Shade-White rounded-t-2xl max-h-[80vh] pb-4">
                       <FilterDrawerContent
+                        ref={drawerContentRef}
                         title="ساعت پرواز رفت"
                         activeFiltersCount={(flightTimeRange[0] !== 4 || flightTimeRange[1] !== 24) ? 1 : 0}
                         clearFilters={() => setFlightTimeRange([4, 24])}
@@ -850,7 +1067,6 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                         setFlightTimeRange={setFlightTimeRange}
                         priceRange={priceRange}
                         setPriceRange={setPriceRange}
-                        closeDrawer={() => closeDrawer('flightTime')}
                       />
                     </DrawerContent>
                   </Drawer>
@@ -874,6 +1090,7 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                     </DrawerTrigger>
                     <DrawerContent className="bg-Shade-White rounded-t-2xl max-h-[80vh] pb-4">
                       <FilterDrawerContent
+                        ref={drawerContentRef}
                         title="نوع بلیط"
                         activeFiltersCount={Object.values(filters.ticketType).filter(Boolean).length}
                         clearFilters={() => updateFilter('ticketType', 'all', false)}
@@ -884,7 +1101,6 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                         setFlightTimeRange={setFlightTimeRange}
                         priceRange={priceRange}
                         setPriceRange={setPriceRange}
-                        closeDrawer={() => closeDrawer('ticketType')}
                       />
                     </DrawerContent>
                   </Drawer>
@@ -908,6 +1124,7 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                     </DrawerTrigger>
                     <DrawerContent className="bg-Shade-White rounded-t-2xl max-h-[80vh] pb-4">
                       <FilterDrawerContent
+                        ref={drawerContentRef}
                         title="کلاس پروازی"
                         activeFiltersCount={Object.values(filters.cabinClass).filter(Boolean).length}
                         clearFilters={() => updateFilter('cabinClass', 'all', false)}
@@ -918,7 +1135,6 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                         setFlightTimeRange={setFlightTimeRange}
                         priceRange={priceRange}
                         setPriceRange={setPriceRange}
-                        closeDrawer={() => closeDrawer('cabinClass')}
                       />
                     </DrawerContent>
                   </Drawer>
@@ -942,6 +1158,7 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                     </DrawerTrigger>
                     <DrawerContent className="bg-Shade-White rounded-t-2xl max-h-[80vh] pb-4">
                       <FilterDrawerContent
+                        ref={drawerContentRef}
                         title="شرکت‌های هواپیمایی"
                         activeFiltersCount={Object.values(filters.airlines).filter(Boolean).length}
                         clearFilters={() => updateFilter('airlines', 'all', false)}
@@ -952,7 +1169,6 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                         setFlightTimeRange={setFlightTimeRange}
                         priceRange={priceRange}
                         setPriceRange={setPriceRange}
-                        closeDrawer={() => closeDrawer('airlines')}
                       />
                     </DrawerContent>
                   </Drawer>
@@ -976,6 +1192,7 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                     </DrawerTrigger>
                     <DrawerContent className="bg-Shade-White rounded-t-2xl max-h-[80vh] pb-4">
                       <FilterDrawerContent
+                        ref={drawerContentRef}
                         title="وبسایت‌ها"
                         activeFiltersCount={Object.values(filters.agencies).filter(Boolean).length}
                         clearFilters={() => updateFilter('agencies', 'all', false)}
@@ -986,7 +1203,6 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                         setFlightTimeRange={setFlightTimeRange}
                         priceRange={priceRange}
                         setPriceRange={setPriceRange}
-                        closeDrawer={() => closeDrawer('agencies')}
                       />
                     </DrawerContent>
                   </Drawer>
@@ -1036,428 +1252,375 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
   )
 }
 
-// Drawer content component for filters
-const FilterDrawerContent = ({
-  title,
-  activeFiltersCount,
-  clearFilters,
-  activeSection,
-  filters,
-  updateFilter,
-  flightTimeRange,
-  setFlightTimeRange,
-  priceRange,
-  setPriceRange,
-  closeDrawer
-}: {
-  title: string,
-  activeFiltersCount: number,
-  clearFilters: () => void,
-  activeSection: string,
-  filters: FilterState,
-  updateFilter: (category: string, key: string, value: boolean) => void,
-  flightTimeRange: [number, number],
-  setFlightTimeRange: (range: [number, number]) => void,
-  priceRange: [number, number],
-  setPriceRange: (range: [number, number]) => void,
-  closeDrawer?: () => void
-}) => {
-  // Create local state copies to use within the drawer
-  const [localFilters, setLocalFilters] = React.useState<FilterState>({ ...filters });
-  const [localFlightTimeRange, setLocalFlightTimeRange] = React.useState<[number, number]>([...flightTimeRange]);
-  const [localPriceRange, setLocalPriceRange] = React.useState<[number, number]>([...priceRange]);
-  
-  // Update local state when props change (for initial render)
-  React.useEffect(() => {
-    setLocalFilters({ ...filters });
-    setLocalFlightTimeRange([...flightTimeRange]);
-    setLocalPriceRange([...priceRange]);
-  }, []);
-  
-  // Handle local filter changes
-  const handleLocalFilterUpdate = (category: string, key: string, value: boolean) => {
-    if (key === 'all' && value === false) {
-      // Clear all filters in the specific category locally
-      setLocalFilters(prev => {
-        const updatedCategory: Record<string, boolean> = {};
-        // Set all keys in this category to false
-        Object.keys(prev[category as keyof typeof prev]).forEach(k => {
-          updatedCategory[k] = false;
-        });
-        
+// Simpler drawer content component with ref API
+const FilterDrawerContent = React.forwardRef<
+  { getLocalState: () => { localFilters: FilterState, localPriceRange: [number, number], localFlightTimeRange: [number, number] } },
+  {
+    title: string,
+    activeFiltersCount: number,
+    clearFilters: () => void,
+    activeSection: string,
+    filters: FilterState,
+    updateFilter: (category: string, key: string, value: boolean) => void,
+    flightTimeRange: [number, number],
+    setFlightTimeRange: (range: [number, number]) => void,
+    priceRange: [number, number],
+    setPriceRange: (range: [number, number]) => void
+  }
+>(
+  ({ title, activeFiltersCount, clearFilters, activeSection, filters, updateFilter, flightTimeRange, setFlightTimeRange, priceRange, setPriceRange }, ref) => {
+    // Create local state copies to use within the drawer
+    const [localFilters, setLocalFilters] = React.useState<FilterState>({ ...filters });
+    const [localFlightTimeRange, setLocalFlightTimeRange] = React.useState<[number, number]>([...flightTimeRange]);
+    const [localPriceRange, setLocalPriceRange] = React.useState<[number, number]>([...priceRange]);
+    
+    // Update local state when props change (for initial render)
+    React.useEffect(() => {
+      setLocalFilters({ ...filters });
+      setLocalFlightTimeRange([...flightTimeRange]);
+      setLocalPriceRange([...priceRange]);
+    }, [filters, flightTimeRange, priceRange]);
+    
+    // Expose the method to get local state via ref
+    React.useImperativeHandle(ref, () => ({
+      getLocalState() {
         return {
-          ...prev,
-          [category]: updatedCategory
+          localFilters,
+          localPriceRange,
+          localFlightTimeRange
         };
-      });
-    } else {
-      // Regular single filter update locally
-      setLocalFilters(prev => ({
-        ...prev,
-        [category]: {
-          ...prev[category as keyof typeof prev],
-          [key]: value,
-        },
-      }));
-    }
-  };
-  
-  // Commit changes to parent state when drawer closes
-  const handleDrawerClose = () => {
-    // Apply all local changes to parent state
-    // Handle each category separately to maintain type safety
+      }
+    }));
     
-    // Handle ticketType filters
-    if (localFilters.ticketType.charter !== filters.ticketType.charter) {
-      updateFilter('ticketType', 'charter', localFilters.ticketType.charter);
-    }
-    if (localFilters.ticketType.system !== filters.ticketType.system) {
-      updateFilter('ticketType', 'system', localFilters.ticketType.system);
-    }
-    
-    // Handle cabinClass filters
-    if (localFilters.cabinClass.economy !== filters.cabinClass.economy) {
-      updateFilter('cabinClass', 'economy', localFilters.cabinClass.economy);
-    }
-    if (localFilters.cabinClass.business !== filters.cabinClass.business) {
-      updateFilter('cabinClass', 'business', localFilters.cabinClass.business);
-    }
-    
-    // Handle airlines filters
-    if (localFilters.airlines.mahan !== filters.airlines.mahan) {
-      updateFilter('airlines', 'mahan', localFilters.airlines.mahan);
-    }
-    if (localFilters.airlines.caspian !== filters.airlines.caspian) {
-      updateFilter('airlines', 'caspian', localFilters.airlines.caspian);
-    }
-    if (localFilters.airlines.ata !== filters.airlines.ata) {
-      updateFilter('airlines', 'ata', localFilters.airlines.ata);
-    }
-    
-    // Handle agencies filters
-    if (localFilters.agencies.alibaba !== filters.agencies.alibaba) {
-      updateFilter('agencies', 'alibaba', localFilters.agencies.alibaba);
-    }
-    if (localFilters.agencies.flytoday !== filters.agencies.flytoday) {
-      updateFilter('agencies', 'flytoday', localFilters.agencies.flytoday);
-    }
-    if (localFilters.agencies.mrbilit !== filters.agencies.mrbilit) {
-      updateFilter('agencies', 'mrbilit', localFilters.agencies.mrbilit);
-    }
-    
-    // Update ranges if changed
-    if (localPriceRange[0] !== priceRange[0] || localPriceRange[1] !== priceRange[1]) {
-      setPriceRange(localPriceRange);
-    }
-    
-    if (localFlightTimeRange[0] !== flightTimeRange[0] || localFlightTimeRange[1] !== flightTimeRange[1]) {
-      setFlightTimeRange(localFlightTimeRange);
-    }
-    
-    // Call the closeDrawer prop function if provided
-    if (closeDrawer) closeDrawer();
-  };
-
-  // Calculate total active filters for the local filters state
-  const totalActiveFiltersForChips = 
-    Object.values(localFilters.ticketType).filter(Boolean).length +
-    Object.values(localFilters.cabinClass).filter(Boolean).length +
-    Object.values(localFilters.airlines).filter(Boolean).length +
-    Object.values(localFilters.agencies).filter(Boolean).length +
-    ((localPriceRange[0] !== 500000 || localPriceRange[1] !== 5000000) ? 1 : 0) +
-    ((localFlightTimeRange[0] !== 4 || localFlightTimeRange[1] !== 24) ? 1 : 0);
-    
-  // Calculate active filter count for the local state
-  const localActiveFiltersCount = 
-    Object.values(localFilters.ticketType).filter(Boolean).length +
-    Object.values(localFilters.cabinClass).filter(Boolean).length +
-    Object.values(localFilters.airlines).filter(Boolean).length +
-    Object.values(localFilters.agencies).filter(Boolean).length +
-    ((localPriceRange[0] !== 500000 || localPriceRange[1] !== 5000000) ? 1 : 0) +
-    ((localFlightTimeRange[0] !== 4 || localFlightTimeRange[1] !== 24) ? 1 : 0);
-    
-  // Local clear filters function
-  const handleLocalClearFilters = () => {
-    setLocalFilters({
-      ticketType: { charter: false, system: false },
-      cabinClass: { economy: false, business: false },
-      airlines: { mahan: false, caspian: false, ata: false },
-      agencies: { alibaba: false, flytoday: false, mrbilit: false },
-    });
-    setLocalFlightTimeRange([4, 24]);
-    setLocalPriceRange([500000, 5000000]);
-  };
-
-  return (
-    <div className="inline-flex h-full w-full flex-col items-start justify-start max-h-[80vh]">
-      <DialogTitle className="bg-Shade-White border-Gray-N100 inline-flex items-center self-stretch border-b px-5 py-4 sticky top-0 z-10">
-        <div className="self-stretch inline-flex justify-center items-center w-full gap-2 relative">
-          <div
-            className={`absolute left-5 text-Primary-P500main text-[13px] font-medium leading-normal cursor-pointer ${localActiveFiltersCount === 0 ? 'invisible' : ''}`}
-            onClick={handleLocalClearFilters}
-          >
-            حذف فیلتر‌ها
-          </div>
+    // Handle local filter changes
+    const handleLocalFilterUpdate = (category: string, key: string, value: boolean) => {
+      if (key === 'all' && value === false) {
+        // Clear all filters in the specific category locally
+        setLocalFilters(prev => {
+          const updatedCategory: Record<string, boolean> = {};
+          // Set all keys in this category to false
+          Object.keys(prev[category as keyof typeof prev]).forEach(k => {
+            updatedCategory[k] = false;
+          });
           
-          <div className="flex-1 flex justify-center items-center text-center">
-            <div className="flex justify-center items-center">
-              <div className="text-Gray-N600 text-center text-base font-semibold leading-7 ml-2">{title}</div>
+          return {
+            ...prev,
+            [category]: updatedCategory
+          };
+        });
+      } else {
+        // Regular single filter update locally
+        setLocalFilters(prev => ({
+          ...prev,
+          [category]: {
+            ...prev[category as keyof typeof prev],
+            [key]: value,
+          },
+        }));
+      }
+    };
+    
+    // Local clear filters function
+    const handleLocalClearFilters = () => {
+      setLocalFilters({
+        ticketType: { charter: false, system: false },
+        cabinClass: { economy: false, business: false },
+        airlines: { mahan: false, caspian: false, ata: false },
+        agencies: { alibaba: false, flytoday: false, mrbilit: false },
+      });
+      setLocalFlightTimeRange([4, 24]);
+      setLocalPriceRange([500000, 5000000]);
+    };
+
+    // Calculate local active filters count
+    const localActiveFiltersCount = 
+      Object.values(localFilters.ticketType).filter(Boolean).length +
+      Object.values(localFilters.cabinClass).filter(Boolean).length +
+      Object.values(localFilters.airlines).filter(Boolean).length +
+      Object.values(localFilters.agencies).filter(Boolean).length +
+      ((localPriceRange[0] !== 500000 || localPriceRange[1] !== 5000000) ? 1 : 0) +
+      ((localFlightTimeRange[0] !== 4 || localFlightTimeRange[1] !== 24) ? 1 : 0);
+      
+    // Calculate total active filters for chips display 
+    const totalActiveFiltersForChips = 
+      Object.values(localFilters.ticketType).filter(Boolean).length +
+      Object.values(localFilters.cabinClass).filter(Boolean).length +
+      Object.values(localFilters.airlines).filter(Boolean).length +
+      Object.values(localFilters.agencies).filter(Boolean).length +
+      ((localPriceRange[0] !== 500000 || localPriceRange[1] !== 5000000) ? 1 : 0) +
+      ((localFlightTimeRange[0] !== 4 || localFlightTimeRange[1] !== 24) ? 1 : 0);
+
+    return (
+      <div className="inline-flex h-full w-full flex-col items-start justify-start max-h-[80vh]">
+        <DialogTitle className="bg-Shade-White border-Gray-N100 inline-flex items-center self-stretch border-b px-5 py-4 sticky top-0 z-10">
+          <div className="self-stretch inline-flex justify-center items-center w-full gap-2 relative">
+            <div
+              className={`absolute left-5 text-Primary-P500main text-[13px] font-medium leading-normal cursor-pointer ${localActiveFiltersCount === 0 || activeSection !== 'all' ? 'invisible' : ''}`}
+              onClick={handleLocalClearFilters}
+            >
+              حذف فیلتر‌ها
             </div>
-            {localActiveFiltersCount > 0 && (
-              <div className="size-5 bg-Primary-P50 rounded-[80px] flex justify-center items-center gap-2 ">
-                <div className="text-Primary-P500main text-[13px] font-medium leading-normal">
-                  {englishToFarsiNumber(localActiveFiltersCount)}
-                </div>
+            
+            <div className="flex-1 flex justify-center items-center text-center">
+              <div className="flex justify-center items-center">
+                <div className="text-Gray-N600 text-center text-base font-semibold leading-7 ml-2">{title}</div>
               </div>
+              {localActiveFiltersCount > 0 && activeSection === 'all' && (
+                <div className="size-5 bg-Primary-P50 rounded-[80px] flex justify-center items-center gap-2 ">
+                  <div className="text-Primary-P500main text-[13px] font-medium leading-normal">
+                    {englishToFarsiNumber(localActiveFiltersCount)}
+                  </div>
+                </div>
+              )}
+            </div>
+            
+            <div className="absolute right-5 flex justify-start items-center gap-2">
+              <DrawerClose className="cursor-pointer">
+                <CloseCircle size="24" color="#334155" variant="Outline" />
+              </DrawerClose>
+            </div>
+          </div>
+        </DialogTitle>
+        
+        <div className="w-full max-h-[calc(80vh-60px)] overflow-y-auto">
+          {/* Active Filter Chips Section (Horizontally Scrollable) */}
+          {activeSection === 'all' && totalActiveFiltersForChips > 0 && (
+            <div className="px-5 py-1 border-b border-Gray-N100 w-full">
+              <div className="flex items-center gap-[7px] overflow-x-auto whitespace-nowrap p-2" style={{ WebkitOverflowScrolling: 'touch', scrollbarWidth: 'thin' }}>
+                {/* Ticket Type Filters */}
+                {Object.entries(localFilters.ticketType).map(([key, value]) => 
+                  value && (
+                    <div key={`ticketType-${key}`} className="px-3 py-1 bg-Shade-White rounded-2xl outline outline-2 outline-offset-[-2px] outline-Gray-N100 flex-shrink-0 flex justify-center items-center gap-1 overflow-hidden">
+                      <div className="py-1 flex justify-start items-center gap-2 cursor-pointer" onClick={() => handleLocalFilterUpdate('ticketType', key, false)}>
+                        <div className="size-4 relative rounded-[48px] overflow-hidden">
+                          <CloseCircle size="16" color="#94A3B8" />
+                        </div>
+                      </div>
+                      <div className="flex justify-center items-center gap-1">
+                        <div className="text-Gray-N700 text-sm font-medium leading-normal">
+                          {key === 'charter' ? 'چارتری' : 'سیستمی'}
+                        </div>
+                      </div>
+                    </div>
+                  )
+                )}
+                
+                {/* Cabin Class Filters */}
+                {Object.entries(localFilters.cabinClass).map(([key, value]) => 
+                  value && (
+                    <div key={`cabinClass-${key}`} className="px-3 py-1 bg-Shade-White rounded-2xl outline outline-2 outline-offset-[-2px] outline-Gray-N100 flex-shrink-0 flex justify-center items-center gap-1 overflow-hidden">
+                      <div className="py-1 flex justify-start items-center gap-2 cursor-pointer" onClick={() => handleLocalFilterUpdate('cabinClass', key, false)}>
+                        <div className="size-4 relative rounded-[48px] overflow-hidden">
+                          <CloseCircle size="16" color="#94A3B8" />
+                        </div>
+                      </div>
+                      <div className="flex justify-center items-center gap-1">
+                        <div className="text-Gray-N700 text-sm font-medium leading-normal">
+                          {key === 'economy' ? 'اکونومی' : 'بیزینس'}
+                        </div>
+                      </div>
+                    </div>
+                  )
+                )}
+                
+                {/* Airlines Filters */}
+                {Object.entries(localFilters.airlines).map(([key, value]) => 
+                  value && (
+                    <div key={`airlines-${key}`} className="px-3 py-1 bg-Shade-White rounded-2xl outline outline-2 outline-offset-[-2px] outline-Gray-N100 flex-shrink-0 flex justify-center items-center gap-1 overflow-hidden">
+                      <div className="py-1 flex justify-start items-center gap-2 cursor-pointer" onClick={() => handleLocalFilterUpdate('airlines', key, false)}>
+                        <div className="size-4 relative rounded-[48px] overflow-hidden">
+                          <CloseCircle size="16" color="#94A3B8" />
+                        </div>
+                      </div>
+                      <div className="flex justify-center items-center gap-1">
+                        <div className="text-Gray-N700 text-sm font-medium leading-normal">
+                          {key === 'mahan' ? 'ماهان' : key === 'caspian' ? 'کاسپین' : 'آتا'}
+                        </div>
+                      </div>
+                    </div>
+                  )
+                )}
+                
+                {/* Agencies Filters */}
+                {Object.entries(localFilters.agencies).map(([key, value]) => 
+                  value && (
+                    <div key={`agencies-${key}`} className="px-3 py-1 bg-Shade-White rounded-2xl outline outline-2 outline-offset-[-2px] outline-Gray-N100 flex-shrink-0 flex justify-center items-center gap-1 overflow-hidden">
+                      <div className="py-1 flex justify-start items-center gap-2 cursor-pointer" onClick={() => handleLocalFilterUpdate('agencies', key, false)}>
+                        <div className="size-4 relative rounded-[48px] overflow-hidden">
+                          <CloseCircle size="16" color="#94A3B8" />
+                        </div>
+                      </div>
+                      <div className="flex justify-center items-center gap-1">
+                        <div className="text-Gray-N700 text-sm font-medium leading-normal">
+                          {key === 'alibaba' ? 'علی بابا' : key === 'flytoday' ? 'فلای تودی' : 'مستر بلیط'}
+                        </div>
+                      </div>
+                    </div>
+                  )
+                )}
+                
+                {/* Price Range Filter */}
+                {(localPriceRange[0] !== 500000 || localPriceRange[1] !== 5000000) && (
+                  <div className="px-3 py-1 bg-Shade-White rounded-2xl outline outline-2 outline-offset-[-2px] outline-Gray-N100 flex-shrink-0 flex justify-center items-center gap-1 overflow-hidden">
+                    <div className="py-1 flex justify-start items-center gap-2 cursor-pointer" onClick={() => setLocalPriceRange([500000, 5000000])}>
+                      <div className="size-4 relative rounded-[48px] overflow-hidden">
+                        <CloseCircle size="16" color="#94A3B8" />
+                      </div>
+                    </div>
+                    <div className="flex justify-center items-center gap-1">
+                      <div className="text-Gray-N700 text-sm font-medium leading-normal">
+                        بازه قیمت (تومان): {englishToFarsiNumber(Math.floor(localPriceRange[0] / 1000))} تا {englishToFarsiNumber(Math.floor(localPriceRange[1] / 1000))} هزار
+                      </div>
+                    </div>
+                  </div>
+                )}
+                
+                {/* Flight Time Range Filter */}
+                {(localFlightTimeRange[0] !== 4 || localFlightTimeRange[1] !== 24) && (
+                  <div className="px-3 py-1 bg-Shade-White rounded-2xl outline outline-2 outline-offset-[-2px] outline-Gray-N100 flex-shrink-0 flex justify-center items-center gap-1 overflow-hidden">
+                    <div className="py-1 flex justify-start items-center gap-2 cursor-pointer" onClick={() => setLocalFlightTimeRange([4, 24])}>
+                      <div className="size-4 relative rounded-[48px] overflow-hidden">
+                        <CloseCircle size="16" color="#94A3B8" />
+                      </div>
+                    </div>
+                    <div className="flex justify-center items-center gap-1">
+                      <div className="text-Gray-N700 text-sm font-medium leading-normal">
+                        ساعت پرواز: {englishToFarsiNumber(localFlightTimeRange[0])} تا {englishToFarsiNumber(localFlightTimeRange[1])}
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+          
+          <div className="self-stretch px-5 py-4 bg-Shade-White flex flex-col justify-center items-center gap-3">
+            {/* Filtered content based on activeSection */}
+            {/* Flight Time Range */}
+            {(activeSection === 'all' || activeSection === 'flightTime') && (
+              <FilterSection title="ساعت پرواز رفت" isLast={activeSection !== 'all'}>
+                <FancySlider
+                  value={localFlightTimeRange}
+                  onValueChange={setLocalFlightTimeRange}
+                  min={4}
+                  max={24}
+                  step={1}
+                  leftLabel={formatTime(localFlightTimeRange[1])}
+                  rightLabel={formatTime(localFlightTimeRange[0])}
+                />
+              </FilterSection>
+            )}
+
+            {/* Price Range */}
+            {(activeSection === 'all' || activeSection === 'priceRange') && (
+              <FilterSection title="بازه قیمت (تومان)" isLast={activeSection !== 'all'}>
+                <FancySlider
+                  value={localPriceRange}
+                  onValueChange={setLocalPriceRange}
+                  min={500000}
+                  max={5000000}
+                  step={100000}
+                  leftLabel={formatPrice(localPriceRange[1])}
+                  rightLabel={formatPrice(localPriceRange[0])}
+                />
+              </FilterSection>
+            )}
+
+            {/* Ticket Type */}
+            {(activeSection === 'all' || activeSection === 'ticketType') && (
+              <FilterSection title="نوع بلیط" count={Object.values(localFilters.ticketType).filter(Boolean).length} isLast={activeSection !== 'all'}>
+                <FilterCheckbox
+                  label="چارتر"
+                  checked={localFilters.ticketType.charter}
+                  onChange={(v) => handleLocalFilterUpdate('ticketType', 'charter', v)}
+                />
+                <FilterCheckbox
+                  label="سیستمی"
+                  checked={localFilters.ticketType.system}
+                  onChange={(v) => handleLocalFilterUpdate('ticketType', 'system', v)}
+                />
+              </FilterSection>
+            )}
+
+            {/* Cabin Class */}
+            {(activeSection === 'all' || activeSection === 'cabinClass') && (
+              <FilterSection title="کلاس پروازی" count={Object.values(localFilters.cabinClass).filter(Boolean).length} isLast={activeSection !== 'all'}>
+                <FilterCheckbox
+                  label="اکونومی"
+                  checked={localFilters.cabinClass.economy}
+                  onChange={(v) => handleLocalFilterUpdate('cabinClass', 'economy', v)}
+                />
+                <FilterCheckbox
+                  label="بیزینس"
+                  checked={localFilters.cabinClass.business}
+                  onChange={(v) => handleLocalFilterUpdate('cabinClass', 'business', v)}
+                />
+              </FilterSection>
+            )}
+
+            {/* Airlines */}
+            {(activeSection === 'all' || activeSection === 'airlines') && (
+              <FilterSection 
+                title="شرکت‌های هواپیمایی" 
+                count={Object.values(localFilters.airlines).filter(Boolean).length}
+                isLast={activeSection !== 'all'}
+              >
+                <FilterCheckbox
+                  label="ماهان"
+                  logo="/images/logo.webp"
+                  extraText="از ۲,346,890"
+                  checked={localFilters.airlines.mahan}
+                  onChange={(v) => handleLocalFilterUpdate('airlines', 'mahan', v)}
+                />
+                <FilterCheckbox
+                  label="کاسپین"
+                  logo="/images/logo.webp"
+                  extraText="از ۲,346,890"
+                  checked={localFilters.airlines.caspian}
+                  onChange={(v) => handleLocalFilterUpdate('airlines', 'caspian', v)}
+                />
+                <FilterCheckbox
+                  label="آتا"
+                  logo="/images/logo.webp"
+                  extraText="از ۲,346,890"
+                  checked={localFilters.airlines.ata}
+                  onChange={(v) => handleLocalFilterUpdate('airlines', 'ata', v)}
+                />
+              </FilterSection>
+            )}
+
+            {/* Agencies */}
+            {(activeSection === 'all' || activeSection === 'agencies') && (
+              <FilterSection title="وبسایت‌ها" count={Object.values(localFilters.agencies).filter(Boolean).length} isLast={activeSection !== 'all'}>
+                <FilterCheckbox
+                  label="علی‌بابا"
+                  logo="/images/logo.webp"
+                  extraText="از ۲,346,890"
+                  checked={localFilters.agencies.alibaba}
+                  onChange={(v) => handleLocalFilterUpdate('agencies', 'alibaba', v)}
+                />
+                <FilterCheckbox
+                  label="فلای تودی"
+                  logo="/images/logo.webp"
+                  extraText="از ۲,346,890"
+                  checked={localFilters.agencies.flytoday}
+                  onChange={(v) => handleLocalFilterUpdate('agencies', 'flytoday', v)}
+                />
+                <FilterCheckbox
+                  label="مستر بلیط"
+                  logo="/images/logo.webp"
+                  extraText="از ۲,346,890"
+                  checked={localFilters.agencies.mrbilit}
+                  onChange={(v) => handleLocalFilterUpdate('agencies', 'mrbilit', v)}
+                />
+              </FilterSection>
             )}
           </div>
-          
-          <div className="absolute right-5 flex justify-start items-center gap-2">
-            <div className="cursor-pointer" onClick={handleDrawerClose}>
-              <CloseCircle size="24" color="#334155" variant="Outline" />
-            </div>
-          </div>
-        </div>
-      </DialogTitle>
-      
-      <div className="w-full max-h-[calc(80vh-60px)] overflow-y-auto">
-        {/* Active Filter Chips Section (Horizontally Scrollable) */}
-        {activeSection === 'all' && totalActiveFiltersForChips > 0 && (
-          <div className="px-5 py-1 border-b border-Gray-N100 w-full">
-            <div className="flex items-center gap-[7px] overflow-x-auto whitespace-nowrap p-2" style={{ WebkitOverflowScrolling: 'touch', scrollbarWidth: 'thin' }}>
-              {/* Ticket Type Filters */}
-              {Object.entries(localFilters.ticketType).map(([key, value]) => 
-                value && (
-                  <div key={`ticketType-${key}`} className="px-3 py-1 bg-Shade-White rounded-2xl outline outline-2 outline-offset-[-2px] outline-Gray-N100 flex-shrink-0 flex justify-center items-center gap-1 overflow-hidden">
-                    <div className="py-1 flex justify-start items-center gap-2 cursor-pointer" onClick={() => handleLocalFilterUpdate('ticketType', key, false)}>
-                      <div className="size-4 relative rounded-[48px] overflow-hidden">
-                        <CloseCircle size="16" color="#94A3B8" />
-                      </div>
-                    </div>
-                    <div className="flex justify-center items-center gap-1">
-                      <div className="text-Gray-N700 text-sm font-medium leading-normal">
-                        {key === 'charter' ? 'چارتری' : 'سیستمی'}
-                      </div>
-                    </div>
-                  </div>
-                )
-              )}
-              
-              {/* Cabin Class Filters */}
-              {Object.entries(localFilters.cabinClass).map(([key, value]) => 
-                value && (
-                  <div key={`cabinClass-${key}`} className="px-3 py-1 bg-Shade-White rounded-2xl outline outline-2 outline-offset-[-2px] outline-Gray-N100 flex-shrink-0 flex justify-center items-center gap-1 overflow-hidden">
-                    <div className="py-1 flex justify-start items-center gap-2 cursor-pointer" onClick={() => handleLocalFilterUpdate('cabinClass', key, false)}>
-                      <div className="size-4 relative rounded-[48px] overflow-hidden">
-                        <CloseCircle size="16" color="#94A3B8" />
-                      </div>
-                    </div>
-                    <div className="flex justify-center items-center gap-1">
-                      <div className="text-Gray-N700 text-sm font-medium leading-normal">
-                        {key === 'economy' ? 'اکونومی' : 'بیزینس'}
-                      </div>
-                    </div>
-                  </div>
-                )
-              )}
-              
-              {/* Airlines Filters */}
-              {Object.entries(localFilters.airlines).map(([key, value]) => 
-                value && (
-                  <div key={`airlines-${key}`} className="px-3 py-1 bg-Shade-White rounded-2xl outline outline-2 outline-offset-[-2px] outline-Gray-N100 flex-shrink-0 flex justify-center items-center gap-1 overflow-hidden">
-                    <div className="py-1 flex justify-start items-center gap-2 cursor-pointer" onClick={() => handleLocalFilterUpdate('airlines', key, false)}>
-                      <div className="size-4 relative rounded-[48px] overflow-hidden">
-                        <CloseCircle size="16" color="#94A3B8" />
-                      </div>
-                    </div>
-                    <div className="flex justify-center items-center gap-1">
-                      <div className="text-Gray-N700 text-sm font-medium leading-normal">
-                        {key === 'mahan' ? 'ماهان' : key === 'caspian' ? 'کاسپین' : 'آتا'}
-                      </div>
-                    </div>
-                  </div>
-                )
-              )}
-              
-              {/* Agencies Filters */}
-              {Object.entries(localFilters.agencies).map(([key, value]) => 
-                value && (
-                  <div key={`agencies-${key}`} className="px-3 py-1 bg-Shade-White rounded-2xl outline outline-2 outline-offset-[-2px] outline-Gray-N100 flex-shrink-0 flex justify-center items-center gap-1 overflow-hidden">
-                    <div className="py-1 flex justify-start items-center gap-2 cursor-pointer" onClick={() => handleLocalFilterUpdate('agencies', key, false)}>
-                      <div className="size-4 relative rounded-[48px] overflow-hidden">
-                        <CloseCircle size="16" color="#94A3B8" />
-                      </div>
-                    </div>
-                    <div className="flex justify-center items-center gap-1">
-                      <div className="text-Gray-N700 text-sm font-medium leading-normal">
-                        {key === 'alibaba' ? 'علی بابا' : key === 'flytoday' ? 'فلای تودی' : 'مستر بلیط'}
-                      </div>
-                    </div>
-                  </div>
-                )
-              )}
-              
-              {/* Price Range Filter */}
-              {(localPriceRange[0] !== 500000 || localPriceRange[1] !== 5000000) && (
-                <div className="px-3 py-1 bg-Shade-White rounded-2xl outline outline-2 outline-offset-[-2px] outline-Gray-N100 flex-shrink-0 flex justify-center items-center gap-1 overflow-hidden">
-                  <div className="py-1 flex justify-start items-center gap-2 cursor-pointer" onClick={() => setLocalPriceRange([500000, 5000000])}>
-                    <div className="size-4 relative rounded-[48px] overflow-hidden">
-                      <CloseCircle size="16" color="#94A3B8" />
-                    </div>
-                  </div>
-                  <div className="flex justify-center items-center gap-1">
-                    <div className="text-Gray-N700 text-sm font-medium leading-normal">
-                      بازه قیمت (تومان): {englishToFarsiNumber(Math.floor(localPriceRange[0] / 1000))} تا {englishToFarsiNumber(Math.floor(localPriceRange[1] / 1000))} هزار
-                    </div>
-                  </div>
-                </div>
-              )}
-              
-              {/* Flight Time Range Filter */}
-              {(localFlightTimeRange[0] !== 4 || localFlightTimeRange[1] !== 24) && (
-                <div className="px-3 py-1 bg-Shade-White rounded-2xl outline outline-2 outline-offset-[-2px] outline-Gray-N100 flex-shrink-0 flex justify-center items-center gap-1 overflow-hidden">
-                  <div className="py-1 flex justify-start items-center gap-2 cursor-pointer" onClick={() => setLocalFlightTimeRange([4, 24])}>
-                    <div className="size-4 relative rounded-[48px] overflow-hidden">
-                      <CloseCircle size="16" color="#94A3B8" />
-                    </div>
-                  </div>
-                  <div className="flex justify-center items-center gap-1">
-                    <div className="text-Gray-N700 text-sm font-medium leading-normal">
-                      ساعت پرواز: {englishToFarsiNumber(localFlightTimeRange[0])} تا {englishToFarsiNumber(localFlightTimeRange[1])}
-                    </div>
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-        )}
-        
-        <div className="self-stretch px-5 py-4 bg-Shade-White flex flex-col justify-center items-center gap-3">
-          {/* Filtered content based on activeSection */}
-          {/* Flight Time Range */}
-          {(activeSection === 'all' || activeSection === 'flightTime') && (
-            <FilterSection title="ساعت پرواز رفت" isLast={activeSection !== 'all'}>
-              <FancySlider
-                value={localFlightTimeRange}
-                onValueChange={setLocalFlightTimeRange}
-                min={4}
-                max={24}
-                step={1}
-                leftLabel={formatTime(localFlightTimeRange[1])}
-                rightLabel={formatTime(localFlightTimeRange[0])}
-              />
-            </FilterSection>
-          )}
-
-          {/* Price Range */}
-          {(activeSection === 'all' || activeSection === 'priceRange') && (
-            <FilterSection title="بازه قیمت (تومان)" isLast={activeSection !== 'all'}>
-              <FancySlider
-                value={localPriceRange}
-                onValueChange={setLocalPriceRange}
-                min={500000}
-                max={5000000}
-                step={100000}
-                leftLabel={formatPrice(localPriceRange[1])}
-                rightLabel={formatPrice(localPriceRange[0])}
-              />
-            </FilterSection>
-          )}
-
-          {/* Ticket Type */}
-          {(activeSection === 'all' || activeSection === 'ticketType') && (
-            <FilterSection title="نوع بلیط" count={Object.values(localFilters.ticketType).filter(Boolean).length} isLast={activeSection !== 'all'}>
-              <FilterCheckbox
-                label="چارتر"
-                checked={localFilters.ticketType.charter}
-                onChange={(v) => handleLocalFilterUpdate('ticketType', 'charter', v)}
-              />
-              <FilterCheckbox
-                label="سیستمی"
-                checked={localFilters.ticketType.system}
-                onChange={(v) => handleLocalFilterUpdate('ticketType', 'system', v)}
-              />
-            </FilterSection>
-          )}
-
-          {/* Cabin Class */}
-          {(activeSection === 'all' || activeSection === 'cabinClass') && (
-            <FilterSection title="کلاس پروازی" count={Object.values(localFilters.cabinClass).filter(Boolean).length} isLast={activeSection !== 'all'}>
-              <FilterCheckbox
-                label="اکونومی"
-                checked={localFilters.cabinClass.economy}
-                onChange={(v) => handleLocalFilterUpdate('cabinClass', 'economy', v)}
-              />
-              <FilterCheckbox
-                label="بیزینس"
-                checked={localFilters.cabinClass.business}
-                onChange={(v) => handleLocalFilterUpdate('cabinClass', 'business', v)}
-              />
-            </FilterSection>
-          )}
-
-          {/* Airlines */}
-          {(activeSection === 'all' || activeSection === 'airlines') && (
-            <FilterSection 
-              title="شرکت‌های هواپیمایی" 
-              count={Object.values(localFilters.airlines).filter(Boolean).length}
-              isLast={activeSection !== 'all'}
-            >
-              <FilterCheckbox
-                label="ماهان"
-                logo="/images/logo.webp"
-                extraText="از ۲,346,890"
-                checked={localFilters.airlines.mahan}
-                onChange={(v) => handleLocalFilterUpdate('airlines', 'mahan', v)}
-              />
-              <FilterCheckbox
-                label="کاسپین"
-                logo="/images/logo.webp"
-                extraText="از ۲,346,890"
-                checked={localFilters.airlines.caspian}
-                onChange={(v) => handleLocalFilterUpdate('airlines', 'caspian', v)}
-              />
-              <FilterCheckbox
-                label="آتا"
-                logo="/images/logo.webp"
-                extraText="از ۲,346,890"
-                checked={localFilters.airlines.ata}
-                onChange={(v) => handleLocalFilterUpdate('airlines', 'ata', v)}
-              />
-            </FilterSection>
-          )}
-
-          {/* Agencies */}
-          {(activeSection === 'all' || activeSection === 'agencies') && (
-            <FilterSection title="وبسایت‌ها" count={Object.values(localFilters.agencies).filter(Boolean).length} isLast={activeSection !== 'all'}>
-              <FilterCheckbox
-                label="علی‌بابا"
-                logo="/images/logo.webp"
-                extraText="از ۲,346,890"
-                checked={localFilters.agencies.alibaba}
-                onChange={(v) => handleLocalFilterUpdate('agencies', 'alibaba', v)}
-              />
-              <FilterCheckbox
-                label="فلای تودی"
-                logo="/images/logo.webp"
-                extraText="از ۲,346,890"
-                checked={localFilters.agencies.flytoday}
-                onChange={(v) => handleLocalFilterUpdate('agencies', 'flytoday', v)}
-              />
-              <FilterCheckbox
-                label="مستر بلیط"
-                logo="/images/logo.webp"
-                extraText="از ۲,346,890"
-                checked={localFilters.agencies.mrbilit}
-                onChange={(v) => handleLocalFilterUpdate('agencies', 'mrbilit', v)}
-              />
-            </FilterSection>
-          )}
         </div>
       </div>
-    </div>
-  );
-};
+    );
+  }
+);
 
 // Format price with commas
 const formatPrice = (price: number) => {
