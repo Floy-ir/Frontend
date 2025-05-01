@@ -1137,7 +1137,7 @@ const FilterDrawerContent = ({
           {/* Filtered content based on activeSection */}
           {/* Flight Time Range */}
           {(activeSection === 'all' || activeSection === 'flightTime') && (
-            <FilterSection title="ساعت پرواز رفت">
+            <FilterSection title="ساعت پرواز رفت" isLast={activeSection !== 'all'}>
               <FancySlider
                 value={flightTimeRange}
                 onValueChange={setFlightTimeRange}
@@ -1152,7 +1152,7 @@ const FilterDrawerContent = ({
 
           {/* Price Range */}
           {(activeSection === 'all' || activeSection === 'priceRange') && (
-            <FilterSection title="بازه قیمت (تومان)">
+            <FilterSection title="بازه قیمت (تومان)" isLast={activeSection !== 'all'}>
               <FancySlider
                 value={priceRange}
                 onValueChange={setPriceRange}
@@ -1167,7 +1167,7 @@ const FilterDrawerContent = ({
 
           {/* Ticket Type */}
           {(activeSection === 'all' || activeSection === 'ticketType') && (
-            <FilterSection title="نوع بلیط" count={Object.values(filters.ticketType).filter(Boolean).length}>
+            <FilterSection title="نوع بلیط" count={Object.values(filters.ticketType).filter(Boolean).length} isLast={activeSection !== 'all'}>
               <FilterCheckbox
                 label="چارتر"
                 checked={filters.ticketType.charter}
@@ -1183,7 +1183,7 @@ const FilterDrawerContent = ({
 
           {/* Cabin Class */}
           {(activeSection === 'all' || activeSection === 'cabinClass') && (
-            <FilterSection title="کلاس پروازی" count={Object.values(filters.cabinClass).filter(Boolean).length}>
+            <FilterSection title="کلاس پروازی" count={Object.values(filters.cabinClass).filter(Boolean).length} isLast={activeSection !== 'all'}>
               <FilterCheckbox
                 label="اکونومی"
                 checked={filters.cabinClass.economy}
@@ -1202,7 +1202,7 @@ const FilterDrawerContent = ({
             <FilterSection 
               title="شرکت‌های هواپیمایی" 
               count={Object.values(filters.airlines).filter(Boolean).length}
-              isLast={true}
+              isLast={activeSection !== 'all'}
             >
               <FilterCheckbox
                 label="ماهان"
@@ -1230,7 +1230,7 @@ const FilterDrawerContent = ({
 
           {/* Agencies */}
           {(activeSection === 'all' || activeSection === 'agencies') && (
-            <FilterSection title="وبسایت‌ها" count={Object.values(filters.agencies).filter(Boolean).length}>
+            <FilterSection title="وبسایت‌ها" count={Object.values(filters.agencies).filter(Boolean).length} isLast={activeSection !== 'all'}>
               <FilterCheckbox
                 label="علی‌بابا"
                 logo="/images/logo.webp"
