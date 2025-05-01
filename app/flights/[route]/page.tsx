@@ -507,7 +507,7 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                       </div>
                     </div>
                   </DrawerTrigger>
-                  <DrawerContent className="bg-Shade-White rounded-t-2xl max-h-[80vh]">
+                  <DrawerContent className="bg-Shade-White rounded-t-2xl max-h-[80vh] pb-4">
                     <FilterDrawerContent
                       title="فیلتر‌ها"
                       activeFiltersCount={activeFiltersCount}
@@ -539,7 +539,7 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                         </div>
                       </div>
                     </DrawerTrigger>
-                    <DrawerContent className="bg-Shade-White rounded-t-2xl max-h-[80vh]">
+                    <DrawerContent className="bg-Shade-White rounded-t-2xl max-h-[80vh] pb-4">
                       <FilterDrawerContent
                         title="بازه قیمت"
                         activeFiltersCount={(priceRange[0] !== 500000 || priceRange[1] !== 5000000) ? 1 : 0}
@@ -571,7 +571,7 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                         </div>
                       </div>
                     </DrawerTrigger>
-                    <DrawerContent className="bg-Shade-White rounded-t-2xl max-h-[80vh]">
+                    <DrawerContent className="bg-Shade-White rounded-t-2xl max-h-[80vh] pb-4">
                       <FilterDrawerContent
                         title="ساعت پرواز رفت"
                         activeFiltersCount={(flightTimeRange[0] !== 4 || flightTimeRange[1] !== 24) ? 1 : 0}
@@ -606,7 +606,7 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                         </div>
                       </div>
                     </DrawerTrigger>
-                    <DrawerContent className="bg-Shade-White rounded-t-2xl max-h-[80vh]">
+                    <DrawerContent className="bg-Shade-White rounded-t-2xl max-h-[80vh] pb-4">
                       <FilterDrawerContent
                         title="نوع بلیط"
                         activeFiltersCount={Object.values(filters.ticketType).filter(Boolean).length}
@@ -641,7 +641,7 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                         </div>
                       </div>
                     </DrawerTrigger>
-                    <DrawerContent className="bg-Shade-White rounded-t-2xl max-h-[80vh]">
+                    <DrawerContent className="bg-Shade-White rounded-t-2xl max-h-[80vh] pb-4">
                       <FilterDrawerContent
                         title="کلاس پروازی"
                         activeFiltersCount={Object.values(filters.cabinClass).filter(Boolean).length}
@@ -677,7 +677,7 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                         </div>
                       </div>
                     </DrawerTrigger>
-                    <DrawerContent className="bg-Shade-White rounded-t-2xl max-h-[80vh]">
+                    <DrawerContent className="bg-Shade-White rounded-t-2xl max-h-[80vh] pb-4">
                       <FilterDrawerContent
                         title="شرکت‌های هواپیمایی"
                         activeFiltersCount={Object.values(filters.airlines).filter(Boolean).length}
@@ -713,7 +713,7 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                         </div>
                       </div>
                     </DrawerTrigger>
-                    <DrawerContent className="bg-Shade-White rounded-t-2xl max-h-[80vh]">
+                    <DrawerContent className="bg-Shade-White rounded-t-2xl max-h-[80vh] pb-4">
                       <FilterDrawerContent
                         title="وبسایت‌ها"
                         activeFiltersCount={Object.values(filters.agencies).filter(Boolean).length}
@@ -744,7 +744,7 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                         </div>
                       </div>
                     </DrawerTrigger>
-                    <DrawerContent className="bg-Shade-White rounded-t-2xl max-h-[80vh]">
+                    <DrawerContent className="bg-Shade-White rounded-t-2xl max-h-[80vh] pb-4">
                       <FilterDrawerContent
                         title="بازه قیمت"
                         activeFiltersCount={(priceRange[0] !== 500000 || priceRange[1] !== 5000000) ? 1 : 0}
@@ -774,7 +774,7 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                         </div>
                       </div>
                     </DrawerTrigger>
-                    <DrawerContent className="bg-Shade-White rounded-t-2xl max-h-[80vh]">
+                    <DrawerContent className="bg-Shade-White rounded-t-2xl max-h-[80vh] pb-4">
                       <FilterDrawerContent
                         title="ساعت پرواز رفت"
                         activeFiltersCount={(flightTimeRange[0] !== 4 || flightTimeRange[1] !== 24) ? 1 : 0}
@@ -804,7 +804,7 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                         </div>
                       </div>
                     </DrawerTrigger>
-                    <DrawerContent className="bg-Shade-White rounded-t-2xl max-h-[80vh]">
+                    <DrawerContent className="bg-Shade-White rounded-t-2xl max-h-[80vh] pb-4">
                       <FilterDrawerContent
                         title="نوع بلیط"
                         activeFiltersCount={Object.values(filters.ticketType).filter(Boolean).length}
@@ -834,7 +834,7 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                         </div>
                       </div>
                     </DrawerTrigger>
-                    <DrawerContent className="bg-Shade-White rounded-t-2xl max-h-[80vh]">
+                    <DrawerContent className="bg-Shade-White rounded-t-2xl max-h-[80vh] pb-4">
                       <FilterDrawerContent
                         title="کلاس پروازی"
                         activeFiltersCount={Object.values(filters.cabinClass).filter(Boolean).length}
@@ -864,7 +864,7 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                         </div>
                       </div>
                     </DrawerTrigger>
-                    <DrawerContent className="bg-Shade-White rounded-t-2xl max-h-[80vh]">
+                    <DrawerContent className="bg-Shade-White rounded-t-2xl max-h-[80vh] pb-4">
                       <FilterDrawerContent
                         title="شرکت‌های هواپیمایی"
                         activeFiltersCount={Object.values(filters.airlines).filter(Boolean).length}
@@ -894,7 +894,7 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                         </div>
                       </div>
                     </DrawerTrigger>
-                    <DrawerContent className="bg-Shade-White rounded-t-2xl max-h-[80vh]">
+                    <DrawerContent className="bg-Shade-White rounded-t-2xl max-h-[80vh] pb-4">
                       <FilterDrawerContent
                         title="وبسایت‌ها"
                         activeFiltersCount={Object.values(filters.agencies).filter(Boolean).length}
