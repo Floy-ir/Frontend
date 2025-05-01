@@ -243,6 +243,9 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
         },
       }));
     }
+    
+    // This will cause the URL update in the useEffect hook
+    // The drawer state is now preserved separately in openDrawers state
   }
 
   const clearFilters = () => {
@@ -360,6 +363,34 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
 
   // Track which filter section is active in the drawer
   const [activeFilterSection, setActiveFilterSection] = useState<string | null>(null)
+  
+  // Add state to control drawer open states
+  const [openDrawers, setOpenDrawers] = useState<Record<string, boolean>>({
+    sort: false,
+    all: false,
+    ticketType: false,
+    cabinClass: false,
+    airlines: false,
+    agencies: false,
+    flightTime: false,
+    priceRange: false
+  })
+
+  // Helper function to open a specific drawer
+  const openDrawer = (drawer: string) => {
+    setOpenDrawers(prev => ({
+      ...prev,
+      [drawer]: true
+    }))
+  }
+
+  // Helper function to close a specific drawer
+  const closeDrawer = (drawer: string) => {
+    setOpenDrawers(prev => ({
+      ...prev,
+      [drawer]: false
+    }))
+  }
 
   // Sort flights based on selected sort key, safely handling empty/incomplete objects
   const sortedFlights = [...sampleFlights]
@@ -444,9 +475,10 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
               {/* Filter Chips - Each opens a specific section */}
               <div className="flex gap-1 overflow-x-auto">
                 {/* Mobile sort drawer trigger */}
-                <Drawer>
+                <Drawer open={openDrawers.sort} onOpenChange={(open) => setOpenDrawers(prev => ({ ...prev, sort: open }))}>
                   <DrawerTrigger asChild>
-                    <div className="bg-Shade-White outline-Gray-N100 inline-flex items-center justify-center gap-1 rounded-2xl px-3 py-1 outline-2 outline-offset-[-2px]">
+                    <div className="bg-Shade-White outline-Gray-N100 inline-flex items-center justify-center gap-1 rounded-2xl px-3 py-1 outline-2 outline-offset-[-2px]"
+                         onClick={() => openDrawer('sort')}>
                       <Sort size="16" color="#1E1E1E" />
                       <div className="flex items-center justify-center gap-2">
                         <div className="text-Gray-N700 text-sm leading-normal font-medium text-nowrap"> مرتب سازی: </div>
@@ -475,8 +507,7 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                                 checked={sortKey === key}
                                 onCheckedChange={() => {
                                   setSortKey(key)
-                                  const drawer = document.querySelector("[data-state=open]") as HTMLElement
-                                  if (drawer) drawer.click()
+                                  closeDrawer('sort')
                                 }}
                                 className="data-[state=checked]:bg-Primary-P500main data-[state=checked]:border-Primary-P500main rounded-full"
                               />
@@ -491,9 +522,10 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                 </Drawer>
 
                 {/* All Filters Chip - always first */}
-                <Drawer>
+                <Drawer open={openDrawers.all} onOpenChange={(open) => setOpenDrawers(prev => ({ ...prev, all: open }))}>
                   <DrawerTrigger asChild>
-                    <div className="bg-Shade-White outline-Gray-N100 inline-flex items-center justify-center gap-1 rounded-2xl px-3 py-1 outline-2 outline-offset-[-2px] whitespace-nowrap cursor-pointer mr-1">
+                    <div className="bg-Shade-White outline-Gray-N100 inline-flex items-center justify-center gap-1 rounded-2xl px-3 py-1 outline-2 outline-offset-[-2px] whitespace-nowrap cursor-pointer mr-1"
+                         onClick={() => openDrawer('all')}>
                       <Setting5 size="16" color="#1E1E1E" />
                       <div className="flex items-center gap-1">
                         <div className="text-Gray-N700 text-sm font-medium leading-normal">فیلتر‌ها</div>
@@ -519,6 +551,7 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                       setFlightTimeRange={setFlightTimeRange}
                       priceRange={priceRange}
                       setPriceRange={setPriceRange}
+                      closeDrawer={() => closeDrawer('all')}
                     />
                   </DrawerContent>
                 </Drawer>
@@ -526,11 +559,14 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                 {/* Active filters first */}
                 {/* Price Range Filter Chip - if active */}
                 {(priceRange[0] !== 500000 || priceRange[1] !== 5000000) && (
-                  <Drawer>
+                  <Drawer open={openDrawers.priceRange} onOpenChange={(open) => setOpenDrawers(prev => ({ ...prev, priceRange: open }))}>
                     <DrawerTrigger asChild>
                       <div
                         className="bg-Primary-P50 outline-Primary-P500main inline-flex items-center justify-center gap-1 rounded-2xl px-3 py-1 outline-2 outline-offset-[-2px] whitespace-nowrap cursor-pointer mr-1"
-                        onClick={() => setActiveFilterSection('priceRange')}
+                        onClick={() => {
+                          setActiveFilterSection('priceRange')
+                          openDrawer('priceRange')
+                        }}
                       >
                         <div className="flex items-center gap-1">
                           <div className="text-Primary-P500main text-sm font-medium leading-normal">
@@ -551,6 +587,7 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                         setFlightTimeRange={setFlightTimeRange}
                         priceRange={priceRange}
                         setPriceRange={setPriceRange}
+                        closeDrawer={() => closeDrawer('priceRange')}
                       />
                     </DrawerContent>
                   </Drawer>
@@ -558,11 +595,14 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
 
                 {/* Flight Time Filter Chip - if active */}
                 {(flightTimeRange[0] !== 4 || flightTimeRange[1] !== 24) && (
-                  <Drawer>
+                  <Drawer open={openDrawers.flightTime} onOpenChange={(open) => setOpenDrawers(prev => ({ ...prev, flightTime: open }))}>
                     <DrawerTrigger asChild>
                       <div
                         className="bg-Primary-P50 outline-Primary-P500main inline-flex items-center justify-center gap-1 rounded-2xl px-3 py-1 outline-2 outline-offset-[-2px] whitespace-nowrap cursor-pointer mr-1"
-                        onClick={() => setActiveFilterSection('flightTime')}
+                        onClick={() => {
+                          setActiveFilterSection('flightTime')
+                          openDrawer('flightTime')
+                        }}
                       >
                         <div className="flex items-center gap-1">
                           <div className="text-Primary-P500main text-sm font-medium leading-normal">
@@ -583,6 +623,7 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                         setFlightTimeRange={setFlightTimeRange}
                         priceRange={priceRange}
                         setPriceRange={setPriceRange}
+                        closeDrawer={() => closeDrawer('flightTime')}
                       />
                     </DrawerContent>
                   </Drawer>
@@ -590,16 +631,19 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
 
                 {/* Ticket Type Filter Chip - if active */}
                 {Object.values(filters.ticketType).some(Boolean) && (
-                  <Drawer>
+                  <Drawer open={openDrawers.ticketType} onOpenChange={(open) => setOpenDrawers(prev => ({ ...prev, ticketType: open }))}>
                     <DrawerTrigger asChild>
                       <div
                         className="bg-Primary-P50 outline-Primary-P500main inline-flex items-center justify-center gap-1 rounded-2xl px-3 py-1 outline-2 outline-offset-[-2px] whitespace-nowrap cursor-pointer mr-1"
-                        onClick={() => setActiveFilterSection('ticketType')}
+                        onClick={() => {
+                          setActiveFilterSection('ticketType')
+                          openDrawer('ticketType')
+                        }}
                       >
                         <div className="flex items-center gap-1">
                           <div className="text-Primary-P500main text-sm font-medium leading-normal">
                             نوع بلیط: {[
-                              filters.ticketType.charter ? 'چارتر' : null,
+                              filters.ticketType.charter ? 'چارتری' : null,
                               filters.ticketType.system ? 'سیستمی' : null
                             ].filter(Boolean).join('، ')}
                           </div>
@@ -618,6 +662,7 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                         setFlightTimeRange={setFlightTimeRange}
                         priceRange={priceRange}
                         setPriceRange={setPriceRange}
+                        closeDrawer={() => closeDrawer('ticketType')}
                       />
                     </DrawerContent>
                   </Drawer>
@@ -625,11 +670,14 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
 
                 {/* Cabin Class Filter Chip - if active */}
                 {Object.values(filters.cabinClass).some(Boolean) && (
-                  <Drawer>
+                  <Drawer open={openDrawers.cabinClass} onOpenChange={(open) => setOpenDrawers(prev => ({ ...prev, cabinClass: open }))}>
                     <DrawerTrigger asChild>
                       <div
                         className="bg-Primary-P50 outline-Primary-P500main inline-flex items-center justify-center gap-1 rounded-2xl px-3 py-1 outline-2 outline-offset-[-2px] whitespace-nowrap cursor-pointer mr-1"
-                        onClick={() => setActiveFilterSection('cabinClass')}
+                        onClick={() => {
+                          setActiveFilterSection('cabinClass')
+                          openDrawer('cabinClass')
+                        }}
                       >
                         <div className="flex items-center gap-1">
                           <div className="text-Primary-P500main text-sm font-medium leading-normal">
@@ -653,6 +701,7 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                         setFlightTimeRange={setFlightTimeRange}
                         priceRange={priceRange}
                         setPriceRange={setPriceRange}
+                        closeDrawer={() => closeDrawer('cabinClass')}
                       />
                     </DrawerContent>
                   </Drawer>
@@ -660,11 +709,14 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
 
                 {/* Airlines Filter Chip - if active */}
                 {Object.values(filters.airlines).some(Boolean) && (
-                  <Drawer>
+                  <Drawer open={openDrawers.airlines} onOpenChange={(open) => setOpenDrawers(prev => ({ ...prev, airlines: open }))}>
                     <DrawerTrigger asChild>
                       <div
                         className="bg-Primary-P50 outline-Primary-P500main inline-flex items-center justify-center gap-1 rounded-2xl px-3 py-1 outline-2 outline-offset-[-2px] whitespace-nowrap cursor-pointer mr-1"
-                        onClick={() => setActiveFilterSection('airlines')}
+                        onClick={() => {
+                          setActiveFilterSection('airlines')
+                          openDrawer('airlines')
+                        }}
                       >
                         <div className="flex items-center gap-1">
                           <div className="text-Primary-P500main text-sm font-medium leading-normal">
@@ -689,6 +741,7 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                         setFlightTimeRange={setFlightTimeRange}
                         priceRange={priceRange}
                         setPriceRange={setPriceRange}
+                        closeDrawer={() => closeDrawer('airlines')}
                       />
                     </DrawerContent>
                   </Drawer>
@@ -696,11 +749,14 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
 
                 {/* Agencies Filter Chip - if active */}
                 {Object.values(filters.agencies).some(Boolean) && (
-                  <Drawer>
+                  <Drawer open={openDrawers.agencies} onOpenChange={(open) => setOpenDrawers(prev => ({ ...prev, agencies: open }))}>
                     <DrawerTrigger asChild>
                       <div
                         className="bg-Primary-P50 outline-Primary-P500main inline-flex items-center justify-center gap-1 rounded-2xl px-3 py-1 outline-2 outline-offset-[-2px] whitespace-nowrap cursor-pointer mr-1"
-                        onClick={() => setActiveFilterSection('agencies')}
+                        onClick={() => {
+                          setActiveFilterSection('agencies')
+                          openDrawer('agencies')
+                        }}
                       >
                         <div className="flex items-center gap-1">
                           <div className="text-Primary-P500main text-sm font-medium leading-normal">
@@ -725,6 +781,7 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                         setFlightTimeRange={setFlightTimeRange}
                         priceRange={priceRange}
                         setPriceRange={setPriceRange}
+                        closeDrawer={() => closeDrawer('agencies')}
                       />
                     </DrawerContent>
                   </Drawer>
@@ -733,11 +790,14 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                 {/* Inactive filters after active ones */}
                 {/* Price Range Filter Chip - if inactive */}
                 {(priceRange[0] === 500000 && priceRange[1] === 5000000) && (
-                  <Drawer>
+                  <Drawer open={openDrawers.priceRange} onOpenChange={(open) => setOpenDrawers(prev => ({ ...prev, priceRange: open }))}>
                     <DrawerTrigger asChild>
                       <div
                         className="bg-Shade-White outline-Gray-N100 inline-flex items-center justify-center gap-1 rounded-2xl px-3 py-1 outline-2 outline-offset-[-2px] whitespace-nowrap cursor-pointer mr-1"
-                        onClick={() => setActiveFilterSection('priceRange')}
+                        onClick={() => {
+                          setActiveFilterSection('priceRange')
+                          openDrawer('priceRange')
+                        }}
                       >
                         <div className="flex items-center gap-1">
                           <div className="text-Gray-N700 text-sm font-medium leading-normal">قیمت</div>
@@ -756,6 +816,7 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                         setFlightTimeRange={setFlightTimeRange}
                         priceRange={priceRange}
                         setPriceRange={setPriceRange}
+                        closeDrawer={() => closeDrawer('priceRange')}
                       />
                     </DrawerContent>
                   </Drawer>
@@ -763,11 +824,14 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
 
                 {/* Flight Time Filter Chip - if inactive */}
                 {(flightTimeRange[0] === 4 && flightTimeRange[1] === 24) && (
-                  <Drawer>
+                  <Drawer open={openDrawers.flightTime} onOpenChange={(open) => setOpenDrawers(prev => ({ ...prev, flightTime: open }))}>
                     <DrawerTrigger asChild>
                       <div
                         className="bg-Shade-White outline-Gray-N100 inline-flex items-center justify-center gap-1 rounded-2xl px-3 py-1 outline-2 outline-offset-[-2px] whitespace-nowrap cursor-pointer mr-1"
-                        onClick={() => setActiveFilterSection('flightTime')}
+                        onClick={() => {
+                          setActiveFilterSection('flightTime')
+                          openDrawer('flightTime')
+                        }}
                       >
                         <div className="flex items-center gap-1">
                           <div className="text-Gray-N700 text-sm font-medium leading-normal">ساعت پرواز</div>
@@ -786,6 +850,7 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                         setFlightTimeRange={setFlightTimeRange}
                         priceRange={priceRange}
                         setPriceRange={setPriceRange}
+                        closeDrawer={() => closeDrawer('flightTime')}
                       />
                     </DrawerContent>
                   </Drawer>
@@ -793,11 +858,14 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
 
                 {/* Ticket Type Filter Chip - if inactive */}
                 {!Object.values(filters.ticketType).some(Boolean) && (
-                  <Drawer>
+                  <Drawer open={openDrawers.ticketType} onOpenChange={(open) => setOpenDrawers(prev => ({ ...prev, ticketType: open }))}>
                     <DrawerTrigger asChild>
                       <div
                         className="bg-Shade-White outline-Gray-N100 inline-flex items-center justify-center gap-1 rounded-2xl px-3 py-1 outline-2 outline-offset-[-2px] whitespace-nowrap cursor-pointer mr-1"
-                        onClick={() => setActiveFilterSection('ticketType')}
+                        onClick={() => {
+                          setActiveFilterSection('ticketType')
+                          openDrawer('ticketType')
+                        }}
                       >
                         <div className="flex items-center gap-1">
                           <div className="text-Gray-N700 text-sm font-medium leading-normal">نوع بلیط</div>
@@ -816,6 +884,7 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                         setFlightTimeRange={setFlightTimeRange}
                         priceRange={priceRange}
                         setPriceRange={setPriceRange}
+                        closeDrawer={() => closeDrawer('ticketType')}
                       />
                     </DrawerContent>
                   </Drawer>
@@ -823,11 +892,14 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
 
                 {/* Cabin Class Filter Chip - if inactive */}
                 {!Object.values(filters.cabinClass).some(Boolean) && (
-                  <Drawer>
+                  <Drawer open={openDrawers.cabinClass} onOpenChange={(open) => setOpenDrawers(prev => ({ ...prev, cabinClass: open }))}>
                     <DrawerTrigger asChild>
                       <div
                         className="bg-Shade-White outline-Gray-N100 inline-flex items-center justify-center gap-1 rounded-2xl px-3 py-1 outline-2 outline-offset-[-2px] whitespace-nowrap cursor-pointer mr-1"
-                        onClick={() => setActiveFilterSection('cabinClass')}
+                        onClick={() => {
+                          setActiveFilterSection('cabinClass')
+                          openDrawer('cabinClass')
+                        }}
                       >
                         <div className="flex items-center gap-1">
                           <div className="text-Gray-N700 text-sm font-medium leading-normal">کلاس پروازی</div>
@@ -846,6 +918,7 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                         setFlightTimeRange={setFlightTimeRange}
                         priceRange={priceRange}
                         setPriceRange={setPriceRange}
+                        closeDrawer={() => closeDrawer('cabinClass')}
                       />
                     </DrawerContent>
                   </Drawer>
@@ -853,11 +926,14 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
 
                 {/* Airlines Filter Chip - if inactive */}
                 {!Object.values(filters.airlines).some(Boolean) && (
-                  <Drawer>
+                  <Drawer open={openDrawers.airlines} onOpenChange={(open) => setOpenDrawers(prev => ({ ...prev, airlines: open }))}>
                     <DrawerTrigger asChild>
                       <div
                         className="bg-Shade-White outline-Gray-N100 inline-flex items-center justify-center gap-1 rounded-2xl px-3 py-1 outline-2 outline-offset-[-2px] whitespace-nowrap cursor-pointer mr-1"
-                        onClick={() => setActiveFilterSection('airlines')}
+                        onClick={() => {
+                          setActiveFilterSection('airlines')
+                          openDrawer('airlines')
+                        }}
                       >
                         <div className="flex items-center gap-1">
                           <div className="text-Gray-N700 text-sm font-medium leading-normal">ایرلاین‌ها</div>
@@ -876,6 +952,7 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                         setFlightTimeRange={setFlightTimeRange}
                         priceRange={priceRange}
                         setPriceRange={setPriceRange}
+                        closeDrawer={() => closeDrawer('airlines')}
                       />
                     </DrawerContent>
                   </Drawer>
@@ -883,11 +960,14 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
 
                 {/* Agencies Filter Chip - if inactive */}
                 {!Object.values(filters.agencies).some(Boolean) && (
-                  <Drawer>
+                  <Drawer open={openDrawers.agencies} onOpenChange={(open) => setOpenDrawers(prev => ({ ...prev, agencies: open }))}>
                     <DrawerTrigger asChild>
                       <div
                         className="bg-Shade-White outline-Gray-N100 inline-flex items-center justify-center gap-1 rounded-2xl px-3 py-1 outline-2 outline-offset-[-2px] whitespace-nowrap cursor-pointer mr-1"
-                        onClick={() => setActiveFilterSection('agencies')}
+                        onClick={() => {
+                          setActiveFilterSection('agencies')
+                          openDrawer('agencies')
+                        }}
                       >
                         <div className="flex items-center gap-1">
                           <div className="text-Gray-N700 text-sm font-medium leading-normal">وبسایت‌ها</div>
@@ -906,6 +986,7 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                         setFlightTimeRange={setFlightTimeRange}
                         priceRange={priceRange}
                         setPriceRange={setPriceRange}
+                        closeDrawer={() => closeDrawer('agencies')}
                       />
                     </DrawerContent>
                   </Drawer>
@@ -966,7 +1047,8 @@ const FilterDrawerContent = ({
   flightTimeRange,
   setFlightTimeRange,
   priceRange,
-  setPriceRange
+  setPriceRange,
+  closeDrawer
 }: {
   title: string,
   activeFiltersCount: number,
@@ -977,25 +1059,142 @@ const FilterDrawerContent = ({
   flightTimeRange: [number, number],
   setFlightTimeRange: (range: [number, number]) => void,
   priceRange: [number, number],
-  setPriceRange: (range: [number, number]) => void
+  setPriceRange: (range: [number, number]) => void,
+  closeDrawer?: () => void
 }) => {
+  // Create local state copies to use within the drawer
+  const [localFilters, setLocalFilters] = React.useState<FilterState>({ ...filters });
+  const [localFlightTimeRange, setLocalFlightTimeRange] = React.useState<[number, number]>([...flightTimeRange]);
+  const [localPriceRange, setLocalPriceRange] = React.useState<[number, number]>([...priceRange]);
+  
+  // Update local state when props change (for initial render)
+  React.useEffect(() => {
+    setLocalFilters({ ...filters });
+    setLocalFlightTimeRange([...flightTimeRange]);
+    setLocalPriceRange([...priceRange]);
+  }, []);
+  
+  // Handle local filter changes
+  const handleLocalFilterUpdate = (category: string, key: string, value: boolean) => {
+    if (key === 'all' && value === false) {
+      // Clear all filters in the specific category locally
+      setLocalFilters(prev => {
+        const updatedCategory: Record<string, boolean> = {};
+        // Set all keys in this category to false
+        Object.keys(prev[category as keyof typeof prev]).forEach(k => {
+          updatedCategory[k] = false;
+        });
+        
+        return {
+          ...prev,
+          [category]: updatedCategory
+        };
+      });
+    } else {
+      // Regular single filter update locally
+      setLocalFilters(prev => ({
+        ...prev,
+        [category]: {
+          ...prev[category as keyof typeof prev],
+          [key]: value,
+        },
+      }));
+    }
+  };
+  
+  // Commit changes to parent state when drawer closes
+  const handleDrawerClose = () => {
+    // Apply all local changes to parent state
+    // Handle each category separately to maintain type safety
+    
+    // Handle ticketType filters
+    if (localFilters.ticketType.charter !== filters.ticketType.charter) {
+      updateFilter('ticketType', 'charter', localFilters.ticketType.charter);
+    }
+    if (localFilters.ticketType.system !== filters.ticketType.system) {
+      updateFilter('ticketType', 'system', localFilters.ticketType.system);
+    }
+    
+    // Handle cabinClass filters
+    if (localFilters.cabinClass.economy !== filters.cabinClass.economy) {
+      updateFilter('cabinClass', 'economy', localFilters.cabinClass.economy);
+    }
+    if (localFilters.cabinClass.business !== filters.cabinClass.business) {
+      updateFilter('cabinClass', 'business', localFilters.cabinClass.business);
+    }
+    
+    // Handle airlines filters
+    if (localFilters.airlines.mahan !== filters.airlines.mahan) {
+      updateFilter('airlines', 'mahan', localFilters.airlines.mahan);
+    }
+    if (localFilters.airlines.caspian !== filters.airlines.caspian) {
+      updateFilter('airlines', 'caspian', localFilters.airlines.caspian);
+    }
+    if (localFilters.airlines.ata !== filters.airlines.ata) {
+      updateFilter('airlines', 'ata', localFilters.airlines.ata);
+    }
+    
+    // Handle agencies filters
+    if (localFilters.agencies.alibaba !== filters.agencies.alibaba) {
+      updateFilter('agencies', 'alibaba', localFilters.agencies.alibaba);
+    }
+    if (localFilters.agencies.flytoday !== filters.agencies.flytoday) {
+      updateFilter('agencies', 'flytoday', localFilters.agencies.flytoday);
+    }
+    if (localFilters.agencies.mrbilit !== filters.agencies.mrbilit) {
+      updateFilter('agencies', 'mrbilit', localFilters.agencies.mrbilit);
+    }
+    
+    // Update ranges if changed
+    if (localPriceRange[0] !== priceRange[0] || localPriceRange[1] !== priceRange[1]) {
+      setPriceRange(localPriceRange);
+    }
+    
+    if (localFlightTimeRange[0] !== flightTimeRange[0] || localFlightTimeRange[1] !== flightTimeRange[1]) {
+      setFlightTimeRange(localFlightTimeRange);
+    }
+    
+    // Call the closeDrawer prop function if provided
+    if (closeDrawer) closeDrawer();
+  };
 
-  // Calculate total active filters for chips display
+  // Calculate total active filters for the local filters state
   const totalActiveFiltersForChips = 
-    Object.values(filters.ticketType).filter(Boolean).length +
-    Object.values(filters.cabinClass).filter(Boolean).length +
-    Object.values(filters.airlines).filter(Boolean).length +
-    Object.values(filters.agencies).filter(Boolean).length +
-    ((priceRange[0] !== 500000 || priceRange[1] !== 5000000) ? 1 : 0) +
-    ((flightTimeRange[0] !== 4 || flightTimeRange[1] !== 24) ? 1 : 0);
+    Object.values(localFilters.ticketType).filter(Boolean).length +
+    Object.values(localFilters.cabinClass).filter(Boolean).length +
+    Object.values(localFilters.airlines).filter(Boolean).length +
+    Object.values(localFilters.agencies).filter(Boolean).length +
+    ((localPriceRange[0] !== 500000 || localPriceRange[1] !== 5000000) ? 1 : 0) +
+    ((localFlightTimeRange[0] !== 4 || localFlightTimeRange[1] !== 24) ? 1 : 0);
+    
+  // Calculate active filter count for the local state
+  const localActiveFiltersCount = 
+    Object.values(localFilters.ticketType).filter(Boolean).length +
+    Object.values(localFilters.cabinClass).filter(Boolean).length +
+    Object.values(localFilters.airlines).filter(Boolean).length +
+    Object.values(localFilters.agencies).filter(Boolean).length +
+    ((localPriceRange[0] !== 500000 || localPriceRange[1] !== 5000000) ? 1 : 0) +
+    ((localFlightTimeRange[0] !== 4 || localFlightTimeRange[1] !== 24) ? 1 : 0);
+    
+  // Local clear filters function
+  const handleLocalClearFilters = () => {
+    setLocalFilters({
+      ticketType: { charter: false, system: false },
+      cabinClass: { economy: false, business: false },
+      airlines: { mahan: false, caspian: false, ata: false },
+      agencies: { alibaba: false, flytoday: false, mrbilit: false },
+    });
+    setLocalFlightTimeRange([4, 24]);
+    setLocalPriceRange([500000, 5000000]);
+  };
 
   return (
     <div className="inline-flex h-full w-full flex-col items-start justify-start max-h-[80vh]">
       <DialogTitle className="bg-Shade-White border-Gray-N100 inline-flex items-center self-stretch border-b px-5 py-4 sticky top-0 z-10">
         <div className="self-stretch inline-flex justify-center items-center w-full gap-2 relative">
           <div
-            className={`absolute left-5 text-Primary-P500main text-[13px] font-medium leading-normal cursor-pointer ${activeFiltersCount === 0 ? 'invisible' : ''}`}
-            onClick={clearFilters}
+            className={`absolute left-5 text-Primary-P500main text-[13px] font-medium leading-normal cursor-pointer ${localActiveFiltersCount === 0 ? 'invisible' : ''}`}
+            onClick={handleLocalClearFilters}
           >
             حذف فیلتر‌ها
           </div>
@@ -1004,19 +1203,19 @@ const FilterDrawerContent = ({
             <div className="flex justify-center items-center">
               <div className="text-Gray-N600 text-center text-base font-semibold leading-7 ml-2">{title}</div>
             </div>
-            {activeFiltersCount > 0 && (
+            {localActiveFiltersCount > 0 && (
               <div className="size-5 bg-Primary-P50 rounded-[80px] flex justify-center items-center gap-2 ">
                 <div className="text-Primary-P500main text-[13px] font-medium leading-normal">
-                  {englishToFarsiNumber(activeFiltersCount)}
+                  {englishToFarsiNumber(localActiveFiltersCount)}
                 </div>
               </div>
             )}
           </div>
           
           <div className="absolute right-5 flex justify-start items-center gap-2">
-            <DrawerClose className="cursor-pointer">
+            <div className="cursor-pointer" onClick={handleDrawerClose}>
               <CloseCircle size="24" color="#334155" variant="Outline" />
-            </DrawerClose>
+            </div>
           </div>
         </div>
       </DialogTitle>
@@ -1027,10 +1226,10 @@ const FilterDrawerContent = ({
           <div className="px-5 py-1 border-b border-Gray-N100 w-full">
             <div className="flex items-center gap-[7px] overflow-x-auto whitespace-nowrap p-2" style={{ WebkitOverflowScrolling: 'touch', scrollbarWidth: 'thin' }}>
               {/* Ticket Type Filters */}
-              {Object.entries(filters.ticketType).map(([key, value]) => 
+              {Object.entries(localFilters.ticketType).map(([key, value]) => 
                 value && (
                   <div key={`ticketType-${key}`} className="px-3 py-1 bg-Shade-White rounded-2xl outline outline-2 outline-offset-[-2px] outline-Gray-N100 flex-shrink-0 flex justify-center items-center gap-1 overflow-hidden">
-                    <div className="py-1 flex justify-start items-center gap-2 cursor-pointer" onClick={() => updateFilter('ticketType', key, false)}>
+                    <div className="py-1 flex justify-start items-center gap-2 cursor-pointer" onClick={() => handleLocalFilterUpdate('ticketType', key, false)}>
                       <div className="size-4 relative rounded-[48px] overflow-hidden">
                         <CloseCircle size="16" color="#94A3B8" />
                       </div>
@@ -1045,10 +1244,10 @@ const FilterDrawerContent = ({
               )}
               
               {/* Cabin Class Filters */}
-              {Object.entries(filters.cabinClass).map(([key, value]) => 
+              {Object.entries(localFilters.cabinClass).map(([key, value]) => 
                 value && (
                   <div key={`cabinClass-${key}`} className="px-3 py-1 bg-Shade-White rounded-2xl outline outline-2 outline-offset-[-2px] outline-Gray-N100 flex-shrink-0 flex justify-center items-center gap-1 overflow-hidden">
-                    <div className="py-1 flex justify-start items-center gap-2 cursor-pointer" onClick={() => updateFilter('cabinClass', key, false)}>
+                    <div className="py-1 flex justify-start items-center gap-2 cursor-pointer" onClick={() => handleLocalFilterUpdate('cabinClass', key, false)}>
                       <div className="size-4 relative rounded-[48px] overflow-hidden">
                         <CloseCircle size="16" color="#94A3B8" />
                       </div>
@@ -1063,10 +1262,10 @@ const FilterDrawerContent = ({
               )}
               
               {/* Airlines Filters */}
-              {Object.entries(filters.airlines).map(([key, value]) => 
+              {Object.entries(localFilters.airlines).map(([key, value]) => 
                 value && (
                   <div key={`airlines-${key}`} className="px-3 py-1 bg-Shade-White rounded-2xl outline outline-2 outline-offset-[-2px] outline-Gray-N100 flex-shrink-0 flex justify-center items-center gap-1 overflow-hidden">
-                    <div className="py-1 flex justify-start items-center gap-2 cursor-pointer" onClick={() => updateFilter('airlines', key, false)}>
+                    <div className="py-1 flex justify-start items-center gap-2 cursor-pointer" onClick={() => handleLocalFilterUpdate('airlines', key, false)}>
                       <div className="size-4 relative rounded-[48px] overflow-hidden">
                         <CloseCircle size="16" color="#94A3B8" />
                       </div>
@@ -1081,10 +1280,10 @@ const FilterDrawerContent = ({
               )}
               
               {/* Agencies Filters */}
-              {Object.entries(filters.agencies).map(([key, value]) => 
+              {Object.entries(localFilters.agencies).map(([key, value]) => 
                 value && (
                   <div key={`agencies-${key}`} className="px-3 py-1 bg-Shade-White rounded-2xl outline outline-2 outline-offset-[-2px] outline-Gray-N100 flex-shrink-0 flex justify-center items-center gap-1 overflow-hidden">
-                    <div className="py-1 flex justify-start items-center gap-2 cursor-pointer" onClick={() => updateFilter('agencies', key, false)}>
+                    <div className="py-1 flex justify-start items-center gap-2 cursor-pointer" onClick={() => handleLocalFilterUpdate('agencies', key, false)}>
                       <div className="size-4 relative rounded-[48px] overflow-hidden">
                         <CloseCircle size="16" color="#94A3B8" />
                       </div>
@@ -1099,32 +1298,32 @@ const FilterDrawerContent = ({
               )}
               
               {/* Price Range Filter */}
-              {(priceRange[0] !== 500000 || priceRange[1] !== 5000000) && (
+              {(localPriceRange[0] !== 500000 || localPriceRange[1] !== 5000000) && (
                 <div className="px-3 py-1 bg-Shade-White rounded-2xl outline outline-2 outline-offset-[-2px] outline-Gray-N100 flex-shrink-0 flex justify-center items-center gap-1 overflow-hidden">
-                  <div className="py-1 flex justify-start items-center gap-2 cursor-pointer" onClick={() => setPriceRange([500000, 5000000])}>
+                  <div className="py-1 flex justify-start items-center gap-2 cursor-pointer" onClick={() => setLocalPriceRange([500000, 5000000])}>
                     <div className="size-4 relative rounded-[48px] overflow-hidden">
                       <CloseCircle size="16" color="#94A3B8" />
                     </div>
                   </div>
                   <div className="flex justify-center items-center gap-1">
                     <div className="text-Gray-N700 text-sm font-medium leading-normal">
-                      بازه قیمت (تومان): {englishToFarsiNumber(Math.floor(priceRange[0] / 1000))} تا {englishToFarsiNumber(Math.floor(priceRange[1] / 1000))} هزار
+                      بازه قیمت (تومان): {englishToFarsiNumber(Math.floor(localPriceRange[0] / 1000))} تا {englishToFarsiNumber(Math.floor(localPriceRange[1] / 1000))} هزار
                     </div>
                   </div>
                 </div>
               )}
               
               {/* Flight Time Range Filter */}
-              {(flightTimeRange[0] !== 4 || flightTimeRange[1] !== 24) && (
+              {(localFlightTimeRange[0] !== 4 || localFlightTimeRange[1] !== 24) && (
                 <div className="px-3 py-1 bg-Shade-White rounded-2xl outline outline-2 outline-offset-[-2px] outline-Gray-N100 flex-shrink-0 flex justify-center items-center gap-1 overflow-hidden">
-                  <div className="py-1 flex justify-start items-center gap-2 cursor-pointer" onClick={() => setFlightTimeRange([4, 24])}>
+                  <div className="py-1 flex justify-start items-center gap-2 cursor-pointer" onClick={() => setLocalFlightTimeRange([4, 24])}>
                     <div className="size-4 relative rounded-[48px] overflow-hidden">
                       <CloseCircle size="16" color="#94A3B8" />
                     </div>
                   </div>
                   <div className="flex justify-center items-center gap-1">
                     <div className="text-Gray-N700 text-sm font-medium leading-normal">
-                      ساعت پرواز: {englishToFarsiNumber(flightTimeRange[0])} تا {englishToFarsiNumber(flightTimeRange[1])}
+                      ساعت پرواز: {englishToFarsiNumber(localFlightTimeRange[0])} تا {englishToFarsiNumber(localFlightTimeRange[1])}
                     </div>
                   </div>
                 </div>
@@ -1139,13 +1338,13 @@ const FilterDrawerContent = ({
           {(activeSection === 'all' || activeSection === 'flightTime') && (
             <FilterSection title="ساعت پرواز رفت" isLast={activeSection !== 'all'}>
               <FancySlider
-                value={flightTimeRange}
-                onValueChange={setFlightTimeRange}
+                value={localFlightTimeRange}
+                onValueChange={setLocalFlightTimeRange}
                 min={4}
                 max={24}
                 step={1}
-                leftLabel={formatTime(flightTimeRange[1])}
-                rightLabel={formatTime(flightTimeRange[0])}
+                leftLabel={formatTime(localFlightTimeRange[1])}
+                rightLabel={formatTime(localFlightTimeRange[0])}
               />
             </FilterSection>
           )}
@@ -1154,45 +1353,45 @@ const FilterDrawerContent = ({
           {(activeSection === 'all' || activeSection === 'priceRange') && (
             <FilterSection title="بازه قیمت (تومان)" isLast={activeSection !== 'all'}>
               <FancySlider
-                value={priceRange}
-                onValueChange={setPriceRange}
+                value={localPriceRange}
+                onValueChange={setLocalPriceRange}
                 min={500000}
                 max={5000000}
                 step={100000}
-                leftLabel={formatPrice(priceRange[1])}
-                rightLabel={formatPrice(priceRange[0])}
+                leftLabel={formatPrice(localPriceRange[1])}
+                rightLabel={formatPrice(localPriceRange[0])}
               />
             </FilterSection>
           )}
 
           {/* Ticket Type */}
           {(activeSection === 'all' || activeSection === 'ticketType') && (
-            <FilterSection title="نوع بلیط" count={Object.values(filters.ticketType).filter(Boolean).length} isLast={activeSection !== 'all'}>
+            <FilterSection title="نوع بلیط" count={Object.values(localFilters.ticketType).filter(Boolean).length} isLast={activeSection !== 'all'}>
               <FilterCheckbox
                 label="چارتر"
-                checked={filters.ticketType.charter}
-                onChange={(v) => updateFilter('ticketType', 'charter', v)}
+                checked={localFilters.ticketType.charter}
+                onChange={(v) => handleLocalFilterUpdate('ticketType', 'charter', v)}
               />
               <FilterCheckbox
                 label="سیستمی"
-                checked={filters.ticketType.system}
-                onChange={(v) => updateFilter('ticketType', 'system', v)}
+                checked={localFilters.ticketType.system}
+                onChange={(v) => handleLocalFilterUpdate('ticketType', 'system', v)}
               />
             </FilterSection>
           )}
 
           {/* Cabin Class */}
           {(activeSection === 'all' || activeSection === 'cabinClass') && (
-            <FilterSection title="کلاس پروازی" count={Object.values(filters.cabinClass).filter(Boolean).length} isLast={activeSection !== 'all'}>
+            <FilterSection title="کلاس پروازی" count={Object.values(localFilters.cabinClass).filter(Boolean).length} isLast={activeSection !== 'all'}>
               <FilterCheckbox
                 label="اکونومی"
-                checked={filters.cabinClass.economy}
-                onChange={(v) => updateFilter('cabinClass', 'economy', v)}
+                checked={localFilters.cabinClass.economy}
+                onChange={(v) => handleLocalFilterUpdate('cabinClass', 'economy', v)}
               />
               <FilterCheckbox
                 label="بیزینس"
-                checked={filters.cabinClass.business}
-                onChange={(v) => updateFilter('cabinClass', 'business', v)}
+                checked={localFilters.cabinClass.business}
+                onChange={(v) => handleLocalFilterUpdate('cabinClass', 'business', v)}
               />
             </FilterSection>
           )}
@@ -1201,56 +1400,56 @@ const FilterDrawerContent = ({
           {(activeSection === 'all' || activeSection === 'airlines') && (
             <FilterSection 
               title="شرکت‌های هواپیمایی" 
-              count={Object.values(filters.airlines).filter(Boolean).length}
+              count={Object.values(localFilters.airlines).filter(Boolean).length}
               isLast={activeSection !== 'all'}
             >
               <FilterCheckbox
                 label="ماهان"
                 logo="/images/logo.webp"
                 extraText="از ۲,346,890"
-                checked={filters.airlines.mahan}
-                onChange={(v) => updateFilter('airlines', 'mahan', v)}
+                checked={localFilters.airlines.mahan}
+                onChange={(v) => handleLocalFilterUpdate('airlines', 'mahan', v)}
               />
               <FilterCheckbox
                 label="کاسپین"
                 logo="/images/logo.webp"
                 extraText="از ۲,346,890"
-                checked={filters.airlines.caspian}
-                onChange={(v) => updateFilter('airlines', 'caspian', v)}
+                checked={localFilters.airlines.caspian}
+                onChange={(v) => handleLocalFilterUpdate('airlines', 'caspian', v)}
               />
               <FilterCheckbox
                 label="آتا"
                 logo="/images/logo.webp"
                 extraText="از ۲,346,890"
-                checked={filters.airlines.ata}
-                onChange={(v) => updateFilter('airlines', 'ata', v)}
+                checked={localFilters.airlines.ata}
+                onChange={(v) => handleLocalFilterUpdate('airlines', 'ata', v)}
               />
             </FilterSection>
           )}
 
           {/* Agencies */}
           {(activeSection === 'all' || activeSection === 'agencies') && (
-            <FilterSection title="وبسایت‌ها" count={Object.values(filters.agencies).filter(Boolean).length} isLast={activeSection !== 'all'}>
+            <FilterSection title="وبسایت‌ها" count={Object.values(localFilters.agencies).filter(Boolean).length} isLast={activeSection !== 'all'}>
               <FilterCheckbox
                 label="علی‌بابا"
                 logo="/images/logo.webp"
                 extraText="از ۲,346,890"
-                checked={filters.agencies.alibaba}
-                onChange={(v) => updateFilter('agencies', 'alibaba', v)}
+                checked={localFilters.agencies.alibaba}
+                onChange={(v) => handleLocalFilterUpdate('agencies', 'alibaba', v)}
               />
               <FilterCheckbox
                 label="فلای تودی"
                 logo="/images/logo.webp"
                 extraText="از ۲,346,890"
-                checked={filters.agencies.flytoday}
-                onChange={(v) => updateFilter('agencies', 'flytoday', v)}
+                checked={localFilters.agencies.flytoday}
+                onChange={(v) => handleLocalFilterUpdate('agencies', 'flytoday', v)}
               />
               <FilterCheckbox
                 label="مستر بلیط"
                 logo="/images/logo.webp"
                 extraText="از ۲,346,890"
-                checked={filters.agencies.mrbilit}
-                onChange={(v) => updateFilter('agencies', 'mrbilit', v)}
+                checked={localFilters.agencies.mrbilit}
+                onChange={(v) => handleLocalFilterUpdate('agencies', 'mrbilit', v)}
               />
             </FilterSection>
           )}
