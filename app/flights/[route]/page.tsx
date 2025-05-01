@@ -1,7 +1,7 @@
 "use client"
 import { DialogTitle } from "@radix-ui/react-dialog"
 import { Sort, Setting5, CloseCircle } from "iconsax-react"
-import React, { use, useState } from "react"
+import React, { use, useState, useEffect } from "react"
 import { FlightFilters } from "@/components/FlightFilters"
 import { FlightSearchHeader } from "@/components/FlightSearchHeader/FlightSearchHeader"
 import NoTicketFound from "@/components/FlightsPage/NoTicketFound"
@@ -14,6 +14,7 @@ import { englishToFarsiNumber } from "@/utils/numbers"
 import { FlightResultsList } from "./FlightResultsList"
 import { FancySlider } from "@/components/ui/fancy-slider"
 import Image from "next/image"
+import { useRouter, useSearchParams } from "next/navigation"
 
 type RouteParams = {
   params: Promise<{
@@ -36,6 +37,9 @@ interface FilterState {
 }
 
 export default function FlightResults({ params, searchParams }: RouteParams) {
+  const router = useRouter()
+  const urlSearchParams = useSearchParams()
+  
   // Unwrap params Promise using React.use()
   const unwrappedParams = use(params)
   // Unwrap searchParams Promise using React.use()
@@ -59,33 +63,151 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
   const selectedDate = unwrappedSearchParams.departing || formatDate(new Date())
 
   // State for sorting
-  const [sortKey, setSortKey] = React.useState<"cheapest" | "mostExpensive" | "earliest" | "latest">("cheapest")
+  const [sortKey, setSortKey] = React.useState<"cheapest" | "mostExpensive" | "earliest" | "latest">(
+    (urlSearchParams.get("sort") as "cheapest" | "mostExpensive" | "earliest" | "latest") || "cheapest"
+  )
+
+  // Parse filter values from URL
+  const getInitialFilterState = () => {
+    const ticketParam = urlSearchParams.get("ticketType") || "";
+    const cabinParam = urlSearchParams.get("cabinClass") || "";
+    const airlinesParam = urlSearchParams.get("airlines") || "";
+    const agenciesParam = urlSearchParams.get("agencies") || "";
+    
+    return {
+      ticketType: {
+        charter: ticketParam.includes("charter"),
+        system: ticketParam.includes("system"),
+      },
+      cabinClass: {
+        economy: cabinParam.includes("economy"),
+        business: cabinParam.includes("business"),
+      },
+      airlines: {
+        mahan: airlinesParam.includes("mahan"),
+        caspian: airlinesParam.includes("caspian"),
+        ata: airlinesParam.includes("ata"),
+      },
+      agencies: {
+        alibaba: agenciesParam.includes("alibaba"),
+        flytoday: agenciesParam.includes("flytoday"),
+        mrbilit: agenciesParam.includes("mrbilit"),
+      },
+    };
+  };
+
+  // Get time range from URL
+  const getInitialTimeRange = (): [number, number] => {
+    const timeParam = urlSearchParams.get("flightTime");
+    if (timeParam) {
+      const parts = timeParam.split("-");
+      if (parts.length === 2) {
+        const min = parseInt(parts[0]!);
+        const max = parseInt(parts[1]!);
+        if (!isNaN(min) && !isNaN(max)) {
+          return [min, max];
+        }
+      }
+    }
+    return [4, 24];
+  };
+
+  // Get price range from URL
+  const getInitialPriceRange = (): [number, number] => {
+    const priceParam = urlSearchParams.get("priceRange");
+    if (priceParam) {
+      const parts = priceParam.split("-");
+      if (parts.length === 2) {
+        const min = parseInt(parts[0]!);
+        const max = parseInt(parts[1]!);
+        if (!isNaN(min) && !isNaN(max)) {
+          return [min, max];
+        }
+      }
+    }
+    return [500000, 5000000];
+  };
 
   // Shared filters state
-  const [filters, setFilters] = React.useState<FilterState>({
-    ticketType: {
-      charter: true,
-      system: false,
-    },
-    cabinClass: {
-      economy: true,
-      business: false,
-    },
-    airlines: {
-      mahan: false,
-      caspian: false,
-      ata: false,
-    },
-    agencies: {
-      alibaba: false,
-      flytoday: false,
-      mrbilit: false,
-    },
-  })
+  const [filters, setFilters] = React.useState<FilterState>(getInitialFilterState());
 
   // Flight time and price ranges
-  const [flightTimeRange, setFlightTimeRange] = useState<[number, number]>([4, 24])
-  const [priceRange, setPriceRange] = useState<[number, number]>([500000, 5000000])
+  const [flightTimeRange, setFlightTimeRange] = useState<[number, number]>(getInitialTimeRange());
+  const [priceRange, setPriceRange] = useState<[number, number]>(getInitialPriceRange());
+
+  // Update URL when filters change
+  const updateURL = () => {
+    const currentUrlParams = new URLSearchParams(urlSearchParams.toString());
+    
+    // Update sort in URL
+    currentUrlParams.set("sort", sortKey);
+    
+    // Update ticket types in URL
+    const ticketTypes = Object.entries(filters.ticketType)
+      .filter(([_, value]) => value)
+      .map(([key, _]) => key);
+    
+    if (ticketTypes.length > 0) {
+      currentUrlParams.set("ticketType", ticketTypes.join(","));
+    } else {
+      currentUrlParams.delete("ticketType");
+    }
+    
+    // Update cabin class in URL
+    const cabinClasses = Object.entries(filters.cabinClass)
+      .filter(([_, value]) => value)
+      .map(([key, _]) => key);
+    
+    if (cabinClasses.length > 0) {
+      currentUrlParams.set("cabinClass", cabinClasses.join(","));
+    } else {
+      currentUrlParams.delete("cabinClass");
+    }
+    
+    // Update airlines in URL
+    const airlines = Object.entries(filters.airlines)
+      .filter(([_, value]) => value)
+      .map(([key, _]) => key);
+    
+    if (airlines.length > 0) {
+      currentUrlParams.set("airlines", airlines.join(","));
+    } else {
+      currentUrlParams.delete("airlines");
+    }
+    
+    // Update agencies in URL
+    const agencies = Object.entries(filters.agencies)
+      .filter(([_, value]) => value)
+      .map(([key, _]) => key);
+    
+    if (agencies.length > 0) {
+      currentUrlParams.set("agencies", agencies.join(","));
+    } else {
+      currentUrlParams.delete("agencies");
+    }
+    
+    // Update flight time range in URL if changed from default
+    if (flightTimeRange[0] !== 4 || flightTimeRange[1] !== 24) {
+      currentUrlParams.set("flightTime", `${flightTimeRange[0]}-${flightTimeRange[1]}`);
+    } else {
+      currentUrlParams.delete("flightTime");
+    }
+    
+    // Update price range in URL if changed from default
+    if (priceRange[0] !== 500000 || priceRange[1] !== 5000000) {
+      currentUrlParams.set("priceRange", `${priceRange[0]}-${priceRange[1]}`);
+    } else {
+      currentUrlParams.delete("priceRange");
+    }
+    
+    // Update the URL without page reload
+    router.replace(`/flights/${unwrappedParams.route}?${currentUrlParams.toString()}`, { scroll: false });
+  };
+
+  // Call updateURL whenever filter values change
+  useEffect(() => {
+    updateURL();
+  }, [filters, sortKey, flightTimeRange, priceRange]);
 
   // Calculate active filters count
   const activeFiltersCount = Object.values(filters).reduce(
