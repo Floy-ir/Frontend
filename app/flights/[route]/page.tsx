@@ -1320,7 +1320,7 @@ const FilterDrawerContent = React.forwardRef<
 
     return (
       <div className="inline-flex h-full w-full flex-col items-start justify-start max-h-[80vh]">
-        <DialogTitle className="bg-Shade-White border-Gray-N100 inline-flex items-center self-stretch border-b px-5 py-4 sticky top-0 z-10">
+        <DialogTitle className="bg-Shade-White border-Gray-N100 inline-flex items-center self-stretch border-b py-4 sticky top-0 z-10">
           <div className="self-stretch inline-flex justify-center items-center w-full gap-2 relative">
             <div
               className={`absolute left-5 text-Primary-P500main text-[13px] font-medium leading-normal cursor-pointer ${localActiveFiltersCount === 0 || activeSection !== 'all' ? 'invisible' : ''}`}
