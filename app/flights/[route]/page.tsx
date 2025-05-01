@@ -515,102 +515,58 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
       const { localFilters, localPriceRange, localFlightTimeRange } = drawerContentRef.current.getLocalState();
       
       // Apply the changes based on drawer type
-      if (drawerType === 'priceRange' && localPriceRange) {
+      if (drawerType === 'priceRange') {
         setPriceRange(localPriceRange);
       } 
-      else if (drawerType === 'flightTime' && localFlightTimeRange) {
+      else if (drawerType === 'flightTime') {
         setFlightTimeRange(localFlightTimeRange);
       }
       else if (drawerType === 'ticketType') {
-        // Update ticket type filters
-        if (localFilters.ticketType.charter !== filters.ticketType.charter) {
-          updateFilter('ticketType', 'charter', localFilters.ticketType.charter);
-        }
-        if (localFilters.ticketType.system !== filters.ticketType.system) {
-          updateFilter('ticketType', 'system', localFilters.ticketType.system);
-        }
+        // Always update values from local state when drawer closes
+        updateFilter('ticketType', 'charter', localFilters.ticketType.charter);
+        updateFilter('ticketType', 'system', localFilters.ticketType.system);
       }
       else if (drawerType === 'cabinClass') {
-        // Update cabin class filters
-        if (localFilters.cabinClass.economy !== filters.cabinClass.economy) {
-          updateFilter('cabinClass', 'economy', localFilters.cabinClass.economy);
-        }
-        if (localFilters.cabinClass.business !== filters.cabinClass.business) {
-          updateFilter('cabinClass', 'business', localFilters.cabinClass.business);
-        }
+        // Always update cabin class filters
+        updateFilter('cabinClass', 'economy', localFilters.cabinClass.economy);
+        updateFilter('cabinClass', 'business', localFilters.cabinClass.business);
       }
       else if (drawerType === 'airlines') {
-        // Update airlines filters
-        if (localFilters.airlines.mahan !== filters.airlines.mahan) {
-          updateFilter('airlines', 'mahan', localFilters.airlines.mahan);
-        }
-        if (localFilters.airlines.caspian !== filters.airlines.caspian) {
-          updateFilter('airlines', 'caspian', localFilters.airlines.caspian);
-        }
-        if (localFilters.airlines.ata !== filters.airlines.ata) {
-          updateFilter('airlines', 'ata', localFilters.airlines.ata);
-        }
+        // Always update airlines filters
+        updateFilter('airlines', 'mahan', localFilters.airlines.mahan);
+        updateFilter('airlines', 'caspian', localFilters.airlines.caspian);
+        updateFilter('airlines', 'ata', localFilters.airlines.ata);
       }
       else if (drawerType === 'agencies') {
-        // Update agencies filters
-        if (localFilters.agencies.alibaba !== filters.agencies.alibaba) {
-          updateFilter('agencies', 'alibaba', localFilters.agencies.alibaba);
-        }
-        if (localFilters.agencies.flytoday !== filters.agencies.flytoday) {
-          updateFilter('agencies', 'flytoday', localFilters.agencies.flytoday);
-        }
-        if (localFilters.agencies.mrbilit !== filters.agencies.mrbilit) {
-          updateFilter('agencies', 'mrbilit', localFilters.agencies.mrbilit);
-        }
+        // Always update agencies filters
+        updateFilter('agencies', 'alibaba', localFilters.agencies.alibaba);
+        updateFilter('agencies', 'flytoday', localFilters.agencies.flytoday);
+        updateFilter('agencies', 'mrbilit', localFilters.agencies.mrbilit);
       }
       else if (drawerType === 'all') {
         // Apply all changes for the "all filters" drawer
         
         // Update ticket type filters
-        if (localFilters.ticketType.charter !== filters.ticketType.charter) {
-          updateFilter('ticketType', 'charter', localFilters.ticketType.charter);
-        }
-        if (localFilters.ticketType.system !== filters.ticketType.system) {
-          updateFilter('ticketType', 'system', localFilters.ticketType.system);
-        }
+        updateFilter('ticketType', 'charter', localFilters.ticketType.charter);
+        updateFilter('ticketType', 'system', localFilters.ticketType.system);
         
         // Update cabin class filters
-        if (localFilters.cabinClass.economy !== filters.cabinClass.economy) {
-          updateFilter('cabinClass', 'economy', localFilters.cabinClass.economy);
-        }
-        if (localFilters.cabinClass.business !== filters.cabinClass.business) {
-          updateFilter('cabinClass', 'business', localFilters.cabinClass.business);
-        }
+        updateFilter('cabinClass', 'economy', localFilters.cabinClass.economy);
+        updateFilter('cabinClass', 'business', localFilters.cabinClass.business);
         
         // Update airlines filters
-        if (localFilters.airlines.mahan !== filters.airlines.mahan) {
-          updateFilter('airlines', 'mahan', localFilters.airlines.mahan);
-        }
-        if (localFilters.airlines.caspian !== filters.airlines.caspian) {
-          updateFilter('airlines', 'caspian', localFilters.airlines.caspian);
-        }
-        if (localFilters.airlines.ata !== filters.airlines.ata) {
-          updateFilter('airlines', 'ata', localFilters.airlines.ata);
-        }
+        updateFilter('airlines', 'mahan', localFilters.airlines.mahan);
+        updateFilter('airlines', 'caspian', localFilters.airlines.caspian);
+        updateFilter('airlines', 'ata', localFilters.airlines.ata);
         
         // Update agencies filters
-        if (localFilters.agencies.alibaba !== filters.agencies.alibaba) {
-          updateFilter('agencies', 'alibaba', localFilters.agencies.alibaba);
-        }
-        if (localFilters.agencies.flytoday !== filters.agencies.flytoday) {
-          updateFilter('agencies', 'flytoday', localFilters.agencies.flytoday);
-        }
-        if (localFilters.agencies.mrbilit !== filters.agencies.mrbilit) {
-          updateFilter('agencies', 'mrbilit', localFilters.agencies.mrbilit);
-        }
+        updateFilter('agencies', 'alibaba', localFilters.agencies.alibaba);
+        updateFilter('agencies', 'flytoday', localFilters.agencies.flytoday);
+        updateFilter('agencies', 'mrbilit', localFilters.agencies.mrbilit);
         
         // Update ranges
-        if (localPriceRange) {
-          setPriceRange(localPriceRange);
-        }
-        if (localFlightTimeRange) {
-          setFlightTimeRange(localFlightTimeRange);
-        }
+        setPriceRange(localPriceRange);
+        setFlightTimeRange(localFlightTimeRange);
       }
     }
     
@@ -1006,7 +962,8 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                 {/* Inactive filters after active ones */}
                 {/* Price Range Filter Chip - if inactive */}
                 {(priceRange[0] === 500000 && priceRange[1] === 5000000) && (
-                  <Drawer open={openDrawers.priceRange} onOpenChange={(open) => setOpenDrawers(prev => ({ ...prev, priceRange: open }))}>
+                  <Drawer open={openDrawers.priceRange} 
+                    onOpenChange={(isOpen) => handleDrawerOpenChange(isOpen, 'priceRange')}>
                     <DrawerTrigger asChild>
                       <div
                         className="bg-Shade-White outline-Gray-N100 inline-flex items-center justify-center gap-1 rounded-2xl px-3 py-1 outline-2 outline-offset-[-2px] whitespace-nowrap cursor-pointer mr-1"
@@ -1040,7 +997,8 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
 
                 {/* Flight Time Filter Chip - if inactive */}
                 {(flightTimeRange[0] === 4 && flightTimeRange[1] === 24) && (
-                  <Drawer open={openDrawers.flightTime} onOpenChange={(open) => setOpenDrawers(prev => ({ ...prev, flightTime: open }))}>
+                  <Drawer open={openDrawers.flightTime} 
+                    onOpenChange={(isOpen) => handleDrawerOpenChange(isOpen, 'flightTime')}>
                     <DrawerTrigger asChild>
                       <div
                         className="bg-Shade-White outline-Gray-N100 inline-flex items-center justify-center gap-1 rounded-2xl px-3 py-1 outline-2 outline-offset-[-2px] whitespace-nowrap cursor-pointer mr-1"
@@ -1074,7 +1032,8 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
 
                 {/* Ticket Type Filter Chip - if inactive */}
                 {!Object.values(filters.ticketType).some(Boolean) && (
-                  <Drawer open={openDrawers.ticketType} onOpenChange={(open) => setOpenDrawers(prev => ({ ...prev, ticketType: open }))}>
+                  <Drawer open={openDrawers.ticketType} 
+                    onOpenChange={(isOpen) => handleDrawerOpenChange(isOpen, 'ticketType')}>
                     <DrawerTrigger asChild>
                       <div
                         className="bg-Shade-White outline-Gray-N100 inline-flex items-center justify-center gap-1 rounded-2xl px-3 py-1 outline-2 outline-offset-[-2px] whitespace-nowrap cursor-pointer mr-1"
@@ -1108,7 +1067,8 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
 
                 {/* Cabin Class Filter Chip - if inactive */}
                 {!Object.values(filters.cabinClass).some(Boolean) && (
-                  <Drawer open={openDrawers.cabinClass} onOpenChange={(open) => setOpenDrawers(prev => ({ ...prev, cabinClass: open }))}>
+                  <Drawer open={openDrawers.cabinClass} 
+                    onOpenChange={(isOpen) => handleDrawerOpenChange(isOpen, 'cabinClass')}>
                     <DrawerTrigger asChild>
                       <div
                         className="bg-Shade-White outline-Gray-N100 inline-flex items-center justify-center gap-1 rounded-2xl px-3 py-1 outline-2 outline-offset-[-2px] whitespace-nowrap cursor-pointer mr-1"
@@ -1142,7 +1102,8 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
 
                 {/* Airlines Filter Chip - if inactive */}
                 {!Object.values(filters.airlines).some(Boolean) && (
-                  <Drawer open={openDrawers.airlines} onOpenChange={(open) => setOpenDrawers(prev => ({ ...prev, airlines: open }))}>
+                  <Drawer open={openDrawers.airlines} 
+                    onOpenChange={(isOpen) => handleDrawerOpenChange(isOpen, 'airlines')}>
                     <DrawerTrigger asChild>
                       <div
                         className="bg-Shade-White outline-Gray-N100 inline-flex items-center justify-center gap-1 rounded-2xl px-3 py-1 outline-2 outline-offset-[-2px] whitespace-nowrap cursor-pointer mr-1"
@@ -1176,7 +1137,8 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
 
                 {/* Agencies Filter Chip - if inactive */}
                 {!Object.values(filters.agencies).some(Boolean) && (
-                  <Drawer open={openDrawers.agencies} onOpenChange={(open) => setOpenDrawers(prev => ({ ...prev, agencies: open }))}>
+                  <Drawer open={openDrawers.agencies} 
+                    onOpenChange={(isOpen) => handleDrawerOpenChange(isOpen, 'agencies')}>
                     <DrawerTrigger asChild>
                       <div
                         className="bg-Shade-White outline-Gray-N100 inline-flex items-center justify-center gap-1 rounded-2xl px-3 py-1 outline-2 outline-offset-[-2px] whitespace-nowrap cursor-pointer mr-1"
@@ -1276,7 +1238,13 @@ const FilterDrawerContent = React.forwardRef<
     
     // Update local state when props change (for initial render)
     React.useEffect(() => {
-      setLocalFilters({ ...filters });
+      // Create deep copy of filters to avoid reference issues
+      setLocalFilters({
+        ticketType: { ...filters.ticketType },
+        cabinClass: { ...filters.cabinClass },
+        airlines: { ...filters.airlines },
+        agencies: { ...filters.agencies },
+      });
       setLocalFlightTimeRange([...flightTimeRange]);
       setLocalPriceRange([...priceRange]);
     }, [filters, flightTimeRange, priceRange]);
@@ -1290,7 +1258,7 @@ const FilterDrawerContent = React.forwardRef<
           localFlightTimeRange
         };
       }
-    }));
+    }), [localFilters, localPriceRange, localFlightTimeRange]);
     
     // Handle local filter changes
     const handleLocalFilterUpdate = (category: string, key: string, value: boolean) => {
