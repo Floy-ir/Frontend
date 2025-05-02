@@ -1,9 +1,10 @@
 import axios, { AxiosRequestConfig } from 'axios';
 import { env } from '@/env.mjs';
 
-type RequestOptions = AxiosRequestConfig & {
-  params?: Record<string, string | number>;
-};
+// type RequestOptions = AxiosRequestConfig & {
+//   params?: Record<string, string | number>;
+// };
+type RequestOptions = AxiosRequestConfig;
 
 export async function apiFetch<T>(
   endpoint: string,
@@ -12,7 +13,16 @@ export async function apiFetch<T>(
 
   try {
     const url = new URL(endpoint, env.NEXT_PUBLIC_API_URL).toString();
-
+    // console.log('[API REQUEST]', {
+    //   url,
+    //   method: options.method || 'GET',
+    //   params: options.params,
+    //   data: options.data,
+    //   headers: {
+    //     'Content-Type': 'application/json',
+    //     ...(options.headers || {}),
+    //   }
+    // });
     const response = await axios<T>(url, {
       ...options,
       headers: {
@@ -20,6 +30,7 @@ export async function apiFetch<T>(
         ...(options.headers || {}),
       },
     });
+
     return response.data;
   } catch (error: unknown) {
     if (axios.isAxiosError(error)) {

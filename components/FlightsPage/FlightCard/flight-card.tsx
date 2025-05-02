@@ -3,10 +3,14 @@
 import { cva, type VariantProps } from "class-variance-authority"
 import { Airplane } from "iconsax-react"
 import Image from "next/image"
-import { PiSuitcaseRollingLight } from "react-icons/pi";
+import React, { useState } from "react"
+import { PiSuitcaseRollingLight } from "react-icons/pi"
 import { twMerge } from "tailwind-merge"
 import { Button } from "@/components/Button/Button"
+import ComparisonDialog from "@/components/FlightsPage/comparisonPage/page"
 import { englishToFarsiNumber } from "@/utils/numbers"
+import dude from "@/public/images/flash-circle-outline.svg"
+
 // Card wrapper styles with variants
 const flightCardVariants = cva(
   "bg-Shade-White rounded-xl outline-1 outline-offset-[-1px] outline-Gray-N200 overflow-hidden",
@@ -45,7 +49,7 @@ const textStyles = {
   semibold: " font-semibold",
   small: "text-[10px] leading-3",
   medium: "text-[11px] leading-none",
-  good:"text-[12px]",
+  good: "text-[12px]",
   large: "text-lg leading-loose",
   xl: "text-xl leading-loose",
 }
@@ -53,6 +57,8 @@ const textStyles = {
 export interface FlightCardProps extends VariantProps<typeof flightCardVariants> {
   departureTime: string
   arrivalTime: string
+  origin: string
+  destination: string
   duration: {
     hours: number
     minutes: number
@@ -62,9 +68,9 @@ export interface FlightCardProps extends VariantProps<typeof flightCardVariants>
     logo: string
   }
   flightInfo: {
-    aircraft: string
+    // aircraft: string
     baggage: string
-    ticketType: string
+    // ticketType: string
     cabinClass: string
   }
   price: {
@@ -74,11 +80,25 @@ export interface FlightCardProps extends VariantProps<typeof flightCardVariants>
     agencyLogo: string
     label?: string
     base_redirect_url: string
-    one_adult_redirect_url: string
-    two_Adults_redirect_url: string
+    one_adult_redirect_url: string | null
+    two_adults_redirect_url: string | null
   }
+  websites: {
+    adult_price: number
+    base_redirect_url: string
+    child_price: number | null
+    detail: {
+      uid: string
+      name: string
+      name_fa: string
+      image: string | null
+    }
+    infant_price: number | null
+    one_adult_redirect_url: string
+    remaining_seat: number
+    two_adult_redirect_url: string
+  }[]
   onBuy: () => void
-  onViewOtherSellers?: () => void
   otherSellersCount?: number
   className?: string
 }
@@ -86,16 +106,25 @@ export interface FlightCardProps extends VariantProps<typeof flightCardVariants>
 // Format duration for display
 const FormatDuration = ({ hours, minutes }: { hours: number; minutes: number }) => (
   <span>
-    <span className={`text-Gray-N500 text-[12px] font-normal leading-3 ${textStyles.small} ${textStyles.normal}`}>{englishToFarsiNumber(hours)} </span>
-    <span className={`text-Gray-N500 text-[12px] font-normal leading-3${textStyles.small} ${textStyles.normal}`}>ساعت </span>
-    <span className={`text-Gray-N500 text-[12px] font-normal leading-3 ${textStyles.small} ${textStyles.normal}`}>{englishToFarsiNumber(minutes)}</span>
-    <span className={`text-Gray-N500 text-[12px] font-normal leading-3 ${textStyles.small} ${textStyles.normal}`}> دقیقه</span>
+    <span className={`text-Gray-N500 text-[12px] leading-3 font-normal ${textStyles.small} ${textStyles.normal}`}>
+      {englishToFarsiNumber(hours)}{" "}
+    </span>
+    <span className={`text-Gray-N500 text-[12px] font-normal leading-3${textStyles.small} ${textStyles.normal}`}>
+      ساعت{" "}
+    </span>
+    <span className={`text-Gray-N500 text-[12px] leading-3 font-normal ${textStyles.small} ${textStyles.normal}`}>
+      {englishToFarsiNumber(minutes)}
+    </span>
+    <span className={`text-Gray-N500 text-[12px] leading-3 font-normal ${textStyles.small} ${textStyles.normal}`}>
+      {" "}
+      دقیقه
+    </span>
   </span>
 )
 
 // Render flight route visualization component
 const FlightRouteVisualization = ({ isMobile = true }: { isMobile?: boolean }) => (
-  <div className="relative mx-0  flex flex-1 items-center justify-center">
+  <div className="relative mx-0 flex flex-1 items-center justify-center">
     <div className="border-Gray-N300 size-1.5 rounded-[33px] border" />
     <div className="bg-Gray-N200 relative h-px w-23 flex-1" />
     <div className="bg-Gray-N300 size-1.5 rounded-[2px]" />
@@ -111,15 +140,23 @@ const FlightRouteVisualization = ({ isMobile = true }: { isMobile?: boolean }) =
 // Badge component for flight info items
 const InfoBadge = ({ text }: { text: string }) => (
   <div className={badgeStyles()}>
-    <div className={`text-Gray-N600 justify-center text-[12px] font-normal leading-3 text-right ${textStyles.small} ${textStyles.normal}`}>{text}</div>
+    <div
+      className={`text-Gray-N600 justify-center text-right text-[12px] leading-3 font-normal ${textStyles.small} ${textStyles.normal}`}
+    >
+      {text}
+    </div>
   </div>
 )
 
 // Badge with icon for baggage
 const BaggageBadge = ({ text }: { text: string }) => (
   <div className={badgeStyles()}>
-    <PiSuitcaseRollingLight className="h-3 w-3 text-Gray-N600"/>
-    <div className={`text-Gray-N600 justify-center  text-[12px] font-normal leading-3 text-right ${textStyles.small} ${textStyles.normal}`}>{text}</div>
+    <PiSuitcaseRollingLight className="text-Gray-N600 h-3 w-3" />
+    <div
+      className={`text-Gray-N600 justify-center text-right text-[12px] leading-3 inline-flex gap-1 font-normal ${textStyles.small} ${textStyles.normal}`}
+    >
+      {text} کیلوگرم
+    </div>
   </div>
 )
 
@@ -128,8 +165,8 @@ const FlightInfoBadges = ({ flightInfo }: { flightInfo: FlightCardProps["flightI
   <div className="inline-flex flex-wrap content-start items-start justify-start gap-2 self-stretch">
     {flightInfo.cabinClass && <InfoBadge text={flightInfo.cabinClass} />}
     {flightInfo.baggage && <BaggageBadge text={englishToFarsiNumber(flightInfo.baggage)} />}
-    {flightInfo.ticketType && <InfoBadge text={flightInfo.ticketType} />}
-    {flightInfo.aircraft && <InfoBadge text={flightInfo.aircraft} />}
+    {/* {flightInfo.ticketType && <InfoBadge text={flightInfo.ticketType} />} */}
+    {/* {flightInfo.aircraft && <InfoBadge text={flightInfo.aircraft} />} */}
   </div>
 )
 
@@ -137,25 +174,24 @@ const FlightInfoBadges = ({ flightInfo }: { flightInfo: FlightCardProps["flightI
 const PriceInfo = ({ price }: { price: FlightCardProps["price"] }) => (
   <div className="bg-Gray-N50 outline-Gray-N200 relative flex flex-col items-end justify-center gap-3 self-stretch rounded-lg px-3 py-2 outline-1 outline-offset-[-1px]">
     {price.label && (
-      <div className="flex gap-1 items-start w-full">
-      <div className={`text-Gray-N500 justify-center  self-stretch text-right ${textStyles.good} ${textStyles.normal}`}>
-        {price.label} 
+      <div className="flex w-full items-start gap-1">
+        <div
+          className={`text-Gray-N500 justify-center self-stretch text-right ${textStyles.good} ${textStyles.normal}`}
+        >
+          {price.label}
+        </div>
+        <div className={`text-Gray-N600 justify-start self-stretch text-right ${textStyles.good} ${textStyles.normal}`}>
+          در
+        </div>
       </div>
-          <div
-            className={`text-Gray-N600 justify-start self-stretch text-right ${textStyles.good} ${textStyles.normal}`}
-          >
-            در
-          </div>
-          </div>
     )}
     <div className="inline-flex items-center justify-between self-stretch">
       <div className="flex items-center justify-start gap-1">
-        <div className="inline-flex flex-col items-start justify-center gap-1">
-        </div>
+        <div className="inline-flex flex-col items-start justify-center gap-1"></div>
         <div className="outline-Gray-N200 relative size-6 overflow-hidden rounded-[48px] bg-white outline-1 outline-offset-[-1px]">
           {price.agencyLogo && (
             <Image
-              src={price.agencyLogo}
+              src={price.agencyLogo ?? dude.src}
               alt={`${price.agency} logo`}
               width={11}
               height={13}
@@ -173,7 +209,7 @@ const PriceInfo = ({ price }: { price: FlightCardProps["price"] }) => (
         </div>
       </div>
       <div className="flex items-center justify-end gap-1">
-        <div className="text-Gray-N700 justify-start text-right text-[17px] text-base leading-7 font-semibold">
+        <div className="text-Gray-N700 justify-start text-right text-base text-[17px] leading-7 font-semibold">
           {englishToFarsiNumber(price.formattedAmount)}
         </div>
         <div className={`text-Gray-N500 justify-start text-right ${textStyles.medium} ${textStyles.semibold}`}>
@@ -191,8 +227,12 @@ const FlightDetailsSection = ({
   duration,
   airline,
   flightInfo,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  origin,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  destination,
   isMobile = false,
-}: Omit<FlightCardProps, "price" | "onBuy" | "onViewOtherSellers" | "otherSellersCount" | "className" | "intent"> & {
+}: Omit<FlightCardProps, "price" | "onBuy" | "otherSellersCount" | "className" | "intent"> & {
   isMobile?: boolean
 }) => {
   const durationText = <FormatDuration hours={duration.hours} minutes={duration.minutes} />
@@ -234,11 +274,11 @@ const FlightDetailsSection = ({
 
   return (
     <div className="inline-flex flex-1 flex-col items-center justify-between self-stretch px-4 py-4">
-      <div className="inline-flex items-center justify-end gap-2 self-stretch ">
+      <div className="inline-flex items-center justify-end gap-2 self-stretch">
         {/* Airline logo and name */}
         <div className="inline-flex flex-col items-center justify-center gap-2">
           <div className="border-Gray-N200 relative size-11 overflow-hidden rounded-[48px] border">
-            <Image src={airline.logo} alt={`${airline.name} logo`} fill className="object-contain" />
+            <Image src={airline.logo} alt={`${airline.name} logo`} fill className="rounded-[50px] object-contain" />
           </div>
           <div className={`text-Gray-N600 justify-start text-right text-[13px] ${textStyles.semibold}`}>
             {airline.name}
@@ -266,65 +306,6 @@ const FlightDetailsSection = ({
   )
 }
 
-// Price and Action Section (Left Section in Desktop)
-const PriceActionSection = ({
-  price,
-  onBuy,
-  onViewOtherSellers,
-  otherSellersCount = 0,
-  isMobile = false,
-}: Pick<FlightCardProps, "price" | "onBuy" | "onViewOtherSellers" | "otherSellersCount"> & {
-  isMobile?: boolean
-}) => {
-  if (isMobile) {
-    return (
-      <div className="flex flex-col items-start justify-start gap-2 self-stretch">
-        <div className="flex flex-col items-center justify-center gap-3 self-stretch">
-          <PriceInfo price={price} />
-
-          <div className="flex flex-col items-start justify-start gap-2 self-stretch">
-            <Button intent="primary" size="small" className="self-stretch" onClick={onBuy}>
-              خرید
-            </Button>
-            {otherSellersCount > 0 && (
-              <Button
-                intent="text"
-                size="small"
-                className="self-stretch"
-              >
-                مشاهده {englishToFarsiNumber(otherSellersCount)} فروشنده
-              </Button>
-            )}
-          </div>
-        </div>
-      </div>
-    )
-  }
-
-  return (
-    <div className="inline-flex w-[290px] md:w-[250px] flex-col items-start justify-start gap-2 px-2 -mx-3">
-      <div className="flex flex-col items-center justify-center gap-3 self-stretch">
-        <PriceInfo price={price} />
-
-        <div className="flex flex-col items-start justify-start gap-1 self-stretch">
-          <Button intent="primary" size="small" className="self-stretch" onClick={onBuy}>
-            خرید
-          </Button>
-          {otherSellersCount > 0 && (
-            <Button
-              intent="text"
-              size="small"
-              className="self-stretch"
-              onClick={onViewOtherSellers}
-            >
-              مشاهده {englishToFarsiNumber(otherSellersCount)} فروشنده
-            </Button>
-          )}
-        </div>
-      </div>
-    </div>
-  )
-}
 
 export function FlightCard({
   departureTime,
@@ -334,16 +315,76 @@ export function FlightCard({
   flightInfo,
   price,
   intent,
+  websites,
   onBuy,
-  onViewOtherSellers,
   otherSellersCount = 0,
   className,
+  destination,
+  origin,
 }: FlightCardProps) {
+  const [showComparison, setShowComparison] = useState(false)
 
+  // Price and Action Section (Left Section in Desktop)
+  const PriceActionSection = ({
+    price,
+    onBuy,
+    otherSellersCount = 0,
+    isMobile = false,
+  }: Pick<FlightCardProps, "price" | "onBuy" | "otherSellersCount"> & {
+    isMobile?: boolean
+  }) => {
+    if (isMobile) {
+      return (
+        <div className="flex flex-col items-start justify-start gap-2 self-stretch">
+          <div className="flex flex-col items-center justify-center gap-3 self-stretch">
+            <PriceInfo price={price} />
+
+            <div className="flex flex-col items-start justify-start gap-2 self-stretch">
+              <Button intent="primary" size="small" className="self-stretch" onClick={onBuy}>
+                خرید
+              </Button>
+
+              <Button
+                intent="text"
+                size="small"
+                className="self-stretch"
+                onClick={() => setShowComparison(true)}
+              >
+                مشاهده {englishToFarsiNumber(otherSellersCount)} فروشنده
+              </Button>
+            </div>
+          </div>
+        </div>
+      )
+    }
+
+    return (
+      <div className="-mx-3 inline-flex w-[290px] flex-col items-start justify-start gap-2 px-2 md:w-[250px]">
+        <div className="flex flex-col items-center justify-center gap-3 self-stretch">
+          <PriceInfo price={price} />
+
+          <div className="flex flex-col items-start justify-start gap-1 self-stretch">
+            <Button intent="primary" size="small" className="self-stretch" onClick={onBuy}>
+              خرید
+            </Button>
+
+            <Button
+              intent="text"
+              size="small"
+              className="self-stretch"
+              onClick={() => setShowComparison(true)}
+            >
+              مشاهده {englishToFarsiNumber(otherSellersCount)} فروشنده
+            </Button>
+          </div>
+        </div>
+      </div>
+    )
+  }
   return (
     <article className={twMerge(flightCardVariants({ intent, className }))}>
       {/* Mobile/Tablet Layout */}
-      <div className="flex flex-col md-lg:hidden lg:hidden ">
+      <div className="md-lg:hidden flex flex-col lg:hidden">
         <div
           data-layer="Frame 1000002364"
           className="bg-Shade-White outline-Gray-N200 inline-flex flex-col items-center justify-center gap-3 self-stretch overflow-hidden rounded-xl px-4 pt-4 pb-2 outline-1 outline-offset-[-1px]"
@@ -362,15 +403,12 @@ export function FlightCard({
                   {englishToFarsiNumber(departureTime)}
                 </time>
 
+                <FlightRouteVisualization isMobile={true} />
 
-            <FlightRouteVisualization isMobile={true} />
-                
                 <time className="text-Gray-N800 flex-1 justify-start text-center text-lg leading-loose font-semibold">
-                {englishToFarsiNumber(arrivalTime)}
+                  {englishToFarsiNumber(arrivalTime)}
                 </time>
               </div>
-
-
 
               <div data-layer="Frame 1000002344" className="flex flex-col items-center justify-end gap-2 self-stretch">
                 <div data-layer="Duration" className="justify-start text-center">
@@ -393,16 +431,16 @@ export function FlightCard({
           {/* Flight info badges */}
           <div
             data-layer="Frame 1000002341"
-            className="inline-flex flex-wrap content-start items-start justify-start gap-1 self-stretch mt-3"
+            className="mt-3 inline-flex flex-wrap content-start items-start justify-start gap-1 self-stretch"
           >
             {flightInfo.cabinClass && <InfoBadge text={flightInfo.cabinClass} />}
             {flightInfo.baggage && <BaggageBadge text={englishToFarsiNumber(flightInfo.baggage)} />}
-            {flightInfo.ticketType && <InfoBadge text={flightInfo.ticketType} />}
-            {flightInfo.aircraft && <InfoBadge text={flightInfo.aircraft} />}
+            {/* {flightInfo.ticketType && <InfoBadge text={flightInfo.ticketType} />} */}
+            {/* {flightInfo.aircraft && <InfoBadge text={flightInfo.aircraft} />} */}
           </div>
 
           {/* Divider */}
-          <div data-layer="Divider" className="bg-Gray-N100 relative h-px self-stretch my-2" />
+          <div data-layer="Divider" className="bg-Gray-N100 relative my-2 h-px self-stretch" />
 
           {/* Price and action section */}
           <div data-layer="Frame 1000002366" className="flex flex-col items-start justify-start gap-2 self-stretch">
@@ -459,11 +497,10 @@ export function FlightCard({
                 <Button intent="primary" size="small" className="self-stretch px-5 py-3.5" onClick={onBuy}>
                   خرید
                 </Button>
-                {otherSellersCount > 0 && (
-                  <Button intent="text" size="small" className="self-stretch px-5 py-3.5" onClick={onViewOtherSellers}>
-                    مشاهده {englishToFarsiNumber(otherSellersCount)} فروشنده
-                  </Button>
-                )}
+
+                <Button intent="text" size="small" className="self-stretch px-5 py-3.5" onClick={()=>setShowComparison(true)}>
+                  مشاهده {englishToFarsiNumber(otherSellersCount)} فروشنده
+                </Button>
               </div>
             </div>
           </div>
@@ -471,7 +508,7 @@ export function FlightCard({
       </div>
 
       {/* Desktop Layout */}
-      <div className="hidden w-full items-start md-lg:inline-flex justify-between gap-8 self-stretch px-6 pt-4 pb-2 lg:inline-flex">
+      <div className="md-lg:inline-flex hidden w-full items-start justify-between gap-8 self-stretch px-6 pt-4 pb-2 lg:inline-flex">
         {/* Flight details - Right */}
         <FlightDetailsSection
           departureTime={departureTime}
@@ -479,6 +516,9 @@ export function FlightCard({
           duration={duration}
           airline={airline}
           flightInfo={flightInfo}
+          websites={websites}
+          origin={origin}
+          destination={destination}
         />
 
         {/* Vertical divider */}
@@ -488,10 +528,25 @@ export function FlightCard({
         <PriceActionSection
           price={price}
           onBuy={onBuy}
-          onViewOtherSellers={onViewOtherSellers}
           otherSellersCount={otherSellersCount}
         />
       </div>
+      {showComparison && (
+        <ComparisonDialog
+          open={showComparison}
+          onOpenChange={setShowComparison}
+          departureTime={departureTime}
+          arrivalTime={arrivalTime}
+          origin={origin}
+          destination={destination}
+          duration={duration}
+          otherSellersCount={otherSellersCount}
+          airline={airline}
+          flightInfo={flightInfo}
+          websites={websites} 
+          o
+          />
+      )}
     </article>
   )
 }

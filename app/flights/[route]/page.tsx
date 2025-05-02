@@ -2,7 +2,7 @@
 import { DialogTitle } from "@radix-ui/react-dialog"
 import { CloseCircle, Setting5, Sort } from "iconsax-react"
 import Image from "next/image"
-import React, { use, useState, useEffect } from "react"
+import React, { use, useEffect, useState } from "react"
 import { FlightFilters } from "@/components/FlightFilters"
 import { FlightSearchHeader } from "@/components/FlightSearchHeader/FlightSearchHeader"
 import NoTicketFound from "@/components/FlightsPage/NoTicketFound"
@@ -11,10 +11,11 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { Drawer, DrawerClose, DrawerContent, DrawerTrigger } from "@/components/ui/drawer"
 import { FancySlider } from "@/components/ui/fancy-slider"
 import { getCityByCode } from "@/config/cities"
+import dude from "@/public/images/flash-circle-outline.svg"
+import { apiFetch } from "@/services/api/index"
 import { formatDate } from "@/utils/dateUtils"
 import { englishToFarsiNumber } from "@/utils/numbers"
 import { FlightResultsList } from "./FlightResultsList"
-
 type RouteParams = {
   params: Promise<{
     route: string
@@ -33,6 +34,89 @@ interface FilterState {
   cabinClass: { economy: boolean; business: boolean }
   airlines: { mahan: boolean; caspian: boolean; ata: boolean }
   agencies: { alibaba: boolean; flytoday: boolean; mrbilit: boolean }
+}
+
+type FlightData = {
+  airline: {
+    uid: string
+    name: string
+    image: string | null
+  }
+  allowed_weight: number
+  arrival_timestamp: number
+  cheapest_base_redirect_url: string
+  cheapest_one_adult_redirect_url: string | null
+  cheapest_price: number
+  cheapest_two_adult_redirect_url: string | null
+  cheapest_website: {
+    uid: string
+    name: string
+    name_fa: string
+    image: string | null
+  }
+  departure_timestamp: number
+  destination: string
+  origin: string
+  seat_class: string
+  websites: {
+    adult_price: number
+    base_redirect_url: string
+    child_price: number | null
+    detail: {
+      uid: string
+      name: string
+      name_fa: string
+      image: string | null
+    }
+    infant_price: number | null
+    one_adult_redirect_url: string
+    remaining_seat: number
+    two_adult_redirect_url: string
+  }[]
+}
+
+type TransformedFlight = {
+  id: string
+  departureTime: string
+  arrivalTime: string
+  origin: string
+  destination: string
+  duration: { hours: number; minutes: number }
+  airline: {
+    name: string
+    logo: string
+  }
+  flightInfo: {
+    baggage: string
+    // ticketType: string
+    cabinClass: string
+  }
+  price: {
+    amount: number
+    formattedAmount: string
+    agency: string
+    agencyLogo: string
+    label: string
+    base_redirect_url: string
+    one_adult_redirect_url: string | null
+    two_adults_redirect_url: string | null
+  }
+  otherSellersCount: number
+  websites: {
+    adult_price: number
+    base_redirect_url: string
+    child_price: number | null
+    detail: {
+      uid: string
+      name: string
+      name_fa: string
+      image: string | null
+    }
+    infant_price: number | null
+    one_adult_redirect_url: string
+    remaining_seat: number
+    two_adult_redirect_url: string
+  }[]
 }
 
 export default function FlightResults({ params, searchParams }: RouteParams) {
@@ -144,96 +228,6 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
     setPriceRange([500000, 5000000])
   }
 
-  // Sample flight data for demonstration
-  const sampleFlights = [
-    {
-      id: "1",
-      departureTime: "۱۱:۳۰",
-      arrivalTime: "۰۹:۳۰",
-      duration: { hours: 1, minutes: 30 },
-      airline: {
-        name: "آتا",
-        logo: "/images/logo.webp",
-      },
-      flightInfo: {
-        aircraft: "Boeing 737-300",
-        baggage: "۲۰ kg",
-        ticketType: "سیستمی",
-        cabinClass: "اکونومی",
-      },
-      price: {
-        amount: 3534678,
-        formattedAmount: "3,534,678",
-        agency: "علی بابا",
-        agencyLogo: "/images/logo.webp",
-        label: "ارزان‌ترین",
-        base_redirect_url:
-          "https://www.alibaba.ir/flights/AWZ-THR?adult={adult_count}&child={child_count}&infant={infant_count}&departing=1404-02-09",
-        one_adult_redirect_url: "https://www.alibaba.ir/flights/AWZ-THR/wj1cf4r/passengers",
-        two_Adults_redirect_url: "https://www.alibaba.ir/flights/AWZ-THR/mtbv5go/passengers",
-      },
-      otherSellersCount: 3,
-    },
-    {
-      id: "2",
-      departureTime: "۱۳:۴۵",
-      arrivalTime: "۱۵:۱۵",
-      duration: { hours: 1, minutes: 30 },
-      airline: {
-        name: "ایران ایر",
-        logo: "/images/logo.webp",
-      },
-      flightInfo: {
-        aircraft: "Airbus A320",
-        baggage: "۲۵ kg",
-        ticketType: "چارتری",
-        cabinClass: "اکونومی",
-      },
-      price: {
-        amount: 3689000,
-        formattedAmount: "3,689,000",
-        agency: "فلای تودی",
-        agencyLogo: "/images/logo.webp",
-        label: "ارزان‌ترین",
-        base_redirect_url:
-          "https://www.alibaba.ir/flights/AWZ-THR?adult={adult_count}&child={child_count}&infant={infant_count}&departing=1404-02-09",
-        one_adult_redirect_url: "https://www.alibaba.ir/flights/AWZ-THR/wj1cf4r/passengers",
-        two_Adults_redirect_url: "https://www.alibaba.ir/flights/AWZ-THR/jb1bsc/passengers",
-      },
-      otherSellersCount: 5,
-    },
-    {
-      id: "3",
-      departureTime: "۱۷:۲۰",
-      arrivalTime: "۱۸:۵۰",
-      duration: { hours: 1, minutes: 30 },
-      airline: {
-        name: "آسمان",
-        logo: "/images/logo.webp",
-      },
-      flightInfo: {
-        aircraft: "Boeing 737-400",
-        baggage: "۲۰ kg",
-        ticketType: "سیستمی",
-        cabinClass: "بیزینس",
-      },
-      price: {
-        amount: 4150000,
-        formattedAmount: "4,150,000",
-        agency: "مستر بلیط",
-        agencyLogo: "/images/logo.webp",
-        label: "ارزان‌ترین",
-        base_redirect_url:
-          "https://www.alibaba.ir/flights/AWZ-THR?adult={adult_count}&child={child_count}&infant={infant_count}&departing=1404-02-09",
-        one_adult_redirect_url: "https://www.alibaba.ir/flights/AWZ-THR/wj1cf4r/passengers",
-        two_Adults_redirect_url: "https://www.alibaba.ir/flights/AWZ-THR/jb1bsc/passengers",
-      },
-      otherSellersCount: 2,
-    },
-  ]
-
-  const sampleFlights1 = [{}]
-
   // Sort options
   const sortOptions = [
     { key: "cheapest" as const, label: "ارزان‌ترین" },
@@ -249,10 +243,91 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
   }
 
   // Track which filter section is active in the drawer
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [activeFilterSection, setActiveFilterSection] = useState<string | null>(null)
 
+  const [flights, setFlights] = useState<TransformedFlight[]>([])
+  // const [error, setError] = useState<string | null>(null);
+
+  //fetch flights
+  useEffect(() => {
+    const getFlights = async (departureDate: string) => {
+      try {
+        const startOfDay = new Date(`${departureDate}T00:00:00`).getTime() / 1000
+        const endOfDay = new Date(`${departureDate}T23:59:59`).getTime() / 1000 + 1
+
+        const data = await apiFetch<{ results: FlightData[] }>("/flights", {
+          params: {
+            origin: "THR",
+            destination: "MHD",
+            departure_timestamp__gte: startOfDay,
+            departure_timestamp__lte: endOfDay,
+          },
+        })
+
+        // console.log(params)
+
+        if (data?.results) {
+          const transformed = data.results.map((flight, index) => transformFlightData(flight, (index + 1).toString()))
+          setFlights(transformed)
+        }
+      } catch (err) {
+        console.error("Error fetching flights:", err)
+      }
+    }
+
+    function transformFlightData(input: FlightData, id: string = "1"): TransformedFlight {
+      const departure = new Date(input.departure_timestamp * 1000)
+      const arrival = new Date(input.arrival_timestamp * 1000)
+
+      const durationMs = arrival.getTime() - departure.getTime()
+      const duration = {
+        hours: Math.floor(durationMs / (1000 * 60 * 60)),
+        minutes: Math.floor((durationMs % (1000 * 60 * 60)) / (1000 * 60)),
+      }
+
+      const toPersianTime = (date: Date) =>
+        date
+          .toLocaleTimeString("fa-IR", { hour: "2-digit", minute: "2-digit", hour12: false })
+          .replace(/\d/g, (d) => "۰۱۲۳۴۵۶۷۸۹".charAt(parseInt(d)))
+
+      return {
+        id,
+        departureTime: toPersianTime(departure),
+        arrivalTime: toPersianTime(arrival),
+        duration,
+        origin: input.origin,
+        destination: input.destination,
+        airline: {
+          name: input.airline.name || "نامشخص",
+          logo: input.airline.image ?? dude.src,
+        },
+        flightInfo: {
+          baggage: `${input.allowed_weight} `,
+          // ticketType: "سیستمی",
+          cabinClass:
+            input.seat_class === "Economy" ? "اکونومی" : input.seat_class === "Business" ? "بیزینس" : input.seat_class,
+        },
+        price: {
+          amount: input.cheapest_price,
+          formattedAmount: input.cheapest_price.toLocaleString("fa-IR"),
+          agency: input.cheapest_website?.name_fa ?? "",
+          agencyLogo: input.cheapest_website?.image ?? "",
+          label: "",
+          base_redirect_url: input.cheapest_base_redirect_url ?? "",
+          one_adult_redirect_url: input.cheapest_one_adult_redirect_url ?? input.cheapest_base_redirect_url,
+          two_adults_redirect_url: input.cheapest_two_adult_redirect_url ?? input.cheapest_base_redirect_url,
+        },
+        otherSellersCount: input.websites.length,
+        websites: input.websites,
+      }
+    }
+
+    getFlights(departureDate)
+  }, [])
+
   // Sort flights based on selected sort key, safely handling empty/incomplete objects
-  const sortedFlights = [...sampleFlights]
+  const sortedFlights = [...flights]
     .filter((f) => f && f.id)
     .sort((a, b) => {
       const priceA = a.price?.amount || 0
@@ -308,7 +383,7 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
 
             <div className="mb-6 hidden flex-row items-start justify-between lg:flex">
               <p className="text-Gray-N800 hidden text-right text-sm font-semibold lg:block">
-                {sortedFlights.length} نتیجه
+                {englishToFarsiNumber(sortedFlights.length)} نتیجه
               </p>
 
               {/* desktop sort */}
