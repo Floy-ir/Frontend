@@ -23,9 +23,34 @@ function PopoverContent({
   sideOffset = 4,
   ...props
 }: React.ComponentProps<typeof PopoverPrimitive.Content>) {
+  const contentRef = React.useRef<HTMLDivElement>(null)
+
+  React.useEffect(() => {
+    const handlePopoverPosition = () => {
+      if (!contentRef.current) return
+      
+      const contentRect = contentRef.current.getBoundingClientRect()
+      const viewportHeight = window.innerHeight
+      const bottomOverflow = contentRect.bottom + 24 - viewportHeight
+      
+      if (bottomOverflow > 0) {
+        // Scroll the page down enough to show the popover
+        window.scrollBy({
+          top: bottomOverflow + 36, // Add a small buffer
+          behavior: 'smooth'
+        })
+      }
+    }
+
+    // Small delay to ensure the popover is rendered
+    const timer = setTimeout(handlePopoverPosition, 50)
+    return () => clearTimeout(timer)
+  }, [])
+
   return (
     <PopoverPrimitive.Portal>
       <PopoverPrimitive.Content
+        ref={contentRef}
         data-slot="popover-content"
         align={align}
         sideOffset={sideOffset}
