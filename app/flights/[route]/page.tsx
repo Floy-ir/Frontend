@@ -2,6 +2,7 @@
 import { DialogTitle } from "@radix-ui/react-dialog"
 import { CloseCircle, Setting5, Sort } from "iconsax-react"
 import Image from "next/image"
+import { usePathname, useSearchParams } from "next/navigation"
 import React, { use, useEffect, useState } from "react"
 import { FlightFilters } from "@/components/FlightFilters"
 import { FlightSearchHeader } from "@/components/FlightSearchHeader/FlightSearchHeader"
@@ -247,10 +248,14 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
   const [activeFilterSection, setActiveFilterSection] = useState<string | null>(null)
 
   const [flights, setFlights] = useState<TransformedFlight[]>([])
+  const pathname = usePathname()
   // const [error, setError] = useState<string | null>(null);
 
   //fetch flights
   useEffect(() => {
+    console.log("asdfg")
+    console.log(pathname)
+const fullUrl = `${pathname}?${searchParams.toString()}`
     const getFlights = async (departureDate: string) => {
       try {
         const startOfDay = new Date(`${departureDate}T00:00:00`).getTime() / 1000
@@ -324,7 +329,7 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
     }
 
     getFlights(departureDate)
-  }, [])
+  }, [pathname, searchParams])
 
   // Sort flights based on selected sort key, safely handling empty/incomplete objects
   const sortedFlights = [...flights]
