@@ -2,12 +2,13 @@
 
 import { Add, ArrowRight, ArrowSwapHorizontal, ArrowUp2 } from "iconsax-react"
 import { useRouter } from "next/navigation"
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 
 import { Button } from "@/components/Button/Button"
 import { ComboboxSelect } from "@/components/ComboboxSelect/ComboboxSelect"
 import { DatePicker } from "@/components/DatePicker/DatePicker"
 import { PassengerCount, PassengerSelector } from "@/components/PassengerSelector/PassengerSelector"
+import type { CityOption } from "@/config/cities"
 import { getCityByName, getCityOptions } from "@/config/cities"
 import { useStoredCities } from "@/hooks/useStoredCities"
 import { formatDate } from "@/utils/dateUtils"
@@ -37,25 +38,32 @@ export function FlightSearchForm({
   const [destination, setDestination] = useState(initialDestination)
   const [departureDate, setDepartureDate] = useState<Date | null>(initialDepartureDate)
   const [passengers, setPassengers] = useState<PassengerCount>(initialPassengers)
-
+  const [options, setOptions] = useState<Pick<CityOption, "value" | "label">[]>([])
   // Use our custom hook
   const { recentSelections, addRecentSelection, saveSearch } = useStoredCities()
 
   // Get city options from config
-  const cityOptions = getCityOptions()
 
+  useEffect(() => {
+    getCityOptions().then(setOptions)
+  }, [])
+  useEffect(() => {
+    // console.log("Origin on mount:", origin);
+    // console.log("Destination on mount:", destination);
+  }, []);
   // Custom onChange handlers
-  const handleOriginChange = (value: string) => {
+  const handleOriginChange = async (value: string) => {
+    console.log("hellooowofjl;asfje")
     setOrigin(value)
-    const cityOption = getCityByName(value)
+    const cityOption = await getCityByName(value)
     if (cityOption) {
       addRecentSelection(value, cityOption.label)
     }
   }
 
-  const handleDestinationChange = (value: string) => {
+  const handleDestinationChange = async (value: string) => {
     setDestination(value)
-    const cityOption = getCityByName(value)
+    const cityOption = await getCityByName(value)
     if (cityOption) {
       addRecentSelection(value, cityOption.label)
     }
@@ -79,15 +87,15 @@ export function FlightSearchForm({
   }
 
   // Handle search button click
-  const handleSearch = () => {
+  const handleSearch = async () => {
     // Don't proceed if required fields are missing
     if (!origin || !destination || !departureDate) {
       return
     }
 
     // Get the city objects with their codes
-    const originCity = getCityByName(origin)
-    const destinationCity = getCityByName(destination)
+    const originCity = await getCityByName(origin)
+    const destinationCity = await getCityByName(destination)
 
     // If we can't find the codes, don't proceed
     if (!originCity || !destinationCity) {
@@ -108,8 +116,6 @@ export function FlightSearchForm({
     // Navigate to the flights page with the query parameters
     router.push(createFlightSearchUrl(originCity.code, destinationCity.code, departureDate, passengers))
   }
-
-  console.log(contextPage)
 
   return (
     <div className="m-0 flex w-full flex-col items-center">
@@ -158,7 +164,7 @@ export function FlightSearchForm({
                       noBorder
                       expandDropdown
                       placeholder="انتخاب شهر"
-                      options={cityOptions}
+                      options={options}
                       filled={true}
                       size="md"
                       dir="rtl"
@@ -179,7 +185,7 @@ export function FlightSearchForm({
                       noBorder
                       expandDropdown
                       placeholder="انتخاب شهر"
-                      options={cityOptions}
+                      options={options}
                       filled={true}
                       size="md"
                       dir="rtl"
@@ -205,7 +211,7 @@ export function FlightSearchForm({
                   noBorder
                   expandDropdown
                   placeholder="انتخاب شهر"
-                  options={cityOptions}
+                  options={options}
                   filled={true}
                   size="md"
                   dir="rtl"
@@ -238,7 +244,7 @@ export function FlightSearchForm({
                   noBorder
                   expandDropdown
                   placeholder="انتخاب شهر"
-                  options={cityOptions}
+                  options={options}
                   filled={true}
                   size="md"
                   dir="rtl"
@@ -321,7 +327,7 @@ export function FlightSearchForm({
       <Button
         intent="text"
         size="medium"
-        className={`-mb-5 -mt-1 ${contextPage == "flights" ? "hidden md:block" : "hidden"}`}
+        className={`-mt-1 -mb-5 ${contextPage == "flights" ? "hidden md:block" : "hidden"}`}
         onClick={onClose}
         leftIcon={<ArrowUp2 size="20" color="#5A28EE" />}
       >

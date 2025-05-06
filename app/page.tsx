@@ -1,15 +1,15 @@
 import { Metadata } from "next"
 import Image from "next/image"
 
-import { Header } from "@/components/Header/Header"
+
 import { HeroSection } from "@/components/HeroSection/HeroSection"
 import Benefits from "@/components/LandingPage/Benefits"
 import Companies from "@/components/LandingPage/Companies"
 
 import PopularCities from "@/components/LandingPage/PopularCities"
-import Suggestions from "@/components/LandingPage/suggestions"
-import img from "../public/images/Underline_06.svg"
+// import Suggestions from "@/components/LandingPage/suggestions"
 import Questions from "@/components/LandingPage/Questions"
+import img from "../public/images/Underline_06.svg"
 
 export const metadata: Metadata = {
   title: "Next.js Enterprise Boilerplate",
@@ -29,13 +29,6 @@ export const metadata: Metadata = {
 }
 
 export default function Web() {
-  const menuItems = [
-    { label: "صفحه اصلی", href: "/", isActive: true },
-    { label: "پشتیبانی", href: "/support" },
-    { label: "بلاگ", href: "/blog" },
-    { label: "درباره ما", href: "/about" },
-  ]
-
   return (
     <>
       {/* Background Image with Oval Bottom */}
@@ -66,7 +59,8 @@ export default function Web() {
         <Companies />
         <Benefits />
         {/* Cities */}
-        <div className="flex w-full max-w-[1600px] shrink-0 flex-col items-center justify-between bg-white px-4 py-8 lg:px-38 lg:py-12">
+        <div className="flex w-full  shrink-0 flex-col items-center justify-between bg-white px-4 py-8 lg:px-38 lg:py-12">
+          <div className="max-w-[1600px]">
           {/* Title */}
           <div className="flex w-full items-center justify-between">
             <div className="flex flex-col justify-start">
@@ -91,12 +85,13 @@ export default function Web() {
             </div> */}
           </div>
           <PopularCities />
+          </div>
         </div>
 
         {/* suggestions */}
-        {/* <div className="mt-12 flex w-full max-w-[1500px] shrink-0 flex-col items-center justify-center px-4 py-8 lg:px-38 lg:py-12">
-          <Suggestions />
-        </div> */}
+        <div className="mt-12 flex w-full max-w-[1500px] shrink-0 flex-col items-center justify-center px-4 py-8 lg:px-38 lg:py-12">
+          {/* <Suggestions /> */}
+        </div>
         <div className="mb-13 w-full">
           <Questions />
         </div>
