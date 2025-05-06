@@ -45,11 +45,13 @@ export function DatePicker({
   ...props
 }: DatePickerProps) {
   const [open, setOpen] = React.useState(false)
-  const isDesktop = useMediaQuery("(min-width: 768px)")
+  const isDesktop = useMediaQuery("(min-width: 1024px)")
+  const isTablet = useMediaQuery("(min-width: 768px) and (max-width: 1023px)")
+  const isMobile = useMediaQuery("(max-width: 767px)")
   
   // Prevent scrolling and hide main page header when datepicker is open on mobile
   React.useEffect(() => {
-    if (!isDesktop && open) {
+    if (isMobile && open) {
       // Prevent scrolling on the body
       document.body.style.overflow = 'hidden'
       
@@ -68,7 +70,7 @@ export function DatePicker({
       document.body.style.overflow = ''
       document.body.classList.remove('datepicker-fullscreen-open')
     }
-  }, [open, isDesktop])
+  }, [open, isMobile])
   
   // Convert string dates to Date objects if needed
   const selectedDate = value instanceof Date ? value : 
@@ -133,13 +135,54 @@ export function DatePicker({
     </div>
   )
   
-  // Desktop calendar component - unchanged from original
-  const DesktopCalendarComponent = () => {
+  // Calendar component with responsive sizing
+  const CalendarComponent = ({ isMobile = false }) => {
     // Create a single disabled object that handles both min and max dates
     const disabledDates = {
       before: minDate || new Date(),
       ...(maxDate && { after: maxDate })
     };
+    
+    // Handle different scale sizes based on device type
+    const getCalendarScale = () => {
+      if (isMobile) return "";
+      if (isTablet) return "scale-125 origin-top";
+      return "scale-110 origin-top";
+    };
+    
+    // Add direct handler for mobile
+    const handleDeviceSelect = (day: Date | undefined) => {
+      handleDateSelect(day)
+    }
+    
+    if (isMobile) {
+      return (
+        <div className="w-full h-full">
+          {/* @ts-ignore - Ignoring type issues to allow for the calendar to work properly */}
+          <JalaliCalendar
+            mode="single" 
+            selected={selectedDate}
+            onSelect={handleDeviceSelect}
+            disabled={disabledDates}
+            className="w-full mx-auto"
+            classNames={{
+              months: "flex flex-col space-y-4 w-full",
+              month: "w-full",
+              month_grid: "w-full",
+              weekdays: "self-stretch p-3 bg-slate-50 inline-flex justify-start items-start w-full",
+              weekday: "flex-1 text-center justify-start text-slate-500 text-sm font-medium leading-normal",
+              table: "w-full border-collapse",
+              row: "flex w-full justify-between mb-2",
+              cell: "text-center flex-1 p-0 relative",
+              day: "w-12 h-12 p-0 flex items-center justify-center text-base rounded-full mx-auto",
+              day_today: "bg-Primary-P50",
+              day_selected: "!bg-Primary-P300 !text-white !font-bold hover:!bg-Primary-P300"
+            }}
+            {...calendarProps}
+          />
+        </div>
+      );
+    }
     
     return (
       <div className="p-6">
@@ -147,15 +190,17 @@ export function DatePicker({
         <JalaliCalendar
           mode="single"
           selected={selectedDate}
-          onSelect={handleDateSelect}
+          onSelect={handleDeviceSelect}
           disabled={disabledDates}
-          className="scale-110 origin-top"
+          className={getCalendarScale()}
           classNames={{
-            day: "w-10 h-10 p-0 flex items-center justify-center text-base rounded-full mx-auto",
+            day: isTablet ? 
+              "w-12 h-12 p-0 flex items-center justify-center text-lg rounded-full mx-auto" : 
+              "w-10 h-10 p-0 flex items-center justify-center text-base rounded-full mx-auto",
             day_today: "bg-Primary-P50",
             day_selected: "!bg-Primary-P300 !text-white !font-bold hover:!bg-Primary-P300",
             caption: "p-2",
-            caption_label: "text-base font-semibold"
+            caption_label: isTablet ? "text-lg font-semibold" : "text-base font-semibold"
           }}
           {...calendarProps}
         />
@@ -163,49 +208,8 @@ export function DatePicker({
     );
   }
   
-  // Mobile calendar component - with full-screen styling
-  const MobileCalendarComponent = () => {
-    // Create a single disabled object that handles both min and max dates
-    const disabledDates = {
-      before: minDate || new Date(),
-      ...(maxDate && { after: maxDate })
-    };
-    
-    // Add direct handler for mobile
-    const handleMobileSelect = (day: Date | undefined) => {
-      handleDateSelect(day)
-    }
-    
-    return (
-      <div className="w-full h-full">
-        {/* @ts-ignore - Ignoring type issues to allow for the calendar to work properly */}
-        <JalaliCalendar
-          mode="single" 
-          selected={selectedDate}
-          onSelect={handleMobileSelect}
-          disabled={disabledDates}
-          className="w-full mx-auto"
-          classNames={{
-            months: "flex flex-col space-y-4 w-full",
-            month: "w-full",
-            month_grid: "w-full",
-            weekdays: "self-stretch p-3 bg-slate-50 inline-flex justify-start items-start w-full",
-            weekday: "flex-1 text-center justify-start text-slate-500 text-sm font-medium leading-normal",
-            table: "w-full border-collapse",
-            row: "flex w-full justify-between mb-2",
-            cell: "text-center flex-1 p-0 relative",
-            day: "w-12 h-12 p-0 flex items-center justify-center text-base rounded-full mx-auto",
-            day_today: "bg-Primary-P50",
-            day_selected: "!bg-Primary-P300 !text-white !font-bold hover:!bg-Primary-P300"
-          }}
-          {...calendarProps}
-        />
-      </div>
-    );
-  }
-  
-  // Desktop view uses Popover
-  if (isDesktop) {
+  // Use Popover for desktop and tablet, full screen for mobile
+  if (!isMobile) {
     return (
       <Container>
         <Popover open={open && !disabled} onOpenChange={disabled ? undefined : setOpen}>
@@ -213,11 +217,14 @@ export function DatePicker({
             <div className="cursor-pointer">{triggerField}</div>
           </PopoverTrigger>
           <PopoverContent
-            className="overflow-hidden rounded-xl p-0 border border-Gray-N200 shadow-[0px_4px_20px_rgba(0,0,0,0.1)] bg-white transform translate-x-4 min-w-[320px]"
+            className={twMerge(
+              "overflow-hidden rounded-xl p-0 border border-Gray-N200 shadow-[0px_4px_20px_rgba(0,0,0,0.1)] bg-white transform translate-x-4",
+              isTablet ? "min-w-[360px]" : "min-w-[320px]"
+            )}
             align={dir === "rtl" ? "start" : "end"}
             sideOffset={4}
           >
-            <DesktopCalendarComponent />
+            <CalendarComponent />
           </PopoverContent>
         </Popover>
       </Container>
@@ -367,7 +374,7 @@ export function DatePicker({
                 font-weight: bold !important;
               }
             `}</style>
-            <MobileCalendarComponent />
+            <CalendarComponent isMobile={true} />
           </div>
         </div>
       )}

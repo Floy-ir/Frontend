@@ -114,13 +114,14 @@ export function ComboboxSelect({
         <Command className="overflow-hidden rounded-xl bg-white">
           <div className="p-4">
             <div className="flex flex-col items-end justify-center overflow-hidden rounded-lg px-2 outline-2 outline-offset-[-2px] outline-[#9170f4]">
-              <div className="Content w-full rounded-lg flex items-center justify-between gap-3">
+              <div className="Content w-full rounded-lg flex items-center justify-between gap-3" style={{ minHeight: '70px' }}>
                 <CommandInput
                   ref={commandInputRef}
                   value={searchValue}
                   onValueChange={setSearchValue}
                   placeholder={searchPlaceholder || `جستجو ${label || "options"}...`}
-                  className={`h-10 flex-grow py-3 ${dir === "rtl" ? "text-right" : "text-left"} border-none outline-none`}
+                  className={`flex-grow text-Gray-N400 ${dir === "rtl" ? "text-right" : "text-left"} border-none outline-none placeholder:font-normal`}
+                  style={{ height: '60px', padding: '15px 0' }}
                 />
                 <div 
                   className="flex items-center justify-center cursor-pointer" 
