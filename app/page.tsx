@@ -51,7 +51,7 @@ export default function Web() {
         <Header menuItems={menuItems} />
       </div> */}
       
-      <main className="rtl relative z-10 flex min-h-screen flex-col items-center bg-transparent">
+      <main className="rtl relative z-10 flex min-h-screen flex-col items-center bg-transparent w-full">
         <div className="w-full max-w-[1136px] mx-auto px-4 md:px-0">
           <HeroSection />
         </div>
@@ -59,8 +59,8 @@ export default function Web() {
         <Companies />
         <Benefits />
         {/* Cities */}
-        <div className="flex w-full  shrink-0 flex-col items-center justify-between bg-white px-4 py-8 lg:px-38 lg:py-12">
-          <div className="max-w-[1600px]">
+        <div className="flex w-full shrink-0 flex-col items-center justify-between bg-white px-4 py-8 lg:px-38 lg:py-12">
+          <div className="max-w-11/12">
           {/* Title */}
           <div className="flex w-full items-center justify-between">
             <div className="flex flex-col justify-start">
