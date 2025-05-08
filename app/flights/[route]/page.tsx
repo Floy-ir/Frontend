@@ -559,7 +559,7 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
           formattedAmount: input.cheapest_price.toLocaleString("fa-IR"),
           agency: input.cheapest_website?.name_fa ?? "",
           agencyLogo: input.cheapest_website?.image ?? "",
-          label: "",
+          label: "ارزان ترین",
           base_redirect_url: input.cheapest_base_redirect_url ?? "",
           one_adult_redirect_url: input.cheapest_one_adult_redirect_url ?? input.cheapest_base_redirect_url,
           two_adults_redirect_url: input.cheapest_two_adult_redirect_url ?? input.cheapest_base_redirect_url,

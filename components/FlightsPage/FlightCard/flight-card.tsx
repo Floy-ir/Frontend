@@ -202,7 +202,7 @@ const PriceInfo = ({ price }: { price: FlightCardProps["price"] }) => (
         </div>
         <div className="inline-flex flex-col items-start justify-center gap-1">
           <div
-            className={`text-Gray-N600 justify-start self-stretch text-right text-[15px] ${textStyles.good} ${textStyles.semibold}`}
+            className={`text-Gray-N600 justify-start self-stretch text-right text-[15px] ${textStyles.normal} ${textStyles.normal}`}
           >
             {price.agency}
           </div>
@@ -212,7 +212,7 @@ const PriceInfo = ({ price }: { price: FlightCardProps["price"] }) => (
         <div className="text-Gray-N700 justify-start text-right text-base text-[17px] leading-7 font-semibold">
           {englishToFarsiNumber(price.formattedAmount)}
         </div>
-        <div className={`text-Gray-N500 justify-start text-right ${textStyles.medium} ${textStyles.semibold}`}>
+        <div className={`text-Gray-N500 justify-start text-right ${textStyles.medium} ${textStyles.normal}`}>
           تومان
         </div>
       </div>
@@ -359,7 +359,7 @@ export function FlightCard({
     }
 
     return (
-      <div className="-mx-3 inline-flex w-[290px] flex-col items-start justify-start gap-2 px-2 md:w-[250px]">
+      <div className="-mx-3 inline-flex w-[290px] flex-col items-start justify-start gap-2 px-2 md:w-[300px]">
         <div className="flex flex-col items-center justify-center gap-3 self-stretch">
           <PriceInfo price={price} />
 
@@ -459,7 +459,7 @@ export function FlightCard({
                   className="inline-flex flex-row-reverse items-center justify-between self-stretch"
                 >
                   <div data-layer="Frame 1000002342" className="flex flex-row-reverse items-center justify-end gap-1">
-                    <div className="text-Gray-N500 justify-start text-right text-[11px] leading-none font-semibold">
+                    <div className="text-Gray-N500 justify-start text-right text-[11px] leading-none font-normal">
                       تومان
                     </div>
                     <div className="text-Gray-N700 justify-start text-right text-base leading-7 font-semibold">
@@ -468,7 +468,7 @@ export function FlightCard({
                   </div>
                   <div data-layer="Frame 1000002408" className="flex flex-row-reverse items-center justify-end gap-2">
                     <div className="inline-flex flex-col items-end justify-center gap-1">
-                      <div className="text-Gray-N600 justify-start self-stretch text-right text-[11px] leading-none font-semibold">
+                      <div className={`text-Gray-N600 justify-start self-stretch text-right text-[11px] leading-none font-semibold`}>
                         {price.agency}
                       </div>
                     </div>
