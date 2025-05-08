@@ -71,8 +71,7 @@ const Timeline = ({
       console.log("Cheapest flight data:", response)
       if (response) {
         setData(response.results || [])
-        isScroll=true;
-
+        isScroll = true
       } else {
         console.error("No flight data returned")
         setData([])
@@ -80,19 +79,16 @@ const Timeline = ({
     } catch (err) {
       console.error("Error fetching cheapest flights", err)
     }
-
   }
 
   // Calculate the min and max price
   const minPrice = Math.min(...data.filter((item) => item.price).map((item) => item.price || Infinity))
   const maxPrice = Math.max(...data.filter((item) => item.price).map((item) => item.price || -Infinity))
 
- 
+  let isScroll = true
 
-  let isScroll=true;
-  
-  const handleDateSelection = (newDate: string) => { 
-    isScroll=false;
+  const handleDateSelection = (newDate: string) => {
+    isScroll = false
 
     const dates = data.map((item) => item.date)
     const isEdge = newDate === dates[0] || newDate === dates[dates.length - 1]
@@ -103,22 +99,20 @@ const Timeline = ({
 
     const url = createFlightSearchUrl(originCityCode, destinationCityCode, new Date(newDate), passengers)
     router.push(url)
-    
-    
-    setSelectedDay(newDate)
 
+    setSelectedDay(newDate)
   }
-  
+
   useEffect(() => {
     if (isScroll && autoScrollToSelected && scrollRef.current) {
-      const selectedEl = scrollRef.current.querySelector('[data-selected="true"]') as HTMLElement;
+      const selectedEl = scrollRef.current.querySelector('[data-selected="true"]') as HTMLElement
       if (selectedEl) {
-        const container = scrollRef.current;
-        const offsetLeft = selectedEl.offsetLeft - container.offsetWidth / 2 + selectedEl.offsetWidth / 2;
-        container.scrollTo({ left: offsetLeft, behavior: 'smooth' });
+        const container = scrollRef.current
+        const offsetLeft = selectedEl.offsetLeft - container.offsetWidth / 2 + selectedEl.offsetWidth / 2
+        container.scrollTo({ left: offsetLeft, behavior: "smooth" })
       }
     }
-  }, [isScroll,selectedDate]);
+  }, [isScroll, selectedDate])
 
   return (
     <div className="relative max-w-screen items-center justify-center">
@@ -203,7 +197,11 @@ const Timeline = ({
                     isSelected ? "text-Primary-P500main" : `${priceColor}`
                   } text-[13px] leading-normal font-medium`}
                 >
-                  {item.price === 0 ? "-" : item.price ? englishToFarsiNumber(item.price) : "-"}
+                  {item.price === 0
+                    ? "-"
+                    : item.price
+                    ? englishToFarsiNumber(item.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "،"))
+                    : "-"}
                 </div>
               </div>
             )
