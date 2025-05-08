@@ -491,37 +491,6 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
   const [flights, setFlights] = useState<TransformedFlight[]>([])
   const pathname = usePathname()
   // const [error, setError] = useState<string | null>(null);
-
-  //fetch flights
-  useEffect(() => {
-    console.log("asdfg")
-    console.log(pathname)
-    // const fullUrl = `${pathname}?${searchParams.toString()}`
-    const getFlights = async (departureDate: string) => {
-      try {
-        const startOfDay = new Date(`${departureDate}T00:00:00`).getTime() / 1000
-        const endOfDay = new Date(`${departureDate}T23:59:59`).getTime() / 1000 + 1
-
-        const data = await apiFetch<{ results: FlightData[] }>("/flights", {
-          params: {
-            origin: "THR",
-            destination: "MHD",
-            departure_timestamp__gte: startOfDay,
-            departure_timestamp__lte: endOfDay,
-          },
-        })
-
-        // console.log(params)
-
-        if (data?.results) {
-          const transformed = data.results.map((flight, index) => transformFlightData(flight, (index + 1).toString()))
-          setFlights(transformed)
-        }
-      } catch (err) {
-        console.error("Error fetching flights:", err)
-      }
-    }
-
     function transformFlightData(input: FlightData, id: string = "1"): TransformedFlight {
       const departure = new Date(input.departure_timestamp * 1000)
       const arrival = new Date(input.arrival_timestamp * 1000)
@@ -568,6 +537,37 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
         websites: input.websites,
       }
     }
+
+    const getFlights = async (departureDate: string) => {
+      try {
+        const startOfDay = new Date(`${departureDate}T00:00:00`).getTime() / 1000
+        const endOfDay = new Date(`${departureDate}T23:59:59`).getTime() / 1000 + 1
+
+        const data = await apiFetch<{ results: FlightData[] }>("/flights", {
+          params: {
+            origin: "THR",
+            destination: "MHD",
+            departure_timestamp__gte: startOfDay,
+            departure_timestamp__lte: endOfDay,
+          },
+        })
+
+        // console.log(params)
+
+        if (data?.results) {
+          const transformed = data.results.map((flight, index) => transformFlightData(flight, (index + 1).toString()))
+          setFlights(transformed)
+        }
+      } catch (err) {
+        console.error("Error fetching flights:", err)
+      }
+    }
+
+  //fetch flights
+  useEffect(() => {
+    // console.log("asdfg")
+    // console.log(pathname)
+    // const fullUrl = `${pathname}?${searchParams.toString()}`
 
     getFlights(departureDate)
   }, [pathname, searchParams])
@@ -1320,7 +1320,7 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
 
               {/* Flight results list */}
               <div className="flex-1">
-                <FlightResultsList flights={sortedFlights} />
+                <FlightResultsList flights={sortedFlights} onRefresh={() => getFlights(departureDate)}/>
               </div>
             </div>
           </>
