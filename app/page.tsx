@@ -60,7 +60,7 @@ export default function Web() {
         <Benefits />
         {/* Cities */}
         <div className="flex w-full  shrink-0 flex-col items-center justify-between bg-white px-4 py-8 lg:px-38 lg:py-12">
-          <div className="max-w-[1600px]">
+          <div className="max-w-20/21">
           {/* Title */}
           <div className="flex w-full items-center justify-between">
             <div className="flex flex-col justify-start">

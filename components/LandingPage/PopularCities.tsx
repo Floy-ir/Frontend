@@ -68,7 +68,7 @@ export default function PopularCities() {
     <div className="mt-6 md:mt-10 lg:mt-14 flex w-full gap-2 lg:flex-row mb-8">
       {/* Scrollable Container for Smaller Screens */}
 
-      <div className="relative flex w-full snap-x snap-proximity flex-nowrap gap-2 overflow-hidden overflow-x-auto scroll-smooth sm:justify-center sm:px-12 lg:overflow-visible">
+      <div className="relative flex w-full gap-2 sm:justify-center sm:px-12 snap-x snap-proximity flex-nowrap overflow-x-auto scroll-smooth">
         {/* Large City Card */}
         {cities[0] && (
           <div className="shrink-0 snap-center mb-4">
