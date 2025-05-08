@@ -52,9 +52,10 @@ type FlightData = {
 
 type FlightResultsListProps = {
   flights: FlightData[]
+  onRefresh: () => void;
 }
 
-export function FlightResultsList({ flights }: FlightResultsListProps) {
+export function FlightResultsList({ flights,onRefresh }: FlightResultsListProps) {
   // Handle actions
 
   const router = useRouter();
@@ -115,7 +116,7 @@ export function FlightResultsList({ flights }: FlightResultsListProps) {
       </div>
       
       {showExpirationModal && (
-        <ExpirationModal open={showExpirationModal} onOpenChange={setShowExpirationModal} />
+        <ExpirationModal open={showExpirationModal} onOpenChange={setShowExpirationModal} onRefresh={onRefresh} />
       )}
     </div>
   )
