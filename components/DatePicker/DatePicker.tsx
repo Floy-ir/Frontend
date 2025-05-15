@@ -142,13 +142,21 @@ export function DatePicker({
     };
     
     return (
-      <div className="p-4">
+      <div className="p-6">
         {/* @ts-ignore - Ignoring type issues to allow for the calendar to work properly */}
         <JalaliCalendar
           mode="single"
           selected={selectedDate}
           onSelect={handleDateSelect}
           disabled={disabledDates}
+          className="scale-110 origin-top"
+          classNames={{
+            day: "w-10 h-10 p-0 flex items-center justify-center text-base rounded-full mx-auto",
+            day_today: "bg-Primary-P50",
+            day_selected: "!bg-Primary-P300 !text-white !font-bold hover:!bg-Primary-P300",
+            caption: "p-2",
+            caption_label: "text-base font-semibold"
+          }}
           {...calendarProps}
         />
       </div>
@@ -205,7 +213,7 @@ export function DatePicker({
             <div className="cursor-pointer">{triggerField}</div>
           </PopoverTrigger>
           <PopoverContent
-            className="overflow-hidden rounded-xl p-0 border border-Gray-N200 shadow-[0px_4px_20px_rgba(0,0,0,0.1)] bg-white transform translate-x-4"
+            className="overflow-hidden rounded-xl p-0 border border-Gray-N200 shadow-[0px_4px_20px_rgba(0,0,0,0.1)] bg-white transform translate-x-4 min-w-[320px]"
             align={dir === "rtl" ? "start" : "end"}
             sideOffset={4}
           >
@@ -227,7 +235,7 @@ export function DatePicker({
         <div className="fixed inset-0 bg-white z-[9999] flex flex-col">
           <div className="self-stretch pt-4 inline-flex flex-col justify-center items-end gap-4">
             <div className="self-stretch px-4 inline-flex justify-start items-center gap-4">
-            <div 
+              <div 
                 className="size-6 relative cursor-pointer" 
                 onClick={() => setOpen(false)}
               >
@@ -236,7 +244,6 @@ export function DatePicker({
               <div className="text-right text-Gray-N600 text-sm font-semibold leading-normal">
                 {label || "انتخاب تاریخ"}
               </div>
-          
             </div>
             <div className="self-stretch h-px relative bg-Gray-N200 mb-4"></div>
           </div>

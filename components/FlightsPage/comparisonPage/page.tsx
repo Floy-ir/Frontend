@@ -2,6 +2,7 @@
 
 import { DialogClose } from "@radix-ui/react-dialog"
 import { CloseCircle } from "iconsax-react"
+// import { flightRouterStateSchema } from "next/dist/server/app-render/types"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import FlightInfo from "./flightInfo"
 import TicketCard from "./ticketCard"
@@ -9,74 +10,52 @@ import TicketCard from "./ticketCard"
 export default function ComparisonDialog({
   open,
   onOpenChange,
+  websites,
+  departureTime,
+  arrivalTime,
+  origin,
+  destination,
+  duration,
+  otherSellersCount,
+  airline,
+  flightInfo,
+  onBuy
+
 }: {
+  onBuy: () => void 
   open: boolean;
   onOpenChange: (open: boolean) => void;
-}) {
-
-  // Sample flight data
-  const flightData = [
-    {
-      name: "علی بابا",
-      iconPath: "/images/alibaba-icon.png",
-      price: "2,000,000",
-      remainingSeats: "1",
-      redirectUrl: "https://www.alibaba.ir",
-      child: { number: "1", price: "1,000,000" },
-      infant: { number: "1", price: "500,000" },
-      adult: { number: "1", price: "3,000,000" },
-    },
-    {
-      name: "اسمان",
-      iconPath: "/images/alibaba-icon.png",
-      price: "2,500,000",
-      remainingSeats: "6",
-      redirectUrl: "https://www.alibaba.ir",
-      child: { number: "1", price: "800,000" },
-      infant: { number: "1", price: "400,000" },
-      adult: { number: "1", price: "2,100,000" },
-    },
-    {
-      name: "ماهان",
-      iconPath: "/images/alibaba-icon.png",
-      price: "۴،۰۰۰،۰۰۰",
-      remainingSeats: "2",
-      redirectUrl: "https://www.alibaba.ir",
-      child: { number: "1", price: "900,000" },
-      infant: { number: "1", price: "450,000" },
-      adult: { number: "1", price: "3,500,000" },
-    },
-    {
-      name: "Kish Air",
-      iconPath: "/images/alibaba-icon.png",
-      price: "۷۰۰،۰۰۰",
-      remainingSeats: "5",
-      redirectUrl: "https://www.alibaba.ir",
-      child: { number: "1", price: "700,000" },
-      infant: { number: "1", price: "350,000" },
-      adult: { number: "1", price: "1,000,000" },
-    },
-    {
-      name: "Iran Air",
-      iconPath: "/images/alibaba-icon.png",
-      price: "۲،۸۰۰،۰۰۰",
-      remainingSeats: "4",
-      redirectUrl: "https://www.alibaba.ir",
-      child: { number: "1", price: "850,000" },
-      infant: { number: "1", price: "420,000" },
-      adult: { number: "1", price: "2,500,000" },
-    },
-    {
-      name: "Iran Air",
-      iconPath: "/images/alibaba-icon.png",
-      price: "۲،۸۰۰،۰۰۰",
-      remainingSeats: "4",
-      redirectUrl: "https://www.alibaba.ir",
-      child: { number: "1", price: "850,000" },
-      infant: { number: "1", price: "420,000" },
-      adult: { number: "1", price: "2,500,000" },
+  departureTime: string
+  arrivalTime: string
+  origin: string
+  destination: string
+  duration: { hours: number; minutes: number }
+  otherSellersCount: number
+  airline: {
+    name: string
+    logo: string
+  }
+  flightInfo: {
+    baggage: string
+    // ticketType: string
+    cabinClass: string
+  }
+  websites: {
+    adult_price: number
+    base_redirect_url: string
+    child_price: number | null
+    detail: {
+      uid: string
+      name: string
+      name_fa: string
+      image: string | null
     }
-  ]
+    infant_price: number | null
+    one_adult_redirect_url: string
+    remaining_seat: number
+    two_adult_redirect_url: string
+  }[]
+}) {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -95,14 +74,20 @@ export default function ComparisonDialog({
           <div className="bg-Gray-N200 h-px self-stretch" />
         </DialogHeader>
 
-
-
         <div className="mb-7 flex overflow-y-auto flex-col lg:flex-row items-start gap-4 md:px-24 lg:px-6.5 md:pt-6.5">
           {/* flight info */}
-          <FlightInfo flightData={flightData} />
+          <FlightInfo
+            departureTime={departureTime}
+            arrivalTime={arrivalTime}
+            origin={origin}
+            destination={destination}
+            duration={duration}
+            otherSellersCount={otherSellersCount}
+            airline={airline} 
+            flightInfo={flightInfo}/>
 
           {/* ticket cards */}
-          <TicketCard flightData={flightData} />
+          <TicketCard websites={websites}/>
         </div>
         
       </DialogContent>
