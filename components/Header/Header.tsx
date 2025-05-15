@@ -122,7 +122,7 @@ export function Header({ menuItems, className, forceScrolledStyle = false }: Hea
           <div className="hidden items-center justify-between md:flex h-22">
             {/* Logo - Right Side in RTL */}
             <div className="flex items-center gap-2">
-              <span className={`text-lg font-semibold ${isScrolled ? 'text-Gray-N700' : 'text-white'}`}>لوگو</span>
+              <span className={`text-lg font-semibold ${isScrolled ? 'text-Gray-N700' : 'text-white'}`}>فلوی</span>
               <Airplane 
                 size={20} 
                 variant="Bold" 
@@ -155,9 +155,8 @@ export function Header({ menuItems, className, forceScrolledStyle = false }: Hea
                 ))}
               </NavigationMenu.List>
             </NavigationMenu.Root>
-
             {/* Login Button - Left Side in RTL */}
-            <div>
+            {/* <div>
               <Button
                 href="/login"
                 intent="secondary"
@@ -171,7 +170,7 @@ export function Header({ menuItems, className, forceScrolledStyle = false }: Hea
               >
                 ورود | ثبت‌نام
               </Button>
-            </div>
+            </div> */}
           </div>
 
           {/* Mobile view */}
