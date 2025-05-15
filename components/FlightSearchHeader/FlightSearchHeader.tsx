@@ -1,7 +1,7 @@
 "use client"
 
 import { AnimatePresence, motion } from "framer-motion"
-import { SearchNormal } from "iconsax-react"
+import { ArrowRight, SearchNormal } from "iconsax-react"
 import React, { useEffect, useState } from "react"
 import { Button } from "@/components/Button/Button"
 import { FlightSearchForm } from "@/components/FlightSearchForm/FlightSearchForm"
@@ -10,6 +10,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { getCityByCode } from "@/config/cities"
 import { formatToJalali } from "@/utils/dateUtils"
 import { englishToFarsiNumber } from "@/utils/numbers"
+import Link from "next/link"
 
 type FlightSearchHeaderProps = {
   originCity: string
@@ -37,7 +38,7 @@ export function FlightSearchHeader({
   const [showSearchForm, setShowSearchForm] = useState(false)
 
   const toggleSearchForm = () => {
-    setShowSearchForm((prev) => !prev) 
+    setShowSearchForm((prev) => !prev)
   }
 
   // Handle closing the form
@@ -53,11 +54,9 @@ export function FlightSearchHeader({
   const persianDate = parsedDate ? formatToJalali(parsedDate) : date
 
   // Get full city names if we have codes
-  
 
-    const [originFullName, setOriginFullName] = useState("")
-    const [destinationFullName, setDestinationFullName] = useState("")
-  
+  const [originFullName, setOriginFullName] = useState("")
+  const [destinationFullName, setDestinationFullName] = useState("")
 
   useEffect(() => {
     const fetchOrigin = async () => {
@@ -65,7 +64,7 @@ export function FlightSearchHeader({
       setOriginFullName(originCityObj?.label || destinationCity)
 
       const destinationCityObj = destinationCode ? await getCityByCode(destinationCode) : undefined
-      setDestinationFullName(destinationCityObj?.label || destinationCity) 
+      setDestinationFullName(destinationCityObj?.label || destinationCity)
     }
 
     fetchOrigin()
@@ -140,33 +139,40 @@ export function FlightSearchHeader({
             </div>
           </motion.div>
         ) : (
-          <div className="border-Gray-N200 flex w-full items-center justify-center gap-3 border-t border-b bg-white px-4 py-4 md:px-0">
-            {/* info */}
-            <div className="sm-md:flex-row sm-md:items-center flex flex-col items-start gap-2 sm:justify-start md:flex-row md:items-center md:justify-end">
-              {/* city */}
-              <div className="text-Gray-N700 shrink-0 text-right text-base leading-7 font-semibold lg:text-[17px]">
-                پرواز {originCity} به {destinationCity}
+          <div className="border-Gray-N200 flex w-full items-center justify-center gap-3 border-b bg-white px-4 py-4 md:px-0">
+            <div className="flex gap-3">
+              {/* Arrow */}
+              <div>
+                <Link href="/" className="mt-3.5 sm-md:mt-1 flex items-center gap-1 text-sm">
+                  <ArrowRight size="29" color="#737373" />
+                </Link>
               </div>
-
-              {/* dot */}
-              <div className="bg-Gray-N200 sm-md:block ml-1 hidden size-1 shrink-0 rounded-[33px] md:block"></div>
-
-              <div className="flex items-center gap-2 sm:justify-start md:justify-end">
-                {/* date */}
-                <div className="text-Gray-N500 shrink-0 text-right text-[13px] leading-normal font-medium lg:text-[15px]">
-                  {persianDate}
+              {/* info */}
+              <div className="sm-md:flex-row sm-md:items-center flex flex-col items-start gap-2 sm:justify-start md:flex-row md:items-center md:justify-end">
+                {/* city */}
+                <div className="text-Gray-N700 shrink-0 text-right text-base leading-7 font-semibold lg:text-[17px]">
+                  پرواز {originCity} به {destinationCity}
                 </div>
 
-                {/* divider */}
-                <div className="bg-Gray-N200 size-1 shrink-0 rounded-[33px]"></div>
+                {/* dot */}
+                <div className="bg-Gray-N200 sm-md:block ml-1 hidden size-1 shrink-0 rounded-[33px] md:block"></div>
 
-                {/* passengers */}
-                <div className="text-Gray-N500 shrink-0 text-right text-[13px] leading-normal font-medium lg:text-[15px]">
-                  {englishToFarsiNumber(passengerCount)} مسافر
+                <div className="flex items-center gap-2 sm:justify-start md:justify-end">
+                  {/* date */}
+                  <div className="text-Gray-N500 shrink-0 text-right text-[13px] leading-normal font-medium lg:text-[15px]">
+                    {persianDate}
+                  </div>
+
+                  {/* divider */}
+                  <div className="bg-Gray-N200 size-1 shrink-0 rounded-[33px]"></div>
+
+                  {/* passengers */}
+                  <div className="text-Gray-N500 shrink-0 text-right text-[13px] leading-normal font-medium lg:text-[15px]">
+                    {englishToFarsiNumber(passengerCount)} مسافر
+                  </div>
                 </div>
               </div>
             </div>
-
             <Button
               intent="primary"
               size="small"

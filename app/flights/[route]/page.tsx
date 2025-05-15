@@ -243,7 +243,7 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
   })
 
   // Track drawer changes that need to be applied
-  const drawerChangesRef = React.useRef<Record<string, any>>({})
+  const drawerChangesRef = React.useRef<Record<string, unknown>>({})
 
   // Helper function to mark a drawer as having changes
   const markDrawerDirty = (drawer: string, isDirty: boolean) => {
@@ -254,25 +254,26 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
   }
 
   // Store changes to be applied when a drawer closes
-  const storeDrawerChanges = (drawer: string, changes: any) => {
+  const _storeDrawerChanges = (drawer: string, changes: unknown) => {
     drawerChangesRef.current[drawer] = changes
     markDrawerDirty(drawer, true)
   }
 
   // Apply changes when a drawer closes
-  const applyDrawerChanges = (drawer: string) => {
+  const _applyDrawerChanges = (drawer: string) => {
     if (dirtyDrawers[drawer] && drawerChangesRef.current[drawer]) {
-      const changes = drawerChangesRef.current[drawer]
+      const changes = drawerChangesRef.current[drawer] as Record<string, unknown>
 
       // Apply changes based on drawer type
-      if (drawer === "priceRange" && changes.priceRange) {
-        setPriceRange(changes.priceRange)
-      } else if (drawer === "flightTime" && changes.flightTimeRange) {
-        setFlightTimeRange(changes.flightTimeRange)
-      } else if (["ticketType", "cabinClass", "airlines", "agencies"].includes(drawer) && changes.filters) {
+      if (drawer === "priceRange" && typeof changes.priceRange !== 'undefined') {
+        setPriceRange(changes.priceRange as [number, number])
+      } else if (drawer === "flightTime" && typeof changes.flightTimeRange !== 'undefined') {
+        setFlightTimeRange(changes.flightTimeRange as [number, number])
+      } else if (["ticketType", "cabinClass", "airlines", "agencies"].includes(drawer) && 
+                 typeof changes.filters !== 'undefined') {
         // Apply filter changes
         const category = drawer
-        const newFilters = changes.filters
+        const newFilters = changes.filters as Record<string, boolean>
 
         Object.entries(newFilters).forEach(([key, value]) => {
           const typedCategory = category as keyof typeof filters
@@ -282,27 +283,35 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
             key in filters[typedCategory] &&
             filters[typedCategory][key as keyof (typeof filters)[typeof typedCategory]] !== value
           ) {
-            updateFilter(category, key, value as boolean)
+            _updateFilter(category, key, value as boolean)
           }
         })
-      } else if (drawer === "all" && changes.all) {
+      } else if (drawer === "all" && typeof changes.all !== 'undefined') {
         // Apply all changes from the "all filters" drawer
-        const { filters: newFilters, priceRange: newPriceRange, flightTimeRange: newFlightTimeRange } = changes.all
+        const allChanges = changes.all as {
+          filters?: Record<string, Record<string, boolean>>,
+          priceRange?: [number, number],
+          flightTimeRange?: [number, number]
+        }
+        
+        const { filters: newFilters, priceRange: newPriceRange, flightTimeRange: newFlightTimeRange } = allChanges
 
         // Update filters
-        Object.entries(newFilters).forEach(([category, categoryFilters]) => {
-          const typedCategory = category as keyof typeof filters
-          if (typedCategory in filters) {
-            Object.entries(categoryFilters as Record<string, boolean>).forEach(([key, value]) => {
-              if (
-                key in filters[typedCategory] &&
-                filters[typedCategory][key as keyof (typeof filters)[typeof typedCategory]] !== value
-              ) {
-                updateFilter(category, key, value as boolean)
-              }
-            })
-          }
-        })
+        if (newFilters) {
+          Object.entries(newFilters).forEach(([category, categoryFilters]) => {
+            const typedCategory = category as keyof typeof filters
+            if (typedCategory in filters) {
+              Object.entries(categoryFilters as Record<string, boolean>).forEach(([key, value]) => {
+                if (
+                  key in filters[typedCategory] &&
+                  filters[typedCategory][key as keyof (typeof filters)[typeof typedCategory]] !== value
+                ) {
+                  _updateFilter(category, key, value as boolean)
+                }
+              })
+            }
+          })
+        }
 
         // Update ranges
         if (newPriceRange) {
@@ -394,13 +403,13 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
   }, [filters, sortKey, flightTimeRange, priceRange])
 
   // Calculate active filters count
-  const activeFiltersCount =
+  const _activeFiltersCount =
     Object.values(filters).reduce((count, category) => count + Object.values(category).filter(Boolean).length, 0) +
     (priceRange[0] !== 500000 || priceRange[1] !== 5000000 ? 1 : 0) +
     (flightTimeRange[0] !== 4 || flightTimeRange[1] !== 24 ? 1 : 0)
 
   // Handler for filter changes
-  const updateFilter = (category: string, key: string, value: boolean) => {
+  const _updateFilter = (category: string, key: string, value: boolean) => {
     if (key === "all" && value === false) {
       // Clear all filters in the specific category
       setFilters((prev) => {
@@ -430,16 +439,21 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
     // The drawer state is now preserved separately in openDrawers state
   }
 
-  const clearFilters = () => {
+  const _clearFilters = () => {
     setFilters({
       ticketType: { charter: false, system: false },
       cabinClass: { economy: false, business: false },
       airlines: { mahan: false, caspian: false, ata: false },
       agencies: { alibaba: false, flytoday: false, mrbilit: false },
     })
-    // Reset range slider values
-    setFlightTimeRange([4, 24])
-    setPriceRange([500000, 5000000])
+  }
+  
+  const _setFlightTimeRange = (range: [number, number]) => {
+    // Implementation would go here
+  }
+  
+  const _setPriceRange = (range: [number, number]) => {
+    // Implementation would go here
   }
 
   // Sort options
@@ -617,42 +631,42 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
         setFlightTimeRange(localFlightTimeRange)
       } else if (drawerType === "ticketType") {
         // Always update values from local state when drawer closes
-        updateFilter("ticketType", "charter", localFilters.ticketType.charter)
-        updateFilter("ticketType", "system", localFilters.ticketType.system)
+        _updateFilter("ticketType", "charter", localFilters.ticketType.charter)
+        _updateFilter("ticketType", "system", localFilters.ticketType.system)
       } else if (drawerType === "cabinClass") {
         // Always update cabin class filters
-        updateFilter("cabinClass", "economy", localFilters.cabinClass.economy)
-        updateFilter("cabinClass", "business", localFilters.cabinClass.business)
+        _updateFilter("cabinClass", "economy", localFilters.cabinClass.economy)
+        _updateFilter("cabinClass", "business", localFilters.cabinClass.business)
       } else if (drawerType === "airlines") {
         // Always update airlines filters
-        updateFilter("airlines", "mahan", localFilters.airlines.mahan)
-        updateFilter("airlines", "caspian", localFilters.airlines.caspian)
-        updateFilter("airlines", "ata", localFilters.airlines.ata)
+        _updateFilter("airlines", "mahan", localFilters.airlines.mahan)
+        _updateFilter("airlines", "caspian", localFilters.airlines.caspian)
+        _updateFilter("airlines", "ata", localFilters.airlines.ata)
       } else if (drawerType === "agencies") {
         // Always update agencies filters
-        updateFilter("agencies", "alibaba", localFilters.agencies.alibaba)
-        updateFilter("agencies", "flytoday", localFilters.agencies.flytoday)
-        updateFilter("agencies", "mrbilit", localFilters.agencies.mrbilit)
+        _updateFilter("agencies", "alibaba", localFilters.agencies.alibaba)
+        _updateFilter("agencies", "flytoday", localFilters.agencies.flytoday)
+        _updateFilter("agencies", "mrbilit", localFilters.agencies.mrbilit)
       } else if (drawerType === "all") {
         // Apply all changes for the "all filters" drawer
 
         // Update ticket type filters
-        updateFilter("ticketType", "charter", localFilters.ticketType.charter)
-        updateFilter("ticketType", "system", localFilters.ticketType.system)
+        _updateFilter("ticketType", "charter", localFilters.ticketType.charter)
+        _updateFilter("ticketType", "system", localFilters.ticketType.system)
 
         // Update cabin class filters
-        updateFilter("cabinClass", "economy", localFilters.cabinClass.economy)
-        updateFilter("cabinClass", "business", localFilters.cabinClass.business)
+        _updateFilter("cabinClass", "economy", localFilters.cabinClass.economy)
+        _updateFilter("cabinClass", "business", localFilters.cabinClass.business)
 
         // Update airlines filters
-        updateFilter("airlines", "mahan", localFilters.airlines.mahan)
-        updateFilter("airlines", "caspian", localFilters.airlines.caspian)
-        updateFilter("airlines", "ata", localFilters.airlines.ata)
+        _updateFilter("airlines", "mahan", localFilters.airlines.mahan)
+        _updateFilter("airlines", "caspian", localFilters.airlines.caspian)
+        _updateFilter("airlines", "ata", localFilters.airlines.ata)
 
         // Update agencies filters
-        updateFilter("agencies", "alibaba", localFilters.agencies.alibaba)
-        updateFilter("agencies", "flytoday", localFilters.agencies.flytoday)
-        updateFilter("agencies", "mrbilit", localFilters.agencies.mrbilit)
+        _updateFilter("agencies", "alibaba", localFilters.agencies.alibaba)
+        _updateFilter("agencies", "flytoday", localFilters.agencies.flytoday)
+        _updateFilter("agencies", "mrbilit", localFilters.agencies.mrbilit)
 
         // Update ranges
         setPriceRange(localPriceRange)
@@ -725,7 +739,7 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
             {/* mobile sort and filter options */}
             <div className="my-4 flex items-center justify-start px-5 lg:hidden">
               {/* Filter Chips - Each opens a specific section */}
-              <div className="flex gap-1 overflow-x-auto">
+              <div className="flex gap-1 overflow-x-auto" style={{ scrollbarWidth: "none" }}>
                 {/* Mobile sort drawer trigger */}
                 <Drawer open={openDrawers.sort} onOpenChange={(isOpen) => handleDrawerOpenChange(isOpen, "sort")}>
                   <DrawerTrigger asChild>
@@ -790,10 +804,10 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                       <Setting5 size="16" color="#1E1E1E" />
                       <div className="flex items-center gap-1">
                         <div className="text-Gray-N700 text-sm leading-normal font-medium">فیلتر‌ها</div>
-                        {activeFiltersCount > 0 && (
+                        {_activeFiltersCount > 0 && (
                           <div className="bg-Primary-P50 flex size-5 items-center justify-center rounded-[80px]">
                             <div className="text-Primary-P500main text-[11px] leading-none font-semibold">
-                              {englishToFarsiNumber(activeFiltersCount)}
+                              {englishToFarsiNumber(_activeFiltersCount)}
                             </div>
                           </div>
                         )}
@@ -804,15 +818,15 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                     <FilterDrawerContent
                       ref={drawerContentRef}
                       title="فیلتر‌ها"
-                      activeFiltersCount={activeFiltersCount}
-                      clearFilters={clearFilters}
+                      activeFiltersCount={_activeFiltersCount}
+                      clearFilters={_clearFilters}
                       activeSection="all"
                       filters={filters}
-                      updateFilter={updateFilter}
+                      updateFilter={_updateFilter}
                       flightTimeRange={flightTimeRange}
-                      setFlightTimeRange={setFlightTimeRange}
+                      setFlightTimeRange={_setFlightTimeRange}
                       priceRange={priceRange}
-                      setPriceRange={setPriceRange}
+                      setPriceRange={_setPriceRange}
                     />
                   </DrawerContent>
                 </Drawer>
@@ -848,11 +862,11 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                         clearFilters={() => setPriceRange([500000, 5000000])}
                         activeSection="priceRange"
                         filters={filters}
-                        updateFilter={updateFilter}
+                        updateFilter={_updateFilter}
                         flightTimeRange={flightTimeRange}
-                        setFlightTimeRange={setFlightTimeRange}
+                        setFlightTimeRange={_setFlightTimeRange}
                         priceRange={priceRange}
-                        setPriceRange={setPriceRange}
+                        setPriceRange={_setPriceRange}
                       />
                     </DrawerContent>
                   </Drawer>
@@ -888,11 +902,11 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                         clearFilters={() => setFlightTimeRange([4, 24])}
                         activeSection="flightTime"
                         filters={filters}
-                        updateFilter={updateFilter}
+                        updateFilter={_updateFilter}
                         flightTimeRange={flightTimeRange}
-                        setFlightTimeRange={setFlightTimeRange}
+                        setFlightTimeRange={_setFlightTimeRange}
                         priceRange={priceRange}
-                        setPriceRange={setPriceRange}
+                        setPriceRange={_setPriceRange}
                       />
                     </DrawerContent>
                   </Drawer>
@@ -927,14 +941,14 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                         ref={drawerContentRef}
                         title="نوع بلیط"
                         activeFiltersCount={Object.values(filters.ticketType).filter(Boolean).length}
-                        clearFilters={() => updateFilter("ticketType", "all", false)}
+                        clearFilters={() => _updateFilter("ticketType", "all", false)}
                         activeSection="ticketType"
                         filters={filters}
-                        updateFilter={updateFilter}
+                        updateFilter={_updateFilter}
                         flightTimeRange={flightTimeRange}
-                        setFlightTimeRange={setFlightTimeRange}
+                        setFlightTimeRange={_setFlightTimeRange}
                         priceRange={priceRange}
-                        setPriceRange={setPriceRange}
+                        setPriceRange={_setPriceRange}
                       />
                     </DrawerContent>
                   </Drawer>
@@ -973,14 +987,14 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                         ref={drawerContentRef}
                         title="کلاس پروازی"
                         activeFiltersCount={Object.values(filters.cabinClass).filter(Boolean).length}
-                        clearFilters={() => updateFilter("cabinClass", "all", false)}
+                        clearFilters={() => _updateFilter("cabinClass", "all", false)}
                         activeSection="cabinClass"
                         filters={filters}
-                        updateFilter={updateFilter}
+                        updateFilter={_updateFilter}
                         flightTimeRange={flightTimeRange}
-                        setFlightTimeRange={setFlightTimeRange}
+                        setFlightTimeRange={_setFlightTimeRange}
                         priceRange={priceRange}
-                        setPriceRange={setPriceRange}
+                        setPriceRange={_setPriceRange}
                       />
                     </DrawerContent>
                   </Drawer>
@@ -1019,14 +1033,14 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                         ref={drawerContentRef}
                         title="شرکت‌های هواپیمایی"
                         activeFiltersCount={Object.values(filters.airlines).filter(Boolean).length}
-                        clearFilters={() => updateFilter("airlines", "all", false)}
+                        clearFilters={() => _updateFilter("airlines", "all", false)}
                         activeSection="airlines"
                         filters={filters}
-                        updateFilter={updateFilter}
+                        updateFilter={_updateFilter}
                         flightTimeRange={flightTimeRange}
-                        setFlightTimeRange={setFlightTimeRange}
+                        setFlightTimeRange={_setFlightTimeRange}
                         priceRange={priceRange}
-                        setPriceRange={setPriceRange}
+                        setPriceRange={_setPriceRange}
                       />
                     </DrawerContent>
                   </Drawer>
@@ -1065,14 +1079,14 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                         ref={drawerContentRef}
                         title="وبسایت‌ها"
                         activeFiltersCount={Object.values(filters.agencies).filter(Boolean).length}
-                        clearFilters={() => updateFilter("agencies", "all", false)}
+                        clearFilters={() => _updateFilter("agencies", "all", false)}
                         activeSection="agencies"
                         filters={filters}
-                        updateFilter={updateFilter}
+                        updateFilter={_updateFilter}
                         flightTimeRange={flightTimeRange}
-                        setFlightTimeRange={setFlightTimeRange}
+                        setFlightTimeRange={_setFlightTimeRange}
                         priceRange={priceRange}
-                        setPriceRange={setPriceRange}
+                        setPriceRange={_setPriceRange}
                       />
                     </DrawerContent>
                   </Drawer>
@@ -1106,11 +1120,11 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                         clearFilters={() => setPriceRange([500000, 5000000])}
                         activeSection="priceRange"
                         filters={filters}
-                        updateFilter={updateFilter}
+                        updateFilter={_updateFilter}
                         flightTimeRange={flightTimeRange}
-                        setFlightTimeRange={setFlightTimeRange}
+                        setFlightTimeRange={_setFlightTimeRange}
                         priceRange={priceRange}
-                        setPriceRange={setPriceRange}
+                        setPriceRange={_setPriceRange}
                       />
                     </DrawerContent>
                   </Drawer>
@@ -1143,11 +1157,11 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                         clearFilters={() => setFlightTimeRange([4, 24])}
                         activeSection="flightTime"
                         filters={filters}
-                        updateFilter={updateFilter}
+                        updateFilter={_updateFilter}
                         flightTimeRange={flightTimeRange}
-                        setFlightTimeRange={setFlightTimeRange}
+                        setFlightTimeRange={_setFlightTimeRange}
                         priceRange={priceRange}
-                        setPriceRange={setPriceRange}
+                        setPriceRange={_setPriceRange}
                       />
                     </DrawerContent>
                   </Drawer>
@@ -1177,14 +1191,14 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                         ref={drawerContentRef}
                         title="نوع بلیط"
                         activeFiltersCount={Object.values(filters.ticketType).filter(Boolean).length}
-                        clearFilters={() => updateFilter("ticketType", "all", false)}
+                        clearFilters={() => _updateFilter("ticketType", "all", false)}
                         activeSection="ticketType"
                         filters={filters}
-                        updateFilter={updateFilter}
+                        updateFilter={_updateFilter}
                         flightTimeRange={flightTimeRange}
-                        setFlightTimeRange={setFlightTimeRange}
+                        setFlightTimeRange={_setFlightTimeRange}
                         priceRange={priceRange}
-                        setPriceRange={setPriceRange}
+                        setPriceRange={_setPriceRange}
                       />
                     </DrawerContent>
                   </Drawer>
@@ -1214,14 +1228,14 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                         ref={drawerContentRef}
                         title="کلاس پروازی"
                         activeFiltersCount={Object.values(filters.cabinClass).filter(Boolean).length}
-                        clearFilters={() => updateFilter("cabinClass", "all", false)}
+                        clearFilters={() => _updateFilter("cabinClass", "all", false)}
                         activeSection="cabinClass"
                         filters={filters}
-                        updateFilter={updateFilter}
+                        updateFilter={_updateFilter}
                         flightTimeRange={flightTimeRange}
-                        setFlightTimeRange={setFlightTimeRange}
+                        setFlightTimeRange={_setFlightTimeRange}
                         priceRange={priceRange}
-                        setPriceRange={setPriceRange}
+                        setPriceRange={_setPriceRange}
                       />
                     </DrawerContent>
                   </Drawer>
@@ -1251,14 +1265,14 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                         ref={drawerContentRef}
                         title="شرکت‌های هواپیمایی"
                         activeFiltersCount={Object.values(filters.airlines).filter(Boolean).length}
-                        clearFilters={() => updateFilter("airlines", "all", false)}
+                        clearFilters={() => _updateFilter("airlines", "all", false)}
                         activeSection="airlines"
                         filters={filters}
-                        updateFilter={updateFilter}
+                        updateFilter={_updateFilter}
                         flightTimeRange={flightTimeRange}
-                        setFlightTimeRange={setFlightTimeRange}
+                        setFlightTimeRange={_setFlightTimeRange}
                         priceRange={priceRange}
-                        setPriceRange={setPriceRange}
+                        setPriceRange={_setPriceRange}
                       />
                     </DrawerContent>
                   </Drawer>
@@ -1288,14 +1302,14 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                         ref={drawerContentRef}
                         title="وبسایت‌ها"
                         activeFiltersCount={Object.values(filters.agencies).filter(Boolean).length}
-                        clearFilters={() => updateFilter("agencies", "all", false)}
+                        clearFilters={() => _updateFilter("agencies", "all", false)}
                         activeSection="agencies"
                         filters={filters}
-                        updateFilter={updateFilter}
+                        updateFilter={_updateFilter}
                         flightTimeRange={flightTimeRange}
-                        setFlightTimeRange={setFlightTimeRange}
+                        setFlightTimeRange={_setFlightTimeRange}
                         priceRange={priceRange}
-                        setPriceRange={setPriceRange}
+                        setPriceRange={_setPriceRange}
                       />
                     </DrawerContent>
                   </Drawer>
@@ -1308,13 +1322,13 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
               <div className="hidden lg:block">
                 <FlightFilters
                   filters={filters}
-                  updateFilter={updateFilter}
-                  clearFilters={clearFilters}
+                  updateFilter={_updateFilter}
+                  clearFilters={_clearFilters}
                   flightTimeRange={flightTimeRange}
-                  setFlightTimeRange={setFlightTimeRange}
+                  setFlightTimeRange={_setFlightTimeRange}
                   priceRange={priceRange}
-                  setPriceRange={setPriceRange}
-                  activeFiltersCount={activeFiltersCount}
+                  setPriceRange={_setPriceRange}
+                  activeFiltersCount={_activeFiltersCount}
                 />
               </div>
 

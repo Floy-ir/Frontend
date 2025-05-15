@@ -36,6 +36,16 @@ export default function TicketCard({ websites }: { websites: dude[] }) {
   const infantCount = searchParams.get("infant") ?? "0";
 
    const router = useRouter();
+
+  // Calculate total price for a website
+  const getTotalPrice = (website: dude) => (
+    (website.adult_price * Number(adultCount)) +
+    ((website.child_price ?? 0) * Number(childCount)) +
+    ((website.infant_price ?? 0) * Number(infantCount))
+  );
+  // Find the minimum price among all websites
+  const minPrice = Math.min(...websites.map(getTotalPrice));
+  const sortedWebsites = [...websites].sort((a, b) => getTotalPrice(a) - getTotalPrice(b));
  
   useEffect(() => {
     const newRefundHeights = openRefundRules.map((isOpen, i) =>
@@ -70,8 +80,7 @@ export default function TicketCard({ websites }: { websites: dude[] }) {
         <div className="text-Gray-N600 mt-5 mb-5 h-6 self-stretch text-right text-sm leading-normal font-semibold md:mt-0">
           {englishToFarsiNumber(websites.length)} فروشنده
         </div>
-
-        {websites.map((website, index) => {
+        {sortedWebsites.map((website, index) => {
           const contentRef = useRef<HTMLDivElement>(null)
           const [height, setHeight] = useState("0px")
           useEffect(() => {
@@ -87,9 +96,11 @@ export default function TicketCard({ websites }: { websites: dude[] }) {
             <div key={index} className="flex w-full flex-col items-start">
               <div className="bg-Shade-White outline-Gray-N200 relative mb-3 inline-flex w-full flex-col items-center justify-center gap-3 self-stretch rounded-xl px-4 py-3 outline-1 outline-offset-[-1px]">
                 {/* badge */}
-                <div className="bg-Success-s50 absolute top-0 left-0 inline-flex items-center justify-center gap-1 rounded-tl-sm rounded-br-sm px-2.5 py-1">
-                  <div className="text-Success-s700 justify-center text-right text-[8px] font-semibold">ارزان‌ترین</div>
-                </div>
+                {getTotalPrice(website) === minPrice && (
+                  <div className="bg-Success-s50 absolute top-0 left-0 inline-flex items-center justify-center gap-1 rounded-tl-sm rounded-br-sm px-2.5 py-1">
+                    <div className="text-Success-s700 justify-center text-right text-[8px] font-semibold">ارزان‌ترین</div>
+                  </div>
+                )}
 
                 {/* name, icon and price */}
                 <div className="bg-Gray-N50 outline-Gray-N100 flex flex-col items-end justify-center gap-1 self-stretch rounded-lg px-3 py-2 outline-1 outline-offset-[-1px]">

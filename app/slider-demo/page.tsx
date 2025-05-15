@@ -1,9 +1,8 @@
 "use client"
 
 import { useState } from "react"
-import { DualRangeSlider, MultiRangeSlider } from "@/components/ui/slider"
-import { SliderDemo } from "@/components/ui/slider-demo"
 import { FancySlider } from "@/components/ui/fancy-slider"
+import { SliderDemo } from "@/components/ui/slider-demo"
 
 export default function SliderDemoPage() {
   const [priceRange, setPriceRange] = useState<[number, number]>([20, 80])

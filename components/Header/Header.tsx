@@ -2,7 +2,7 @@
 
 import * as NavigationMenu from "@radix-ui/react-navigation-menu"
 import { cva } from "class-variance-authority"
-import { Airplane, HambergerMenu } from "iconsax-react"
+import { Airplane, ArrowRight, ArrowRight2, HambergerMenu } from "iconsax-react"
 import Link from "next/link"
 import React, { useState, useEffect } from "react"
 import { twMerge } from "tailwind-merge"
@@ -13,6 +13,7 @@ import {
   DrawerTrigger,
   DrawerTitle,
 } from "../ui/drawer"
+import { usePathname } from "next/navigation"
 
 interface MenuItem {
   label: string
@@ -56,11 +57,13 @@ const navItem = cva(["flex", "flex-col", "items-center", "gap-1"], {
 })
 
 export function Header({ menuItems, className, forceScrolledStyle = false }: HeaderProps) {
+  const pathname = usePathname()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [prevScrollPos, setPrevScrollPos] = useState(0)
   const [visible, setVisible] = useState(true)
   const [isScrolled, setIsScrolled] = useState(forceScrolledStyle)
-  
+  const [isSmallScreen, setIsSmallScreen] = useState(false)
+
   // This effect updates isScrolled when forceScrolledStyle changes
   useEffect(() => {
     setIsScrolled(forceScrolledStyle || window.scrollY > 50)
@@ -112,6 +115,20 @@ export function Header({ menuItems, className, forceScrolledStyle = false }: Hea
     visible && isScrolled ? "bg-white border-b border-Gray-N200" : "bg-transparent",
     className
   )
+useEffect(() => {
+    const checkScreen = () => {
+      setIsSmallScreen(window.innerWidth < 768)
+    }
+    checkScreen()
+    window.addEventListener('resize', checkScreen)
+    return () => window.removeEventListener('resize', checkScreen)
+  }, [])
+
+  if (pathname.startsWith("/flights") && isSmallScreen) {
+    return (
+      <></>
+    )
+  }
 
   return (
     <>
@@ -122,7 +139,7 @@ export function Header({ menuItems, className, forceScrolledStyle = false }: Hea
           <div className="hidden items-center justify-between md:flex h-22">
             {/* Logo - Right Side in RTL */}
             <div className="flex items-center gap-2">
-              <span className={`text-lg font-semibold ${isScrolled ? 'text-Gray-N700' : 'text-white'}`}>لوگو</span>
+              <span className={`text-lg font-semibold ${isScrolled ? 'text-Gray-N700' : 'text-white'}`}>فلوی</span>
               <Airplane 
                 size={20} 
                 variant="Bold" 
@@ -155,9 +172,8 @@ export function Header({ menuItems, className, forceScrolledStyle = false }: Hea
                 ))}
               </NavigationMenu.List>
             </NavigationMenu.Root>
-
             {/* Login Button - Left Side in RTL */}
-            <div>
+            {/* <div>
               <Button
                 href="/login"
                 intent="secondary"
@@ -171,7 +187,7 @@ export function Header({ menuItems, className, forceScrolledStyle = false }: Hea
               >
                 ورود | ثبت‌نام
               </Button>
-            </div>
+            </div> */}
           </div>
 
           {/* Mobile view */}

@@ -25,6 +25,7 @@ export default function Companies() {
             <Image className="" src="/images/snapptrip.png" alt="SnappTrip" width={60} height={10} />
             {/* </div> */}
           </div>
+          {/*  todo : add other websites */}
         </div>
       </div>
     </div>

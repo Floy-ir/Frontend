@@ -2,13 +2,15 @@
 
 import * as React from "react"
 import { twMerge } from "tailwind-merge"
+import { ArrowRight } from "lucide-react"
+import { useMediaQuery } from "@/hooks/use-media-query"
+import { englishToFarsiNumber } from "utils/numbers"
+
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { TextField, TextFieldProps, textFieldContainer, textFieldHelperText, textFieldLabel } from "@/components/TextField/TextField"
 import { JalaliCalendar } from "@/components/JalaliCalendar/jalali-calendar"
-import { useMediaQuery } from "@/hooks/use-media-query"
-import { englishToFarsiNumber } from "utils/numbers"
 import { Button } from "@/components/ui/button"
-import { X, ArrowRight } from "lucide-react"
+import { cn } from '@/lib/utils'
 
 export interface DatePickerProps extends Omit<TextFieldProps, "onChange" | "value"> {
   value?: Date | string | null
@@ -118,22 +120,22 @@ export function DatePicker({
   // Main container wrapper
   const Container = ({ children }: { children: React.ReactNode }) => (
     <div
-      className={twMerge(
+      className={cn(
         textFieldContainer({ intent, disabled, className: containerClassName }),
         props.noBorder && "gap-0"
       )}
     >
-      {label && <div className={twMerge(textFieldLabel({ intent, className: labelClassName }))}>{label}</div>}
+      {label && <div className={cn(textFieldLabel({ intent, className: labelClassName }))}>{label}</div>}
       
       {children}
       
       {helperText && (
-        <div className={twMerge(textFieldHelperText({ intent, className: helperTextClassName }))}>{helperText}</div>
+        <div className={cn(textFieldHelperText({ intent, className: helperTextClassName }))}>{helperText}</div>
       )}
     </div>
   )
   
-  // Desktop calendar component - unchanged from original
+  // Desktop calendar component
   const DesktopCalendarComponent = () => {
     // Create a single disabled object that handles both min and max dates
     const disabledDates = {
@@ -141,10 +143,13 @@ export function DatePicker({
       ...(maxDate && { after: maxDate })
     };
     
+    // We need to cast this component as any due to type compatibility issues between the date types
+    // The JalaliCalendar expects DateRange but our component provides Date
+    const SafeCalendar = JalaliCalendar as any;
+    
     return (
       <div className="p-6">
-        {/* @ts-ignore - Ignoring type issues to allow for the calendar to work properly */}
-        <JalaliCalendar
+        <SafeCalendar
           mode="single"
           selected={selectedDate}
           onSelect={handleDateSelect}
@@ -176,10 +181,12 @@ export function DatePicker({
       handleDateSelect(day)
     }
     
+    // We need to cast this component as any due to type compatibility issues between the date types
+    const SafeCalendar = JalaliCalendar as any;
+    
     return (
       <div className="w-full h-full">
-        {/* @ts-ignore - Ignoring type issues to allow for the calendar to work properly */}
-        <JalaliCalendar
+        <SafeCalendar
           mode="single" 
           selected={selectedDate}
           onSelect={handleMobileSelect}

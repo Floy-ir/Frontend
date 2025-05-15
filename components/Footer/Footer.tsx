@@ -34,7 +34,7 @@ const Footer: React.FC = () => {
                 <div className="flex flex-col gap-4 text-sm text-gray-500">
                   <span>سوالات متداول</span>
                   <span>پشتیبانی</span>
-                  <span>راهنما</span>
+                  {/* <span>راهنما</span> */}
                   <span>وبلاگ</span>
                 </div>
               </div>
@@ -82,12 +82,11 @@ const Footer: React.FC = () => {
               فلوی{" "}
             </div>
             <p className="text-Gray-N500 flex flex-col items-start justify-start text-right text-[13px] leading-normal">
-              فلوی یک پلتفرم جستجوی بلیط است که امکان مقایسه و خرید آسان بلیط هواپیما، هتل، قطار و دیگر خدمات سفر را از
-              میان صدها منبع معتبر فراهم می‌کند. ما با ارائه داده‌های به‌روز و قیمت‌های رقابتی، به کاربران کمک می‌کنیم
+              فلوی یک پلتفرم جستجوی بلیط است که امکان مقایسه و خرید آسان بلیط هواپیما، هتل و اقامتگاه های مسافرتی را از
+              میان ارائه دهندگان معتبر فراهم می‌کند. ما با جمع آوری داده‌های به‌روز و قیمت‌های متفاوت به کاربران کمک می‌کنیم
               تا بهترین انتخاب را برای سفرهای خود داشته باشند. هدف ما ساده‌سازی فرآیند جستجو و رزرو، صرفه‌جویی در زمان و
               هزینه، و ایجاد تجربه‌ای لذت‌بخش برای مسافران است.
             </p>
-            // todo: write this
           </div>
         </div>
 
@@ -128,7 +127,7 @@ const Footer: React.FC = () => {
               <AccordionContent className="flex flex-col gap-4 px-5 text-xs text-gray-500">
                 <span>سوالات متداول</span>
                 <span>پشتیبانی</span>
-                <span>راهنما</span>
+                {/* <span>راهنما</span> */}
                 <span>وبلاگ</span>
               </AccordionContent>
             </AccordionItem>
