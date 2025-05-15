@@ -1,15 +1,15 @@
 "use client"
 
-import React, { useEffect, useState } from "react"
-import { motion, AnimatePresence } from "framer-motion"
+import { AnimatePresence, motion } from "framer-motion"
 import { SearchNormal } from "iconsax-react"
+import React, { useEffect, useState } from "react"
 import { Button } from "@/components/Button/Button"
 import { FlightSearchForm } from "@/components/FlightSearchForm/FlightSearchForm"
-import { getCityByCode } from "@/config/cities"
 import { PassengerCount } from "@/components/PassengerSelector/PassengerSelector"
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import { getCityByCode } from "@/config/cities"
 import { formatToJalali } from "@/utils/dateUtils"
 import { englishToFarsiNumber } from "@/utils/numbers"
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 
 type FlightSearchHeaderProps = {
   originCity: string
@@ -37,7 +37,7 @@ export function FlightSearchHeader({
   const [showSearchForm, setShowSearchForm] = useState(false)
 
   const toggleSearchForm = () => {
-    setShowSearchForm((prev) => !prev)
+    setShowSearchForm((prev) => !prev) 
   }
 
   // Handle closing the form
@@ -53,10 +53,23 @@ export function FlightSearchHeader({
   const persianDate = parsedDate ? formatToJalali(parsedDate) : date
 
   // Get full city names if we have codes
-  const originFullName = originCode ? getCityByCode(originCode)?.label || originCity : originCity
-  const destinationFullName = destinationCode
-    ? getCityByCode(destinationCode)?.label || destinationCity
-    : destinationCity
+  
+
+    const [originFullName, setOriginFullName] = useState("")
+    const [destinationFullName, setDestinationFullName] = useState("")
+  
+
+  useEffect(() => {
+    const fetchOrigin = async () => {
+      const originCityObj = originCode ? await getCityByCode(originCode) : undefined
+      setOriginFullName(originCityObj?.label || destinationCity)
+
+      const destinationCityObj = destinationCode ? await getCityByCode(destinationCode) : undefined
+      setDestinationFullName(destinationCityObj?.label || destinationCity) 
+    }
+
+    fetchOrigin()
+  }, [])
 
   // Create passengers object
   const initialPassengers: PassengerCount = {
@@ -65,18 +78,18 @@ export function FlightSearchHeader({
     infant: infant || 0,
   }
   const [isDesktop, setIsDesktop] = useState(false)
-  
+
   useEffect(() => {
     const handleResize = () => {
       setIsDesktop(window.innerWidth >= 768)
     }
-  
+
     handleResize() // Run once on mount
     window.addEventListener("resize", handleResize)
-  
+
     return () => window.removeEventListener("resize", handleResize)
   }, [])
-  
+
   return (
     <AnimatePresence mode="wait">
       {!showSearchForm ? (
@@ -181,8 +194,7 @@ export function FlightSearchHeader({
                 initialDestination={destinationFullName}
                 initialDepartureDate={parsedDate}
                 initialPassengers={initialPassengers}
-              contextPage="flights"
-
+                contextPage="flights"
               />
             </div>
           </div>

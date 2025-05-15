@@ -8,9 +8,11 @@ import img from "@/public/images/Frame 1000002391.svg"
 export default function ExpirationModal({
   open,
   onOpenChange,
+  onRefresh,
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  onRefresh: () => void;
 }) {
   const router = useRouter()
 
@@ -43,8 +45,7 @@ export default function ExpirationModal({
 
             <Button intent="primary" size="large" className="w-full md:w-1/2" onClick={() => {
               onOpenChange(false)
-              router.refresh()
-              // todo: call the api instead of refresh
+              onRefresh()
             }}>
               به‌روزرسانی
             </Button>

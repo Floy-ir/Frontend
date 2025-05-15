@@ -9,6 +9,7 @@ import { Button } from "@/components/Button/Button"
 import { ComboboxSelect } from "@/components/ComboboxSelect/ComboboxSelect"
 import { DatePicker } from "@/components/DatePicker/DatePicker"
 import { PassengerCount, PassengerSelector } from "@/components/PassengerSelector/PassengerSelector"
+import type { CityOption } from "@/config/cities"
 import { getCityByName, getCityOptions } from "@/config/cities"
 import { useStoredCities } from "@/hooks/useStoredCities"
 import { formatDate } from "@/utils/dateUtils"
@@ -98,9 +99,16 @@ export function FlightSearchForm({
   const onSubmit = (data: FormValues) => {
     const { origin, destination, departureDate, passengers } = data;
     
+  // Handle search button click
+  const handleSearch = async () => {
+    // Don't proceed if required fields are missing
+    if (!origin || !destination || !departureDate) {
+      return
+    }
+
     // Get the city objects with their codes
-    const originCity = getCityByName(origin);
-    const destinationCity = getCityByName(destination);
+    const originCity = await getCityByName(origin)
+    const destinationCity = await getCityByName(destination)
 
     // If we can't find the codes, don't proceed
     if (!originCity || !destinationCity) {
@@ -121,8 +129,6 @@ export function FlightSearchForm({
     // Navigate to the flights page with the query parameters
     router.push(createFlightSearchUrl(originCity.code, destinationCity.code, departureDate, passengers));
   }
-
-  console.log(contextPage);
 
   return (
     <div className="m-0 flex w-full flex-col items-center">

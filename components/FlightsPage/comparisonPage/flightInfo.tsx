@@ -1,20 +1,35 @@
 import { ArrowDown2 } from "iconsax-react"
 import Image from "next/image"
-import { useState, useRef, useEffect } from "react"
+import { useEffect, useRef, useState } from "react"
 import { Button } from "@/components/Button/Button"
+import { englishToFarsiNumber } from "@/utils/numbers"
 
-type FlightData = {
-  name: string
-  iconPath: string
-  price: string
-  remainingSeats: string
-  redirectUrl: string
-  adult: { number: string; price: string }
-  child: { number: string; price: string }
-  infant: { number: string; price: string }
-}
-
-export default function TicketCard({ flightData }: { flightData: FlightData[] }) {
+export default function TicketCard({
+  departureTime,
+  arrivalTime,
+  origin,
+  destination,
+  duration,
+  otherSellersCount,
+  flightInfo,
+  airline,
+}: {
+  departureTime: string
+  arrivalTime: string
+  origin: string
+  destination: string
+  duration: { hours: number; minutes: number }
+  airline: {
+    name: string
+    logo: string
+  }
+  flightInfo: {
+    baggage: string
+    // ticketType: string
+    cabinClass: string
+  }
+  otherSellersCount: number
+}) {
   const [openDetails, setOpenDetails] = useState(false)
   const contentRef = useRef<HTMLDivElement>(null)
   const [height, setHeight] = useState("0px")
@@ -38,21 +53,21 @@ export default function TicketCard({ flightData }: { flightData: FlightData[] })
           <div className="inline-flex flex-1 flex-col items-start justify-center gap-2">
             {/* airline name */}
             <div className="text-Gray-N700 mb-1 justify-start self-stretch text-right text-base leading-normal font-semibold">
-              آتا
+              {airline.name}
             </div>
             {/* tags */}
             <div className="inline-flex flex-wrap content-start items-start justify-end gap-1 self-stretch">
               <div className="bg-Gray-N100 flex items-center justify-center gap-1.5 overflow-hidden rounded-sm px-1.5 py-1">
-                <div className="text-Gray-N600 justify-center text-right text-[13px] leading-3 font-normal">
+                {/* <div className="text-Gray-N600 justify-center text-right text-[13px] leading-3 font-normal">
                   Boeing 737-300
-                </div>
+                </div> */}
               </div>
               <div className="bg-Gray-N100 flex items-center justify-center gap-1.5 overflow-hidden rounded-sm px-1.5 py-1">
                 <div className="text-Gray-N600 justify-center text-right text-[13px] leading-3 font-normal">سیستمی</div>
               </div>
               <div className="bg-Gray-N100 flex items-center justify-center gap-1.5 overflow-hidden rounded-sm px-1.5 py-1">
                 <div className="text-Gray-N600 justify-center text-right text-[13px] leading-3 font-normal">
-                  اکونومی
+                  {flightInfo.cabinClass}
                 </div>
               </div>
             </div>
@@ -60,7 +75,7 @@ export default function TicketCard({ flightData }: { flightData: FlightData[] })
 
           {/* airline image */}
           <div className="outline-Gray-N200 border-Gray-N200 flex h-9 w-9 items-center justify-center rounded-full border bg-white outline-[1.20px] outline-offset-[-1.20px]">
-            <Image alt="airline" width={37} height={37} src={"/images/alibaba-icon.png"} />
+            <Image alt="airline" width={37} height={37} src={airline.logo} />
           </div>
         </div>
         {/* time and location */}
@@ -68,11 +83,11 @@ export default function TicketCard({ flightData }: { flightData: FlightData[] })
           <div className="inline-flex items-center justify-start gap-2 self-stretch">
             <div className="inline-flex w-16 flex-col items-center justify-start">
               <div className="text-Gray-N800 justify-start self-stretch text-center text-xl leading-loose font-semibold">
-                ۱۱:۳۰
+               {arrivalTime}
               </div>
               <div className="flex flex-col items-center justify-start gap-2" dir="rtl">
                 <div className="text-Gray-N500 justify-start text-center text-[12px] leading-3 font-normal">
-                  مشهد(MHD)
+                  {destination}
                 </div>
                 {/* <div className="text-Gray-N500 justify-start text-center text-[10px] leading-3 font-normal">
                         فرودگاه مشهد
@@ -81,25 +96,25 @@ export default function TicketCard({ flightData }: { flightData: FlightData[] })
             </div>
             {/* flight duriation */}
             <div className="inline-flex flex-1 flex-col items-center justify-end gap-2 self-stretch pt-2 pb-6">
-              <div className="justify-start text-center" dir="rtl">
-                <span className="text-Gray-N500 text-[13px] leading-3 font-semibold">۱ </span>
+              <div className="justify-start text-center gap-1 inline-flex" dir="rtl">
+                <span className="text-Gray-N500 text-[13px] leading-3 font-normal">{englishToFarsiNumber(duration.hours)}</span>
                 <span className="text-Gray-N500 text-[13px] leading-3 font-normal">ساعت </span>
-                <span className="text-Gray-N500 text-[13px] leading-3 font-semibold">۳۰</span>
+                <span className="text-Gray-N500 text-[13px] leading-3 font-normal">{englishToFarsiNumber(duration.minutes)}</span>
                 <span className="text-Gray-N500 text-[13px] leading-3 font-normal"> دقیقه</span>
               </div>
               {/* image */}
-              <div className="flex items-center justify-center gap-1.5 lg:w-45 md:w-90 w-45">
+              <div className="flex w-45 items-center justify-center gap-1.5 md:w-90 lg:w-45">
                 <Image alt="airline" width={196} height={6} src={"/images/airplane.png"} />
               </div>
             </div>
 
             <div className="inline-flex w-16 flex-col items-center justify-start">
               <div className="text-Gray-N800 justify-start self-stretch text-center text-xl leading-loose font-semibold">
-                ۰۹:۳۰
+                {departureTime}
               </div>
               <div className="flex flex-col items-center justify-start gap-2" dir="rtl">
                 <div className="text-Gray-N500 justify-start text-center text-[12px] leading-3 font-normal">
-                  تهران(THR)
+                  {origin}
                 </div>
                 {/* <div className="text-Gray-N500 justify-start text-center text-[10px] leading-3 font-normal">
                         فرودگاه مهراباد
@@ -130,20 +145,17 @@ export default function TicketCard({ flightData }: { flightData: FlightData[] })
           style={{ maxHeight: height }}
           className={`overflow-hidden transition-all duration-300 ease-in-out ${openDetails ? "mt-2 mb-4" : "my-0"}`}
         >
-          <div
-            ref={contentRef}
-            className={`transition-opacity duration-500 ${openDetails ? "opacity-100" : "opacity-0"}`}
-          >
+          <div ref={contentRef} className={`transition-opacity duration-500 ${openDetails ? "opacity-100" : "opacity-0"}`}>
             <div className="">
               {/* Accordion Content Here */}
               <div className="flex w-full flex-col justify-start gap-4 self-stretch" dir="rtl">
                 <div className="flex w-full flex-row gap-17">
                   <div className="inline-flex w-full items-center justify-start gap-1">
                     <div className="text-Gray-N500 shrink-0 justify-start text-start text-[14px] leading-[16px] font-normal">
-                      شماره پرواز:
+                      بار مجاز:
                     </div>
                     <div className="text-Gray-N800 shrink-0 justify-start text-start text-[14px] leading-[16px] font-semibold">
-                      ۲۲۴۵
+                    {englishToFarsiNumber(flightInfo.baggage)}
                     </div>
                   </div>
 
@@ -157,8 +169,8 @@ export default function TicketCard({ flightData }: { flightData: FlightData[] })
                   </div>
                 </div>
 
-                <div className="flex w-full flex-row gap-17">
-                  <div className="mt-4 inline-flex w-full items-center justify-end gap-1">
+                {/* <div className="flex w-full flex-row gap-17 items-center">
+                  <div className="inline-flex w-full items-start justify-end gap-1">
                     <div className="text-Gray-N500 shrink-0 justify-start text-start text-[14px] leading-[16px] font-normal">
                       نوع پرواز:
                     </div>
@@ -167,15 +179,15 @@ export default function TicketCard({ flightData }: { flightData: FlightData[] })
                     </div>
                   </div>
 
-                  <div className="mt-4 inline-flex w-full items-center justify-end gap-1">
+                  <div className="mt-4 inline-flex w-full items-center justify-start gap-1">
                     <div className="text-Gray-N500 shrink-0 justify-start text-start text-[14px] leading-[16px] font-normal">
-                      بار مجاز:
+                    شماره پرواز:
                     </div>
                     <div className="text-Gray-N800 shrink-0 justify-start text-start text-[14px] leading-[16px] font-semibold break-keep">
-                      ۲۰ کیلوگرم
+                    ۲۲۴۵
                     </div>
                   </div>
-                </div>
+                </div> */}
               </div>
             </div>
           </div>
