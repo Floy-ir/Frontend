@@ -147,7 +147,7 @@ export function DatePicker({
     const getCalendarScale = () => {
       if (isMobile) return "";
       if (isTablet) return "scale-125 origin-top";
-      return "scale-110 origin-top";
+      return "scale-125 origin-top";
     };
     
     // Add direct handler for mobile
@@ -196,11 +196,19 @@ export function DatePicker({
           classNames={{
             day: isTablet ? 
               "w-12 h-12 p-0 flex items-center justify-center text-lg rounded-full mx-auto" : 
-              "w-10 h-10 p-0 flex items-center justify-center text-base rounded-full mx-auto",
+              "w-12 h-12 p-0 flex items-center justify-center text-lg rounded-full mx-auto",
             day_today: "bg-Primary-P50",
             day_selected: "!bg-Primary-P300 !text-white !font-bold hover:!bg-Primary-P300",
             caption: "p-2",
-            caption_label: isTablet ? "text-lg font-semibold" : "text-base font-semibold"
+            caption_label: isTablet ? "text-lg font-semibold" : "text-lg font-semibold",
+            months: "flex flex-col space-y-4 w-full",
+            month: "w-full",
+            month_grid: "w-full",
+            weekdays: "self-stretch inline-flex justify-start items-start w-full",
+            weekday: "mt-6 flex-1 text-center p-0 text-slate-500 font-medium",
+            table: "w-full border-collapse",
+            row: "flex w-full justify-between mb-2",
+            cell: "text-center flex-1 p-0 relative"
           }}
           {...calendarProps}
         />
@@ -219,7 +227,7 @@ export function DatePicker({
           <PopoverContent
             className={twMerge(
               "overflow-hidden rounded-xl p-0 border border-Gray-N200 shadow-[0px_4px_20px_rgba(0,0,0,0.1)] bg-white transform translate-x-4",
-              isTablet ? "min-w-[360px]" : "min-w-[320px]"
+              isTablet ? "min-w-[360px]" : "min-w-[380px]"
             )}
             align={dir === "rtl" ? "start" : "end"}
             sideOffset={4}
