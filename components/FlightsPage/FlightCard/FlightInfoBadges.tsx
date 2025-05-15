@@ -43,8 +43,6 @@ export const FlightInfoBadges = ({ flightInfo }: { flightInfo: FlightCardProps["
   <div className="inline-flex flex-wrap content-start items-start justify-start gap-1 self-stretch">
     {flightInfo.cabinClass && <InfoBadge text={flightInfo.cabinClass} />}
     {flightInfo.baggage && <BaggageBadge text={flightInfo.baggage} />}
-    {flightInfo.ticketType && <InfoBadge text={flightInfo.ticketType} />}
-    {flightInfo.aircraft && <InfoBadge text={flightInfo.aircraft} />}
   </div>
 )
 

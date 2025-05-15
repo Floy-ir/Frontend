@@ -101,18 +101,20 @@ const FilterCheckbox = ({
 )
 
 // Range slider for price and time filters
-const RangeSlider = ({
-  minLabel,
-  maxLabel,
+const _RangeSlider = ({
+  min,
+  max,
+  value,
   onChange,
   minValue,
-  maxValue
+  maxValue,
 }: {
-  minLabel: string;
-  maxLabel: string;
-  onChange?: (min: number, max: number) => void;
-  minValue?: number;
-  maxValue?: number;
+  min: number
+  max: number
+  value: [number, number]
+  onChange: (value: [number, number]) => void
+  minValue: number
+  maxValue: number
 }) => {
   return (
     <div className="self-stretch py-3 flex flex-col justify-start items-center gap-1">
@@ -125,10 +127,10 @@ const RangeSlider = ({
       </div>
       <div className="self-stretch h-6 inline-flex justify-between items-center">
         <div className="text-Gray-N500 text-sm font-medium  leading-normal">
-          {minLabel}
+          {minValue}
         </div>
         <div className="text-right text-Gray-N500 text-sm font-medium  leading-normal">
-          {maxLabel}
+          {maxValue}
         </div>
       </div>
     </div>

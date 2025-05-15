@@ -543,9 +543,9 @@ export function FlightCard({
           otherSellersCount={otherSellersCount}
           airline={airline}
           flightInfo={flightInfo}
-          websites={websites} 
-          o
-          />
+          websites={websites}
+          onBuy={onBuy}
+        />
       )}
     </article>
   )
