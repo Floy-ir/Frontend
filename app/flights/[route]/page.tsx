@@ -725,7 +725,7 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
             {/* mobile sort and filter options */}
             <div className="my-4 flex items-center justify-start px-5 lg:hidden">
               {/* Filter Chips - Each opens a specific section */}
-              <div className="flex gap-1 overflow-x-auto">
+              <div className="flex gap-1 overflow-x-auto" style={{ scrollbarWidth: "none" }}>
                 {/* Mobile sort drawer trigger */}
                 <Drawer open={openDrawers.sort} onOpenChange={(isOpen) => handleDrawerOpenChange(isOpen, "sort")}>
                   <DrawerTrigger asChild>
