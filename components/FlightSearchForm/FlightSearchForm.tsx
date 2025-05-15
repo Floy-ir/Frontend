@@ -99,7 +99,6 @@ export function FlightSearchForm({
 
     // If we can't find the codes, don't proceed
     if (!originCity || !destinationCity) {
-      console.error("City codes not found")
       return
     }
 
@@ -116,7 +115,6 @@ export function FlightSearchForm({
     // Navigate to the flights page with the query parameters
     router.push(createFlightSearchUrl(originCity.code, destinationCity.code, departureDate, passengers))
   }
-
   return (
     <div className="m-0 flex w-full flex-col items-center">
       <div
@@ -206,7 +204,7 @@ export function FlightSearchForm({
             {/* Origin/Destination Section - Desktop layout (1170px and up) */}
             <div className="hidden w-full items-start gap-4 lg:flex lg:w-auto lg:flex-row lg:items-center xl:gap-6">
               {/* Origin Field - Desktop */}
-              <div className="w-full xl:w-47">
+              <div className="w-full xl:w-47 ">
                 <ComboboxSelect
                   noBorder
                   expandDropdown
