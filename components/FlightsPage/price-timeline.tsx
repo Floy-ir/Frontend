@@ -107,15 +107,26 @@ const Timeline = ({
   }
 
   useEffect(() => {
-    if (isScroll && autoScrollToSelected && scrollRef.current) {
-      const selectedEl = scrollRef.current.querySelector('[data-selected="true"]') as HTMLElement
+    if (!autoScrollToSelected || !scrollRef.current) return
+
+    const scrollToSelected = () => {
+      const container = scrollRef.current
+      if (!container) return
+      const selectedEl = container.querySelector('[data-selected="true"]') as HTMLElement
       if (selectedEl) {
-        const container = scrollRef.current
         const offsetLeft = selectedEl.offsetLeft - container.offsetWidth / 2 + selectedEl.offsetWidth / 2
         container.scrollTo({ left: offsetLeft, behavior: "smooth" })
       }
     }
-  }, [isScroll, selectedDate])
+
+    const raf = requestAnimationFrame(() => {
+      setTimeout(() => {
+        scrollToSelected()
+      }, 100)
+    })
+
+    return () => cancelAnimationFrame(raf)
+  }, [selectedDate, autoScrollToSelected])
 
 
   console.log("data ==>> ", data)
@@ -217,7 +228,11 @@ const Timeline = ({
                       {item.price === 0
                         ? "-"
                         : item.price
-                        ? englishToFarsiNumber(item.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "،"))
+                        ? englishToFarsiNumber(
+                            Math.round(item.price / 1000)
+                              .toString()
+                              .replace(/\B(?=(\d{3})+(?!\d))/g, "،")
+                          )
                         : "-"}
                     </div>
                   </div>
