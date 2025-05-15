@@ -38,16 +38,14 @@ export default function TicketCard({ websites }: { websites: dude[] }) {
    const router = useRouter();
 
   // Calculate total price for a website
-  const getTotalPrice = (website: dude) => {
-    return (
-      website.adult_price * Number(adultCount) +
-      (website.child_price ?? 0) * Number(childCount) +
-      (website.infant_price ?? 0) * Number(infantCount)
-    );
-  };
-
+  const getTotalPrice = (website: dude) => (
+    (website.adult_price * Number(adultCount)) +
+    ((website.child_price ?? 0) * Number(childCount)) +
+    ((website.infant_price ?? 0) * Number(infantCount))
+  );
   // Find the minimum price among all websites
   const minPrice = Math.min(...websites.map(getTotalPrice));
+  const sortedWebsites = [...websites].sort((a, b) => getTotalPrice(a) - getTotalPrice(b));
  
   useEffect(() => {
     const newRefundHeights = openRefundRules.map((isOpen, i) =>
@@ -82,8 +80,7 @@ export default function TicketCard({ websites }: { websites: dude[] }) {
         <div className="text-Gray-N600 mt-5 mb-5 h-6 self-stretch text-right text-sm leading-normal font-semibold md:mt-0">
           {englishToFarsiNumber(websites.length)} فروشنده
         </div>
-
-        {websites.map((website, index) => {
+        {sortedWebsites.map((website, index) => {
           const contentRef = useRef<HTMLDivElement>(null)
           const [height, setHeight] = useState("0px")
           useEffect(() => {
