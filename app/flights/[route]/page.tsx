@@ -616,6 +616,62 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
       }
     })
 
+  // Filter flights based on applied filters
+  const filteredFlights = sortedFlights.filter((flight) => {
+    // Filter by price range
+    if (flight.price.amount < priceRange[0] || flight.price.amount > priceRange[1]) {
+      return false;
+    }
+
+    // Filter by flight time range
+    const departureHour = parseInt(flight.departureTime.split(":")[0].replace(/[^\d]/g, ""));
+    if (departureHour < flightTimeRange[0] || departureHour > flightTimeRange[1]) {
+      return false;
+    }
+
+    // Filter by cabin class if any selected
+    if (Object.values(filters.cabinClass).some(Boolean)) {
+      // Map cabin class from flight to filter key
+      const cabinClassMapping: Record<string, string> = {
+        "اکونومی": "economy",
+        "بیزینس": "business",
+        "اکونومی پریمیوم": "premiumEconomy"
+      };
+      
+      const flightCabinClass = flight.flightInfo.cabinClass || "";
+      const cabinClassKey = cabinClassMapping[flightCabinClass];
+      
+      // Only check if we found a matching cabin class key
+      if (cabinClassKey && !filters.cabinClass[cabinClassKey as keyof typeof filters.cabinClass]) {
+        return false;
+      }
+    }
+
+    // Filter by airlines if any selected
+    if (Object.values(filters.airlines).some(Boolean)) {
+      // Find the airline UID based on name
+      const airlineUID = availableAirlines.find(a => a.name === flight.airline.name)?.uid;
+      
+      if (!airlineUID || !filters.airlines[airlineUID]) {
+        return false;
+      }
+    }
+
+    // Filter by agencies (websites) if any selected
+    if (Object.values(filters.agencies).some(Boolean)) {
+      // Check if at least one website offering this flight matches the filter
+      const hasMatchingWebsite = flight.websites.some(website => 
+        filters.agencies[website.detail.uid]
+      );
+      
+      if (!hasMatchingWebsite) {
+        return false;
+      }
+    }
+
+    return true;
+  });
+
   // Create a drawer content ref to communicate with the FilterDrawerContent
   const drawerContentRef = useRef<DrawerContentRefType>(null)
 
@@ -701,7 +757,7 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
 
       {/* Main content */}
       <div className="container mx-auto max-w-266 p-0 lg:px-4 lg:py-6">
-        {sortedFlights.length > 0 ? (
+        {filteredFlights.length > 0 ? (
           <>
             {/* Timeline component from HEAD branch */}
             <div className="mb-0 lg:mb-8">
@@ -718,7 +774,7 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
 
             <div className="mb-6 hidden flex-row items-start justify-between lg:flex">
               <p className="text-Gray-N800 hidden text-right text-sm font-semibold lg:block">
-                {englishToFarsiNumber(sortedFlights.length)} نتیجه
+                {englishToFarsiNumber(filteredFlights.length)} نتیجه
               </p>
 
               {/* desktop sort */}
@@ -1382,7 +1438,7 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
 
               {/* Flight results list */}
               <div className="flex-1">
-                <FlightResultsList flights={sortedFlights} onRefresh={() => getFlights(departureDate)} />
+                <FlightResultsList flights={filteredFlights} onRefresh={() => getFlights(departureDate)} />
               </div>
             </div>
           </>
