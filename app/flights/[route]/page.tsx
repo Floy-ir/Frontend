@@ -624,9 +624,40 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
     }
 
     // Filter by flight time range
-    const departureHour = parseInt(flight.departureTime.split(":")[0].replace(/[^\d]/g, ""));
-    if (departureHour < flightTimeRange[0] || departureHour > flightTimeRange[1]) {
-      return false;
+    // Only apply if we have a valid departure time
+    const departureTime = flight.departureTime;
+    if (departureTime) {
+      // Try to extract hour as a number by:
+      // 1. First checking for Persian digits (۰-۹)
+      // 2. If not found, try normal digits (0-9)
+      let departureHour: number | null = null;
+      
+      // First try Persian digits pattern
+      const persianMatch = departureTime.match(/^([۰۱۲۳۴۵۶۷۸۹]+):/);
+      if (persianMatch && persianMatch[1]) {
+        // Convert Persian digits to numbers
+        const persianDigits = "۰۱۲۳۴۵۶۷۸۹";
+        let hour = 0;
+        for (const digit of persianMatch[1]) {
+          const index = persianDigits.indexOf(digit);
+          if (index !== -1) {
+            hour = hour * 10 + index;
+          }
+        }
+        departureHour = hour;
+      } else {
+        // Try regular digits
+        const regularMatch = departureTime.match(/^(\d+):/);
+        if (regularMatch && regularMatch[1]) {
+          departureHour = parseInt(regularMatch[1], 10);
+        }
+      }
+      
+      // Apply filter if we successfully extracted a valid hour
+      if (departureHour !== null && 
+          (departureHour < flightTimeRange[0] || departureHour > flightTimeRange[1])) {
+        return false;
+      }
     }
 
     // Filter by cabin class if any selected
