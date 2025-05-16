@@ -25,10 +25,24 @@ import {
   DrawerContentRefType, 
   FilterSectionProps, 
   FilterCheckboxProps, 
-  FilterDrawerContentProps, 
   FlightResult, 
   FlightSearchResponseData 
 } from "@/app/types"
+
+// Extend the FilterDrawerContentProps to include priceRangeBounds
+interface FilterDrawerContentProps {
+  title: string;
+  activeFiltersCount: number;
+  clearFilters: () => void;
+  activeSection: string;
+  filters: FilterState;
+  updateFilter: (category: string, key: string, value: boolean) => void;
+  flightTimeRange: [number, number];
+  setFlightTimeRange: (range: [number, number]) => void;
+  priceRange: [number, number];
+  setPriceRange: (range: [number, number]) => void;
+  priceRangeBounds: [number, number];
+}
 
 export default function FlightResults({ params, searchParams }: RouteParams) {
   const router = useRouter()
@@ -38,6 +52,9 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
   const unwrappedParams = use(params)
   // Unwrap searchParams Promise using React.use()
   const unwrappedSearchParams = use(searchParams)
+
+  // Add state for price range bounds from API - Define this early
+  const [priceRangeBounds, setPriceRangeBounds] = useState<[number, number]>([500000, 5000000])
 
   // Parse route from URL (format: THR-MHD)
   const [originCode, destinationCode] = unwrappedParams.route.split("-")
@@ -133,7 +150,8 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
         }
       }
     }
-    return [500000, 5000000]
+    // Use dynamic bounds from API if available, otherwise fallback to defaults
+    return [priceRangeBounds[0], priceRangeBounds[1]]
   }
 
   // Shared filters state
@@ -301,7 +319,7 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
     }
 
     // Update price range in URL if changed from default
-    if (priceRange[0] !== 500000 || priceRange[1] !== 5000000) {
+    if (priceRange[0] !== priceRangeBounds[0] || priceRange[1] !== priceRangeBounds[1]) {
       currentUrlParams.set("priceRange", `${priceRange[0]}-${priceRange[1]}`)
     } else {
       currentUrlParams.delete("priceRange")
@@ -319,7 +337,7 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
   // Calculate active filters count
   const _activeFiltersCount =
     Object.values(filters).reduce((count, category) => count + Object.values(category).filter(Boolean).length, 0) +
-    (priceRange[0] !== 500000 || priceRange[1] !== 5000000 ? 1 : 0) +
+    (priceRange[0] !== priceRangeBounds[0] || priceRange[1] !== priceRangeBounds[1] ? 1 : 0) +
     (flightTimeRange[0] !== 4 || flightTimeRange[1] !== 24 ? 1 : 0)
 
   // Handler for filter changes
@@ -361,7 +379,7 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
       agencies: {},
     });
     setFlightTimeRange([4, 24]);
-    setPriceRange([500000, 5000000]);
+    setPriceRange(priceRangeBounds); // Use dynamic bounds instead of hardcoded values
   }
 
   const _setFlightTimeRange = (range: [number, number]) => {
@@ -418,6 +436,7 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
     }))
   }
 
+  // State for flight data
   const [flights, setFlights] = useState<TransformedFlight[]>([])
   const pathname = usePathname()
   // const [error, setError] = useState<string | null>(null);
@@ -485,6 +504,19 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
       if (data?.results) {
         const transformed = data.results.map((flight, index) => transformFlightData(flight, (index + 1).toString()))
         setFlights(transformed)
+
+        // Update price range bounds if available in the API response
+        if (data.filters && typeof data.filters.min_price === 'number' && typeof data.filters.max_price === 'number') {
+          // Make sure max is at least min + 1 to avoid slider issues
+          const max = Math.max(data.filters.max_price, data.filters.min_price + 1)
+          const newBounds: [number, number] = [data.filters.min_price, max]
+          setPriceRangeBounds(newBounds)
+          
+          // Only update price range if it's still at default values
+          if (priceRange[0] === 500000 && priceRange[1] === 5000000) {
+            setPriceRange(newBounds)
+          }
+        }
       }
     } catch (err) {
       console.error("Error fetching flights:", err)
@@ -735,13 +767,14 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                       setFlightTimeRange={_setFlightTimeRange}
                       priceRange={priceRange}
                       setPriceRange={_setPriceRange}
+                      priceRangeBounds={priceRangeBounds}
                     />
                   </DrawerContent>
                 </Drawer>
 
                 {/* Active filters first */}
                 {/* Price Range Filter Chip - if active */}
-                {(priceRange[0] !== 500000 || priceRange[1] !== 5000000) && (
+                {(priceRange[0] !== priceRangeBounds[0] || priceRange[1] !== priceRangeBounds[1]) && (
                   <Drawer
                     open={openDrawers.priceRange}
                     onOpenChange={(isOpen) => handleDrawerOpenChange(isOpen, "priceRange")}
@@ -766,8 +799,8 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                       <FilterDrawerContent
                         ref={drawerContentRef}
                         title="بازه قیمت"
-                        activeFiltersCount={priceRange[0] !== 500000 || priceRange[1] !== 5000000 ? 1 : 0}
-                        clearFilters={() => setPriceRange([500000, 5000000])}
+                        activeFiltersCount={priceRange[0] !== priceRangeBounds[0] || priceRange[1] !== priceRangeBounds[1] ? 1 : 0}
+                        clearFilters={() => setPriceRange(priceRangeBounds)}
                         activeSection="priceRange"
                         filters={filters}
                         updateFilter={_updateFilter}
@@ -775,6 +808,7 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                         setFlightTimeRange={_setFlightTimeRange}
                         priceRange={priceRange}
                         setPriceRange={_setPriceRange}
+                        priceRangeBounds={priceRangeBounds}
                       />
                     </DrawerContent>
                   </Drawer>
@@ -815,6 +849,7 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                         setFlightTimeRange={_setFlightTimeRange}
                         priceRange={priceRange}
                         setPriceRange={_setPriceRange}
+                        priceRangeBounds={priceRangeBounds}
                       />
                     </DrawerContent>
                   </Drawer>
@@ -857,6 +892,7 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                         setFlightTimeRange={_setFlightTimeRange}
                         priceRange={priceRange}
                         setPriceRange={_setPriceRange}
+                        priceRangeBounds={priceRangeBounds}
                       />
                     </DrawerContent>
                   </Drawer>
@@ -903,6 +939,7 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                         setFlightTimeRange={_setFlightTimeRange}
                         priceRange={priceRange}
                         setPriceRange={_setPriceRange}
+                        priceRangeBounds={priceRangeBounds}
                       />
                     </DrawerContent>
                   </Drawer>
@@ -949,6 +986,7 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                         setFlightTimeRange={_setFlightTimeRange}
                         priceRange={priceRange}
                         setPriceRange={_setPriceRange}
+                        priceRangeBounds={priceRangeBounds}
                       />
                     </DrawerContent>
                   </Drawer>
@@ -995,6 +1033,7 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                         setFlightTimeRange={_setFlightTimeRange}
                         priceRange={priceRange}
                         setPriceRange={_setPriceRange}
+                        priceRangeBounds={priceRangeBounds}
                       />
                     </DrawerContent>
                   </Drawer>
@@ -1002,7 +1041,7 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
 
                 {/* Inactive filters after active ones */}
                 {/* Price Range Filter Chip - if inactive */}
-                {priceRange[0] === 500000 && priceRange[1] === 5000000 && (
+                {priceRange[0] === priceRangeBounds[0] && priceRange[1] === priceRangeBounds[1] && (
                   <Drawer
                     open={openDrawers.priceRange}
                     onOpenChange={(isOpen) => handleDrawerOpenChange(isOpen, "priceRange")}
@@ -1024,8 +1063,8 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                       <FilterDrawerContent
                         ref={drawerContentRef}
                         title="بازه قیمت"
-                        activeFiltersCount={priceRange[0] !== 500000 || priceRange[1] !== 5000000 ? 1 : 0}
-                        clearFilters={() => setPriceRange([500000, 5000000])}
+                        activeFiltersCount={priceRange[0] !== priceRangeBounds[0] || priceRange[1] !== priceRangeBounds[1] ? 1 : 0}
+                        clearFilters={() => setPriceRange(priceRangeBounds)}
                         activeSection="priceRange"
                         filters={filters}
                         updateFilter={_updateFilter}
@@ -1033,6 +1072,7 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                         setFlightTimeRange={_setFlightTimeRange}
                         priceRange={priceRange}
                         setPriceRange={_setPriceRange}
+                        priceRangeBounds={priceRangeBounds}
                       />
                     </DrawerContent>
                   </Drawer>
@@ -1070,6 +1110,7 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                         setFlightTimeRange={_setFlightTimeRange}
                         priceRange={priceRange}
                         setPriceRange={_setPriceRange}
+                        priceRangeBounds={priceRangeBounds}
                       />
                     </DrawerContent>
                   </Drawer>
@@ -1107,6 +1148,7 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                         setFlightTimeRange={_setFlightTimeRange}
                         priceRange={priceRange}
                         setPriceRange={_setPriceRange}
+                        priceRangeBounds={priceRangeBounds}
                       />
                     </DrawerContent>
                   </Drawer>
@@ -1144,6 +1186,7 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                         setFlightTimeRange={_setFlightTimeRange}
                         priceRange={priceRange}
                         setPriceRange={_setPriceRange}
+                        priceRangeBounds={priceRangeBounds}
                       />
                     </DrawerContent>
                   </Drawer>
@@ -1181,6 +1224,7 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                         setFlightTimeRange={_setFlightTimeRange}
                         priceRange={priceRange}
                         setPriceRange={_setPriceRange}
+                        priceRangeBounds={priceRangeBounds}
                       />
                     </DrawerContent>
                   </Drawer>
@@ -1218,6 +1262,7 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                         setFlightTimeRange={_setFlightTimeRange}
                         priceRange={priceRange}
                         setPriceRange={_setPriceRange}
+                        priceRangeBounds={priceRangeBounds}
                       />
                     </DrawerContent>
                   </Drawer>
@@ -1237,6 +1282,7 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                   priceRange={priceRange}
                   setPriceRange={_setPriceRange}
                   activeFiltersCount={_activeFiltersCount}
+                  priceRangeBounds={priceRangeBounds}
                 />
               </div>
 
@@ -1284,6 +1330,7 @@ const FilterDrawerContent = React.forwardRef<
       setFlightTimeRange,
       priceRange,
       setPriceRange,
+      priceRangeBounds,
     },
     ref
   ) => {
@@ -1291,6 +1338,8 @@ const FilterDrawerContent = React.forwardRef<
     const [localFilters, setLocalFilters] = React.useState<FilterState>({ ...filters })
     const [localFlightTimeRange, setLocalFlightTimeRange] = React.useState<[number, number]>([...flightTimeRange])
     const [localPriceRange, setLocalPriceRange] = React.useState<[number, number]>([...priceRange])
+    // Add local state for price range bounds from props
+    const [localPriceRangeBounds, setLocalPriceRangeBounds] = React.useState<[number, number]>([...priceRangeBounds])
 
     // Update local state when props change (for initial render)
     React.useEffect(() => {
@@ -1303,7 +1352,8 @@ const FilterDrawerContent = React.forwardRef<
       })
       setLocalFlightTimeRange([...flightTimeRange])
       setLocalPriceRange([...priceRange])
-    }, [filters, flightTimeRange, priceRange])
+      setLocalPriceRangeBounds([...priceRangeBounds])
+    }, [filters, flightTimeRange, priceRange, priceRangeBounds])
 
     // Expose the method to get local state via ref
     React.useImperativeHandle(
@@ -1357,7 +1407,7 @@ const FilterDrawerContent = React.forwardRef<
         agencies: {},
       });
       setLocalFlightTimeRange([4, 24]);
-      setLocalPriceRange([500000, 5000000]);
+      setLocalPriceRange(localPriceRangeBounds);
     }
 
     // Calculate local active filters count
@@ -1366,7 +1416,7 @@ const FilterDrawerContent = React.forwardRef<
       Object.values(localFilters.cabinClass).filter(Boolean).length +
       Object.values(localFilters.airlines).filter(Boolean).length +
       Object.values(localFilters.agencies).filter(Boolean).length +
-      (localPriceRange[0] !== 500000 || localPriceRange[1] !== 5000000 ? 1 : 0) +
+      (localPriceRange[0] !== localPriceRangeBounds[0] || localPriceRange[1] !== localPriceRangeBounds[1] ? 1 : 0) +
       (localFlightTimeRange[0] !== 4 || localFlightTimeRange[1] !== 24 ? 1 : 0)
 
     // Calculate total active filters for chips display
@@ -1375,7 +1425,7 @@ const FilterDrawerContent = React.forwardRef<
       Object.values(localFilters.cabinClass).filter(Boolean).length +
       Object.values(localFilters.airlines).filter(Boolean).length +
       Object.values(localFilters.agencies).filter(Boolean).length +
-      (localPriceRange[0] !== 500000 || localPriceRange[1] !== 5000000 ? 1 : 0) +
+      (localPriceRange[0] !== localPriceRangeBounds[0] || localPriceRange[1] !== localPriceRangeBounds[1] ? 1 : 0) +
       (localFlightTimeRange[0] !== 4 || localFlightTimeRange[1] !== 24 ? 1 : 0)
 
     return (
@@ -1521,11 +1571,11 @@ const FilterDrawerContent = React.forwardRef<
                 )}
 
                 {/* Price Range Filter */}
-                {(localPriceRange[0] !== 500000 || localPriceRange[1] !== 5000000) && (
+                {(localPriceRange[0] !== localPriceRangeBounds[0] || localPriceRange[1] !== localPriceRangeBounds[1]) && (
                   <div className="bg-Shade-White outline-Gray-N100 flex flex-shrink-0 items-center justify-center gap-1 overflow-hidden rounded-2xl px-3 py-1 outline-2 outline-offset-[-2px]">
                     <div
                       className="flex cursor-pointer items-center justify-start gap-2 py-1"
-                      onClick={() => setLocalPriceRange([500000, 5000000])}
+                      onClick={() => setLocalPriceRange(localPriceRangeBounds)}
                     >
                       <div className="relative size-4 overflow-hidden rounded-[48px]">
                         <CloseCircle size="16" color="#94A3B8" />
@@ -1586,9 +1636,9 @@ const FilterDrawerContent = React.forwardRef<
                 <FancySlider
                   value={localPriceRange}
                   onValueChange={setLocalPriceRange}
-                  min={500000}
-                  max={5000000}
-                  step={100000}
+                  min={localPriceRangeBounds[0]}
+                  max={localPriceRangeBounds[1]}
+                  step={Math.max(1, Math.floor((localPriceRangeBounds[1] - localPriceRangeBounds[0]) / 50))}
                   leftLabel={formatPrice(localPriceRange[1])}
                   rightLabel={formatPrice(localPriceRange[0])}
                 />

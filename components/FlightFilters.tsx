@@ -150,6 +150,7 @@ export function FlightFilters({
   priceRange,
   setPriceRange,
   activeFiltersCount,
+  priceRangeBounds,
 }: {
   filters: {
     ticketType: {
@@ -160,16 +161,8 @@ export function FlightFilters({
       economy: boolean
       business: boolean
     }
-    airlines: {
-      mahan: boolean
-      caspian: boolean
-      ata: boolean
-    }
-    agencies: {
-      alibaba: boolean
-      flytoday: boolean
-      mrbilit: boolean
-    }
+    airlines: Record<string, boolean>
+    agencies: Record<string, boolean>
   }
   updateFilter: (category: string, key: string, value: boolean) => void
   clearFilters: () => void
@@ -178,6 +171,7 @@ export function FlightFilters({
   priceRange: [number, number]
   setPriceRange: (range: [number, number]) => void
   activeFiltersCount: number
+  priceRangeBounds: [number, number]
 }) {
   // Check if component is rendered in a drawer
   const [isInDrawer, setIsInDrawer] = useState(false)
@@ -312,11 +306,11 @@ export function FlightFilters({
           )}
 
           {/* Price Range Filter */}
-          {(priceRange[0] !== 500000 || priceRange[1] !== 5000000) && (
+          {(priceRange[0] !== priceRangeBounds[0] || priceRange[1] !== priceRangeBounds[1]) && (
             <div className="bg-Primary-P50 outline-Primary-P500main flex items-center justify-center gap-1 overflow-hidden rounded-2xl px-3 py-1 outline outline-2 outline-offset-[-2px]">
               <div
                 className="flex cursor-pointer items-center justify-start gap-2 py-1"
-                onClick={() => setPriceRange([500000, 5000000])}
+                onClick={() => setPriceRange(priceRangeBounds)}
               >
                 <div className="relative size-4 overflow-hidden rounded-[48px]">
                   <CloseCircle size="16" color="#0046B5" />
@@ -410,9 +404,9 @@ export function FlightFilters({
           <FancySlider
             value={priceRange}
             onValueChange={setPriceRange}
-            min={500000}
-            max={5000000}
-            step={100000}
+            min={priceRangeBounds[0]}
+            max={priceRangeBounds[1]}
+            step={Math.max(1, Math.floor((priceRangeBounds[1] - priceRangeBounds[0]) / 50))}
             leftLabel={formatPrice(priceRange[1]) as string}
             rightLabel={formatPrice(priceRange[0]) as string}
           />
@@ -452,21 +446,21 @@ export function FlightFilters({
             label="علی‌بابا"
             logo="/images/logo.webp"
             extraText="از ۲,346,890"
-            checked={filters.agencies.alibaba}
+            checked={filters.agencies.alibaba || false}
             onChange={(v) => updateFilter("agencies", "alibaba", v)}
           />
           <FilterCheckbox
             label="فلای تودی"
             logo="/images/logo.webp"
             extraText="از ۲,346,890"
-            checked={filters.agencies.flytoday}
+            checked={filters.agencies.flytoday || false}
             onChange={(v) => updateFilter("agencies", "flytoday", v)}
           />
           <FilterCheckbox
             label="مستر بلیط"
             logo="/images/logo.webp"
             extraText="از ۲,346,890"
-            checked={filters.agencies.mrbilit}
+            checked={filters.agencies.mrbilit || false}
             onChange={(v: boolean) => updateFilter("agencies", "mrbilit", v)}
           />
         </FilterSection>
@@ -481,21 +475,21 @@ export function FlightFilters({
             label="ماهان"
             logo="/images/logo.webp"
             extraText="از ۲,346,890"
-            checked={filters.airlines.mahan}
+            checked={filters.airlines.mahan || false}
             onChange={(v) => updateFilter("airlines", "mahan", v)}
           />
           <FilterCheckbox
             label="کاسپین"
             logo="/images/logo.webp"
             extraText="از ۲,346,890"
-            checked={filters.airlines.caspian}
+            checked={filters.airlines.caspian || false}
             onChange={(v) => updateFilter("airlines", "caspian", v)}
           />
           <FilterCheckbox
             label="آتا"
             logo="/images/logo.webp"
             extraText="از ۲,346,890"
-            checked={filters.airlines.ata}
+            checked={filters.airlines.ata || false}
             onChange={(v) => updateFilter("airlines", "ata", v)}
           />
         </FilterSection>
