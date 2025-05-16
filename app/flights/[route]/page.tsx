@@ -561,7 +561,7 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
       const startOfDay = new Date(`${departureDate}T00:00:00`).getTime() / 1000
       const endOfDay = new Date(`${departureDate}T23:59:59`).getTime() / 1000 + 1
       const [originCode, destinationCode] = unwrappedParams.route.split("-")
-      const data = await apiFetch<{ results: FlightData[] }>("/flights", {
+      const data = await apiFetch<{ results: FlightData[] }>("/flights/", {
         params: {
           origin: originCode,
           destination: destinationCode,
@@ -1338,7 +1338,7 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
 
               {/* Flight results list */}
               <div className="flex-1">
-                <FlightResultsList flights={sortedFlights} onRefresh={() => getFlights(departureDate)} />
+                <FlightResultsList flights={sortedFlights} onRefresh={() => getFlights(departureDate) } />
               </div>
             </div>
           </>

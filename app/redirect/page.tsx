@@ -3,6 +3,7 @@ import { ArrowForwardSquare } from "iconsax-react"
 import { useRouter, useSearchParams } from "next/navigation"
 import React, { Suspense, useEffect } from "react"
 import { apiFetch } from "@/services/api"
+
 function RedirectContent() {
   const searchParams = useSearchParams()
   const router = useRouter()

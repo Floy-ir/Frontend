@@ -1,17 +1,37 @@
 "use client"
 
 import Image, { StaticImageData } from "next/image"
-import image1 from "../../public/images/image1.png"
-import image2 from "../../public/images/image2.png"
-import image3 from "../../public/images/image3.png"
-import image4 from "../../public/images/image4.jpg"
+import { useEffect, useState } from "react"
+import { getCityByCode } from "@/config/cities"
+import { apiFetch } from "@/services/api"
+import { englishToFarsiNumber } from "@/utils/numbers"
+import kish from "../../public/images/kish.jpeg"
+import mashhad from "../../public/images/mashhad.jpg"
+import shiraz from "../../public/images/shiraz.jpg"
+import tabriz from "../../public/images/tabriz.jpg"
+import tehran from "../../public/images/tehran.jpg"
+
+const getDestinationImage = (destinationCode: string): StaticImageData => {
+  switch (destinationCode) {
+    case "KIH":
+      return kish
+    case "MHD":
+      return mashhad
+    case "SYZ":
+      return shiraz
+    case "TBZ":
+      return tabriz
+    default:
+      return tehran
+  }
+}
 
 const cities: { city: string; price: string; bg: StaticImageData; large?: boolean }[] = [
-  { city: "کیش", price: "۱،۹۲۵،۷۰۰", bg: image4, large: true },
-  { city: "کیش", price: "۱،۹۲۵،۷۰۰", bg: image1 },
-  { city: "قشم", price: "۱،۹۲۵،۷۰۰", bg: image3 },
-  { city: "قشم", price: "۱،۹۲۵،۷۰۰", bg: image3 },
-  { city: "قشم", price: "۱،۹۲۵،۷۰۰", bg: image2 },
+  { city: "کیش", price: "۱،۹۲۵،۷۰۰", bg: mashhad, large: true },
+  { city: "کیش", price: "۱،۹۲۵،۷۰۰", bg: tabriz },
+  { city: "قشم", price: "۱،۹۲۵،۷۰۰", bg: kish },
+  { city: "قشم", price: "۱،۹۲۵،۷۰۰", bg: kish },
+  { city: "قشم", price: "۱،۹۲۵،۷۰۰", bg: shiraz },
 ]
 
 function CityRow({ cities }: { cities: { city: string; price: string; bg: StaticImageData }[] }) {
@@ -35,23 +55,23 @@ function CityCard({ city, price, bg, large }: { city: string; price: string; bg:
       <Image src={bg} alt={city} fill className="h-full w-full" priority />
 
       {/* Gradient Overlay */}
-      <div className="absolute top-0 left-0 h-full w-full bg-gradient-to-l from-slate-700/80 to-slate-700/0" />
+      <div className="absolute top-0 left-0 h-full w-full bg-gradient-to-l from-slate-800/80 to-slate-700/0" />
 
       {/* City Info  */}
       <div className="flex w-full items-end justify-between">
         {/* City Name */}
         <div className="flex flex-col items-start">
-          <div className="text-Shade-White z-10 justify-center self-stretch text-right text-xl leading-loose font-bold">
-            {city}
+          <div className="text-Shade-White z-10 justify-center self-stretch text-right text-lg leading-loose font-semibold">
+             {city}
           </div>
           <div className="text-Shade-White z-10 justify-center text-sm leading-normal font-normal">شروع قیمت از</div>
         </div>
 
         {/* Price */}
         <div className="flex flex-col items-end text-right">
-          <div className="text-Shade-White z-10 mb-1 text-xs leading-none font-semibold">تومان</div>
+          <div className="text-Shade-White z-10 mb-1 text-xs leading-none font-normal">تومان</div>
           <div className="text-Shade-White z-10 justify-center self-stretch text-base leading-7 font-semibold">
-            {price}
+                        {englishToFarsiNumber(price)}
           </div>
         </div>
       </div>
@@ -60,32 +80,135 @@ function CityCard({ city, price, bg, large }: { city: string; price: string; bg:
 }
 
 export default function PopularCities() {
+  const [cityData, setCityData] = useState<{ count: number; results: any[] } | null>(null)
+
+  useEffect(() => {
+    const defaultOriginList = ["THR", "MHD", "KHD", "TBZ", "SYZ"]
+    let originList = [...defaultOriginList]
+
+    try {
+      const stored = localStorage.getItem("app:cities:recentSelections")
+      if (stored) {
+        const parsed = JSON.parse(stored) as Array<{ value: string; label: string; code: string }>
+        const recentCodes = parsed.map((c) => c.code)
+        originList = Array.from(new Set([...recentCodes, ...defaultOriginList]))
+      }
+    } catch (e) {
+      console.error("Failed to read from localStorage:", e)
+    }
+
+    ;(async () => {
+      try {
+        const query = `?favorite_cities=${originList.join(",")}`
+        const response = (await apiFetch(`/flights/favorite_cities/${query}`, {
+          method: "GET",
+        })) as { count: number; results: unknown[] }
+
+        const resultsWithLabels = await Promise.all(
+          response.results.map(async (flight: any) => {
+            const originCity = flight.origin ? await getCityByCode(flight.origin) : undefined
+            const destinationCity = flight.destination ? await getCityByCode(flight.destination) : undefined
+            return {
+              ...flight,
+              originLabel: originCity ? originCity.label : flight.origin,
+              destinationLabel: destinationCity ? destinationCity.label : flight.destination,
+            }
+          })
+        )
+
+        setCityData({ count: response.count, results: resultsWithLabels })
+      } catch (error) {
+        console.error("Failed to fetch flight data:", error)
+      }
+    })()
+  }, [])
+
   return (
     <div className="mt-6 mb-8 flex w-full gap-2 md:mt-10 lg:mt-14 lg:flex-row">
-      {/* Scrollable Container for Smaller Screens */}
-
       <div className="relative flex w-full snap-x snap-proximity flex-nowrap gap-2 overflow-x-auto scroll-smooth sm:justify-center sm:px-12">
-        {/* Large City Card */}
-        {cities[0] && (
-          <div className="mb-4 shrink-0 snap-center">
-            <CityCard {...cities[0]} />
-          </div>
-        )}
-
-        {/* Small Cities Cards */}
-        <div className="flex flex-1 flex-col gap-2">
-          {cities
-            .slice(1)
-            .reduce<{ city: string; price: string; bg: StaticImageData }[][]>((rows, city, index, arr) => {
-              if (index % 2 === 0) rows.push(arr.slice(index, index + 2))
-              return rows
-            }, [])
-            .map((pair, index) => (
-              <div key={index} className="shrink-0 snap-center">
-                <CityRow cities={pair} />
+        {cityData && cityData.results.length > 0 ? (
+          <>
+            {cityData.results[0] && (
+              <div className="mb-4 shrink-0 snap-center">
+                <CityCard
+                  city={`${cityData.results[0].originLabel} به ${cityData.results[0].destinationLabel}`}
+                  price={cityData.results[0].price.toLocaleString()}
+                  bg={getDestinationImage(cityData.results[0].destination)}
+                  large
+                />
               </div>
-            ))}
-        </div>
+            )}
+            <div className="flex flex-1 flex-col gap-2">
+              {cityData.results
+                .slice(1)
+                .reduce<
+                  {
+                    origin: string
+                    destination: string
+                    originLabel: string
+                    destinationLabel: string
+                    price: number
+                  }[][]
+                >(
+                  (
+                    rows,
+                    flight,
+                    index,
+                    arr
+                  ) => {
+                    if (index % 2 === 0) rows.push(arr.slice(index, index + 2))
+                    return rows
+                  },
+                  []
+                )
+                .map(
+                  (
+                    pair: {
+                      origin: string
+                      destination: string
+                      originLabel: string
+                      destinationLabel: string
+                      price: number
+                    }[],
+                    index: number
+                  ) => (
+                    <div key={index} className="shrink-0 snap-center">
+                      <CityRow
+                        cities={pair.map((flight, i) => ({
+                          city: `${flight.originLabel} به ${flight.destinationLabel}`,
+                          price: flight.price.toLocaleString(),
+                          bg: getDestinationImage(flight.destination),
+                        }))}
+                      />
+                    </div>
+                  )
+                )}
+            </div>
+          </>
+        ) : (
+          <>
+            {cities[0] && (
+              <div className="mb-4 shrink-0 snap-center">
+                <CityCard {...cities[0]} />
+              </div>
+            )}
+            <div className="flex flex-1 flex-col gap-2">
+              {cities
+                .slice(1)
+                .reduce<{ city: string; price: string; bg: StaticImageData; large?: boolean }[][]>(
+                  (rows, city, index) => {
+                    if (index % 2 === 0) rows.push(cities.slice(index, index + 2))
+                    return rows
+                  }, []
+                )
+                .map((pair, index) => (
+                  <div key={index} className="shrink-0 snap-center">
+                    <CityRow cities={[...pair]} />
+                  </div>
+                ))}
+            </div>
+          </>
+        )}
       </div>
     </div>
   )
