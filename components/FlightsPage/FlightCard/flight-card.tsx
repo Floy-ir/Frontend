@@ -191,15 +191,15 @@ const PriceInfo = ({ price }: { price: FlightCardProps["price"] }) => (
         <div className="outline-Gray-N200 relative size-6 overflow-hidden rounded-[48px] bg-white outline-1 outline-offset-[-1px]">
           {price.agencyLogo && (
             <Image
-              src={price.agencyLogo ?? dude.src}
+              src={price.agencyLogo}
               alt={`${price.agency} logo`}
               width={11}
               height={13}
-              className="absolute"
-              style={{ left: "7px", top: "6px" }}
+              className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 object-cover"
             />
           )}
         </div>
+
         <div className="inline-flex flex-col items-start justify-center gap-1">
           <div
             className={`text-Gray-N600 justify-start self-stretch text-right text-[15px] ${textStyles.normal} ${textStyles.normal}`}
@@ -461,18 +461,18 @@ export function FlightCard({
                         {price.agency}
                       </div>
                     </div>
-                    <div className="outline-Gray-N200 relative size-5 overflow-hidden rounded-[48px] bg-white outline-1 outline-offset-[-1px]">
-                      {price.agencyLogo && (
-                        <Image
-                          src={price.agencyLogo}
-                          alt={`${price.agency} logo`}
-                          width={10}
-                          height={13}
-                          className="absolute"
-                          style={{ left: "5.40px", top: "4px" }}
-                        />
-                      )}
-                    </div>
+                    <div className="outline-Gray-N200 relative size-5 overflow-hidden rounded-full bg-white outline-1 outline-offset-[-1px]">
+                    {price.agencyLogo && (
+                      <Image
+                        src={price.agencyLogo}
+                        alt={`${price.agency} logo`}
+                        width={10}
+                        height={13}
+                        className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 object-contain"
+                      />
+                    )}
+                  </div>
+
                     <div className="inline-flex flex-col items-end justify-center gap-1">
                       <div className="text-Gray-N600 justify-start self-stretch text-right text-[11px] leading-none font-normal">
                         در

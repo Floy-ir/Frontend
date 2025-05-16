@@ -568,12 +568,14 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
         },
       })
 
-      // console.log(params)
 
       if (data?.results) {
         const transformed = data.results.map((flight, index) => transformFlightData(flight, (index + 1).toString()))
         setFlights(transformed)
+      console.log(data.results)
+
       }
+
     } catch (err) {
       console.error("Error fetching flights:", err)
     }

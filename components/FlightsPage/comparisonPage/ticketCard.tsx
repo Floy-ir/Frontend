@@ -106,15 +106,16 @@ export default function TicketCard({ websites }: { websites: dude[] }) {
                   <div className="inline-flex items-center justify-between self-stretch">
                     {/* name and icon */}
                     <div className="flex items-center justify-end gap-2">
-                      <div className="outline-Gray-N200 flex h-6 w-6 items-center justify-center rounded-[57.60px] bg-white outline-[1.20px] outline-offset-[-1.20px]">
-                        <Image
-                          alt={website.detail.name_fa}
-                          width={20}
-                          height={20}
-                          className="h-[15.60px] w-[12.48px]"
-                          src={website.detail.image ?? dude.src}
-                        />
-                      </div>
+                    <div className="flex h-6 w-6 items-center justify-center rounded-full bg-white outline outline-[1.2px] outline-Gray-N200 outline-offset-[-1.2px]">
+  <Image
+    alt={website.detail.name_fa}
+    width={12}
+    height={16}
+    className="h-[15.6px] w-[12.48px] object-contain"
+    src={website.detail.image ?? dude.src}
+  />
+</div>
+
 
                       <div className="flex flex-col items-start justify-center gap-1">
                         <div className="text-Gray-N600 justify-start text-right text-xs font-semibold">

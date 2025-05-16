@@ -10,6 +10,16 @@ const config: NextConfig = {
       fullUrl: true,
     },
   },
+  images: {
+    remotePatterns: [
+      {
+        protocol: "http",
+        hostname: "localhost",
+        port: "9000",
+        pathname: "/**", // Allow all paths
+      },
+    ],
+  },
   rewrites: async () => [
     { source: "/healthz", destination: "/api/health" },
     { source: "/api/healthz", destination: "/api/health" },
