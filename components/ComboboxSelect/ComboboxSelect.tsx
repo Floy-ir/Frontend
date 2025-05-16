@@ -248,7 +248,7 @@ export function ComboboxSelect({
         <DrawerTrigger asChild>
           <div>{triggerField}</div>
         </DrawerTrigger>
-        <DrawerContent className="bg-white">
+        <DrawerContent className="bg-white" style={{ zIndex: 9999 }}>
           <DrawerHeader className="px-4">
             <DrawerTitle>{label || "Select an option"}</DrawerTitle>
           </DrawerHeader>

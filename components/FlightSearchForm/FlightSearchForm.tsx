@@ -13,6 +13,7 @@ import { getCityByName, getCityOptions } from "@/config/cities"
 import { useStoredCities } from "@/hooks/useStoredCities"
 import { formatDate } from "@/utils/dateUtils"
 import { createFlightSearchUrl } from "@/utils/navigation"
+import FormExample from "../FormExample/FormExample"
 
 type FlightSearchFormProps = {
   initialOrigin?: string
@@ -157,7 +158,7 @@ export function FlightSearchForm({
                 {/* Fields Container - Mobile & Tablet */}
                 <div className="flex flex-1 flex-col">
                   {/* Origin Field - Mobile & Tablet */}
-                  <div className="w-full">
+                  <div className="w-full z-150 ">
                     <ComboboxSelect
                       noBorder
                       expandDropdown
@@ -325,7 +326,7 @@ export function FlightSearchForm({
       <Button
         intent="text"
         size="medium"
-        className={`-mt-1 -mb-5 ${contextPage == "flights" ? "hidden md:block" : "hidden"}`}
+        className={`mt-2 -mb-5 ${contextPage == "flights" ? "hidden md:block" : "hidden"}`}
         onClick={onClose}
         leftIcon={<ArrowUp2 size="20" color="#5A28EE" />}
       >
