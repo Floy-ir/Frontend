@@ -13,7 +13,6 @@ import { getCityByName, getCityOptions } from "@/config/cities"
 import { useStoredCities } from "@/hooks/useStoredCities"
 import { formatDate } from "@/utils/dateUtils"
 import { createFlightSearchUrl } from "@/utils/navigation"
-import FormExample from "../FormExample/FormExample"
 
 type FlightSearchFormProps = {
   initialOrigin?: string
