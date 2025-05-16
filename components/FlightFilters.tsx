@@ -151,6 +151,7 @@ export function FlightFilters({
   setPriceRange,
   activeFiltersCount,
   priceRangeBounds,
+  availableSeatClasses = [],
 }: {
   filters: {
     ticketType: {
@@ -173,6 +174,7 @@ export function FlightFilters({
   setPriceRange: (range: [number, number]) => void
   activeFiltersCount: number
   priceRangeBounds: [number, number]
+  availableSeatClasses?: string[]
 }) {
   // Check if component is rendered in a drawer
   const [isInDrawer, setIsInDrawer] = useState(false)
@@ -433,21 +435,27 @@ export function FlightFilters({
 
         {/* Cabin class */}
         <FilterSection title="کلاس پروازی" count={Object.values(filters.cabinClass).filter(Boolean).length}>
-          <FilterCheckbox
-            label="اکونومی"
-            checked={filters.cabinClass.economy}
-            onChange={(v) => updateFilter("cabinClass", "economy", v)}
-          />
-          <FilterCheckbox
-            label="اکونومی پریمیوم"
-            checked={filters.cabinClass.premiumEconomy}
-            onChange={(v) => updateFilter("cabinClass", "premiumEconomy", v)}
-          />
-          <FilterCheckbox
-            label="بیزینس"
-            checked={filters.cabinClass.business}
-            onChange={(v) => updateFilter("cabinClass", "business", v)}
-          />
+          {availableSeatClasses.includes("Economy") && (
+            <FilterCheckbox
+              label="اکونومی"
+              checked={filters.cabinClass.economy}
+              onChange={(v) => updateFilter("cabinClass", "economy", v)}
+            />
+          )}
+          {availableSeatClasses.includes("Premium Economy") && (
+            <FilterCheckbox
+              label="اکونومی پریمیوم"
+              checked={filters.cabinClass.premiumEconomy}
+              onChange={(v) => updateFilter("cabinClass", "premiumEconomy", v)}
+            />
+          )}
+          {availableSeatClasses.includes("Business") && (
+            <FilterCheckbox
+              label="بیزینس"
+              checked={filters.cabinClass.business}
+              onChange={(v) => updateFilter("cabinClass", "business", v)}
+            />
+          )}
         </FilterSection>
 
         {/* Websites */}

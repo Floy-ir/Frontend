@@ -42,6 +42,7 @@ interface FilterDrawerContentProps {
   priceRange: [number, number];
   setPriceRange: (range: [number, number]) => void;
   priceRangeBounds: [number, number];
+  availableSeatClasses: string[];
 }
 
 export default function FlightResults({ params, searchParams }: RouteParams) {
@@ -439,6 +440,8 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
 
   // State for flight data
   const [flights, setFlights] = useState<TransformedFlight[]>([])
+  // Add state for available seat classes
+  const [availableSeatClasses, setAvailableSeatClasses] = useState<string[]>([])
   const pathname = usePathname()
   // const [error, setError] = useState<string | null>(null);
   function transformFlightData(input: FlightResult, id: string = "1"): TransformedFlight {
@@ -517,6 +520,11 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
           if (priceRange[0] === 500000 && priceRange[1] === 5000000) {
             setPriceRange(newBounds)
           }
+        }
+
+        // Update available seat classes from API response
+        if (data.filters && data.filters.seat_classes) {
+          setAvailableSeatClasses(data.filters.seat_classes)
         }
       }
     } catch (err) {
@@ -771,6 +779,7 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                       priceRange={priceRange}
                       setPriceRange={_setPriceRange}
                       priceRangeBounds={priceRangeBounds}
+                      availableSeatClasses={availableSeatClasses}
                     />
                   </DrawerContent>
                 </Drawer>
@@ -812,6 +821,7 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                         priceRange={priceRange}
                         setPriceRange={_setPriceRange}
                         priceRangeBounds={priceRangeBounds}
+                        availableSeatClasses={availableSeatClasses}
                       />
                     </DrawerContent>
                   </Drawer>
@@ -853,6 +863,7 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                         priceRange={priceRange}
                         setPriceRange={_setPriceRange}
                         priceRangeBounds={priceRangeBounds}
+                        availableSeatClasses={availableSeatClasses}
                       />
                     </DrawerContent>
                   </Drawer>
@@ -944,6 +955,7 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                         priceRange={priceRange}
                         setPriceRange={_setPriceRange}
                         priceRangeBounds={priceRangeBounds}
+                        availableSeatClasses={availableSeatClasses}
                       />
                     </DrawerContent>
                   </Drawer>
@@ -991,6 +1003,7 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                         priceRange={priceRange}
                         setPriceRange={_setPriceRange}
                         priceRangeBounds={priceRangeBounds}
+                        availableSeatClasses={availableSeatClasses}
                       />
                     </DrawerContent>
                   </Drawer>
@@ -1038,6 +1051,7 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                         priceRange={priceRange}
                         setPriceRange={_setPriceRange}
                         priceRangeBounds={priceRangeBounds}
+                        availableSeatClasses={availableSeatClasses}
                       />
                     </DrawerContent>
                   </Drawer>
@@ -1077,6 +1091,7 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                         priceRange={priceRange}
                         setPriceRange={_setPriceRange}
                         priceRangeBounds={priceRangeBounds}
+                        availableSeatClasses={availableSeatClasses}
                       />
                     </DrawerContent>
                   </Drawer>
@@ -1115,6 +1130,7 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                         priceRange={priceRange}
                         setPriceRange={_setPriceRange}
                         priceRangeBounds={priceRangeBounds}
+                        availableSeatClasses={availableSeatClasses}
                       />
                     </DrawerContent>
                   </Drawer>
@@ -1191,6 +1207,7 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                         priceRange={priceRange}
                         setPriceRange={_setPriceRange}
                         priceRangeBounds={priceRangeBounds}
+                        availableSeatClasses={availableSeatClasses}
                       />
                     </DrawerContent>
                   </Drawer>
@@ -1229,6 +1246,7 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                         priceRange={priceRange}
                         setPriceRange={_setPriceRange}
                         priceRangeBounds={priceRangeBounds}
+                        availableSeatClasses={availableSeatClasses}
                       />
                     </DrawerContent>
                   </Drawer>
@@ -1267,6 +1285,7 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                         priceRange={priceRange}
                         setPriceRange={_setPriceRange}
                         priceRangeBounds={priceRangeBounds}
+                        availableSeatClasses={availableSeatClasses}
                       />
                     </DrawerContent>
                   </Drawer>
@@ -1287,6 +1306,7 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                   setPriceRange={_setPriceRange}
                   activeFiltersCount={_activeFiltersCount}
                   priceRangeBounds={priceRangeBounds}
+                  availableSeatClasses={availableSeatClasses}
                 />
               </div>
 
@@ -1335,6 +1355,7 @@ const FilterDrawerContent = React.forwardRef<
       priceRange,
       setPriceRange,
       priceRangeBounds,
+      availableSeatClasses,
     },
     ref
   ) => {
@@ -1676,21 +1697,27 @@ const FilterDrawerContent = React.forwardRef<
                 count={Object.values(localFilters.cabinClass).filter(Boolean).length}
                 isLast={activeSection !== "all"}
               >
-                <FilterCheckbox
-                  label="اکونومی"
-                  checked={localFilters.cabinClass.economy}
-                  onChange={(v) => handleLocalFilterUpdate("cabinClass", "economy", v)}
-                />
-                <FilterCheckbox
-                  label="اکونومی پریمیوم"
-                  checked={localFilters.cabinClass.premiumEconomy || false}
-                  onChange={(v) => handleLocalFilterUpdate("cabinClass", "premiumEconomy", v)}
-                />
-                <FilterCheckbox
-                  label="بیزینس"
-                  checked={localFilters.cabinClass.business}
-                  onChange={(v) => handleLocalFilterUpdate("cabinClass", "business", v)}
-                />
+                {availableSeatClasses.includes("Economy") && (
+                  <FilterCheckbox
+                    label="اکونومی"
+                    checked={localFilters.cabinClass.economy}
+                    onChange={(v) => handleLocalFilterUpdate("cabinClass", "economy", v)}
+                  />
+                )}
+                {availableSeatClasses.includes("Premium Economy") && (
+                  <FilterCheckbox
+                    label="اکونومی پریمیوم"
+                    checked={localFilters.cabinClass.premiumEconomy || false}
+                    onChange={(v) => handleLocalFilterUpdate("cabinClass", "premiumEconomy", v)}
+                  />
+                )}
+                {availableSeatClasses.includes("Business") && (
+                  <FilterCheckbox
+                    label="بیزینس"
+                    checked={localFilters.cabinClass.business}
+                    onChange={(v) => handleLocalFilterUpdate("cabinClass", "business", v)}
+                  />
+                )}
               </FilterSection>
             )}
 
