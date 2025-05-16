@@ -160,6 +160,7 @@ export function FlightFilters({
     cabinClass: {
       economy: boolean
       business: boolean
+      premiumEconomy: boolean
     }
     airlines: Record<string, boolean>
     agencies: Record<string, boolean>
@@ -245,7 +246,11 @@ export function FlightFilters({
               <div className="flex items-center justify-center gap-1">
                 <div className="text-Primary-P500main text-sm leading-normal font-medium">
                   کلاس پروازی:{" "}
-                  {[filters.cabinClass.economy ? "اکونومی" : null, filters.cabinClass.business ? "بیزینس" : null]
+                  {[
+                    filters.cabinClass.economy ? "اکونومی" : null, 
+                    filters.cabinClass.premiumEconomy ? "اکونومی پریمیوم" : null,
+                    filters.cabinClass.business ? "بیزینس" : null,
+                  ]
                     .filter(Boolean)
                     .join("، ")}
                 </div>
@@ -432,6 +437,11 @@ export function FlightFilters({
             label="اکونومی"
             checked={filters.cabinClass.economy}
             onChange={(v) => updateFilter("cabinClass", "economy", v)}
+          />
+          <FilterCheckbox
+            label="اکونومی پریمیوم"
+            checked={filters.cabinClass.premiumEconomy}
+            onChange={(v) => updateFilter("cabinClass", "premiumEconomy", v)}
           />
           <FilterCheckbox
             label="بیزینس"

@@ -7,7 +7,8 @@ export interface FilterState {
   };
   cabinClass: { 
     economy: boolean; 
-    business: boolean 
+    business: boolean; 
+    premiumEconomy: boolean
   };
   airlines: Record<string, boolean>;
   agencies: Record<string, boolean>;

@@ -115,6 +115,7 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
       cabinClass: {
         economy: cabinParam.includes("economy"),
         business: cabinParam.includes("business"),
+        premiumEconomy: cabinParam.includes("premiumEconomy"),
       },
       airlines: airlineValues,
       agencies: agencyValues,
@@ -374,7 +375,7 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
   const _clearFilters = () => {
     setFilters({
       ticketType: { charter: false, system: false },
-      cabinClass: { economy: false, business: false },
+      cabinClass: { economy: false, business: false, premiumEconomy: false },
       airlines: {},
       agencies: {},
     });
@@ -577,6 +578,7 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
         // Always update cabin class filters
         _updateFilter("cabinClass", "economy", localFilters.cabinClass.economy || false)
         _updateFilter("cabinClass", "business", localFilters.cabinClass.business || false)
+        _updateFilter("cabinClass", "premiumEconomy", localFilters.cabinClass.premiumEconomy || false)
       } else if (drawerType === "airlines") {
         // Always update airlines filters - handle the Record<string, boolean> structure
         for (const [key, value] of Object.entries(localFilters.airlines)) {
@@ -597,6 +599,7 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
         // Update cabin class filters
         _updateFilter("cabinClass", "economy", localFilters.cabinClass.economy || false)
         _updateFilter("cabinClass", "business", localFilters.cabinClass.business || false)
+        _updateFilter("cabinClass", "premiumEconomy", localFilters.cabinClass.premiumEconomy || false)
 
         // Update airlines filters
         for (const [key, value] of Object.entries(localFilters.airlines)) {
@@ -917,6 +920,7 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                             کلاس پروازی:{" "}
                             {[
                               filters.cabinClass.economy ? "اکونومی" : null,
+                              filters.cabinClass.premiumEconomy ? "اکونومی پریمیوم" : null,
                               filters.cabinClass.business ? "بیزینس" : null,
                             ]
                               .filter(Boolean)
@@ -1402,7 +1406,7 @@ const FilterDrawerContent = React.forwardRef<
     const handleLocalClearFilters = () => {
       setLocalFilters({
         ticketType: { charter: false, system: false },
-        cabinClass: { economy: false, business: false },
+        cabinClass: { economy: false, business: false, premiumEconomy: false },
         airlines: {},
         agencies: {},
       });
@@ -1513,7 +1517,7 @@ const FilterDrawerContent = React.forwardRef<
                         </div>
                         <div className="flex items-center justify-center gap-1">
                           <div className="text-Gray-N700 text-sm leading-normal font-medium">
-                            {key === "economy" ? "اکونومی" : "بیزینس"}
+                            {key === "economy" ? "اکونومی" : key === "premiumEconomy" ? "اکونومی پریمیوم" : "بیزینس"}
                           </div>
                         </div>
                       </div>
@@ -1676,6 +1680,11 @@ const FilterDrawerContent = React.forwardRef<
                   label="اکونومی"
                   checked={localFilters.cabinClass.economy}
                   onChange={(v) => handleLocalFilterUpdate("cabinClass", "economy", v)}
+                />
+                <FilterCheckbox
+                  label="اکونومی پریمیوم"
+                  checked={localFilters.cabinClass.premiumEconomy || false}
+                  onChange={(v) => handleLocalFilterUpdate("cabinClass", "premiumEconomy", v)}
                 />
                 <FilterCheckbox
                   label="بیزینس"
