@@ -31,7 +31,7 @@ export default function Web() {
   return (
     <>
       {/* Background Image with Oval Bottom */}
-      <div className="rounded-oval-mobile md:rounded-oval absolute inset-0 -z-10 h-[775px] max-h-[775px] w-full overflow-hidden md:h-[775px] xl:h-[478px]">
+      <div className="rounded-oval-mobile md:rounded-oval absolute inset-0 -z-10 h-[800px] max-h-[775px] w-full overflow-hidden md:h-[775px] lg:h-[775px] [@media(min-width:1160px)]:h-[478px] xl:h-[478px]">
         {/* Main image container */}
         <Image
           src="/images/landing2.webp"

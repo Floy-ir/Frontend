@@ -102,6 +102,7 @@ module.exports = {
         "lg-xl": { min: "1050px", max: "1279px" },
         "sm-md": { min: "500px", max: "770px" },
         "md-lg": { min: "720px", max: "1023px" },
+        "xxl": "1160px",
       },
     },
   },
