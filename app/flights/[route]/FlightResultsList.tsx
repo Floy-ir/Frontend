@@ -27,6 +27,7 @@ type FlightData = {
     amount: number
     formattedAmount: string
     agency: string
+    agency_eng:string
     agencyLogo: string
     label: string
     base_redirect_url: string
@@ -83,15 +84,12 @@ export function FlightResultsList({ flights,onRefresh }: FlightResultsListProps)
       redirectUrl = price.two_adults_redirect_url ?? ""
     } else {
       redirectUrl = price.base_redirect_url
-        .replace("{adult_count}", adult)
-        .replace("{child_count}", child)
-        .replace("{infant_count}", infant)
+        .replace("${adult_len}", adult)
+        .replace("${child_len}", child)
+        .replace("${infant_len}", infant)
     }
 
-    const encodedRedirectUrl = redirectUrl
-    const encodedAgency = price.agency
-
-    router.push(`/redirect?redirect_url=${encodedRedirectUrl}&agency=${encodedAgency}`)
+    window.open(`/redirect?redirect_url=${redirectUrl}&agency=${price.agency}&agency_eng=${price.agency_eng}`, "_blank")
   }
 
   return (

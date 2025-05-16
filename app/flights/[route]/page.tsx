@@ -97,6 +97,7 @@ type TransformedFlight = {
     amount: number
     formattedAmount: string
     agency: string
+    agency_eng:string
     agencyLogo: string
     label: string
     base_redirect_url: string
@@ -541,6 +542,7 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
           amount: input.cheapest_price,
           formattedAmount: input.cheapest_price.toLocaleString("fa-IR"),
           agency: input.cheapest_website?.name_fa ?? "",
+          agency_eng: input.cheapest_website?.name ?? "",
           agencyLogo: input.cheapest_website?.image ?? "",
           label: "ارزان ترین",
           base_redirect_url: input.cheapest_base_redirect_url ?? "",

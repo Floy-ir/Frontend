@@ -55,7 +55,6 @@ export default function TicketCard({ websites }: { websites: dude[] }) {
   }, [openRefundRules])
 
   const handleBuy = (website:dude) => {
-
     let redirectUrl = ""
 
     if (adultCount === "1" && childCount === "0" && infantCount === "0") {
@@ -64,16 +63,13 @@ export default function TicketCard({ websites }: { websites: dude[] }) {
       redirectUrl = website.two_adult_redirect_url ?? ""
     } else {
       redirectUrl = website.base_redirect_url
-        .replace("{adult_count}", adultCount)
-        .replace("{child_count}", childCount)
-        .replace("{infant_count}", infantCount)
+        .replace("${adult_len}", adultCount)
+        .replace("${child_len}", childCount)
+        .replace("${infant_len}", infantCount)
     }
-
-    const encodedRedirectUrl = redirectUrl
-    const encodedAgency = website.detail.name_fa
-
-    router.push(`/redirect?redirect_url=${encodedRedirectUrl}&agency=${encodedAgency}`)
+    window.open(`/redirect?redirect_url=${redirectUrl}&agency=${website.detail.name_fa}&agency_eng=${website.detail.name}`, "_blank")
   }
+  
   return (
     <div className="flex w-full flex-col items-start gap-5 lg:w-3/5">
       <div className="cards-container h-[550px] w-full snap-y snap-mandatory overflow-y-auto px-3 md:px-0">
