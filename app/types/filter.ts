@@ -1,5 +1,7 @@
 // Filter-related type definitions
 
+import { Website, Airline } from "./flight";
+
 export interface FilterState {
   ticketType: { 
     charter: boolean; 
@@ -47,6 +49,10 @@ export interface FilterDrawerContentProps {
   setFlightTimeRange: (range: [number, number]) => void;
   priceRange: [number, number];
   setPriceRange: (range: [number, number]) => void;
+  priceRangeBounds: [number, number];
+  availableSeatClasses: string[];
+  availableWebsites: Website[];
+  availableAirlines: Airline[];
 }
 
 export interface FilterSectionProps {

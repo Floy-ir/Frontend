@@ -26,7 +26,9 @@ import {
   FilterSectionProps, 
   FilterCheckboxProps, 
   FlightResult, 
-  FlightSearchResponseData 
+  FlightSearchResponseData,
+  Website,
+  Airline
 } from "@/app/types"
 
 // Extend the FilterDrawerContentProps to include priceRangeBounds
@@ -43,6 +45,8 @@ interface FilterDrawerContentProps {
   setPriceRange: (range: [number, number]) => void;
   priceRangeBounds: [number, number];
   availableSeatClasses: string[];
+  availableWebsites: Website[];
+  availableAirlines: Airline[];
 }
 
 export default function FlightResults({ params, searchParams }: RouteParams) {
@@ -442,6 +446,9 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
   const [flights, setFlights] = useState<TransformedFlight[]>([])
   // Add state for available seat classes
   const [availableSeatClasses, setAvailableSeatClasses] = useState<string[]>([])
+  // Add state for available websites and airlines
+  const [availableWebsites, setAvailableWebsites] = useState<Website[]>([])
+  const [availableAirlines, setAvailableAirlines] = useState<Airline[]>([])
   const pathname = usePathname()
   // const [error, setError] = useState<string | null>(null);
   function transformFlightData(input: FlightResult, id: string = "1"): TransformedFlight {
@@ -458,6 +465,23 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
       date
         .toLocaleTimeString("fa-IR", { hour: "2-digit", minute: "2-digit", hour12: false })
         .replace(/\d/g, (d) => "۰۱۲۳۴۵۶۷۸۹".charAt(parseInt(d)))
+
+    // Transform websites to match FlightData's websites structure
+    const transformedWebsites = input.websites.map(website => ({
+      adult_price: website.adult_price,
+      base_redirect_url: website.base_redirect_url,
+      child_price: website.child_price,
+      detail: {
+        uid: website.detail.uid,
+        name: website.detail.name,
+        name_fa: website.detail.name_fa,
+        image: website.detail.image
+      },
+      infant_price: website.infant_price,
+      one_adult_redirect_url: website.one_adult_redirect_url || "",
+      remaining_seat: website.remaining_seat,
+      two_adult_redirect_url: website.two_adult_redirect_url || ""
+    }));
 
     return {
       id,
@@ -487,7 +511,7 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
         two_adults_redirect_url: input.cheapest_two_adult_redirect_url ?? input.cheapest_base_redirect_url,
       },
       otherSellersCount: input.websites.length,
-      websites: input.websites,
+      websites: transformedWebsites,
     }
   }
 
@@ -525,6 +549,15 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
         // Update available seat classes from API response
         if (data.filters && data.filters.seat_classes) {
           setAvailableSeatClasses(data.filters.seat_classes)
+        }
+
+        // Update available websites and airlines from API response
+        if (data.filters && data.filters.websites) {
+          setAvailableWebsites(data.filters.websites)
+        }
+
+        if (data.filters && data.filters.airlines) {
+          setAvailableAirlines(data.filters.airlines)
         }
       }
     } catch (err) {
@@ -780,6 +813,8 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                       setPriceRange={_setPriceRange}
                       priceRangeBounds={priceRangeBounds}
                       availableSeatClasses={availableSeatClasses}
+                      availableWebsites={availableWebsites}
+                      availableAirlines={availableAirlines}
                     />
                   </DrawerContent>
                 </Drawer>
@@ -822,6 +857,8 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                         setPriceRange={_setPriceRange}
                         priceRangeBounds={priceRangeBounds}
                         availableSeatClasses={availableSeatClasses}
+                        availableWebsites={availableWebsites}
+                        availableAirlines={availableAirlines}
                       />
                     </DrawerContent>
                   </Drawer>
@@ -864,6 +901,8 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                         setPriceRange={_setPriceRange}
                         priceRangeBounds={priceRangeBounds}
                         availableSeatClasses={availableSeatClasses}
+                        availableWebsites={availableWebsites}
+                        availableAirlines={availableAirlines}
                       />
                     </DrawerContent>
                   </Drawer>
@@ -956,6 +995,8 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                         setPriceRange={_setPriceRange}
                         priceRangeBounds={priceRangeBounds}
                         availableSeatClasses={availableSeatClasses}
+                        availableWebsites={availableWebsites}
+                        availableAirlines={availableAirlines}
                       />
                     </DrawerContent>
                   </Drawer>
@@ -1004,6 +1045,8 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                         setPriceRange={_setPriceRange}
                         priceRangeBounds={priceRangeBounds}
                         availableSeatClasses={availableSeatClasses}
+                        availableWebsites={availableWebsites}
+                        availableAirlines={availableAirlines}
                       />
                     </DrawerContent>
                   </Drawer>
@@ -1052,6 +1095,8 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                         setPriceRange={_setPriceRange}
                         priceRangeBounds={priceRangeBounds}
                         availableSeatClasses={availableSeatClasses}
+                        availableWebsites={availableWebsites}
+                        availableAirlines={availableAirlines}
                       />
                     </DrawerContent>
                   </Drawer>
@@ -1092,6 +1137,8 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                         setPriceRange={_setPriceRange}
                         priceRangeBounds={priceRangeBounds}
                         availableSeatClasses={availableSeatClasses}
+                        availableWebsites={availableWebsites}
+                        availableAirlines={availableAirlines}
                       />
                     </DrawerContent>
                   </Drawer>
@@ -1131,6 +1178,8 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                         setPriceRange={_setPriceRange}
                         priceRangeBounds={priceRangeBounds}
                         availableSeatClasses={availableSeatClasses}
+                        availableWebsites={availableWebsites}
+                        availableAirlines={availableAirlines}
                       />
                     </DrawerContent>
                   </Drawer>
@@ -1208,6 +1257,8 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                         setPriceRange={_setPriceRange}
                         priceRangeBounds={priceRangeBounds}
                         availableSeatClasses={availableSeatClasses}
+                        availableWebsites={availableWebsites}
+                        availableAirlines={availableAirlines}
                       />
                     </DrawerContent>
                   </Drawer>
@@ -1247,6 +1298,8 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                         setPriceRange={_setPriceRange}
                         priceRangeBounds={priceRangeBounds}
                         availableSeatClasses={availableSeatClasses}
+                        availableWebsites={availableWebsites}
+                        availableAirlines={availableAirlines}
                       />
                     </DrawerContent>
                   </Drawer>
@@ -1286,6 +1339,8 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                         setPriceRange={_setPriceRange}
                         priceRangeBounds={priceRangeBounds}
                         availableSeatClasses={availableSeatClasses}
+                        availableWebsites={availableWebsites}
+                        availableAirlines={availableAirlines}
                       />
                     </DrawerContent>
                   </Drawer>
@@ -1307,6 +1362,8 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                   activeFiltersCount={_activeFiltersCount}
                   priceRangeBounds={priceRangeBounds}
                   availableSeatClasses={availableSeatClasses}
+                  availableWebsites={availableWebsites}
+                  availableAirlines={availableAirlines}
                 />
               </div>
 
@@ -1356,6 +1413,8 @@ const FilterDrawerContent = React.forwardRef<
       setPriceRange,
       priceRangeBounds,
       availableSeatClasses,
+      availableWebsites,
+      availableAirlines,
     },
     ref
   ) => {
@@ -1728,27 +1787,20 @@ const FilterDrawerContent = React.forwardRef<
                 count={Object.values(localFilters.airlines).filter(Boolean).length}
                 isLast={activeSection !== "all"}
               >
-                <FilterCheckbox
-                  label="ماهان"
-                  logo="/images/logo.webp"
-                  extraText="از ۲,346,890"
-                  checked={localFilters.airlines.mahan}
-                  onChange={(v) => handleLocalFilterUpdate("airlines", "mahan", v)}
-                />
-                <FilterCheckbox
-                  label="کاسپین"
-                  logo="/images/logo.webp"
-                  extraText="از ۲,346,890"
-                  checked={localFilters.airlines.caspian}
-                  onChange={(v) => handleLocalFilterUpdate("airlines", "caspian", v)}
-                />
-                <FilterCheckbox
-                  label="آتا"
-                  logo="/images/logo.webp"
-                  extraText="از ۲,346,890"
-                  checked={localFilters.airlines.ata}
-                  onChange={(v) => handleLocalFilterUpdate("airlines", "ata", v)}
-                />
+                {availableAirlines.length > 0 ? (
+                  availableAirlines.map((airline) => (
+                    <FilterCheckbox
+                      key={airline.uid}
+                      label={airline.name}
+                      logo={airline.image || "/images/logo.webp"}
+                      extraText={airline.min_price ? `از ${englishToFarsiNumber(Math.floor(airline.min_price).toLocaleString())}` : ""}
+                      checked={localFilters.airlines[airline.uid] || false}
+                      onChange={(v) => handleLocalFilterUpdate("airlines", airline.uid, v)}
+                    />
+                  ))
+                ) : (
+                  <div className="text-Gray-N500 text-center text-sm py-2">هیچ ایرلاینی یافت نشد</div>
+                )}
               </FilterSection>
             )}
 
@@ -1757,29 +1809,21 @@ const FilterDrawerContent = React.forwardRef<
               <FilterSection
                 title="وبسایت‌ها"
                 count={Object.values(localFilters.agencies).filter(Boolean).length}
-                isLast={activeSection !== "all"}
               >
-                <FilterCheckbox
-                  label="علی‌بابا"
-                  logo="/images/logo.webp"
-                  extraText="از ۲,346,890"
-                  checked={localFilters.agencies.alibaba}
-                  onChange={(v) => handleLocalFilterUpdate("agencies", "alibaba", v)}
-                />
-                <FilterCheckbox
-                  label="فلای تودی"
-                  logo="/images/logo.webp"
-                  extraText="از ۲,346,890"
-                  checked={localFilters.agencies.flytoday}
-                  onChange={(v) => handleLocalFilterUpdate("agencies", "flytoday", v)}
-                />
-                <FilterCheckbox
-                  label="مستر بلیط"
-                  logo="/images/logo.webp"
-                  extraText="از ۲,346,890"
-                  checked={localFilters.agencies.mrbilit}
-                  onChange={(v) => handleLocalFilterUpdate("agencies", "mrbilit", v)}
-                />
+                {availableWebsites.length > 0 ? (
+                  availableWebsites.map((website) => (
+                    <FilterCheckbox
+                      key={website.uid}
+                      label={website.name_fa}
+                      logo={website.image || "/images/logo.webp"}
+                      extraText={website.min_price ? `از ${englishToFarsiNumber(Math.floor(website.min_price).toLocaleString())}` : ""}
+                      checked={localFilters.agencies[website.uid] || false}
+                      onChange={(v) => handleLocalFilterUpdate("agencies", website.uid, v)}
+                    />
+                  ))
+                ) : (
+                  <div className="text-Gray-N500 text-center text-sm py-2">هیچ وبسایتی یافت نشد</div>
+                )}
               </FilterSection>
             )}
           </div>

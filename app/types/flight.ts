@@ -97,5 +97,19 @@ export interface TransformedFlight {
   flightInfo: FlightInfo;
   price: PriceInfo;
   otherSellersCount: number;
-  websites: WebsiteDetail[];
+  websites: {
+    adult_price: number;
+    base_redirect_url: string;
+    child_price: number | null;
+    detail: {
+      uid: string;
+      name: string;
+      name_fa: string;
+      image: string | null;
+    };
+    infant_price: number | null;
+    one_adult_redirect_url: string;
+    remaining_seat: number;
+    two_adult_redirect_url: string;
+  }[];
 } 

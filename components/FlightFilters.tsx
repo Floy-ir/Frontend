@@ -5,6 +5,8 @@ import Image from "next/image"
 import React, { useState } from "react"
 import { FancySlider } from "@/components/ui/fancy-slider"
 import { englishToFarsiNumber } from "@/utils/numbers"
+import { Website } from "@/app/types/flight"
+import { Airline } from "@/app/types/flight"
 
 // Filter section with expandable header
 const FilterSection = ({
@@ -152,6 +154,8 @@ export function FlightFilters({
   activeFiltersCount,
   priceRangeBounds,
   availableSeatClasses = [],
+  availableWebsites = [],
+  availableAirlines = [],
 }: {
   filters: {
     ticketType: {
@@ -175,6 +179,8 @@ export function FlightFilters({
   activeFiltersCount: number
   priceRangeBounds: [number, number]
   availableSeatClasses?: string[]
+  availableWebsites?: Website[]
+  availableAirlines?: Airline[]
 }) {
   // Check if component is rendered in a drawer
   const [isInDrawer, setIsInDrawer] = useState(false)
@@ -204,6 +210,12 @@ export function FlightFilters({
   const formatTime = (hour: number) => {
     return englishToFarsiNumber(`${hour.toString().padStart(2, "0")}:00`)
   }
+
+  // Helper to format price for display in filter options
+  const formatMinPrice = (price?: number) => {
+    if (!price) return "";
+    return `از ${englishToFarsiNumber(Math.floor(price).toLocaleString())}`;
+  };
 
   // Filter chips component
   const FilterChips = () => {
@@ -274,12 +286,9 @@ export function FlightFilters({
               <div className="flex items-center justify-center gap-1">
                 <div className="text-Primary-P500main text-sm leading-normal font-medium">
                   ایرلاین‌ها:{" "}
-                  {[
-                    filters.airlines.mahan ? "ماهان" : null,
-                    filters.airlines.caspian ? "کاسپین" : null,
-                    filters.airlines.ata ? "آتا" : null,
-                  ]
-                    .filter(Boolean)
+                  {availableAirlines
+                    .filter(airline => filters.airlines[airline.uid])
+                    .map(airline => airline.name)
                     .join("، ")}
                 </div>
               </div>
@@ -300,12 +309,9 @@ export function FlightFilters({
               <div className="flex items-center justify-center gap-1">
                 <div className="text-Primary-P500main text-sm leading-normal font-medium">
                   وبسایت‌ها:{" "}
-                  {[
-                    filters.agencies.alibaba ? "علی بابا" : null,
-                    filters.agencies.flytoday ? "فلای تودی" : null,
-                    filters.agencies.mrbilit ? "مستر بلیط" : null,
-                  ]
-                    .filter(Boolean)
+                  {availableWebsites
+                    .filter(website => filters.agencies[website.uid])
+                    .map(website => website.name_fa)
                     .join("، ")}
                 </div>
               </div>
@@ -458,58 +464,44 @@ export function FlightFilters({
           )}
         </FilterSection>
 
-        {/* Websites */}
+        {/* Websites - Dynamically generated from API data */}
         <FilterSection title="وبسایت‌ها" count={Object.values(filters.agencies).filter(Boolean).length}>
-          <FilterCheckbox
-            label="علی‌بابا"
-            logo="/images/logo.webp"
-            extraText="از ۲,346,890"
-            checked={filters.agencies.alibaba || false}
-            onChange={(v) => updateFilter("agencies", "alibaba", v)}
-          />
-          <FilterCheckbox
-            label="فلای تودی"
-            logo="/images/logo.webp"
-            extraText="از ۲,346,890"
-            checked={filters.agencies.flytoday || false}
-            onChange={(v) => updateFilter("agencies", "flytoday", v)}
-          />
-          <FilterCheckbox
-            label="مستر بلیط"
-            logo="/images/logo.webp"
-            extraText="از ۲,346,890"
-            checked={filters.agencies.mrbilit || false}
-            onChange={(v: boolean) => updateFilter("agencies", "mrbilit", v)}
-          />
+          {availableWebsites.length > 0 ? (
+            availableWebsites.map((website) => (
+              <FilterCheckbox
+                key={website.uid}
+                label={website.name_fa}
+                logo={website.image || "/images/logo.webp"}
+                extraText={formatMinPrice(website.min_price)}
+                checked={filters.agencies[website.uid] || false}
+                onChange={(v) => updateFilter("agencies", website.uid, v)}
+              />
+            ))
+          ) : (
+            <div className="text-Gray-N500 text-center text-sm py-2">هیچ وبسایتی یافت نشد</div>
+          )}
         </FilterSection>
 
-        {/* Airlines */}
+        {/* Airlines - Dynamically generated from API data */}
         <FilterSection
           title="شرکت‌های هواپیمایی"
           count={Object.values(filters.airlines).filter(Boolean).length}
           isLast={true}
         >
-          <FilterCheckbox
-            label="ماهان"
-            logo="/images/logo.webp"
-            extraText="از ۲,346,890"
-            checked={filters.airlines.mahan || false}
-            onChange={(v) => updateFilter("airlines", "mahan", v)}
-          />
-          <FilterCheckbox
-            label="کاسپین"
-            logo="/images/logo.webp"
-            extraText="از ۲,346,890"
-            checked={filters.airlines.caspian || false}
-            onChange={(v) => updateFilter("airlines", "caspian", v)}
-          />
-          <FilterCheckbox
-            label="آتا"
-            logo="/images/logo.webp"
-            extraText="از ۲,346,890"
-            checked={filters.airlines.ata || false}
-            onChange={(v) => updateFilter("airlines", "ata", v)}
-          />
+          {availableAirlines.length > 0 ? (
+            availableAirlines.map((airline) => (
+              <FilterCheckbox
+                key={airline.uid}
+                label={airline.name}
+                logo={airline.logo || "/images/logo.webp"}
+                extraText={formatMinPrice(airline.min_price)}
+                checked={filters.airlines[airline.uid] || false}
+                onChange={(v) => updateFilter("airlines", airline.uid, v)}
+              />
+            ))
+          ) : (
+            <div className="text-Gray-N500 text-center text-sm py-2">هیچ ایرلاینی یافت نشد</div>
+          )}
         </FilterSection>
       </div>
     </div>
