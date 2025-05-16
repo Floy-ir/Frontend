@@ -97,6 +97,7 @@ type TransformedFlight = {
     amount: number
     formattedAmount: string
     agency: string
+    agency_eng:string
     agencyLogo: string
     label: string
     base_redirect_url: string
@@ -543,6 +544,7 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
         amount: input.cheapest_price,
         formattedAmount: input.cheapest_price.toLocaleString("fa-IR"),
         agency: input.cheapest_website?.name_fa ?? "",
+        agency_eng: input.cheapest_website?.name ?? "",
         agencyLogo: input.cheapest_website?.image ?? "",
         label: "ارزان ترین",
         base_redirect_url: input.cheapest_base_redirect_url ?? "",
@@ -559,11 +561,11 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
       const startOfDay = new Date(`${departureDate}T00:00:00`).getTime() / 1000
       const endOfDay = new Date(`${departureDate}T23:59:59`).getTime() / 1000 + 1
       const [originCode, destinationCode] = unwrappedParams.route.split("-")
-      const data = await apiFetch<{ results: FlightData[] }>("/flights", {
+      const data = await apiFetch<{ results: FlightData[] }>("/flights/", {
         params: {
           origin: originCode,
           destination: destinationCode,
-          departure_timestamp__gte: startOfDay,
+          departure_timestamp__gte: Math.max(startOfDay, Math.floor(Date.now() / 1000)),
           departure_timestamp__lte: endOfDay,
         },
       })
@@ -1336,7 +1338,7 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
 
               {/* Flight results list */}
               <div className="flex-1">
-                <FlightResultsList flights={sortedFlights} onRefresh={() => getFlights(departureDate)} />
+                <FlightResultsList flights={sortedFlights} onRefresh={() => getFlights(departureDate) } />
               </div>
             </div>
           </>

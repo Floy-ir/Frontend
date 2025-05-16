@@ -2,26 +2,41 @@
 import { ArrowForwardSquare } from "iconsax-react"
 import { useRouter, useSearchParams } from "next/navigation"
 import React, { Suspense, useEffect } from "react"
+import { apiFetch } from "@/services/api"
 
 function RedirectContent() {
   const searchParams = useSearchParams()
   const router = useRouter()
   const redirectUrl = searchParams.get("redirect_url")
   const agency = searchParams.get("agency")
+  const agency_eng = searchParams.get("agency_eng")
+
 
   useEffect(() => {
+  
     if (redirectUrl) {
-      const timeout = setTimeout(() => {
+      const timeout = setTimeout(async () => {
         const fixedUrl = redirectUrl.startsWith("http") ? redirectUrl : `https://${redirectUrl}`
-        window.open(fixedUrl, "_blank")
-        router.back()
+        // Log provider before redirect
+        if (agency) {
+          try {
+            const response = await apiFetch("/statistics/", {
+              method: "POST",
+              data: JSON.stringify({ provider: agency_eng }),
+            })
+            console.log("Log provider response:", response)
+          } catch (error) {
+            console.error("Logging provider failed:", error)
+          }
+        }
+        router.push(fixedUrl)
       }, 1000)
 
       return () => clearTimeout(timeout)
     } else {
-      router.replace("/") // fallback if redirect_url is not present
+      router.back() // fallback if redirect_url is not present
     }
-  }, [redirectUrl])
+  }, [redirectUrl, agency])
 
   const handleManualRedirect = () => {
     if (redirectUrl) {

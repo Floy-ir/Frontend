@@ -55,25 +55,27 @@ export default function TicketCard({ websites }: { websites: dude[] }) {
   const handleBuy = (website: dude) => {
     let redirectUrl = ""
 
-    if (adultCount === "1" && childCount === "0" && infantCount === "0") {
-      redirectUrl = website.one_adult_redirect_url ?? ""
-    } else if (adultCount === "2" && childCount === "0" && infantCount === "0") {
-      redirectUrl = website.two_adult_redirect_url ?? ""
-    } else {
-      redirectUrl = website.base_redirect_url
-        .replace("{adult_count}", adultCount)
-        .replace("{child_count}", childCount)
-        .replace("{infant_count}", infantCount)
-    }
-
-    const encodedRedirectUrl = redirectUrl
-    const encodedAgency = website.detail.name_fa
-
-    router.push(`/redirect?redirect_url=${encodedRedirectUrl}&agency=${encodedAgency}`)
+    // if (adultCount === "1" && childCount === "0" && infantCount === "0") {
+    //   redirectUrl = website.one_adult_redirect_url ?? ""
+    // } else if (adultCount === "2" && childCount === "0" && infantCount === "0") {
+    //   redirectUrl = website.two_adult_redirect_url ?? ""
+    // } else {
+    //   redirectUrl = website.base_redirect_url
+    //     .replace("${adult_len}", adultCount)
+    //     .replace("${child_len}", childCount)
+    //     .replace("${infant_len}", infantCount)
+    // }
+    redirectUrl = website.base_redirect_url
+        .replace("${adult_len}", adultCount)
+        .replace("${child_len}", childCount)
+        .replace("${infant_len}", infantCount)
+        
+    window.open(`/redirect?redirect_url=${redirectUrl}&agency=${website.detail.name_fa}&agency_eng=${website.detail.name}`, "_blank")
   }
+  
   return (
     <div className="flex w-full flex-col items-start gap-5 lg:w-3/5">
-      <div className="cards-container h-[550px] w-full snap-y snap-mandatory overflow-y-auto px-3 md:px-0">
+      <div className="cards-container h-[550px] w-full snap-y snap-mandatory overflow-y-auto px-3 md:px-0" style={{ scrollbarWidth: "none" }}>
         <div className="text-Gray-N600 mt-5 mb-5 h-6 self-stretch text-right text-sm leading-normal font-semibold md:mt-0">
           {englishToFarsiNumber(websites.length)} فروشنده
         </div>

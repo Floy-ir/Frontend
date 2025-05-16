@@ -20,24 +20,24 @@ export const button = cva(
     variants: {
       intent: {
         primary: [
-          "bg-[#4641FB]",
+          "bg-[#5A28EE]",
           "text-Shade-White",
-          "hover:bg-[#6561FC]",
-          "active:bg-[#0C05F8]",
+          "hover:bg-[#764CF1]",
+          "active:bg-[#4010CE]",
           "disabled:pointer-events-none disabled:opacity-40 disabled:cursor-not-allowed",
         ],
         secondary: [
           "bg-[#F1F5F9]",
-          "text-[#4641FB]",
-          "hover:bg-[#F8FAFC] hover:text-[#6561FC]",
-          "active:bg-[#E2E8F0] active:text-[#0C05F8]",
-          "disabled:bg-[#F1F5F9] disabled:text-[#4641FB] disabled:pointer-events-none disabled:opacity-40",
+          "text-[#5A28EE]",
+          "hover:bg-[#F8FAFC] hover:text-[#764CF1]",
+          "active:bg-[#E2E8F0] active:text-[#300C9B]",
+          "disabled:bg-[#F1F5F9] disabled:text-[#5A28EE] disabled:pointer-events-none disabled:opacity-40",
         ],
         outline: [
-          "border-1 border-[#F1F5F9] text-[#4641FB]",
-          "hover:border-[#6561FC] hover:text-[#6561FC]",
-          "active:border-[#0C05F8] active:text-[#0904BA]",
-          "disabled:!border-[#6561FC] disabled:!text-[#A0A0A0] disabled:pointer-events-none disabled:opacity-40 disabled:cursor-not-allowed",
+          "border-1 border-[#F1F5F9] text-[#5A28EE]",
+          "hover:border-[#764CF1] hover:text-[#764CF1]",
+          "active:border-[#300C9B] active:text-[#4010CE]",
+          "disabled:!border-[#a2a0d4] disabled:!text-[#A0A0A0] disabled:pointer-events-none disabled:opacity-40 disabled:cursor-not-allowed",
         ],
         outline2: [
           "border border-[#F1F5F9] bg-transparent text-[#4641FB]",
@@ -53,9 +53,9 @@ export const button = cva(
           "disabled:text-[#A0A0A0] disabled:pointer-events-none disabled:opacity-40 disabled:cursor-not-allowed",
         ],
         text: [
-          "bg-transparent text-[#4641FB]",
-          "hover:text-[#6561FC]",
-          "active:text-[#0C05F8]",
+          "bg-transparent text-[#5A28EE]",
+          "hover:text-[#764CF1]",
+          "active:text-[#300C9B]",
           "bg-transparent disabled:pointer-events-none disabled:opacity-40 disabled:cursor-not-allowed",
         ],
       },

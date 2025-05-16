@@ -58,7 +58,7 @@ export function FlightSearchForm({
     setOrigin(value)
     const cityOption = await getCityByName(value)
     if (cityOption) {
-      addRecentSelection(value, cityOption.label)
+      addRecentSelection(value, cityOption.label, cityOption.code)
     }
   }
 
@@ -66,7 +66,7 @@ export function FlightSearchForm({
     setDestination(value)
     const cityOption = await getCityByName(value)
     if (cityOption) {
-      addRecentSelection(value, cityOption.label)
+      addRecentSelection(value, cityOption.label, cityOption.code)
     }
   }
 

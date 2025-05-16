@@ -18,8 +18,8 @@ export function useStoredCities() {
   }, [])
 
   // Add a new recent selection
-  const addRecentSelection = useCallback((value: string, label: string) => {
-    CitiesStorageService.addRecentSelection(value, label)
+  const addRecentSelection = useCallback((value: string, label: string, code:string) => {
+    CitiesStorageService.addRecentSelection(value, label, code)
     setRecentSelections(CitiesStorageService.getRecentSelections())
   }, [])
 
