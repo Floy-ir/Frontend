@@ -79,6 +79,7 @@ export interface PriceInfo {
   amount: number;
   formattedAmount: string;
   agency: string;
+  agency_eng: string;
   agencyLogo: string;
   label: string;
   base_redirect_url: string;

@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "cross-env FORCE_COLOR=1 next dev --turbo",
     "build": "next build",
+    "build:no-lint": "next build -- --no-lint",
     "start": "next start",
     "lint": "next lint",
     "lint:fix": "next lint --fix",
