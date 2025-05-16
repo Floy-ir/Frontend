@@ -493,7 +493,7 @@ export function FlightFilters({
               <FilterCheckbox
                 key={airline.uid}
                 label={airline.name}
-                logo={airline.logo || "/images/logo.webp"}
+                logo={airline.image || "/images/logo.webp"}
                 extraText={formatMinPrice(airline.min_price)}
                 checked={filters.airlines[airline.uid] || false}
                 onChange={(v) => updateFilter("airlines", airline.uid, v)}

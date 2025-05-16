@@ -1019,12 +1019,9 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                         <div className="flex items-center gap-1">
                           <div className="text-Primary-P500main text-sm leading-normal font-medium">
                             ایرلاین‌ها:{" "}
-                            {[
-                              filters.airlines.mahan ? "ماهان" : null,
-                              filters.airlines.caspian ? "کاسپین" : null,
-                              filters.airlines.ata ? "آتا" : null,
-                            ]
-                              .filter(Boolean)
+                            {availableAirlines
+                              .filter(airline => filters.airlines[airline.uid])
+                              .map(airline => airline.name)
                               .join("، ")}
                           </div>
                         </div>
@@ -1069,12 +1066,9 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                         <div className="flex items-center gap-1">
                           <div className="text-Primary-P500main text-sm leading-normal font-medium">
                             وبسایت‌ها:{" "}
-                            {[
-                              filters.agencies.alibaba ? "علی بابا" : null,
-                              filters.agencies.flytoday ? "فلای تودی" : null,
-                              filters.agencies.mrbilit ? "مستر بلیط" : null,
-                            ]
-                              .filter(Boolean)
+                            {availableWebsites
+                              .filter(website => filters.agencies[website.uid])
+                              .map(website => website.name_fa)
                               .join("، ")}
                           </div>
                         </div>
@@ -1622,7 +1616,7 @@ const FilterDrawerContent = React.forwardRef<
                         </div>
                         <div className="flex items-center justify-center gap-1">
                           <div className="text-Gray-N700 text-sm leading-normal font-medium">
-                            {key === "mahan" ? "ماهان" : key === "caspian" ? "کاسپین" : "آتا"}
+                            {availableAirlines.find(airline => airline.uid === key)?.name || key}
                           </div>
                         </div>
                       </div>
@@ -1647,7 +1641,7 @@ const FilterDrawerContent = React.forwardRef<
                         </div>
                         <div className="flex items-center justify-center gap-1">
                           <div className="text-Gray-N700 text-sm leading-normal font-medium">
-                            {key === "alibaba" ? "علی بابا" : key === "flytoday" ? "فلای تودی" : "مستر بلیط"}
+                            {availableWebsites.find(website => website.uid === key)?.name_fa || key}
                           </div>
                         </div>
                       </div>
