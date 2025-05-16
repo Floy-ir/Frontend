@@ -48,11 +48,11 @@ function CityCard({ city, price, bg, large }: { city: string; price: string; bg:
   return (
     <div
       className={`relative flex ${
-        large ? "h-80 w-67 px-8 py-4 md:w-80 lg:w-141" : "h-39 w-69 px-6 py-4"
+        large ? "h-80 w-67 px-8 py-4 md:w-80 lg:w-120" : "h-39 w-69 px-6 py-4"
       } flex-1 flex-col justify-end overflow-hidden rounded-2xl border-2 border-slate-200`}
     >
       {/* Background Image */}
-      <Image src={bg} alt={city} fill className="h-full w-full" priority />
+      <Image src={bg} alt={city} fill className="h-full w-full object-cover" priority />
 
       {/* Gradient Overlay */}
       <div className="absolute top-0 left-0 h-full w-full bg-gradient-to-l from-slate-800/80 to-slate-700/0" />
