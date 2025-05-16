@@ -83,7 +83,7 @@ export default function TicketCard({
           <div className="inline-flex items-center justify-start gap-2 self-stretch">
             <div className="inline-flex w-16 flex-col items-center justify-start">
               <div className="text-Gray-N800 justify-start self-stretch text-center text-xl leading-loose font-semibold">
-               {arrivalTime}
+                {arrivalTime}
               </div>
               <div className="flex flex-col items-center justify-start gap-2" dir="rtl">
                 <div className="text-Gray-N500 justify-start text-center text-[12px] leading-3 font-normal">
@@ -96,10 +96,14 @@ export default function TicketCard({
             </div>
             {/* flight duriation */}
             <div className="inline-flex flex-1 flex-col items-center justify-end gap-2 self-stretch pt-2 pb-6">
-              <div className="justify-start text-center gap-1 inline-flex" dir="rtl">
-                <span className="text-Gray-N500 text-[13px] leading-3 font-normal">{englishToFarsiNumber(duration.hours)}</span>
+              <div className="inline-flex justify-start gap-1 text-center" dir="rtl">
+                <span className="text-Gray-N500 text-[13px] leading-3 font-normal">
+                  {englishToFarsiNumber(duration.hours)}
+                </span>
                 <span className="text-Gray-N500 text-[13px] leading-3 font-normal">ساعت </span>
-                <span className="text-Gray-N500 text-[13px] leading-3 font-normal">{englishToFarsiNumber(duration.minutes)}</span>
+                <span className="text-Gray-N500 text-[13px] leading-3 font-normal">
+                  {englishToFarsiNumber(duration.minutes)}
+                </span>
                 <span className="text-Gray-N500 text-[13px] leading-3 font-normal"> دقیقه</span>
               </div>
               {/* image */}
@@ -145,7 +149,10 @@ export default function TicketCard({
           style={{ maxHeight: height }}
           className={`overflow-hidden transition-all duration-300 ease-in-out ${openDetails ? "mt-2 mb-4" : "my-0"}`}
         >
-          <div ref={contentRef} className={`transition-opacity duration-500 ${openDetails ? "opacity-100" : "opacity-0"}`}>
+          <div
+            ref={contentRef}
+            className={`transition-opacity duration-500 ${openDetails ? "opacity-100" : "opacity-0"}`}
+          >
             <div className="">
               {/* Accordion Content Here */}
               <div className="flex w-full flex-col justify-start gap-4 self-stretch" dir="rtl">
@@ -155,7 +162,7 @@ export default function TicketCard({
                       بار مجاز:
                     </div>
                     <div className="text-Gray-N800 shrink-0 justify-start text-start text-[14px] leading-[16px] font-semibold">
-                    {englishToFarsiNumber(flightInfo.baggage)}
+                      {englishToFarsiNumber(flightInfo.baggage)}
                     </div>
                   </div>
 

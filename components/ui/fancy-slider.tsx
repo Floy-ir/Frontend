@@ -1,7 +1,7 @@
 "use client"
 
-import * as React from "react"
 import * as SliderPrimitive from "@radix-ui/react-slider"
+import * as React from "react"
 import { cn } from "@/lib/utils"
 
 // Type guard to check if a value is defined
@@ -23,10 +23,7 @@ interface FancySliderProps
   rightLabel?: string
 }
 
-const FancySlider = React.forwardRef<
-  React.ElementRef<typeof SliderPrimitive.Root>,
-  FancySliderProps
->(
+const FancySlider = React.forwardRef<React.ElementRef<typeof SliderPrimitive.Root>, FancySliderProps>(
   (
     {
       className,
@@ -54,7 +51,7 @@ const FancySlider = React.forwardRef<
         if (onValueChange && newValues.length === 2) {
           const firstValue = newValues[0]
           const secondValue = newValues[1]
-          
+
           if (isDefined(firstValue) && isDefined(secondValue)) {
             onValueChange([firstValue, secondValue])
           }
@@ -70,16 +67,16 @@ const FancySlider = React.forwardRef<
     const trackWidth = trackEnd - trackStart
 
     return (
-      <div className={cn("w-full py-3 flex flex-col justify-start items-center gap-1", className)}>
-        <div className="relative w-full py-2 flex justify-center items-center">
+      <div className={cn("flex w-full flex-col items-center justify-start gap-1 py-3", className)}>
+        <div className="relative flex w-full items-center justify-center py-2">
           {/* Inactive track */}
-          <div className="w-full h-1 bg-gray-200 rounded-sm overflow-hidden">
+          <div className="h-1 w-full overflow-hidden rounded-sm bg-gray-200">
             {/* Colored active track */}
-            <div 
-              className="absolute h-1 bg-[var(--Primary-P500main,#5a28ee)] rounded-sm" 
-              style={{ 
-                left: `${trackStart}%`, 
-                width: `${trackWidth}%` 
+            <div
+              className="absolute h-1 rounded-sm bg-[var(--Primary-P500main,#5a28ee)]"
+              style={{
+                left: `${trackStart}%`,
+                width: `${trackWidth}%`,
               }}
             />
           </div>
@@ -87,7 +84,7 @@ const FancySlider = React.forwardRef<
           {/* Slider with custom styling */}
           <SliderPrimitive.Root
             ref={ref}
-            className="absolute inset-0 flex touch-none select-none items-center"
+            className="absolute inset-0 flex touch-none items-center select-none"
             value={value}
             defaultValue={normalizedDefaultValue}
             min={min}
@@ -99,35 +96,47 @@ const FancySlider = React.forwardRef<
             <SliderPrimitive.Track className="relative h-1 w-full grow rounded-full bg-transparent">
               <SliderPrimitive.Range className="absolute h-full bg-transparent" />
             </SliderPrimitive.Track>
-            
+
             {/* Left thumb with arrow */}
-            <SliderPrimitive.Thumb className="block h-5 w-5 rounded-full bg-[var(--Primary-P500main,#5a28ee)] focus:outline-none focus:ring-2 focus:ring-[var(--Primary-P500main,#5a28ee)] focus:ring-offset-2">
-              <div className="size-8 -left-[6px] -top-[6px] absolute">
-                <div className="size-5 left-[6px] top-[6px] absolute bg-[var(--Primary-P500main,#5a28ee)] rounded-full" />
+            <SliderPrimitive.Thumb className="block h-5 w-5 rounded-full bg-[var(--Primary-P500main,#5a28ee)] focus:ring-2 focus:ring-[var(--Primary-P500main,#5a28ee)] focus:ring-offset-2 focus:outline-none">
+              <div className="absolute -top-[6px] -left-[6px] size-8">
+                <div className="absolute top-[6px] left-[6px] size-5 rounded-full bg-[var(--Primary-P500main,#5a28ee)]" />
               </div>
-              <div className="size-3 left-[4px] top-[4px] absolute overflow-hidden text-white">
+              <div className="absolute top-[4px] left-[4px] size-3 overflow-hidden text-white">
                 <svg viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M4.17 2.67L7.5 6L4.17 9.33" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                  <path
+                    d="M4.17 2.67L7.5 6L4.17 9.33"
+                    stroke="currentColor"
+                    strokeWidth="1.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
                 </svg>
               </div>
             </SliderPrimitive.Thumb>
-            
+
             {/* Right thumb with arrow */}
-            <SliderPrimitive.Thumb className="block h-5 w-5 rounded-full bg-[var(--Primary-P500main,#5a28ee)] focus:outline-none focus:ring-2 focus:ring-[var(--Primary-P500main,#5a28ee)] focus:ring-offset-2">
-              <div className="size-8 -left-[6px] -top-[6px] absolute">
-                <div className="size-5 left-[6px] top-[6px] absolute bg-[var(--Primary-P500main,#5a28ee)] rounded-full" />
+            <SliderPrimitive.Thumb className="block h-5 w-5 rounded-full bg-[var(--Primary-P500main,#5a28ee)] focus:ring-2 focus:ring-[var(--Primary-P500main,#5a28ee)] focus:ring-offset-2 focus:outline-none">
+              <div className="absolute -top-[6px] -left-[6px] size-8">
+                <div className="absolute top-[6px] left-[6px] size-5 rounded-full bg-[var(--Primary-P500main,#5a28ee)]" />
               </div>
-              <div className="size-3 left-[4px] top-[4px] absolute overflow-hidden text-white">
+              <div className="absolute top-[4px] left-[4px] size-3 overflow-hidden text-white">
                 <svg viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M7.83 2.67L4.5 6L7.83 9.33" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                  <path
+                    d="M7.83 2.67L4.5 6L7.83 9.33"
+                    stroke="currentColor"
+                    strokeWidth="1.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
                 </svg>
               </div>
             </SliderPrimitive.Thumb>
           </SliderPrimitive.Root>
         </div>
-        
+
         {/* Labels */}
-        <div className="w-full h-6 flex justify-between items-center">
+        <div className="flex h-6 w-full items-center justify-between">
           <div className="text-Gray-N500 text-sm font-medium">{leftLabel}</div>
           <div className="text-Gray-N500 text-sm font-medium">{rightLabel}</div>
         </div>
@@ -137,4 +146,4 @@ const FancySlider = React.forwardRef<
 )
 FancySlider.displayName = "FancySlider"
 
-export { FancySlider } 
+export { FancySlider }

@@ -44,16 +44,12 @@ function CityCard({ city, price, bg, large }: { city: string; price: string; bg:
           <div className="text-Shade-White z-10 justify-center self-stretch text-right text-xl leading-loose font-bold">
             {city}
           </div>
-          <div className="text-Shade-White z-10 justify-center text-sm leading-normal font-normal">
-            شروع قیمت از
-          </div>
+          <div className="text-Shade-White z-10 justify-center text-sm leading-normal font-normal">شروع قیمت از</div>
         </div>
 
         {/* Price */}
         <div className="flex flex-col items-end text-right">
-          <div className="text-Shade-White z-10 mb-1 text-xs leading-none font-semibold">
-            تومان
-          </div>
+          <div className="text-Shade-White z-10 mb-1 text-xs leading-none font-semibold">تومان</div>
           <div className="text-Shade-White z-10 justify-center self-stretch text-base leading-7 font-semibold">
             {price}
           </div>
@@ -65,13 +61,13 @@ function CityCard({ city, price, bg, large }: { city: string; price: string; bg:
 
 export default function PopularCities() {
   return (
-    <div className="mt-6 md:mt-10 lg:mt-14 flex w-full gap-2 lg:flex-row mb-8">
+    <div className="mt-6 mb-8 flex w-full gap-2 md:mt-10 lg:mt-14 lg:flex-row">
       {/* Scrollable Container for Smaller Screens */}
 
-      <div className="relative flex w-full gap-2 sm:justify-center sm:px-12 snap-x snap-proximity flex-nowrap overflow-x-auto scroll-smooth">
+      <div className="relative flex w-full snap-x snap-proximity flex-nowrap gap-2 overflow-x-auto scroll-smooth sm:justify-center sm:px-12">
         {/* Large City Card */}
         {cities[0] && (
-          <div className="shrink-0 snap-center mb-4">
+          <div className="mb-4 shrink-0 snap-center">
             <CityCard {...cities[0]} />
           </div>
         )}

@@ -1,7 +1,6 @@
 import { Metadata } from "next"
 import Image from "next/image"
 
-
 import { HeroSection } from "@/components/HeroSection/HeroSection"
 import Benefits from "@/components/LandingPage/Benefits"
 import Companies from "@/components/LandingPage/Companies"
@@ -32,7 +31,7 @@ export default function Web() {
   return (
     <>
       {/* Background Image with Oval Bottom */}
-      <div className="absolute inset-0 w-full h-[775px] max-h-[775px] md:h-[775px] xl:h-[478px] -z-10 overflow-hidden rounded-oval-mobile md:rounded-oval">
+      <div className="rounded-oval-mobile md:rounded-oval absolute inset-0 -z-10 h-[775px] max-h-[775px] w-full overflow-hidden md:h-[775px] xl:h-[478px]">
         {/* Main image container */}
         <Image
           src="/images/landing2.webp"
@@ -50,26 +49,26 @@ export default function Web() {
       {/* <div className="rtl">
         <Header menuItems={menuItems} />
       </div> */}
-      
+
       <main className="rtl relative z-10 flex min-h-screen flex-col items-center bg-transparent">
-        <div className="w-full max-w-[1136px] mx-auto px-4 md:px-0">
+        <div className="mx-auto w-full max-w-[1136px] px-4 md:px-0">
           <HeroSection />
         </div>
 
         <Companies />
         <Benefits />
         {/* Cities */}
-        <div className="flex w-full  shrink-0 flex-col items-center justify-between bg-white px-4 py-8 lg:px-38 lg:py-12">
+        <div className="flex w-full shrink-0 flex-col items-center justify-between bg-white px-4 py-8 lg:px-38 lg:py-12">
           <div className="max-w-20/21">
-          {/* Title */}
-          <div className="flex w-full items-center justify-between">
-            <div className="flex flex-col justify-start">
-              <h2 className="mb-1 text-2xl font-semibold text-[#334155]">شهر‌های پرطرفدار</h2>
-              <Image alt="" src={img} width={100} height={100} />
-            </div>
+            {/* Title */}
+            <div className="flex w-full items-center justify-between">
+              <div className="flex flex-col justify-start">
+                <h2 className="mb-1 text-2xl font-semibold text-[#334155]">شهر‌های پرطرفدار</h2>
+                <Image alt="" src={img} width={100} height={100} />
+              </div>
 
-            {/*Buttons */}
-            {/* <div className="flex flex-row items-center">
+              {/*Buttons */}
+              {/* <div className="flex flex-row items-center">
               <Button intent="text" size="medium" className="mr-6">
                 مشاهده همه
               </Button>
@@ -83,8 +82,8 @@ export default function Web() {
                 <Button size="medium" intent="secondary" rightIcon={<ArrowLeft2 size="20" color="#4641FB" />} />
               </div>
             </div> */}
-          </div>
-          <PopularCities />
+            </div>
+            <PopularCities />
           </div>
         </div>
 

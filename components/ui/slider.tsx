@@ -1,7 +1,7 @@
 "use client"
 
-import * as React from "react"
 import * as SliderPrimitive from "@radix-ui/react-slider"
+import * as React from "react"
 
 import { cn } from "@/lib/utils"
 
@@ -11,10 +11,7 @@ const Slider = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <SliderPrimitive.Root
     ref={ref}
-    className={cn(
-      "relative flex w-full touch-none select-none items-center",
-      className
-    )}
+    className={cn("relative flex w-full touch-none items-center select-none", className)}
     {...props}
   >
     <SliderPrimitive.Track className="relative h-2 w-full grow overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
@@ -23,7 +20,7 @@ const Slider = React.forwardRef<
     {(props.value || props.defaultValue)?.map((_, i) => (
       <SliderPrimitive.Thumb
         key={i}
-        className="block h-5 w-5 rounded-full border-2 border-slate-900 bg-white ring-offset-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-950 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 dark:border-slate-50 dark:bg-slate-950 dark:ring-offset-slate-950 dark:focus-visible:ring-slate-300"
+        className="block h-5 w-5 rounded-full border-2 border-slate-900 bg-white ring-offset-white transition-colors focus-visible:ring-2 focus-visible:ring-slate-950 focus-visible:ring-offset-2 focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50 dark:border-slate-50 dark:bg-slate-950 dark:ring-offset-slate-950 dark:focus-visible:ring-slate-300"
       />
     ))}
   </SliderPrimitive.Root>
@@ -50,10 +47,7 @@ interface DualRangeSliderProps
   showLabels?: boolean
 }
 
-const DualRangeSlider = React.forwardRef<
-  React.ElementRef<typeof SliderPrimitive.Root>,
-  DualRangeSliderProps
->(
+const DualRangeSlider = React.forwardRef<React.ElementRef<typeof SliderPrimitive.Root>, DualRangeSliderProps>(
   (
     {
       className,
@@ -86,7 +80,7 @@ const DualRangeSlider = React.forwardRef<
         if (onValueChange && newValues.length === 2) {
           const firstValue = newValues[0]
           const secondValue = newValues[1]
-          
+
           if (isDefined(firstValue) && isDefined(secondValue)) {
             onValueChange([firstValue, secondValue])
           }
@@ -109,12 +103,8 @@ const DualRangeSlider = React.forwardRef<
         />
         {showLabels && (
           <div className="flex justify-between">
-            <span className="text-sm text-slate-500">
-              {formatLabel(value?.[0] ?? sortedDefaultValue[0])}
-            </span>
-            <span className="text-sm text-slate-500">
-              {formatLabel(value?.[1] ?? sortedDefaultValue[1])}
-            </span>
+            <span className="text-sm text-slate-500">{formatLabel(value?.[0] ?? sortedDefaultValue[0])}</span>
+            <span className="text-sm text-slate-500">{formatLabel(value?.[1] ?? sortedDefaultValue[1])}</span>
           </div>
         )}
       </div>
@@ -140,10 +130,7 @@ interface MultiRangeSliderProps
   showLabels?: boolean
 }
 
-const MultiRangeSlider = React.forwardRef<
-  React.ElementRef<typeof SliderPrimitive.Root>,
-  MultiRangeSliderProps
->(
+const MultiRangeSlider = React.forwardRef<React.ElementRef<typeof SliderPrimitive.Root>, MultiRangeSliderProps>(
   (
     {
       className,
@@ -163,9 +150,7 @@ const MultiRangeSlider = React.forwardRef<
     const normalizedDefaultValue = React.useMemo((): number[] => {
       const values = [...(defaultValue || [])]
       // Filter out values outside the range and undefined values
-      const filteredValues = values
-        .filter(isDefined)
-        .filter((val) => val >= min && val <= max)
+      const filteredValues = values.filter(isDefined).filter((val) => val >= min && val <= max)
       // Sort values in ascending order
       filteredValues.sort((a, b) => a - b)
       // Ensure we have at least 2 values
@@ -177,7 +162,7 @@ const MultiRangeSlider = React.forwardRef<
 
     // Make sure currentValues is a non-undefined array of numbers
     const currentValues: number[] = React.useMemo(() => {
-      return (value?.filter(isDefined) || normalizedDefaultValue)
+      return value?.filter(isDefined) || normalizedDefaultValue
     }, [value, normalizedDefaultValue])
 
     return (
@@ -207,4 +192,4 @@ const MultiRangeSlider = React.forwardRef<
 )
 MultiRangeSlider.displayName = "MultiRangeSlider"
 
-export { Slider, DualRangeSlider, MultiRangeSlider } 
+export { Slider, DualRangeSlider, MultiRangeSlider }

@@ -40,4 +40,4 @@ export function SliderDemo() {
       </div>
     </div>
   )
-} 
+}

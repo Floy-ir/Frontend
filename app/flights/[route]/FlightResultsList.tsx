@@ -1,10 +1,10 @@
-'use client'
+"use client"
 
 import { useRouter } from "next/navigation"
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState } from "react"
 import { EXPIRATION_MODAL_SETTINGS } from "@/app/config/settings"
 import ExpirationModal from "@/components/FlightsPage/expiration-modal/page"
-import { FlightCard } from '@/components/FlightsPage/FlightCard'
+import { FlightCard } from "@/components/FlightsPage/FlightCard"
 
 type FlightData = {
   id: string
@@ -47,19 +47,19 @@ type FlightData = {
     infant_price: number | null
     one_adult_redirect_url: string
     remaining_seat: number
-    two_adult_redirect_url: string 
+    two_adult_redirect_url: string
   }[]
 }
 
 type FlightResultsListProps = {
   flights: FlightData[]
-  onRefresh: () => void;
+  onRefresh: () => void
 }
 
-export function FlightResultsList({ flights,onRefresh }: FlightResultsListProps) {
+export function FlightResultsList({ flights, onRefresh }: FlightResultsListProps) {
   // Handle actions
 
-  const router = useRouter();
+  const router = useRouter()
   const [showExpirationModal, setShowExpirationModal] = useState(false)
 
   useEffect(() => {
@@ -70,7 +70,7 @@ export function FlightResultsList({ flights,onRefresh }: FlightResultsListProps)
     return () => clearInterval(interval)
   }, [])
 
- const handleBuy = (_flightId: string, price: FlightData['price']) => {
+  const handleBuy = (_flightId: string, price: FlightData["price"]) => {
     const url = new URL(window.location.href)
     const adult = url.searchParams.get("adult") || "1"
     const child = url.searchParams.get("child") || "0"
@@ -93,8 +93,8 @@ export function FlightResultsList({ flights,onRefresh }: FlightResultsListProps)
   }
 
   return (
-    <div className="flex flex-col gap-3 md:gap-4 w-full items-center">
-      <div className="w-full max-w-[328px] md-lg:max-w-[700px] sm-md:max-w-[400px] md:max-w-[738px] flex flex-col gap-3  md:gap-4">
+    <div className="flex w-full flex-col items-center gap-3 md:gap-4">
+      <div className="md-lg:max-w-[700px] sm-md:max-w-[400px] flex w-full max-w-[328px] flex-col gap-3 md:max-w-[738px] md:gap-4">
         {flights.map((flight) => (
           <FlightCard
             key={flight.id}
@@ -109,10 +109,11 @@ export function FlightResultsList({ flights,onRefresh }: FlightResultsListProps)
             websites={flight.websites}
             onBuy={() => handleBuy(flight.id, flight.price)}
             otherSellersCount={flight.otherSellersCount}
-            className="w-full"/>
+            className="w-full"
+          />
         ))}
       </div>
-      
+
       {showExpirationModal && (
         <ExpirationModal open={showExpirationModal} onOpenChange={setShowExpirationModal} onRefresh={onRefresh} />
       )}

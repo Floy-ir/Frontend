@@ -1,19 +1,15 @@
 "use client"
 
-import * as React from "react"
 import * as PopoverPrimitive from "@radix-ui/react-popover"
+import * as React from "react"
 
 import { cn } from "@/lib/utils"
 
-function Popover({
-  ...props
-}: React.ComponentProps<typeof PopoverPrimitive.Root>) {
+function Popover({ ...props }: React.ComponentProps<typeof PopoverPrimitive.Root>) {
   return <PopoverPrimitive.Root data-slot="popover" {...props} />
 }
 
-function PopoverTrigger({
-  ...props
-}: React.ComponentProps<typeof PopoverPrimitive.Trigger>) {
+function PopoverTrigger({ ...props }: React.ComponentProps<typeof PopoverPrimitive.Trigger>) {
   return <PopoverPrimitive.Trigger data-slot="popover-trigger" {...props} />
 }
 
@@ -28,16 +24,16 @@ function PopoverContent({
   React.useEffect(() => {
     const handlePopoverPosition = () => {
       if (!contentRef.current) return
-      
+
       const contentRect = contentRef.current.getBoundingClientRect()
       const viewportHeight = window.innerHeight
       const bottomOverflow = contentRect.bottom + 24 - viewportHeight
-      
+
       if (bottomOverflow > 0) {
         // Scroll the page down enough to show the popover
         window.scrollBy({
           top: bottomOverflow + 36, // Add a small buffer
-          behavior: 'smooth'
+          behavior: "smooth",
         })
       }
     }
@@ -66,9 +62,7 @@ function PopoverContent({
   )
 }
 
-function PopoverAnchor({
-  ...props
-}: React.ComponentProps<typeof PopoverPrimitive.Anchor>) {
+function PopoverAnchor({ ...props }: React.ComponentProps<typeof PopoverPrimitive.Anchor>) {
   return <PopoverPrimitive.Anchor data-slot="popover-anchor" {...props} />
 }
 

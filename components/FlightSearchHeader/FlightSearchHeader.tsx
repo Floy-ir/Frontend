@@ -2,6 +2,7 @@
 
 import { AnimatePresence, motion } from "framer-motion"
 import { ArrowRight, SearchNormal } from "iconsax-react"
+import Link from "next/link"
 import React, { useEffect, useState } from "react"
 import { Button } from "@/components/Button/Button"
 import { FlightSearchForm } from "@/components/FlightSearchForm/FlightSearchForm"
@@ -10,7 +11,6 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { getCityByCode } from "@/config/cities"
 import { formatToJalali } from "@/utils/dateUtils"
 import { englishToFarsiNumber } from "@/utils/numbers"
-import Link from "next/link"
 
 type FlightSearchHeaderProps = {
   originCity: string
@@ -142,7 +142,7 @@ export function FlightSearchHeader({
             <div className="flex gap-2">
               {/* Arrow */}
               <div>
-                <Link href="/" className="mt-3.5 sm-md:mt-1 flex items-center gap-1 text-sm">
+                <Link href="/" className="sm-md:mt-1 mt-3.5 flex items-center gap-1 text-sm">
                   <ArrowRight size="29" color="#737373" />
                 </Link>
               </div>

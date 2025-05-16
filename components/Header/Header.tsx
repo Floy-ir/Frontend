@@ -4,16 +4,11 @@ import * as NavigationMenu from "@radix-ui/react-navigation-menu"
 import { cva } from "class-variance-authority"
 import { Airplane, ArrowRight, ArrowRight2, HambergerMenu } from "iconsax-react"
 import Link from "next/link"
-import React, { useState, useEffect } from "react"
+import { usePathname } from "next/navigation"
+import React, { useEffect, useState } from "react"
 import { twMerge } from "tailwind-merge"
 import { Button } from "../Button/Button"
-import {
-  Drawer,
-  DrawerContent,
-  DrawerTrigger,
-  DrawerTitle,
-} from "../ui/drawer"
-import { usePathname } from "next/navigation"
+import { Drawer, DrawerContent, DrawerTitle, DrawerTrigger } from "../ui/drawer"
 
 interface MenuItem {
   label: string
@@ -36,7 +31,7 @@ const navItem = cva(["flex", "flex-col", "items-center", "gap-1"], {
     isScrolled: {
       true: ["text-Gray-N700"],
       false: ["text-white"],
-    }
+    },
   },
   defaultVariants: {
     isActive: false,
@@ -68,16 +63,16 @@ export function Header({ menuItems, className, forceScrolledStyle = false }: Hea
   useEffect(() => {
     setIsScrolled(forceScrolledStyle || window.scrollY > 50)
   }, [forceScrolledStyle])
-  
+
   useEffect(() => {
     // Function to handle scroll
     const handleScroll = () => {
       const currentScrollPos = window.scrollY
-      
+
       // Only set scrolled if we've passed a more significant threshold
       // Always respect forceScrolledStyle if it's true
       const hasScrolledEnough = currentScrollPos > 50
-      
+
       // Visible if:
       // 1. Scrolling up
       // 2. At the top of the page
@@ -85,25 +80,25 @@ export function Header({ menuItems, className, forceScrolledStyle = false }: Hea
       const isScrollingUp = prevScrollPos > currentScrollPos
       const isAtTop = currentScrollPos < 70
       const shouldBeVisible = isScrollingUp || isAtTop || mobileMenuOpen
-      
+
       // Update states
       if (shouldBeVisible) {
         setVisible(true)
       } else {
         setVisible(false)
       }
-      
+
       // Update isScrolled state - always true if forceScrolledStyle is set
       setIsScrolled(forceScrolledStyle || hasScrolledEnough)
-      
+
       setPrevScrollPos(currentScrollPos)
     }
-    
-    window.addEventListener('scroll', handleScroll)
-    
+
+    window.addEventListener("scroll", handleScroll)
+
     // Cleanup function
     return () => {
-      window.removeEventListener('scroll', handleScroll)
+      window.removeEventListener("scroll", handleScroll)
     }
   }, [prevScrollPos, mobileMenuOpen, forceScrolledStyle])
 
@@ -115,19 +110,17 @@ export function Header({ menuItems, className, forceScrolledStyle = false }: Hea
     visible && isScrolled ? "bg-white border-b border-Gray-N200" : "bg-transparent",
     className
   )
-useEffect(() => {
+  useEffect(() => {
     const checkScreen = () => {
       setIsSmallScreen(window.innerWidth < 768)
     }
     checkScreen()
-    window.addEventListener('resize', checkScreen)
-    return () => window.removeEventListener('resize', checkScreen)
+    window.addEventListener("resize", checkScreen)
+    return () => window.removeEventListener("resize", checkScreen)
   }, [])
 
   if (pathname.startsWith("/flights") && isSmallScreen) {
-    return (
-      <></>
-    )
+    return <></>
   }
 
   return (
@@ -136,15 +129,11 @@ useEffect(() => {
         {/* Content container - only constrain width for content, not background */}
         <div className={`mx-auto max-w-[1136px] px-4 md:px-8 ${isScrolled ? "w-full" : ""}`}>
           {/* Desktop view */}
-          <div className="hidden items-center justify-between md:flex h-22">
+          <div className="hidden h-22 items-center justify-between md:flex">
             {/* Logo - Right Side in RTL */}
             <div className="flex items-center gap-2">
-              <span className={`text-lg font-semibold ${isScrolled ? 'text-Gray-N700' : 'text-white'}`}>فلوی</span>
-              <Airplane 
-                size={20} 
-                variant="Bold" 
-                className={isScrolled ? 'text-Gray-N700' : 'text-white'} 
-              />
+              <span className={`text-lg font-semibold ${isScrolled ? "text-Gray-N700" : "text-white"}`}>فلوی</span>
+              <Airplane size={20} variant="Bold" className={isScrolled ? "text-Gray-N700" : "text-white"} />
             </div>
 
             {/* Navigation Menu - Middle */}
@@ -153,17 +142,21 @@ useEffect(() => {
                 {menuItems.map((item, index) => (
                   <NavigationMenu.Item key={index}>
                     <NavigationMenu.Link asChild>
-                      <Link 
-                        href={item.href} 
-                        className={navItem({ 
-                          isActive: item.isActive, 
-                          isScrolled: isScrolled 
+                      <Link
+                        href={item.href}
+                        className={navItem({
+                          isActive: item.isActive,
+                          isScrolled: isScrolled,
                         })}
                       >
                         <span className="text-lg">{item.label}</span>
                         {item.isActive && (
                           <div className="relative h-1 w-1">
-                            <div className={`absolute h-1.5 w-1.5 rounded-sm ${isScrolled ? 'bg-Primary-P300' : 'bg-white'}`}></div>
+                            <div
+                              className={`absolute h-1.5 w-1.5 rounded-sm ${
+                                isScrolled ? "bg-Primary-P300" : "bg-white"
+                              }`}
+                            ></div>
                           </div>
                         )}
                       </Link>
@@ -196,11 +189,7 @@ useEffect(() => {
             <Drawer open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
               <DrawerTrigger asChild>
                 <button className="p-2">
-                  <HambergerMenu
-                    size={48}
-                    className="p-2"
-                    color={isScrolled ? "#334155" : "white"}
-                  />
+                  <HambergerMenu size={48} className="p-2" color={isScrolled ? "#334155" : "white"} />
                   <span className="sr-only">Toggle Menu</span>
                 </button>
               </DrawerTrigger>
@@ -234,7 +223,7 @@ useEffect(() => {
                 "rounded-xl px-4 py-3 text-sm",
                 isScrolled
                   ? "bg-Gray-N100 text-Primary-P500main" // Scrolled state styling
-                  : "bg-Gray-N100 text-indigo-600"      // Default styling
+                  : "bg-Gray-N100 text-indigo-600" // Default styling
               )}
             >
               ورود | ثبت‌نام
@@ -242,9 +231,9 @@ useEffect(() => {
           </div>
         </div>
       </header>
-      
+
       {/* Spacer div to prevent layout shifts - matches header height */}
-      <div className="h-16 md:h-22 w-full"></div>
+      <div className="h-16 w-full md:h-22"></div>
     </>
   )
 }

@@ -1,4 +1,4 @@
-import React from 'react'
+import React from "react"
 
 export default function FlightsLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -7,4 +7,4 @@ export default function FlightsLayout({ children }: { children: React.ReactNode 
       {children}
     </div>
   )
-} 
+}

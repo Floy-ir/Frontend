@@ -1,10 +1,10 @@
-"use client";
+"use client"
 
-import { CalendarSearch } from "iconsax-react";
+import { CalendarSearch } from "iconsax-react"
 
 export default function NoTicketFound() {
   return (
-    <div className="max-w-[400px] p-4 rounded-2xl inline-flex flex-col justify-center items-center gap-4">
+    <div className="inline-flex max-w-[400px] flex-col items-center justify-center gap-4 rounded-2xl p-4">
       {/* <div className="self-stretch text-center justify-center text-Primary-P500main text-base font-bold leading-7">
         پروازی یافت نشد
       </div>
@@ -33,10 +33,10 @@ export default function NoTicketFound() {
           ثبت‌
         </span>
       </button> */}
-      <CalendarSearch size="100" color="#5A28EE"/>
-      <div className="flex justify-center text-center break-words leading-8">
-         برای این تاریخ پروازی پیدا نکردیم! لطفا تاریخ دیگه ای رو امتحان کنین.
+      <CalendarSearch size="100" color="#5A28EE" />
+      <div className="flex justify-center text-center leading-8 break-words">
+        برای این تاریخ پروازی پیدا نکردیم! لطفا تاریخ دیگه ای رو امتحان کنین.
       </div>
-    </div> 
-  );
+    </div>
+  )
 }
