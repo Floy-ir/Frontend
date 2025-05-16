@@ -31,6 +31,19 @@ import {
   Airline
 } from "@/app/types"
 
+// Add a utility function to ensure image URLs are properly formatted
+const formatImageUrl = (url: string | null | undefined): string => {
+  if (!url) return '/images/logo.webp';
+  
+  // Check if it's already a valid URL or an absolute path
+  if (url.startsWith('http') || url.startsWith('/')) {
+    return url;
+  }
+  
+  // If it's a relative path, prepend with the API base URL or appropriate domain
+  return `/api/images/${url}`;
+}
+
 // Extend the FilterDrawerContentProps to include priceRangeBounds
 interface FilterDrawerContentProps {
   title: string;
@@ -475,7 +488,7 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
         uid: website.detail.uid,
         name: website.detail.name,
         name_fa: website.detail.name_fa,
-        image: website.detail.image
+        image: formatImageUrl(website.detail.image)
       },
       infant_price: website.infant_price,
       one_adult_redirect_url: website.one_adult_redirect_url || "",
@@ -492,7 +505,7 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
       destination: input.destination,
       airline: {
         name: input.airline.name || "نامشخص",
-        logo: input.airline.image ?? dude.src,
+        logo: formatImageUrl(input.airline.image),
       },
       flightInfo: {
         baggage: `${input.allowed_weight} `,
@@ -504,7 +517,7 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
         amount: input.cheapest_price,
         formattedAmount: input.cheapest_price.toLocaleString("fa-IR"),
         agency: input.cheapest_website?.name_fa ?? "",
-        agencyLogo: input.cheapest_website?.image ?? "",
+        agencyLogo: formatImageUrl(input.cheapest_website?.image),
         label: "ارزان ترین",
         base_redirect_url: input.cheapest_base_redirect_url ?? "",
         one_adult_redirect_url: input.cheapest_one_adult_redirect_url ?? input.cheapest_base_redirect_url,
@@ -1765,7 +1778,7 @@ const FilterDrawerContent = React.forwardRef<
                     <FilterCheckbox
                       key={airline.uid}
                       label={airline.name}
-                      logo={airline.image || "/images/logo.webp"}
+                      logo={formatImageUrl(airline.image)}
                       extraText={airline.min_price ? `از ${englishToFarsiNumber(Math.floor(airline.min_price).toLocaleString())}` : ""}
                       checked={localFilters.airlines[airline.uid] || false}
                       onChange={(v) => handleLocalFilterUpdate("airlines", airline.uid, v)}
@@ -1788,7 +1801,7 @@ const FilterDrawerContent = React.forwardRef<
                     <FilterCheckbox
                       key={website.uid}
                       label={website.name_fa}
-                      logo={website.image || "/images/logo.webp"}
+                      logo={formatImageUrl(website.image)}
                       extraText={website.min_price ? `از ${englishToFarsiNumber(Math.floor(website.min_price).toLocaleString())}` : ""}
                       checked={localFilters.agencies[website.uid] || false}
                       onChange={(v) => handleLocalFilterUpdate("agencies", website.uid, v)}
