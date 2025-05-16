@@ -17,109 +17,7 @@ import { apiFetch } from "@/services/api/index"
 import { formatDate } from "@/utils/dateUtils"
 import { englishToFarsiNumber } from "@/utils/numbers"
 import { FlightResultsList } from "./FlightResultsList"
-
-type RouteParams = {
-  params: Promise<{
-    route: string
-  }>
-  searchParams: Promise<{
-    adult?: string
-    child?: string
-    infant?: string
-    departing?: string
-  }>
-}
-
-// Define the structure for filters state
-interface FilterState {
-  ticketType: { charter: boolean; system: boolean }
-  cabinClass: { economy: boolean; business: boolean }
-  airlines: { mahan: boolean; caspian: boolean; ata: boolean }
-  agencies: { alibaba: boolean; flytoday: boolean; mrbilit: boolean }
-}
-
-type FlightData = {
-  airline: {
-    uid: string
-    name: string
-    image: string | null
-  }
-  allowed_weight: number
-  arrival_timestamp: number
-  cheapest_base_redirect_url: string
-  cheapest_one_adult_redirect_url: string | null
-  cheapest_price: number
-  cheapest_two_adult_redirect_url: string | null
-  cheapest_website: {
-    uid: string
-    name: string
-    name_fa: string
-    image: string | null
-  }
-  departure_timestamp: number
-  destination: string
-  origin: string
-  seat_class: string
-  websites: {
-    adult_price: number
-    base_redirect_url: string
-    child_price: number | null
-    detail: {
-      uid: string
-      name: string
-      name_fa: string
-      image: string | null
-    }
-    infant_price: number | null
-    one_adult_redirect_url: string
-    remaining_seat: number
-    two_adult_redirect_url: string
-  }[]
-}
-
-type TransformedFlight = {
-  id: string
-  departureTime: string
-  arrivalTime: string
-  origin: string
-  destination: string
-  duration: { hours: number; minutes: number }
-  airline: {
-    name: string
-    logo: string
-  }
-  flightInfo: {
-    baggage: string
-    // ticketType: string
-    cabinClass: string
-  }
-  price: {
-    amount: number
-    formattedAmount: string
-    agency: string
-    agencyLogo: string
-    label: string
-    base_redirect_url: string
-    one_adult_redirect_url: string | null
-    two_adults_redirect_url: string | null
-  }
-  otherSellersCount: number
-  websites: {
-    adult_price: number
-    base_redirect_url: string
-    child_price: number | null
-    detail: {
-      uid: string
-      name: string
-      name_fa: string
-      image: string | null
-    }
-    infant_price: number | null
-    one_adult_redirect_url: string
-    remaining_seat: number
-    two_adult_redirect_url: string
-  }[]
-}
+import { FilterState, FlightData, RouteParams, SortKey, TransformedFlight, DrawerContentRefType, FilterSectionProps, FilterCheckboxProps, FilterDrawerContentProps } from "@/app/types"
 
 export default function FlightResults({ params, searchParams }: RouteParams) {
   const router = useRouter()
@@ -159,8 +57,8 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
   const selectedDate = unwrappedSearchParams.departing || formatDate(new Date())
 
   // State for sorting
-  const [sortKey, setSortKey] = React.useState<"cheapest" | "mostExpensive" | "earliest" | "latest">(
-    (urlSearchParams.get("sort") as "cheapest" | "mostExpensive" | "earliest" | "latest") || "cheapest"
+  const [sortKey, setSortKey] = React.useState<SortKey>(
+    (urlSearchParams.get("sort") as SortKey) || "cheapest"
   )
 
   // Parse filter values from URL
@@ -462,10 +360,10 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
 
   // Sort options
   const sortOptions = [
-    { key: "cheapest" as const, label: "ارزان‌ترین" },
-    { key: "mostExpensive" as const, label: "گران‌ترین" },
-    { key: "earliest" as const, label: "نزدیک‌ترین" },
-    { key: "latest" as const, label: "دیر‌ترین" },
+    { key: "cheapest" as SortKey, label: "ارزان‌ترین" },
+    { key: "mostExpensive" as SortKey, label: "گران‌ترین" },
+    { key: "earliest" as SortKey, label: "نزدیک‌ترین" },
+    { key: "latest" as SortKey, label: "دیر‌ترین" },
   ]
 
   // Get current sort label
@@ -614,13 +512,7 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
     })
 
   // Create a drawer content ref to communicate with the FilterDrawerContent
-  const drawerContentRef = useRef<{
-    getLocalState: () => {
-      localFilters: FilterState
-      localPriceRange: [number, number]
-      localFlightTimeRange: [number, number]
-    }
-  }>(null)
+  const drawerContentRef = useRef<DrawerContentRefType>(null)
 
   // Drawer open/close handler that applies the changes from local state
   const handleDrawerOpenChange = (isOpen: boolean, drawerType: string) => {
@@ -1365,25 +1257,8 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
 
 // Simpler drawer content component with ref API
 const FilterDrawerContent = React.forwardRef<
-  {
-    getLocalState: () => {
-      localFilters: FilterState
-      localPriceRange: [number, number]
-      localFlightTimeRange: [number, number]
-    }
-  },
-  {
-    title: string
-    activeFiltersCount: number
-    clearFilters: () => void
-    activeSection: string
-    filters: FilterState
-    updateFilter: (category: string, key: string, value: boolean) => void
-    flightTimeRange: [number, number]
-    setFlightTimeRange: (range: [number, number]) => void
-    priceRange: [number, number]
-    setPriceRange: (range: [number, number]) => void
-  }
+  DrawerContentRefType,
+  FilterDrawerContentProps
 >(
   (
     {
@@ -1827,18 +1702,12 @@ const formatTime = (hour: number) => {
 }
 
 // Filter section with expandable header
-const FilterSection = ({
+const FilterSection: React.FC<FilterSectionProps> = ({
   title,
   children,
   count = 0,
   isOpen = true,
   isLast = false,
-}: {
-  title: string
-  children: React.ReactNode
-  count?: number
-  isOpen?: boolean
-  isLast?: boolean
 }) => {
   const [expanded, setExpanded] = React.useState(isOpen)
 
@@ -1882,18 +1751,12 @@ const FilterSection = ({
 }
 
 // Checkbox component for filters
-const FilterCheckbox = ({
+const FilterCheckbox: React.FC<FilterCheckboxProps> = ({
   label,
   checked,
   onChange,
   logo,
   extraText,
-}: {
-  label: string
-  checked: boolean
-  onChange: (value: boolean) => void
-  logo?: string
-  extraText?: string
 }) => (
   <div className="inline-flex items-center justify-end gap-2 self-stretch">
     <div className="flex items-center justify-center gap-2 p-[3px]">
