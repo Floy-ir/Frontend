@@ -18,7 +18,7 @@ let results: CityOption2[]
 
 async function loadCities(): Promise<CityOption[]> {
   if (!results) {
-    const response = await apiFetch<{ count: number; results: CityOption2[] }>("/flight-city")
+    const response = await apiFetch<{ count: number; results: CityOption2[] }>("/flight-city/")
 
     if (!response || !response.results) {
       // Handle the case where response or response.results is undefined

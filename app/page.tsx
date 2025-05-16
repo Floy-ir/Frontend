@@ -63,7 +63,7 @@ export default function Web() {
             {/* Title */}
             <div className="flex w-full items-center justify-between">
               <div className="flex flex-col justify-start">
-                <h2 className="mb-1 text-2xl font-semibold text-[#334155]">شهر‌های پرطرفدار</h2>
+                <h2 className="mb-1 text-xl md:text-2xl font-semibold text-[#334155]">ارزان ترین پرواز های هفته آينده</h2>
                 <Image alt="" src={img} width={100} height={100} />
               </div>
 
