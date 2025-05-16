@@ -447,15 +447,17 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
       cabinClass: { economy: false, business: false },
       airlines: { mahan: false, caspian: false, ata: false },
       agencies: { alibaba: false, flytoday: false, mrbilit: false },
-    })
+    });
+    setFlightTimeRange([4, 24]);
+    setPriceRange([500000, 5000000]);
   }
 
   const _setFlightTimeRange = (range: [number, number]) => {
-    // Implementation would go here
+    setFlightTimeRange(range)
   }
 
   const _setPriceRange = (range: [number, number]) => {
-    // Implementation would go here
+    setPriceRange(range)
   }
 
   // Sort options
