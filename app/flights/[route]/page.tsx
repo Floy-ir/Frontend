@@ -565,7 +565,7 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
         params: {
           origin: originCode,
           destination: destinationCode,
-          departure_timestamp__gte: startOfDay,
+          departure_timestamp__gte: Math.max(startOfDay, Math.floor(Date.now() / 1000)),
           departure_timestamp__lte: endOfDay,
         },
       })
