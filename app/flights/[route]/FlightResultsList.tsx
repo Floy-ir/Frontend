@@ -78,16 +78,20 @@ export function FlightResultsList({ flights, onRefresh }: FlightResultsListProps
 
     let redirectUrl = ""
 
-    if (adult === "1" && child === "0" && infant === "0") {
-      redirectUrl = price.one_adult_redirect_url ?? ""
-    } else if (adult === "2" && child === "0" && infant === "0") {
-      redirectUrl = price.two_adults_redirect_url ?? ""
-    } else {
-      redirectUrl = price.base_redirect_url
+    // if (adult === "1" && child === "0" && infant === "0") {
+    //   redirectUrl = price.one_adult_redirect_url ?? ""
+    // } else if (adult === "2" && child === "0" && infant === "0") {
+    //   redirectUrl = price.two_adults_redirect_url ?? ""
+    // } else {
+    //   redirectUrl = price.base_redirect_url
+    //     .replace("${adult_len}", adult)
+    //     .replace("${child_len}", child)
+    //     .replace("${infant_len}", infant)
+    // }
+    redirectUrl = price.base_redirect_url
         .replace("${adult_len}", adult)
         .replace("${child_len}", child)
         .replace("${infant_len}", infant)
-    }
 
     window.open(`/redirect?redirect_url=${redirectUrl}&agency=${price.agency}&agency_eng=${price.agency_eng}`, "_blank")
   }

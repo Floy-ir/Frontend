@@ -55,16 +55,21 @@ export default function TicketCard({ websites }: { websites: dude[] }) {
   const handleBuy = (website: dude) => {
     let redirectUrl = ""
 
-    if (adultCount === "1" && childCount === "0" && infantCount === "0") {
-      redirectUrl = website.one_adult_redirect_url ?? ""
-    } else if (adultCount === "2" && childCount === "0" && infantCount === "0") {
-      redirectUrl = website.two_adult_redirect_url ?? ""
-    } else {
-      redirectUrl = website.base_redirect_url
+    // if (adultCount === "1" && childCount === "0" && infantCount === "0") {
+    //   redirectUrl = website.one_adult_redirect_url ?? ""
+    // } else if (adultCount === "2" && childCount === "0" && infantCount === "0") {
+    //   redirectUrl = website.two_adult_redirect_url ?? ""
+    // } else {
+    //   redirectUrl = website.base_redirect_url
+    //     .replace("${adult_len}", adultCount)
+    //     .replace("${child_len}", childCount)
+    //     .replace("${infant_len}", infantCount)
+    // }
+    redirectUrl = website.base_redirect_url
         .replace("${adult_len}", adultCount)
         .replace("${child_len}", childCount)
         .replace("${infant_len}", infantCount)
-    }
+        
     window.open(`/redirect?redirect_url=${redirectUrl}&agency=${website.detail.name_fa}&agency_eng=${website.detail.name}`, "_blank")
   }
   
