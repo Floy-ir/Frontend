@@ -518,8 +518,13 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
   // Add this ref at the component level, near other state declarations
   const lastFetchedDateRef = useRef<string>("")
 
+  // Add loading state near other state declarations
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+
+  // Update getFlights function to handle loading state
   const getFlights = async (departureDate: string) => {
     try {
+      setIsLoading(true);
       const startOfDay = new Date(`${departureDate}T00:00:00`).getTime() / 1000
       const endOfDay = new Date(`${departureDate}T23:59:59`).getTime() / 1000 + 1
       const [originCode, destinationCode] = unwrappedParams.route.split("-")
@@ -581,6 +586,8 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
       }
     } catch (err) {
       console.error("Error fetching flights:", err)
+    } finally {
+      setIsLoading(false);
     }
   }
 
@@ -788,21 +795,26 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
 
       {/* Main content */}
       <div className="container mx-auto max-w-266 p-0 lg:px-4 lg:py-6">
-        {filteredFlights.length > 0 ? (
-          <>
-            {/* Timeline component from HEAD branch */}
-            <div className="mb-0 lg:mb-8">
-              <Timeline
-                originCityCode={originCode || ""}
-                destinationCityCode={destinationCode || ""}
-                selectedDate={selectedDate}
-                adult={String(adult)}
-                child={String(child)}
-                infant={String(infant)}
-                autoScrollToSelected={true}
-              />
-            </div>
+        {/* Timeline component from HEAD branch */}
+        <div className="mb-0 lg:mb-8">
+          <Timeline
+            originCityCode={originCode || ""}
+            destinationCityCode={destinationCode || ""}
+            selectedDate={selectedDate}
+            adult={String(adult)}
+            child={String(child)}
+            infant={String(infant)}
+            autoScrollToSelected={true}
+          />
+        </div>
 
+        {isLoading ? (
+          <div className="flex flex-col items-center justify-center py-12">
+            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary mb-4"></div>
+            <p className="text-Gray-N600 text-lg font-medium">در حال جستجوی پروازها...</p>
+          </div>
+        ) : filteredFlights.length > 0 ? (
+          <>
             <div className="mb-6 hidden flex-row items-start justify-between lg:flex">
               <p className="text-Gray-N800 hidden text-right text-sm font-semibold lg:block">
                 {englishToFarsiNumber(filteredFlights.length)} نتیجه
@@ -1013,49 +1025,6 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                     </DrawerContent>
                   </Drawer>
                 )}
-
-                {/* Ticket Type Filter Chip - if active */}
-                {/*Object.values(filters.ticketType).some(Boolean) && (
-                  <Drawer
-                    open={openDrawers.ticketType}
-                    onOpenChange={(isOpen) => handleDrawerOpenChange(isOpen, "ticketType")}
-                  >
-                    <DrawerTrigger asChild>
-                      <div
-                        className="bg-Primary-P50 outline-Primary-P500main mr-1 inline-flex cursor-pointer items-center justify-center gap-1 rounded-2xl px-3 py-1 whitespace-nowrap outline-2 outline-offset-[-2px]"
-                        onClick={() => {
-                          setActiveFilterSection("ticketType")
-                          openDrawer("ticketType")
-                        }}
-                      >
-                        <div className="flex items-center gap-1">
-                          <div className="text-Primary-P500main text-sm leading-normal font-medium">
-                            نوع بلیط:{" "}
-                            {[filters.ticketType.charter ? "چارتری" : null, filters.ticketType.system ? "سیستمی" : null]
-                              .filter(Boolean)
-                              .join("، ")}
-                          </div>
-                        </div>
-                      </div>
-                    </DrawerTrigger>
-                    <DrawerContent className="bg-Shade-White max-h-[80vh] rounded-t-2xl pb-4">
-                      <FilterDrawerContent
-                        ref={drawerContentRef}
-                        title="نوع بلیط"
-                        activeFiltersCount={Object.values(filters.ticketType).filter(Boolean).length}
-                        clearFilters={() => _updateFilter("ticketType", "all", false)}
-                        activeSection="ticketType"
-                        filters={filters}
-                        updateFilter={_updateFilter}
-                        flightTimeRange={flightTimeRange}
-                        setFlightTimeRange={_setFlightTimeRange}
-                        priceRange={priceRange}
-                        setPriceRange={_setPriceRange}
-                        priceRangeBounds={priceRangeBounds}
-                      />
-                    </DrawerContent>
-                  </Drawer>
-                )*/}
 
                 {/* Cabin Class Filter Chip - if active */}
                 {Object.values(filters.cabinClass).some(Boolean) && (
@@ -1285,85 +1254,6 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                   </Drawer>
                 )}
 
-                {/* Ticket Type Filter Chip - if inactive */}
-                {/*!Object.values(filters.ticketType).some(Boolean) && (
-                  <Drawer
-                    open={openDrawers.ticketType}
-                    onOpenChange={(isOpen) => handleDrawerOpenChange(isOpen, "ticketType")}
-                  >
-                    <DrawerTrigger asChild>
-                      <div
-                        className="bg-Shade-White outline-Gray-N100 mr-1 inline-flex cursor-pointer items-center justify-center gap-1 rounded-2xl px-3 py-1 whitespace-nowrap outline-2 outline-offset-[-2px]"
-                        onClick={() => {
-                          setActiveFilterSection("ticketType")
-                          openDrawer("ticketType")
-                        }}
-                      >
-                        <div className="flex items-center gap-1">
-                          <div className="text-Gray-N700 text-sm leading-normal font-medium">نوع بلیط</div>
-                        </div>
-                      </div>
-                    </DrawerTrigger>
-                    <DrawerContent className="bg-Shade-White max-h-[80vh] rounded-t-2xl pb-4">
-                      <FilterDrawerContent
-                        ref={drawerContentRef}
-                        title="نوع بلیط"
-                        activeFiltersCount={Object.values(filters.ticketType).filter(Boolean).length}
-                        clearFilters={() => _updateFilter("ticketType", "all", false)}
-                        activeSection="ticketType"
-                        filters={filters}
-                        updateFilter={_updateFilter}
-                        flightTimeRange={flightTimeRange}
-                        setFlightTimeRange={_setFlightTimeRange}
-                        priceRange={priceRange}
-                        setPriceRange={_setPriceRange}
-                        priceRangeBounds={priceRangeBounds}
-                      />
-                    </DrawerContent>
-                  </Drawer>
-                )*/}
-
-                {/* Cabin Class Filter Chip - if inactive */}
-                {!Object.values(filters.cabinClass).some(Boolean) && (
-                  <Drawer
-                    open={openDrawers.cabinClass}
-                    onOpenChange={(isOpen) => handleDrawerOpenChange(isOpen, "cabinClass")}
-                  >
-                    <DrawerTrigger asChild>
-                      <div
-                        className="bg-Shade-White outline-Gray-N100 mr-1 inline-flex cursor-pointer items-center justify-center gap-1 rounded-2xl px-3 py-1 whitespace-nowrap outline-2 outline-offset-[-2px]"
-                        onClick={() => {
-                          setActiveFilterSection("cabinClass")
-                          openDrawer("cabinClass")
-                        }}
-                      >
-                        <div className="flex items-center gap-1">
-                          <div className="text-Gray-N700 text-sm leading-normal font-medium">کلاس پروازی</div>
-                        </div>
-                      </div>
-                    </DrawerTrigger>
-                    <DrawerContent className="bg-Shade-White max-h-[80vh] rounded-t-2xl pb-4">
-                      <FilterDrawerContent
-                        ref={drawerContentRef}
-                        title="کلاس پروازی"
-                        activeFiltersCount={Object.values(filters.cabinClass).filter(Boolean).length}
-                        clearFilters={() => _updateFilter("cabinClass", "all", false)}
-                        activeSection="cabinClass"
-                        filters={filters}
-                        updateFilter={_updateFilter}
-                        flightTimeRange={flightTimeRange}
-                        setFlightTimeRange={_setFlightTimeRange}
-                        priceRange={priceRange}
-                        setPriceRange={_setPriceRange}
-                        priceRangeBounds={priceRangeBounds}
-                        availableSeatClasses={availableSeatClasses}
-                        availableWebsites={availableWebsites}
-                        availableAirlines={availableAirlines}
-                      />
-                    </DrawerContent>
-                  </Drawer>
-                )}
-
                 {/* Airlines Filter Chip - if inactive */}
                 {!Object.values(filters.airlines).some(Boolean) && (
                   <Drawer
@@ -1475,17 +1365,6 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
           </>
         ) : (
           <div className="container mx-auto flex max-w-266 flex-col items-center justify-center p-0 lg:px-4 lg:py-6">
-            <div className="`mb-8 max-w-[1010px]">
-              <Timeline
-                originCityCode={originCode || ""}
-                destinationCityCode={destinationCode || ""}
-                selectedDate={selectedDate}
-                adult={String(adult)}
-                child={String(child)}
-                infant={String(infant)}
-                autoScrollToSelected={true}
-              />
-            </div>
             <NoTicketFound />
           </div>
         )}
@@ -1828,26 +1707,6 @@ const FilterDrawerContent = React.forwardRef<
                 />
               </FilterSection>
             )}
-
-            {/* Ticket Type */}
-            {/*(activeSection === "all" || activeSection === "ticketType") && (
-              <FilterSection
-                title="نوع بلیط"
-                count={Object.values(localFilters.ticketType).filter(Boolean).length}
-                isLast={activeSection !== "all"}
-              >
-                <FilterCheckbox
-                  label="چارتر"
-                  checked={localFilters.ticketType.charter}
-                  onChange={(v) => handleLocalFilterUpdate("ticketType", "charter", v)}
-                />
-                <FilterCheckbox
-                  label="سیستمی"
-                  checked={localFilters.ticketType.system}
-                  onChange={(v) => handleLocalFilterUpdate("ticketType", "system", v)}
-                />
-              </FilterSection>
-            )*/}
 
             {/* Cabin Class */}
             {(activeSection === "all" || activeSection === "cabinClass") && (
