@@ -140,7 +140,7 @@ export default function PopularCities() {
             )}
             <div className="flex flex-1 flex-col gap-2">
               {cityData.results
-                .slice(1)
+                .slice(1, 5)
                 .reduce<
                   {
                     origin: string
