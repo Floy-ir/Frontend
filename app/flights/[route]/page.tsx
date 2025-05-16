@@ -17,109 +17,36 @@ import { apiFetch } from "@/services/api/index"
 import { formatDate } from "@/utils/dateUtils"
 import { englishToFarsiNumber } from "@/utils/numbers"
 import { FlightResultsList } from "./FlightResultsList"
+import { 
+  FilterState, 
+  RouteParams, 
+  SortKey, 
+  TransformedFlight, 
+  DrawerContentRefType, 
+  FilterSectionProps, 
+  FilterCheckboxProps, 
+  FlightResult, 
+  FlightSearchResponseData,
+  Website,
+  Airline
+} from "@/app/types"
 
-type RouteParams = {
-  params: Promise<{
-    route: string
-  }>
-  searchParams: Promise<{
-    adult?: string
-    child?: string
-    infant?: string
-    departing?: string
-  }>
-}
-
-// Define the structure for filters state
-interface FilterState {
-  ticketType: { charter: boolean; system: boolean }
-  cabinClass: { economy: boolean; business: boolean }
-  airlines: { mahan: boolean; caspian: boolean; ata: boolean }
-  agencies: { alibaba: boolean; flytoday: boolean; mrbilit: boolean }
-}
-
-type FlightData = {
-  airline: {
-    uid: string
-    name: string
-    image: string | null
-  }
-  allowed_weight: number
-  arrival_timestamp: number
-  cheapest_base_redirect_url: string
-  cheapest_one_adult_redirect_url: string | null
-  cheapest_price: number
-  cheapest_two_adult_redirect_url: string | null
-  cheapest_website: {
-    uid: string
-    name: string
-    name_fa: string
-    image: string | null
-  }
-  departure_timestamp: number
-  destination: string
-  origin: string
-  seat_class: string
-  websites: {
-    adult_price: number
-    base_redirect_url: string
-    child_price: number | null
-    detail: {
-      uid: string
-      name: string
-      name_fa: string
-      image: string | null
-    }
-    infant_price: number | null
-    one_adult_redirect_url: string
-    remaining_seat: number
-    two_adult_redirect_url: string
-  }[]
-}
-
-type TransformedFlight = {
-  id: string
-  departureTime: string
-  arrivalTime: string
-  origin: string
-  destination: string
-  duration: { hours: number; minutes: number }
-  airline: {
-    name: string
-    logo: string
-  }
-  flightInfo: {
-    baggage: string
-    // ticketType: string
-    cabinClass: string
-  }
-  price: {
-    amount: number
-    formattedAmount: string
-    agency: string
-    agency_eng:string
-    agencyLogo: string
-    label: string
-    base_redirect_url: string
-    one_adult_redirect_url: string | null
-    two_adults_redirect_url: string | null
-  }
-  otherSellersCount: number
-  websites: {
-    adult_price: number
-    base_redirect_url: string
-    child_price: number | null
-    detail: {
-      uid: string
-      name: string
-      name_fa: string
-      image: string | null
-    }
-    infant_price: number | null
-    one_adult_redirect_url: string
-    remaining_seat: number
-    two_adult_redirect_url: string
-  }[]
+// Extend the FilterDrawerContentProps to include priceRangeBounds
+interface FilterDrawerContentProps {
+  title: string;
+  activeFiltersCount: number;
+  clearFilters: () => void;
+  activeSection: string;
+  filters: FilterState;
+  updateFilter: (category: string, key: string, value: boolean) => void;
+  flightTimeRange: [number, number];
+  setFlightTimeRange: (range: [number, number]) => void;
+  priceRange: [number, number];
+  setPriceRange: (range: [number, number]) => void;
+  priceRangeBounds: [number, number];
+  availableSeatClasses: string[];
+  availableWebsites: Website[];
+  availableAirlines: Airline[];
 }
 
 export default function FlightResults({ params, searchParams }: RouteParams) {
@@ -130,6 +57,9 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
   const unwrappedParams = use(params)
   // Unwrap searchParams Promise using React.use()
   const unwrappedSearchParams = use(searchParams)
+
+  // Add state for price range bounds from API - Define this early
+  const [priceRangeBounds, setPriceRangeBounds] = useState<[number, number]>([500000, 5000000])
 
   // Parse route from URL (format: THR-MHD)
   const [originCode, destinationCode] = unwrappedParams.route.split("-")
@@ -160,8 +90,8 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
   const selectedDate = unwrappedSearchParams.departing || formatDate(new Date())
 
   // State for sorting
-  const [sortKey, setSortKey] = React.useState<"cheapest" | "mostExpensive" | "earliest" | "latest">(
-    (urlSearchParams.get("sort") as "cheapest" | "mostExpensive" | "earliest" | "latest") || "cheapest"
+  const [sortKey, setSortKey] = React.useState<SortKey>(
+    (urlSearchParams.get("sort") as SortKey) || "cheapest"
   )
 
   // Parse filter values from URL
@@ -171,6 +101,17 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
     const airlinesParam = urlSearchParams.get("airlines") || ""
     const agenciesParam = urlSearchParams.get("agencies") || ""
 
+    // Create record objects for airlines and agencies
+    const airlineValues: Record<string, boolean> = {}
+    airlinesParam.split(",").filter(Boolean).forEach(airline => {
+      airlineValues[airline] = true
+    })
+
+    const agencyValues: Record<string, boolean> = {}
+    agenciesParam.split(",").filter(Boolean).forEach(agency => {
+      agencyValues[agency] = true
+    })
+
     return {
       ticketType: {
         charter: ticketParam.includes("charter"),
@@ -179,17 +120,10 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
       cabinClass: {
         economy: cabinParam.includes("economy"),
         business: cabinParam.includes("business"),
+        premiumEconomy: cabinParam.includes("premiumEconomy"),
       },
-      airlines: {
-        mahan: airlinesParam.includes("mahan"),
-        caspian: airlinesParam.includes("caspian"),
-        ata: airlinesParam.includes("ata"),
-      },
-      agencies: {
-        alibaba: agenciesParam.includes("alibaba"),
-        flytoday: agenciesParam.includes("flytoday"),
-        mrbilit: agenciesParam.includes("mrbilit"),
-      },
+      airlines: airlineValues,
+      agencies: agencyValues,
     }
   }
 
@@ -222,7 +156,8 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
         }
       }
     }
-    return [500000, 5000000]
+    // Use dynamic bounds from API if available, otherwise fallback to defaults
+    return [priceRangeBounds[0], priceRangeBounds[1]]
   }
 
   // Shared filters state
@@ -390,7 +325,7 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
     }
 
     // Update price range in URL if changed from default
-    if (priceRange[0] !== 500000 || priceRange[1] !== 5000000) {
+    if (priceRange[0] !== priceRangeBounds[0] || priceRange[1] !== priceRangeBounds[1]) {
       currentUrlParams.set("priceRange", `${priceRange[0]}-${priceRange[1]}`)
     } else {
       currentUrlParams.delete("priceRange")
@@ -408,7 +343,7 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
   // Calculate active filters count
   const _activeFiltersCount =
     Object.values(filters).reduce((count, category) => count + Object.values(category).filter(Boolean).length, 0) +
-    (priceRange[0] !== 500000 || priceRange[1] !== 5000000 ? 1 : 0) +
+    (priceRange[0] !== priceRangeBounds[0] || priceRange[1] !== priceRangeBounds[1] ? 1 : 0) +
     (flightTimeRange[0] !== 4 || flightTimeRange[1] !== 24 ? 1 : 0)
 
   // Handler for filter changes
@@ -445,26 +380,28 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
   const _clearFilters = () => {
     setFilters({
       ticketType: { charter: false, system: false },
-      cabinClass: { economy: false, business: false },
-      airlines: { mahan: false, caspian: false, ata: false },
-      agencies: { alibaba: false, flytoday: false, mrbilit: false },
-    })
+      cabinClass: { economy: false, business: false, premiumEconomy: false },
+      airlines: {},
+      agencies: {},
+    });
+    setFlightTimeRange([4, 24]);
+    setPriceRange(priceRangeBounds); // Use dynamic bounds instead of hardcoded values
   }
 
   const _setFlightTimeRange = (range: [number, number]) => {
-    // Implementation would go here
+    setFlightTimeRange(range)
   }
 
   const _setPriceRange = (range: [number, number]) => {
-    // Implementation would go here
+    setPriceRange(range)
   }
 
   // Sort options
   const sortOptions = [
-    { key: "cheapest" as const, label: "ارزان‌ترین" },
-    { key: "mostExpensive" as const, label: "گران‌ترین" },
-    { key: "earliest" as const, label: "نزدیک‌ترین" },
-    { key: "latest" as const, label: "دیر‌ترین" },
+    { key: "cheapest" as SortKey, label: "ارزان‌ترین" },
+    { key: "mostExpensive" as SortKey, label: "گران‌ترین" },
+    { key: "earliest" as SortKey, label: "نزدیک‌ترین" },
+    { key: "latest" as SortKey, label: "دیر‌ترین" },
   ]
 
   // Get current sort label
@@ -505,10 +442,16 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
     }))
   }
 
+  // State for flight data
   const [flights, setFlights] = useState<TransformedFlight[]>([])
+  // Add state for available seat classes
+  const [availableSeatClasses, setAvailableSeatClasses] = useState<string[]>([])
+  // Add state for available websites and airlines
+  const [availableWebsites, setAvailableWebsites] = useState<Website[]>([])
+  const [availableAirlines, setAvailableAirlines] = useState<Airline[]>([])
   const pathname = usePathname()
   // const [error, setError] = useState<string | null>(null);
-  function transformFlightData(input: FlightData, id: string = "1"): TransformedFlight {
+  function transformFlightData(input: FlightResult, id: string = "1"): TransformedFlight {
     const departure = new Date(input.departure_timestamp * 1000)
     const arrival = new Date(input.arrival_timestamp * 1000)
 
@@ -522,6 +465,23 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
       date
         .toLocaleTimeString("fa-IR", { hour: "2-digit", minute: "2-digit", hour12: false })
         .replace(/\d/g, (d) => "۰۱۲۳۴۵۶۷۸۹".charAt(parseInt(d)))
+
+    // Transform websites to match FlightData's websites structure
+    const transformedWebsites = input.websites.map(website => ({
+      adult_price: website.adult_price,
+      base_redirect_url: website.base_redirect_url,
+      child_price: website.child_price,
+      detail: {
+        uid: website.detail.uid,
+        name: website.detail.name,
+        name_fa: website.detail.name_fa,
+        image: website.detail.image
+      },
+      infant_price: website.infant_price,
+      one_adult_redirect_url: website.one_adult_redirect_url || "",
+      remaining_seat: website.remaining_seat,
+      two_adult_redirect_url: website.two_adult_redirect_url || ""
+    }));
 
     return {
       id,
@@ -552,16 +512,31 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
         two_adults_redirect_url: input.cheapest_two_adult_redirect_url ?? input.cheapest_base_redirect_url,
       },
       otherSellersCount: input.websites.length,
-      websites: input.websites,
+      websites: transformedWebsites,
     }
   }
 
+  // Add this ref at the component level, near other state declarations
+  const lastFetchedDateRef = useRef<string>("")
+
+  // Add loading state near other state declarations
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+
+  // Add a requestId tracker to avoid duplicate calls
+  const [currentRequestId, setCurrentRequestId] = useState<string>("");
+
+  // Add a state to track if we've already loaded flights for this route
+  const [hasLoadedFlights, setHasLoadedFlights] = useState(false);
+
+  // Update the getFlights function to be simpler
   const getFlights = async (departureDate: string) => {
     try {
+      setIsLoading(true);
+      
       const startOfDay = new Date(`${departureDate}T00:00:00`).getTime() / 1000
       const endOfDay = new Date(`${departureDate}T23:59:59`).getTime() / 1000 + 1
       const [originCode, destinationCode] = unwrappedParams.route.split("-")
-      const data = await apiFetch<{ results: FlightData[] }>("/flights/", {
+      const data = await apiFetch<FlightSearchResponseData>("/flights/", {
         params: {
           origin: originCode,
           destination: destinationCode,
@@ -570,25 +545,75 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
         },
       })
 
-      // console.log(params)
-
       if (data?.results) {
         const transformed = data.results.map((flight, index) => transformFlightData(flight, (index + 1).toString()))
         setFlights(transformed)
+
+        // Update price range bounds if available in the API response
+        if (data.filters && typeof data.filters.min_price === 'number' && typeof data.filters.max_price === 'number') {
+          // Make sure max is at least min + 1 to avoid slider issues
+          const max = Math.max(data.filters.max_price, data.filters.min_price + 1)
+          const newBounds: [number, number] = [data.filters.min_price, max]
+          
+          // Only update if bounds actually changed or date changed
+          const boundsChanged = newBounds[0] !== priceRangeBounds[0] || newBounds[1] !== priceRangeBounds[1];
+          const dateChanged = lastFetchedDateRef.current !== departureDate;
+          
+          if (boundsChanged) {
+            setPriceRangeBounds(newBounds);
+            
+            // Update price range when either:
+            // 1. The date has changed (new search)
+            // 2. It's still at default values
+            // 3. Current range is outside new bounds
+            if (dateChanged || 
+                (priceRange[0] === 500000 && priceRange[1] === 5000000) ||
+                priceRange[0] < newBounds[0] || 
+                priceRange[1] > newBounds[1]) {
+              setPriceRange(newBounds);
+            }
+          }
+          
+          // Update last fetched date
+          lastFetchedDateRef.current = departureDate;
+        }
+
+        // Update available seat classes from API response
+        if (data.filters && data.filters.seat_classes) {
+          setAvailableSeatClasses(data.filters.seat_classes)
+        }
+
+        // Update available websites and airlines from API response
+        if (data.filters && data.filters.websites) {
+          setAvailableWebsites(data.filters.websites)
+        }
+
+        if (data.filters && data.filters.airlines) {
+          setAvailableAirlines(data.filters.airlines)
+        }
+        
+        // Mark that we've loaded data
+        setHasLoadedFlights(true);
       }
     } catch (err) {
       console.error("Error fetching flights:", err)
+    } finally {
+      setIsLoading(false);
     }
   }
 
-  //fetch flights
+  // Split the effect into two parts:
+  // 1. Reset the loaded flag when dependencies change
   useEffect(() => {
-    // console.log("asdfg")
-    // console.log(pathname)
-    // const fullUrl = `${pathname}?${searchParams.toString()}`
+    setHasLoadedFlights(false);
+  }, [unwrappedParams.route, departureDate]);
 
-    getFlights(departureDate)
-  }, [pathname, searchParams])
+  // 2. Load the data only when needed
+  useEffect(() => {
+    if (!hasLoadedFlights) {
+      getFlights(departureDate);
+    }
+  }, [hasLoadedFlights, departureDate]);
 
   // Sort flights based on selected sort key, safely handling empty/incomplete objects
   const sortedFlights = [...flights]
@@ -613,14 +638,95 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
       }
     })
 
-  // Create a drawer content ref to communicate with the FilterDrawerContent
-  const drawerContentRef = useRef<{
-    getLocalState: () => {
-      localFilters: FilterState
-      localPriceRange: [number, number]
-      localFlightTimeRange: [number, number]
+  // Filter flights based on applied filters
+  const filteredFlights = sortedFlights.filter((flight) => {
+    // Filter by price range
+    if (flight.price.amount < priceRange[0] || flight.price.amount > priceRange[1]) {
+      return false;
     }
-  }>(null)
+
+    // Filter by flight time range
+    // Only apply if we have a valid departure time
+    const departureTime = flight.departureTime;
+    if (departureTime) {
+      // Try to extract hour as a number by:
+      // 1. First checking for Persian digits (۰-۹)
+      // 2. If not found, try normal digits (0-9)
+      let departureHour: number | null = null;
+      
+      // First try Persian digits pattern
+      const persianMatch = departureTime.match(/^([۰۱۲۳۴۵۶۷۸۹]+):/);
+      if (persianMatch && persianMatch[1]) {
+        // Convert Persian digits to numbers
+        const persianDigits = "۰۱۲۳۴۵۶۷۸۹";
+        let hour = 0;
+        for (const digit of persianMatch[1]) {
+          const index = persianDigits.indexOf(digit);
+          if (index !== -1) {
+            hour = hour * 10 + index;
+          }
+        }
+        departureHour = hour;
+      } else {
+        // Try regular digits
+        const regularMatch = departureTime.match(/^(\d+):/);
+        if (regularMatch && regularMatch[1]) {
+          departureHour = parseInt(regularMatch[1], 10);
+        }
+      }
+      
+      // Apply filter if we successfully extracted a valid hour
+      if (departureHour !== null && 
+          (departureHour < flightTimeRange[0] || departureHour > flightTimeRange[1])) {
+        return false;
+      }
+    }
+
+    // Filter by cabin class if any selected
+    if (Object.values(filters.cabinClass).some(Boolean)) {
+      // Map cabin class from flight to filter key
+      const cabinClassMapping: Record<string, string> = {
+        "اکونومی": "economy",
+        "بیزینس": "business",
+        "اکونومی پریمیوم": "premiumEconomy"
+      };
+      
+      const flightCabinClass = flight.flightInfo.cabinClass || "";
+      const cabinClassKey = cabinClassMapping[flightCabinClass];
+      
+      // Only check if we found a matching cabin class key
+      if (cabinClassKey && !filters.cabinClass[cabinClassKey as keyof typeof filters.cabinClass]) {
+        return false;
+      }
+    }
+
+    // Filter by airlines if any selected
+    if (Object.values(filters.airlines).some(Boolean)) {
+      // Find the airline UID based on name
+      const airlineUID = availableAirlines.find(a => a.name === flight.airline.name)?.uid;
+      
+      if (!airlineUID || !filters.airlines[airlineUID]) {
+        return false;
+      }
+    }
+
+    // Filter by agencies (websites) if any selected
+    if (Object.values(filters.agencies).some(Boolean)) {
+      // Check if at least one website offering this flight matches the filter
+      const hasMatchingWebsite = flight.websites.some(website => 
+        filters.agencies[website.detail.uid]
+      );
+      
+      if (!hasMatchingWebsite) {
+        return false;
+      }
+    }
+
+    return true;
+  });
+
+  // Create a drawer content ref to communicate with the FilterDrawerContent
+  const drawerContentRef = useRef<DrawerContentRefType>(null)
 
   // Drawer open/close handler that applies the changes from local state
   const handleDrawerOpenChange = (isOpen: boolean, drawerType: string) => {
@@ -635,42 +741,44 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
         setFlightTimeRange(localFlightTimeRange)
       } else if (drawerType === "ticketType") {
         // Always update values from local state when drawer closes
-        _updateFilter("ticketType", "charter", localFilters.ticketType.charter)
-        _updateFilter("ticketType", "system", localFilters.ticketType.system)
+        _updateFilter("ticketType", "charter", localFilters.ticketType.charter || false)
+        _updateFilter("ticketType", "system", localFilters.ticketType.system || false)
       } else if (drawerType === "cabinClass") {
         // Always update cabin class filters
-        _updateFilter("cabinClass", "economy", localFilters.cabinClass.economy)
-        _updateFilter("cabinClass", "business", localFilters.cabinClass.business)
+        _updateFilter("cabinClass", "economy", localFilters.cabinClass.economy || false)
+        _updateFilter("cabinClass", "business", localFilters.cabinClass.business || false)
+        _updateFilter("cabinClass", "premiumEconomy", localFilters.cabinClass.premiumEconomy || false)
       } else if (drawerType === "airlines") {
-        // Always update airlines filters
-        _updateFilter("airlines", "mahan", localFilters.airlines.mahan)
-        _updateFilter("airlines", "caspian", localFilters.airlines.caspian)
-        _updateFilter("airlines", "ata", localFilters.airlines.ata)
+        // Always update airlines filters - handle the Record<string, boolean> structure
+        for (const [key, value] of Object.entries(localFilters.airlines)) {
+          _updateFilter("airlines", key, value || false)
+        }
       } else if (drawerType === "agencies") {
-        // Always update agencies filters
-        _updateFilter("agencies", "alibaba", localFilters.agencies.alibaba)
-        _updateFilter("agencies", "flytoday", localFilters.agencies.flytoday)
-        _updateFilter("agencies", "mrbilit", localFilters.agencies.mrbilit)
+        // Always update agencies filters - handle the Record<string, boolean> structure
+        for (const [key, value] of Object.entries(localFilters.agencies)) {
+          _updateFilter("agencies", key, value || false)
+        }
       } else if (drawerType === "all") {
         // Apply all changes for the "all filters" drawer
 
         // Update ticket type filters
-        _updateFilter("ticketType", "charter", localFilters.ticketType.charter)
-        _updateFilter("ticketType", "system", localFilters.ticketType.system)
+        _updateFilter("ticketType", "charter", localFilters.ticketType.charter || false)
+        _updateFilter("ticketType", "system", localFilters.ticketType.system || false)
 
         // Update cabin class filters
-        _updateFilter("cabinClass", "economy", localFilters.cabinClass.economy)
-        _updateFilter("cabinClass", "business", localFilters.cabinClass.business)
+        _updateFilter("cabinClass", "economy", localFilters.cabinClass.economy || false)
+        _updateFilter("cabinClass", "business", localFilters.cabinClass.business || false)
+        _updateFilter("cabinClass", "premiumEconomy", localFilters.cabinClass.premiumEconomy || false)
 
         // Update airlines filters
-        _updateFilter("airlines", "mahan", localFilters.airlines.mahan)
-        _updateFilter("airlines", "caspian", localFilters.airlines.caspian)
-        _updateFilter("airlines", "ata", localFilters.airlines.ata)
+        for (const [key, value] of Object.entries(localFilters.airlines)) {
+          _updateFilter("airlines", key, value || false)
+        }
 
         // Update agencies filters
-        _updateFilter("agencies", "alibaba", localFilters.agencies.alibaba)
-        _updateFilter("agencies", "flytoday", localFilters.agencies.flytoday)
-        _updateFilter("agencies", "mrbilit", localFilters.agencies.mrbilit)
+        for (const [key, value] of Object.entries(localFilters.agencies)) {
+          _updateFilter("agencies", key, value || false)
+        }
 
         // Update ranges
         setPriceRange(localPriceRange)
@@ -702,24 +810,29 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
 
       {/* Main content */}
       <div className="container mx-auto max-w-266 p-0 lg:px-4 lg:py-6">
-        {sortedFlights.length > 0 ? (
-          <>
-            {/* Timeline component from HEAD branch */}
-            <div className="mb-0 lg:mb-8">
-              <Timeline
-                originCityCode={originCode || ""}
-                destinationCityCode={destinationCode || ""}
-                selectedDate={selectedDate}
-                adult={String(adult)}
-                child={String(child)}
-                infant={String(infant)}
-                autoScrollToSelected={true}
-              />
-            </div>
+        {/* Timeline component from HEAD branch */}
+        <div className="mb-0 lg:mb-8">
+          <Timeline
+            originCityCode={originCode || ""}
+            destinationCityCode={destinationCode || ""}
+            selectedDate={selectedDate}
+            adult={String(adult)}
+            child={String(child)}
+            infant={String(infant)}
+            autoScrollToSelected={true}
+          />
+        </div>
 
+        {isLoading ? (
+          <div className="flex flex-col items-center justify-center py-12">
+            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary mb-4"></div>
+            <p className="text-Gray-N600 text-lg font-medium">در حال جستجوی پروازها...</p>
+          </div>
+        ) : filteredFlights.length > 0 ? (
+          <>
             <div className="mb-6 hidden flex-row items-start justify-between lg:flex">
               <p className="text-Gray-N800 hidden text-right text-sm font-semibold lg:block">
-                {englishToFarsiNumber(sortedFlights.length)} نتیجه
+                {englishToFarsiNumber(filteredFlights.length)} نتیجه
               </p>
 
               {/* desktop sort */}
@@ -831,13 +944,17 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                       setFlightTimeRange={_setFlightTimeRange}
                       priceRange={priceRange}
                       setPriceRange={_setPriceRange}
+                      priceRangeBounds={priceRangeBounds}
+                      availableSeatClasses={availableSeatClasses}
+                      availableWebsites={availableWebsites}
+                      availableAirlines={availableAirlines}
                     />
                   </DrawerContent>
                 </Drawer>
 
                 {/* Active filters first */}
                 {/* Price Range Filter Chip - if active */}
-                {(priceRange[0] !== 500000 || priceRange[1] !== 5000000) && (
+                {(priceRange[0] !== priceRangeBounds[0] || priceRange[1] !== priceRangeBounds[1]) && (
                   <Drawer
                     open={openDrawers.priceRange}
                     onOpenChange={(isOpen) => handleDrawerOpenChange(isOpen, "priceRange")}
@@ -862,8 +979,8 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                       <FilterDrawerContent
                         ref={drawerContentRef}
                         title="بازه قیمت"
-                        activeFiltersCount={priceRange[0] !== 500000 || priceRange[1] !== 5000000 ? 1 : 0}
-                        clearFilters={() => setPriceRange([500000, 5000000])}
+                        activeFiltersCount={priceRange[0] !== priceRangeBounds[0] || priceRange[1] !== priceRangeBounds[1] ? 1 : 0}
+                        clearFilters={() => setPriceRange(priceRangeBounds)}
                         activeSection="priceRange"
                         filters={filters}
                         updateFilter={_updateFilter}
@@ -871,6 +988,10 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                         setFlightTimeRange={_setFlightTimeRange}
                         priceRange={priceRange}
                         setPriceRange={_setPriceRange}
+                        priceRangeBounds={priceRangeBounds}
+                        availableSeatClasses={availableSeatClasses}
+                        availableWebsites={availableWebsites}
+                        availableAirlines={availableAirlines}
                       />
                     </DrawerContent>
                   </Drawer>
@@ -911,48 +1032,10 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                         setFlightTimeRange={_setFlightTimeRange}
                         priceRange={priceRange}
                         setPriceRange={_setPriceRange}
-                      />
-                    </DrawerContent>
-                  </Drawer>
-                )}
-
-                {/* Ticket Type Filter Chip - if active */}
-                {Object.values(filters.ticketType).some(Boolean) && (
-                  <Drawer
-                    open={openDrawers.ticketType}
-                    onOpenChange={(isOpen) => handleDrawerOpenChange(isOpen, "ticketType")}
-                  >
-                    <DrawerTrigger asChild>
-                      <div
-                        className="bg-Primary-P50 outline-Primary-P500main mr-1 inline-flex cursor-pointer items-center justify-center gap-1 rounded-2xl px-3 py-1 whitespace-nowrap outline-2 outline-offset-[-2px]"
-                        onClick={() => {
-                          setActiveFilterSection("ticketType")
-                          openDrawer("ticketType")
-                        }}
-                      >
-                        <div className="flex items-center gap-1">
-                          <div className="text-Primary-P500main text-sm leading-normal font-medium">
-                            نوع بلیط:{" "}
-                            {[filters.ticketType.charter ? "چارتری" : null, filters.ticketType.system ? "سیستمی" : null]
-                              .filter(Boolean)
-                              .join("، ")}
-                          </div>
-                        </div>
-                      </div>
-                    </DrawerTrigger>
-                    <DrawerContent className="bg-Shade-White max-h-[80vh] rounded-t-2xl pb-4">
-                      <FilterDrawerContent
-                        ref={drawerContentRef}
-                        title="نوع بلیط"
-                        activeFiltersCount={Object.values(filters.ticketType).filter(Boolean).length}
-                        clearFilters={() => _updateFilter("ticketType", "all", false)}
-                        activeSection="ticketType"
-                        filters={filters}
-                        updateFilter={_updateFilter}
-                        flightTimeRange={flightTimeRange}
-                        setFlightTimeRange={_setFlightTimeRange}
-                        priceRange={priceRange}
-                        setPriceRange={_setPriceRange}
+                        priceRangeBounds={priceRangeBounds}
+                        availableSeatClasses={availableSeatClasses}
+                        availableWebsites={availableWebsites}
+                        availableAirlines={availableAirlines}
                       />
                     </DrawerContent>
                   </Drawer>
@@ -977,6 +1060,7 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                             کلاس پروازی:{" "}
                             {[
                               filters.cabinClass.economy ? "اکونومی" : null,
+                              filters.cabinClass.premiumEconomy ? "اکونومی پریمیوم" : null,
                               filters.cabinClass.business ? "بیزینس" : null,
                             ]
                               .filter(Boolean)
@@ -999,6 +1083,10 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                         setFlightTimeRange={_setFlightTimeRange}
                         priceRange={priceRange}
                         setPriceRange={_setPriceRange}
+                        priceRangeBounds={priceRangeBounds}
+                        availableSeatClasses={availableSeatClasses}
+                        availableWebsites={availableWebsites}
+                        availableAirlines={availableAirlines}
                       />
                     </DrawerContent>
                   </Drawer>
@@ -1021,12 +1109,9 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                         <div className="flex items-center gap-1">
                           <div className="text-Primary-P500main text-sm leading-normal font-medium">
                             ایرلاین‌ها:{" "}
-                            {[
-                              filters.airlines.mahan ? "ماهان" : null,
-                              filters.airlines.caspian ? "کاسپین" : null,
-                              filters.airlines.ata ? "آتا" : null,
-                            ]
-                              .filter(Boolean)
+                            {availableAirlines
+                              .filter(airline => filters.airlines[airline.uid])
+                              .map(airline => airline.name)
                               .join("، ")}
                           </div>
                         </div>
@@ -1045,6 +1130,10 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                         setFlightTimeRange={_setFlightTimeRange}
                         priceRange={priceRange}
                         setPriceRange={_setPriceRange}
+                        priceRangeBounds={priceRangeBounds}
+                        availableSeatClasses={availableSeatClasses}
+                        availableWebsites={availableWebsites}
+                        availableAirlines={availableAirlines}
                       />
                     </DrawerContent>
                   </Drawer>
@@ -1067,12 +1156,9 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                         <div className="flex items-center gap-1">
                           <div className="text-Primary-P500main text-sm leading-normal font-medium">
                             وبسایت‌ها:{" "}
-                            {[
-                              filters.agencies.alibaba ? "علی بابا" : null,
-                              filters.agencies.flytoday ? "فلای تودی" : null,
-                              filters.agencies.mrbilit ? "مستر بلیط" : null,
-                            ]
-                              .filter(Boolean)
+                            {availableWebsites
+                              .filter(website => filters.agencies[website.uid])
+                              .map(website => website.name_fa)
                               .join("، ")}
                           </div>
                         </div>
@@ -1091,6 +1177,10 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                         setFlightTimeRange={_setFlightTimeRange}
                         priceRange={priceRange}
                         setPriceRange={_setPriceRange}
+                        priceRangeBounds={priceRangeBounds}
+                        availableSeatClasses={availableSeatClasses}
+                        availableWebsites={availableWebsites}
+                        availableAirlines={availableAirlines}
                       />
                     </DrawerContent>
                   </Drawer>
@@ -1098,7 +1188,7 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
 
                 {/* Inactive filters after active ones */}
                 {/* Price Range Filter Chip - if inactive */}
-                {priceRange[0] === 500000 && priceRange[1] === 5000000 && (
+                {priceRange[0] === priceRangeBounds[0] && priceRange[1] === priceRangeBounds[1] && (
                   <Drawer
                     open={openDrawers.priceRange}
                     onOpenChange={(isOpen) => handleDrawerOpenChange(isOpen, "priceRange")}
@@ -1120,8 +1210,8 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                       <FilterDrawerContent
                         ref={drawerContentRef}
                         title="بازه قیمت"
-                        activeFiltersCount={priceRange[0] !== 500000 || priceRange[1] !== 5000000 ? 1 : 0}
-                        clearFilters={() => setPriceRange([500000, 5000000])}
+                        activeFiltersCount={priceRange[0] !== priceRangeBounds[0] || priceRange[1] !== priceRangeBounds[1] ? 1 : 0}
+                        clearFilters={() => setPriceRange(priceRangeBounds)}
                         activeSection="priceRange"
                         filters={filters}
                         updateFilter={_updateFilter}
@@ -1129,6 +1219,10 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                         setFlightTimeRange={_setFlightTimeRange}
                         priceRange={priceRange}
                         setPriceRange={_setPriceRange}
+                        priceRangeBounds={priceRangeBounds}
+                        availableSeatClasses={availableSeatClasses}
+                        availableWebsites={availableWebsites}
+                        availableAirlines={availableAirlines}
                       />
                     </DrawerContent>
                   </Drawer>
@@ -1166,80 +1260,10 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                         setFlightTimeRange={_setFlightTimeRange}
                         priceRange={priceRange}
                         setPriceRange={_setPriceRange}
-                      />
-                    </DrawerContent>
-                  </Drawer>
-                )}
-
-                {/* Ticket Type Filter Chip - if inactive */}
-                {!Object.values(filters.ticketType).some(Boolean) && (
-                  <Drawer
-                    open={openDrawers.ticketType}
-                    onOpenChange={(isOpen) => handleDrawerOpenChange(isOpen, "ticketType")}
-                  >
-                    <DrawerTrigger asChild>
-                      <div
-                        className="bg-Shade-White outline-Gray-N100 mr-1 inline-flex cursor-pointer items-center justify-center gap-1 rounded-2xl px-3 py-1 whitespace-nowrap outline-2 outline-offset-[-2px]"
-                        onClick={() => {
-                          setActiveFilterSection("ticketType")
-                          openDrawer("ticketType")
-                        }}
-                      >
-                        <div className="flex items-center gap-1">
-                          <div className="text-Gray-N700 text-sm leading-normal font-medium">نوع بلیط</div>
-                        </div>
-                      </div>
-                    </DrawerTrigger>
-                    <DrawerContent className="bg-Shade-White max-h-[80vh] rounded-t-2xl pb-4">
-                      <FilterDrawerContent
-                        ref={drawerContentRef}
-                        title="نوع بلیط"
-                        activeFiltersCount={Object.values(filters.ticketType).filter(Boolean).length}
-                        clearFilters={() => _updateFilter("ticketType", "all", false)}
-                        activeSection="ticketType"
-                        filters={filters}
-                        updateFilter={_updateFilter}
-                        flightTimeRange={flightTimeRange}
-                        setFlightTimeRange={_setFlightTimeRange}
-                        priceRange={priceRange}
-                        setPriceRange={_setPriceRange}
-                      />
-                    </DrawerContent>
-                  </Drawer>
-                )}
-
-                {/* Cabin Class Filter Chip - if inactive */}
-                {!Object.values(filters.cabinClass).some(Boolean) && (
-                  <Drawer
-                    open={openDrawers.cabinClass}
-                    onOpenChange={(isOpen) => handleDrawerOpenChange(isOpen, "cabinClass")}
-                  >
-                    <DrawerTrigger asChild>
-                      <div
-                        className="bg-Shade-White outline-Gray-N100 mr-1 inline-flex cursor-pointer items-center justify-center gap-1 rounded-2xl px-3 py-1 whitespace-nowrap outline-2 outline-offset-[-2px]"
-                        onClick={() => {
-                          setActiveFilterSection("cabinClass")
-                          openDrawer("cabinClass")
-                        }}
-                      >
-                        <div className="flex items-center gap-1">
-                          <div className="text-Gray-N700 text-sm leading-normal font-medium">کلاس پروازی</div>
-                        </div>
-                      </div>
-                    </DrawerTrigger>
-                    <DrawerContent className="bg-Shade-White max-h-[80vh] rounded-t-2xl pb-4">
-                      <FilterDrawerContent
-                        ref={drawerContentRef}
-                        title="کلاس پروازی"
-                        activeFiltersCount={Object.values(filters.cabinClass).filter(Boolean).length}
-                        clearFilters={() => _updateFilter("cabinClass", "all", false)}
-                        activeSection="cabinClass"
-                        filters={filters}
-                        updateFilter={_updateFilter}
-                        flightTimeRange={flightTimeRange}
-                        setFlightTimeRange={_setFlightTimeRange}
-                        priceRange={priceRange}
-                        setPriceRange={_setPriceRange}
+                        priceRangeBounds={priceRangeBounds}
+                        availableSeatClasses={availableSeatClasses}
+                        availableWebsites={availableWebsites}
+                        availableAirlines={availableAirlines}
                       />
                     </DrawerContent>
                   </Drawer>
@@ -1277,6 +1301,10 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                         setFlightTimeRange={_setFlightTimeRange}
                         priceRange={priceRange}
                         setPriceRange={_setPriceRange}
+                        priceRangeBounds={priceRangeBounds}
+                        availableSeatClasses={availableSeatClasses}
+                        availableWebsites={availableWebsites}
+                        availableAirlines={availableAirlines}
                       />
                     </DrawerContent>
                   </Drawer>
@@ -1314,6 +1342,10 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                         setFlightTimeRange={_setFlightTimeRange}
                         priceRange={priceRange}
                         setPriceRange={_setPriceRange}
+                        priceRangeBounds={priceRangeBounds}
+                        availableSeatClasses={availableSeatClasses}
+                        availableWebsites={availableWebsites}
+                        availableAirlines={availableAirlines}
                       />
                     </DrawerContent>
                   </Drawer>
@@ -1333,28 +1365,21 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                   priceRange={priceRange}
                   setPriceRange={_setPriceRange}
                   activeFiltersCount={_activeFiltersCount}
+                  priceRangeBounds={priceRangeBounds}
+                  availableSeatClasses={availableSeatClasses}
+                  availableWebsites={availableWebsites}
+                  availableAirlines={availableAirlines}
                 />
               </div>
 
               {/* Flight results list */}
               <div className="flex-1">
-                <FlightResultsList flights={sortedFlights} onRefresh={() => getFlights(departureDate) } />
+                <FlightResultsList flights={filteredFlights} onRefresh={() => getFlights(departureDate)} />
               </div>
             </div>
           </>
         ) : (
           <div className="container mx-auto flex max-w-266 flex-col items-center justify-center p-0 lg:px-4 lg:py-6">
-            <div className="`mb-8 max-w-[1010px]">
-              <Timeline
-                originCityCode={originCode || ""}
-                destinationCityCode={destinationCode || ""}
-                selectedDate={selectedDate}
-                adult={String(adult)}
-                child={String(child)}
-                infant={String(infant)}
-                autoScrollToSelected={true}
-              />
-            </div>
             <NoTicketFound />
           </div>
         )}
@@ -1365,25 +1390,8 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
 
 // Simpler drawer content component with ref API
 const FilterDrawerContent = React.forwardRef<
-  {
-    getLocalState: () => {
-      localFilters: FilterState
-      localPriceRange: [number, number]
-      localFlightTimeRange: [number, number]
-    }
-  },
-  {
-    title: string
-    activeFiltersCount: number
-    clearFilters: () => void
-    activeSection: string
-    filters: FilterState
-    updateFilter: (category: string, key: string, value: boolean) => void
-    flightTimeRange: [number, number]
-    setFlightTimeRange: (range: [number, number]) => void
-    priceRange: [number, number]
-    setPriceRange: (range: [number, number]) => void
-  }
+  DrawerContentRefType,
+  FilterDrawerContentProps
 >(
   (
     {
@@ -1397,6 +1405,10 @@ const FilterDrawerContent = React.forwardRef<
       setFlightTimeRange,
       priceRange,
       setPriceRange,
+      priceRangeBounds,
+      availableSeatClasses,
+      availableWebsites,
+      availableAirlines,
     },
     ref
   ) => {
@@ -1404,6 +1416,8 @@ const FilterDrawerContent = React.forwardRef<
     const [localFilters, setLocalFilters] = React.useState<FilterState>({ ...filters })
     const [localFlightTimeRange, setLocalFlightTimeRange] = React.useState<[number, number]>([...flightTimeRange])
     const [localPriceRange, setLocalPriceRange] = React.useState<[number, number]>([...priceRange])
+    // Add local state for price range bounds from props
+    const [localPriceRangeBounds, setLocalPriceRangeBounds] = React.useState<[number, number]>([...priceRangeBounds])
 
     // Update local state when props change (for initial render)
     React.useEffect(() => {
@@ -1416,7 +1430,8 @@ const FilterDrawerContent = React.forwardRef<
       })
       setLocalFlightTimeRange([...flightTimeRange])
       setLocalPriceRange([...priceRange])
-    }, [filters, flightTimeRange, priceRange])
+      setLocalPriceRangeBounds([...priceRangeBounds])
+    }, [filters, flightTimeRange, priceRange, priceRangeBounds])
 
     // Expose the method to get local state via ref
     React.useImperativeHandle(
@@ -1465,12 +1480,12 @@ const FilterDrawerContent = React.forwardRef<
     const handleLocalClearFilters = () => {
       setLocalFilters({
         ticketType: { charter: false, system: false },
-        cabinClass: { economy: false, business: false },
-        airlines: { mahan: false, caspian: false, ata: false },
-        agencies: { alibaba: false, flytoday: false, mrbilit: false },
-      })
-      setLocalFlightTimeRange([4, 24])
-      setLocalPriceRange([500000, 5000000])
+        cabinClass: { economy: false, business: false, premiumEconomy: false },
+        airlines: {},
+        agencies: {},
+      });
+      setLocalFlightTimeRange([4, 24]);
+      setLocalPriceRange(localPriceRangeBounds);
     }
 
     // Calculate local active filters count
@@ -1479,7 +1494,7 @@ const FilterDrawerContent = React.forwardRef<
       Object.values(localFilters.cabinClass).filter(Boolean).length +
       Object.values(localFilters.airlines).filter(Boolean).length +
       Object.values(localFilters.agencies).filter(Boolean).length +
-      (localPriceRange[0] !== 500000 || localPriceRange[1] !== 5000000 ? 1 : 0) +
+      (localPriceRange[0] !== localPriceRangeBounds[0] || localPriceRange[1] !== localPriceRangeBounds[1] ? 1 : 0) +
       (localFlightTimeRange[0] !== 4 || localFlightTimeRange[1] !== 24 ? 1 : 0)
 
     // Calculate total active filters for chips display
@@ -1488,7 +1503,7 @@ const FilterDrawerContent = React.forwardRef<
       Object.values(localFilters.cabinClass).filter(Boolean).length +
       Object.values(localFilters.airlines).filter(Boolean).length +
       Object.values(localFilters.agencies).filter(Boolean).length +
-      (localPriceRange[0] !== 500000 || localPriceRange[1] !== 5000000 ? 1 : 0) +
+      (localPriceRange[0] !== localPriceRangeBounds[0] || localPriceRange[1] !== localPriceRangeBounds[1] ? 1 : 0) +
       (localFlightTimeRange[0] !== 4 || localFlightTimeRange[1] !== 24 ? 1 : 0)
 
     return (
@@ -1576,7 +1591,7 @@ const FilterDrawerContent = React.forwardRef<
                         </div>
                         <div className="flex items-center justify-center gap-1">
                           <div className="text-Gray-N700 text-sm leading-normal font-medium">
-                            {key === "economy" ? "اکونومی" : "بیزینس"}
+                            {key === "economy" ? "اکونومی" : key === "premiumEconomy" ? "اکونومی پریمیوم" : "بیزینس"}
                           </div>
                         </div>
                       </div>
@@ -1601,7 +1616,7 @@ const FilterDrawerContent = React.forwardRef<
                         </div>
                         <div className="flex items-center justify-center gap-1">
                           <div className="text-Gray-N700 text-sm leading-normal font-medium">
-                            {key === "mahan" ? "ماهان" : key === "caspian" ? "کاسپین" : "آتا"}
+                            {availableAirlines.find(airline => airline.uid === key)?.name || key}
                           </div>
                         </div>
                       </div>
@@ -1626,7 +1641,7 @@ const FilterDrawerContent = React.forwardRef<
                         </div>
                         <div className="flex items-center justify-center gap-1">
                           <div className="text-Gray-N700 text-sm leading-normal font-medium">
-                            {key === "alibaba" ? "علی بابا" : key === "flytoday" ? "فلای تودی" : "مستر بلیط"}
+                            {availableWebsites.find(website => website.uid === key)?.name_fa || key}
                           </div>
                         </div>
                       </div>
@@ -1634,11 +1649,11 @@ const FilterDrawerContent = React.forwardRef<
                 )}
 
                 {/* Price Range Filter */}
-                {(localPriceRange[0] !== 500000 || localPriceRange[1] !== 5000000) && (
+                {(localPriceRange[0] !== localPriceRangeBounds[0] || localPriceRange[1] !== localPriceRangeBounds[1]) && (
                   <div className="bg-Shade-White outline-Gray-N100 flex flex-shrink-0 items-center justify-center gap-1 overflow-hidden rounded-2xl px-3 py-1 outline-2 outline-offset-[-2px]">
                     <div
                       className="flex cursor-pointer items-center justify-start gap-2 py-1"
-                      onClick={() => setLocalPriceRange([500000, 5000000])}
+                      onClick={() => setLocalPriceRange(localPriceRangeBounds)}
                     >
                       <div className="relative size-4 overflow-hidden rounded-[48px]">
                         <CloseCircle size="16" color="#94A3B8" />
@@ -1699,31 +1714,11 @@ const FilterDrawerContent = React.forwardRef<
                 <FancySlider
                   value={localPriceRange}
                   onValueChange={setLocalPriceRange}
-                  min={500000}
-                  max={5000000}
-                  step={100000}
+                  min={localPriceRangeBounds[0]}
+                  max={localPriceRangeBounds[1]}
+                  step={Math.max(1, Math.floor((localPriceRangeBounds[1] - localPriceRangeBounds[0]) / 50))}
                   leftLabel={formatPrice(localPriceRange[1])}
                   rightLabel={formatPrice(localPriceRange[0])}
-                />
-              </FilterSection>
-            )}
-
-            {/* Ticket Type */}
-            {(activeSection === "all" || activeSection === "ticketType") && (
-              <FilterSection
-                title="نوع بلیط"
-                count={Object.values(localFilters.ticketType).filter(Boolean).length}
-                isLast={activeSection !== "all"}
-              >
-                <FilterCheckbox
-                  label="چارتر"
-                  checked={localFilters.ticketType.charter}
-                  onChange={(v) => handleLocalFilterUpdate("ticketType", "charter", v)}
-                />
-                <FilterCheckbox
-                  label="سیستمی"
-                  checked={localFilters.ticketType.system}
-                  onChange={(v) => handleLocalFilterUpdate("ticketType", "system", v)}
                 />
               </FilterSection>
             )}
@@ -1735,16 +1730,27 @@ const FilterDrawerContent = React.forwardRef<
                 count={Object.values(localFilters.cabinClass).filter(Boolean).length}
                 isLast={activeSection !== "all"}
               >
-                <FilterCheckbox
-                  label="اکونومی"
-                  checked={localFilters.cabinClass.economy}
-                  onChange={(v) => handleLocalFilterUpdate("cabinClass", "economy", v)}
-                />
-                <FilterCheckbox
-                  label="بیزینس"
-                  checked={localFilters.cabinClass.business}
-                  onChange={(v) => handleLocalFilterUpdate("cabinClass", "business", v)}
-                />
+                {availableSeatClasses.includes("Economy") && (
+                  <FilterCheckbox
+                    label="اکونومی"
+                    checked={localFilters.cabinClass.economy}
+                    onChange={(v) => handleLocalFilterUpdate("cabinClass", "economy", v)}
+                  />
+                )}
+                {availableSeatClasses.includes("Premium Economy") && (
+                  <FilterCheckbox
+                    label="اکونومی پریمیوم"
+                    checked={localFilters.cabinClass.premiumEconomy || false}
+                    onChange={(v) => handleLocalFilterUpdate("cabinClass", "premiumEconomy", v)}
+                  />
+                )}
+                {availableSeatClasses.includes("Business") && (
+                  <FilterCheckbox
+                    label="بیزینس"
+                    checked={localFilters.cabinClass.business}
+                    onChange={(v) => handleLocalFilterUpdate("cabinClass", "business", v)}
+                  />
+                )}
               </FilterSection>
             )}
 
@@ -1755,27 +1761,20 @@ const FilterDrawerContent = React.forwardRef<
                 count={Object.values(localFilters.airlines).filter(Boolean).length}
                 isLast={activeSection !== "all"}
               >
-                <FilterCheckbox
-                  label="ماهان"
-                  logo="/images/logo.webp"
-                  extraText="از ۲,346,890"
-                  checked={localFilters.airlines.mahan}
-                  onChange={(v) => handleLocalFilterUpdate("airlines", "mahan", v)}
-                />
-                <FilterCheckbox
-                  label="کاسپین"
-                  logo="/images/logo.webp"
-                  extraText="از ۲,346,890"
-                  checked={localFilters.airlines.caspian}
-                  onChange={(v) => handleLocalFilterUpdate("airlines", "caspian", v)}
-                />
-                <FilterCheckbox
-                  label="آتا"
-                  logo="/images/logo.webp"
-                  extraText="از ۲,346,890"
-                  checked={localFilters.airlines.ata}
-                  onChange={(v) => handleLocalFilterUpdate("airlines", "ata", v)}
-                />
+                {availableAirlines.length > 0 ? (
+                  availableAirlines.map((airline) => (
+                    <FilterCheckbox
+                      key={airline.uid}
+                      label={airline.name}
+                      logo={airline.image || "/images/logo.webp"}
+                      extraText={airline.min_price ? `از ${englishToFarsiNumber(Math.floor(airline.min_price).toLocaleString())}` : ""}
+                      checked={localFilters.airlines[airline.uid] || false}
+                      onChange={(v) => handleLocalFilterUpdate("airlines", airline.uid, v)}
+                    />
+                  ))
+                ) : (
+                  <div className="text-Gray-N500 text-center text-sm py-2">هیچ ایرلاینی یافت نشد</div>
+                )}
               </FilterSection>
             )}
 
@@ -1784,29 +1783,21 @@ const FilterDrawerContent = React.forwardRef<
               <FilterSection
                 title="وبسایت‌ها"
                 count={Object.values(localFilters.agencies).filter(Boolean).length}
-                isLast={activeSection !== "all"}
               >
-                <FilterCheckbox
-                  label="علی‌بابا"
-                  logo="/images/logo.webp"
-                  extraText="از ۲,346,890"
-                  checked={localFilters.agencies.alibaba}
-                  onChange={(v) => handleLocalFilterUpdate("agencies", "alibaba", v)}
-                />
-                <FilterCheckbox
-                  label="فلای تودی"
-                  logo="/images/logo.webp"
-                  extraText="از ۲,346,890"
-                  checked={localFilters.agencies.flytoday}
-                  onChange={(v) => handleLocalFilterUpdate("agencies", "flytoday", v)}
-                />
-                <FilterCheckbox
-                  label="مستر بلیط"
-                  logo="/images/logo.webp"
-                  extraText="از ۲,346,890"
-                  checked={localFilters.agencies.mrbilit}
-                  onChange={(v) => handleLocalFilterUpdate("agencies", "mrbilit", v)}
-                />
+                {availableWebsites.length > 0 ? (
+                  availableWebsites.map((website) => (
+                    <FilterCheckbox
+                      key={website.uid}
+                      label={website.name_fa}
+                      logo={website.image || "/images/logo.webp"}
+                      extraText={website.min_price ? `از ${englishToFarsiNumber(Math.floor(website.min_price).toLocaleString())}` : ""}
+                      checked={localFilters.agencies[website.uid] || false}
+                      onChange={(v) => handleLocalFilterUpdate("agencies", website.uid, v)}
+                    />
+                  ))
+                ) : (
+                  <div className="text-Gray-N500 text-center text-sm py-2">هیچ وبسایتی یافت نشد</div>
+                )}
               </FilterSection>
             )}
           </div>
@@ -1827,18 +1818,12 @@ const formatTime = (hour: number) => {
 }
 
 // Filter section with expandable header
-const FilterSection = ({
+const FilterSection: React.FC<FilterSectionProps> = ({
   title,
   children,
   count = 0,
   isOpen = true,
   isLast = false,
-}: {
-  title: string
-  children: React.ReactNode
-  count?: number
-  isOpen?: boolean
-  isLast?: boolean
 }) => {
   const [expanded, setExpanded] = React.useState(isOpen)
 
@@ -1882,18 +1867,12 @@ const FilterSection = ({
 }
 
 // Checkbox component for filters
-const FilterCheckbox = ({
+const FilterCheckbox: React.FC<FilterCheckboxProps> = ({
   label,
   checked,
   onChange,
   logo,
   extraText,
-}: {
-  label: string
-  checked: boolean
-  onChange: (value: boolean) => void
-  logo?: string
-  extraText?: string
 }) => (
   <div className="inline-flex items-center justify-end gap-2 self-stretch">
     <div className="flex items-center justify-center gap-2 p-[3px]">
