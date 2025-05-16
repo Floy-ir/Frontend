@@ -75,7 +75,7 @@ export default function TicketCard({ websites }: { websites: dude[] }) {
   
   return (
     <div className="flex w-full flex-col items-start gap-5 lg:w-3/5">
-      <div className="cards-container h-[550px] w-full snap-y snap-mandatory overflow-y-auto px-3 md:px-0">
+      <div className="cards-container h-[550px] w-full snap-y snap-mandatory overflow-y-auto px-3 md:px-0" style={{ scrollbarWidth: "none" }}>
         <div className="text-Gray-N600 mt-5 mb-5 h-6 self-stretch text-right text-sm leading-normal font-semibold md:mt-0">
           {englishToFarsiNumber(websites.length)} فروشنده
         </div>
