@@ -515,6 +515,9 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
     }
   }
 
+  // Add this ref at the component level, near other state declarations
+  const lastFetchedDateRef = useRef<string>("")
+
   const getFlights = async (departureDate: string) => {
     try {
       const startOfDay = new Date(`${departureDate}T00:00:00`).getTime() / 1000
@@ -538,12 +541,28 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
           // Make sure max is at least min + 1 to avoid slider issues
           const max = Math.max(data.filters.max_price, data.filters.min_price + 1)
           const newBounds: [number, number] = [data.filters.min_price, max]
-          setPriceRangeBounds(newBounds)
           
-          // Only update price range if it's still at default values
-          if (priceRange[0] === 500000 && priceRange[1] === 5000000) {
-            setPriceRange(newBounds)
+          // Only update if bounds actually changed or date changed
+          const boundsChanged = newBounds[0] !== priceRangeBounds[0] || newBounds[1] !== priceRangeBounds[1];
+          const dateChanged = lastFetchedDateRef.current !== departureDate;
+          
+          if (boundsChanged) {
+            setPriceRangeBounds(newBounds);
+            
+            // Update price range when either:
+            // 1. The date has changed (new search)
+            // 2. It's still at default values
+            // 3. Current range is outside new bounds
+            if (dateChanged || 
+                (priceRange[0] === 500000 && priceRange[1] === 5000000) ||
+                priceRange[0] < newBounds[0] || 
+                priceRange[1] > newBounds[1]) {
+              setPriceRange(newBounds);
+            }
           }
+          
+          // Update last fetched date
+          lastFetchedDateRef.current = departureDate;
         }
 
         // Update available seat classes from API response
