@@ -9,16 +9,8 @@ export interface FilterState {
     economy: boolean; 
     business: boolean 
   };
-  airlines: { 
-    mahan: boolean; 
-    caspian: boolean; 
-    ata: boolean 
-  };
-  agencies: { 
-    alibaba: boolean; 
-    flytoday: boolean; 
-    mrbilit: boolean 
-  };
+  airlines: Record<string, boolean>;
+  agencies: Record<string, boolean>;
 }
 
 export interface RouteParams {

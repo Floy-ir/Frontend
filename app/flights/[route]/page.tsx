@@ -17,7 +17,18 @@ import { apiFetch } from "@/services/api/index"
 import { formatDate } from "@/utils/dateUtils"
 import { englishToFarsiNumber } from "@/utils/numbers"
 import { FlightResultsList } from "./FlightResultsList"
-import { FilterState, FlightData, RouteParams, SortKey, TransformedFlight, DrawerContentRefType, FilterSectionProps, FilterCheckboxProps, FilterDrawerContentProps } from "@/app/types"
+import { 
+  FilterState, 
+  RouteParams, 
+  SortKey, 
+  TransformedFlight, 
+  DrawerContentRefType, 
+  FilterSectionProps, 
+  FilterCheckboxProps, 
+  FilterDrawerContentProps, 
+  FlightResult, 
+  FlightSearchResponseData 
+} from "@/app/types"
 
 export default function FlightResults({ params, searchParams }: RouteParams) {
   const router = useRouter()
@@ -68,6 +79,17 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
     const airlinesParam = urlSearchParams.get("airlines") || ""
     const agenciesParam = urlSearchParams.get("agencies") || ""
 
+    // Create record objects for airlines and agencies
+    const airlineValues: Record<string, boolean> = {}
+    airlinesParam.split(",").filter(Boolean).forEach(airline => {
+      airlineValues[airline] = true
+    })
+
+    const agencyValues: Record<string, boolean> = {}
+    agenciesParam.split(",").filter(Boolean).forEach(agency => {
+      agencyValues[agency] = true
+    })
+
     return {
       ticketType: {
         charter: ticketParam.includes("charter"),
@@ -77,16 +99,8 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
         economy: cabinParam.includes("economy"),
         business: cabinParam.includes("business"),
       },
-      airlines: {
-        mahan: airlinesParam.includes("mahan"),
-        caspian: airlinesParam.includes("caspian"),
-        ata: airlinesParam.includes("ata"),
-      },
-      agencies: {
-        alibaba: agenciesParam.includes("alibaba"),
-        flytoday: agenciesParam.includes("flytoday"),
-        mrbilit: agenciesParam.includes("mrbilit"),
-      },
+      airlines: airlineValues,
+      agencies: agencyValues,
     }
   }
 
@@ -343,8 +357,8 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
     setFilters({
       ticketType: { charter: false, system: false },
       cabinClass: { economy: false, business: false },
-      airlines: { mahan: false, caspian: false, ata: false },
-      agencies: { alibaba: false, flytoday: false, mrbilit: false },
+      airlines: {},
+      agencies: {},
     });
     setFlightTimeRange([4, 24]);
     setPriceRange([500000, 5000000]);
@@ -407,7 +421,7 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
   const [flights, setFlights] = useState<TransformedFlight[]>([])
   const pathname = usePathname()
   // const [error, setError] = useState<string | null>(null);
-  function transformFlightData(input: FlightData, id: string = "1"): TransformedFlight {
+  function transformFlightData(input: FlightResult, id: string = "1"): TransformedFlight {
     const departure = new Date(input.departure_timestamp * 1000)
     const arrival = new Date(input.arrival_timestamp * 1000)
 
@@ -459,7 +473,7 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
       const startOfDay = new Date(`${departureDate}T00:00:00`).getTime() / 1000
       const endOfDay = new Date(`${departureDate}T23:59:59`).getTime() / 1000 + 1
       const [originCode, destinationCode] = unwrappedParams.route.split("-")
-      const data = await apiFetch<{ results: FlightData[] }>("/flights", {
+      const data = await apiFetch<FlightSearchResponseData>("/flights", {
         params: {
           origin: originCode,
           destination: destinationCode,
@@ -467,8 +481,6 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
           departure_timestamp__lte: endOfDay,
         },
       })
-
-      // console.log(params)
 
       if (data?.results) {
         const transformed = data.results.map((flight, index) => transformFlightData(flight, (index + 1).toString()))
@@ -527,42 +539,42 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
         setFlightTimeRange(localFlightTimeRange)
       } else if (drawerType === "ticketType") {
         // Always update values from local state when drawer closes
-        _updateFilter("ticketType", "charter", localFilters.ticketType.charter)
-        _updateFilter("ticketType", "system", localFilters.ticketType.system)
+        _updateFilter("ticketType", "charter", localFilters.ticketType.charter || false)
+        _updateFilter("ticketType", "system", localFilters.ticketType.system || false)
       } else if (drawerType === "cabinClass") {
         // Always update cabin class filters
-        _updateFilter("cabinClass", "economy", localFilters.cabinClass.economy)
-        _updateFilter("cabinClass", "business", localFilters.cabinClass.business)
+        _updateFilter("cabinClass", "economy", localFilters.cabinClass.economy || false)
+        _updateFilter("cabinClass", "business", localFilters.cabinClass.business || false)
       } else if (drawerType === "airlines") {
-        // Always update airlines filters
-        _updateFilter("airlines", "mahan", localFilters.airlines.mahan)
-        _updateFilter("airlines", "caspian", localFilters.airlines.caspian)
-        _updateFilter("airlines", "ata", localFilters.airlines.ata)
+        // Always update airlines filters - handle the Record<string, boolean> structure
+        for (const [key, value] of Object.entries(localFilters.airlines)) {
+          _updateFilter("airlines", key, value || false)
+        }
       } else if (drawerType === "agencies") {
-        // Always update agencies filters
-        _updateFilter("agencies", "alibaba", localFilters.agencies.alibaba)
-        _updateFilter("agencies", "flytoday", localFilters.agencies.flytoday)
-        _updateFilter("agencies", "mrbilit", localFilters.agencies.mrbilit)
+        // Always update agencies filters - handle the Record<string, boolean> structure
+        for (const [key, value] of Object.entries(localFilters.agencies)) {
+          _updateFilter("agencies", key, value || false)
+        }
       } else if (drawerType === "all") {
         // Apply all changes for the "all filters" drawer
 
         // Update ticket type filters
-        _updateFilter("ticketType", "charter", localFilters.ticketType.charter)
-        _updateFilter("ticketType", "system", localFilters.ticketType.system)
+        _updateFilter("ticketType", "charter", localFilters.ticketType.charter || false)
+        _updateFilter("ticketType", "system", localFilters.ticketType.system || false)
 
         // Update cabin class filters
-        _updateFilter("cabinClass", "economy", localFilters.cabinClass.economy)
-        _updateFilter("cabinClass", "business", localFilters.cabinClass.business)
+        _updateFilter("cabinClass", "economy", localFilters.cabinClass.economy || false)
+        _updateFilter("cabinClass", "business", localFilters.cabinClass.business || false)
 
         // Update airlines filters
-        _updateFilter("airlines", "mahan", localFilters.airlines.mahan)
-        _updateFilter("airlines", "caspian", localFilters.airlines.caspian)
-        _updateFilter("airlines", "ata", localFilters.airlines.ata)
+        for (const [key, value] of Object.entries(localFilters.airlines)) {
+          _updateFilter("airlines", key, value || false)
+        }
 
         // Update agencies filters
-        _updateFilter("agencies", "alibaba", localFilters.agencies.alibaba)
-        _updateFilter("agencies", "flytoday", localFilters.agencies.flytoday)
-        _updateFilter("agencies", "mrbilit", localFilters.agencies.mrbilit)
+        for (const [key, value] of Object.entries(localFilters.agencies)) {
+          _updateFilter("agencies", key, value || false)
+        }
 
         // Update ranges
         setPriceRange(localPriceRange)
@@ -1341,11 +1353,11 @@ const FilterDrawerContent = React.forwardRef<
       setLocalFilters({
         ticketType: { charter: false, system: false },
         cabinClass: { economy: false, business: false },
-        airlines: { mahan: false, caspian: false, ata: false },
-        agencies: { alibaba: false, flytoday: false, mrbilit: false },
-      })
-      setLocalFlightTimeRange([4, 24])
-      setLocalPriceRange([500000, 5000000])
+        airlines: {},
+        agencies: {},
+      });
+      setLocalFlightTimeRange([4, 24]);
+      setLocalPriceRange([500000, 5000000]);
     }
 
     // Calculate local active filters count
