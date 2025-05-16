@@ -521,10 +521,17 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
   // Add loading state near other state declarations
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
-  // Update getFlights function to handle loading state
+  // Add a requestId tracker to avoid duplicate calls
+  const [currentRequestId, setCurrentRequestId] = useState<string>("");
+
+  // Add a state to track if we've already loaded flights for this route
+  const [hasLoadedFlights, setHasLoadedFlights] = useState(false);
+
+  // Update the getFlights function to be simpler
   const getFlights = async (departureDate: string) => {
     try {
       setIsLoading(true);
+      
       const startOfDay = new Date(`${departureDate}T00:00:00`).getTime() / 1000
       const endOfDay = new Date(`${departureDate}T23:59:59`).getTime() / 1000 + 1
       const [originCode, destinationCode] = unwrappedParams.route.split("-")
@@ -583,6 +590,9 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
         if (data.filters && data.filters.airlines) {
           setAvailableAirlines(data.filters.airlines)
         }
+        
+        // Mark that we've loaded data
+        setHasLoadedFlights(true);
       }
     } catch (err) {
       console.error("Error fetching flights:", err)
@@ -591,14 +601,18 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
     }
   }
 
-  //fetch flights
+  // Split the effect into two parts:
+  // 1. Reset the loaded flag when dependencies change
   useEffect(() => {
-    // console.log("asdfg")
-    // console.log(pathname)
-    // const fullUrl = `${pathname}?${searchParams.toString()}`
+    setHasLoadedFlights(false);
+  }, [unwrappedParams.route, departureDate]);
 
-    getFlights(departureDate)
-  }, [pathname, searchParams])
+  // 2. Load the data only when needed
+  useEffect(() => {
+    if (!hasLoadedFlights) {
+      getFlights(departureDate);
+    }
+  }, [hasLoadedFlights, departureDate]);
 
   // Sort flights based on selected sort key, safely handling empty/incomplete objects
   const sortedFlights = [...flights]
