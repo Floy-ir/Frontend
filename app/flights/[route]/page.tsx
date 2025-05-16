@@ -856,7 +856,7 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                 )}
 
                 {/* Ticket Type Filter Chip - if active */}
-                {Object.values(filters.ticketType).some(Boolean) && (
+                {/*Object.values(filters.ticketType).some(Boolean) && (
                   <Drawer
                     open={openDrawers.ticketType}
                     onOpenChange={(isOpen) => handleDrawerOpenChange(isOpen, "ticketType")}
@@ -896,7 +896,7 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                       />
                     </DrawerContent>
                   </Drawer>
-                )}
+                )*/}
 
                 {/* Cabin Class Filter Chip - if active */}
                 {Object.values(filters.cabinClass).some(Boolean) && (
@@ -1117,7 +1117,7 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                 )}
 
                 {/* Ticket Type Filter Chip - if inactive */}
-                {!Object.values(filters.ticketType).some(Boolean) && (
+                {/*!Object.values(filters.ticketType).some(Boolean) && (
                   <Drawer
                     open={openDrawers.ticketType}
                     onOpenChange={(isOpen) => handleDrawerOpenChange(isOpen, "ticketType")}
@@ -1152,7 +1152,7 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                       />
                     </DrawerContent>
                   </Drawer>
-                )}
+                )*/}
 
                 {/* Cabin Class Filter Chip - if inactive */}
                 {!Object.values(filters.cabinClass).some(Boolean) && (
@@ -1646,7 +1646,7 @@ const FilterDrawerContent = React.forwardRef<
             )}
 
             {/* Ticket Type */}
-            {(activeSection === "all" || activeSection === "ticketType") && (
+            {/*(activeSection === "all" || activeSection === "ticketType") && (
               <FilterSection
                 title="نوع بلیط"
                 count={Object.values(localFilters.ticketType).filter(Boolean).length}
@@ -1663,7 +1663,7 @@ const FilterDrawerContent = React.forwardRef<
                   onChange={(v) => handleLocalFilterUpdate("ticketType", "system", v)}
                 />
               </FilterSection>
-            )}
+            )*/}
 
             {/* Cabin Class */}
             {(activeSection === "all" || activeSection === "cabinClass") && (

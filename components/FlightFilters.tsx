@@ -210,7 +210,7 @@ export function FlightFilters({
       <div className="bg-Shade-White border-Gray-N100 inline-flex items-center justify-center gap-3 self-stretch border-b px-5 py-3">
         <div className="flex flex-1 flex-wrap items-center justify-end gap-[7px]">
           {/* Ticket Type Filters */}
-          {Object.values(filters.ticketType).some(Boolean) && (
+          {/*Object.values(filters.ticketType).some(Boolean) && (
             <div className="bg-Primary-P50 outline-Primary-P500main flex items-center justify-center gap-1 overflow-hidden rounded-2xl px-3 py-1 outline outline-2 outline-offset-[-2px]">
               <div
                 className="flex cursor-pointer items-center justify-start gap-2 py-1"
@@ -229,7 +229,7 @@ export function FlightFilters({
                 </div>
               </div>
             </div>
-          )}
+          )*/}
 
           {/* Cabin Class Filters */}
           {Object.values(filters.cabinClass).some(Boolean) && (
@@ -413,7 +413,7 @@ export function FlightFilters({
         </FilterSection>
 
         {/* Ticket type */}
-        <FilterSection title="نوع بلیط" count={Object.values(filters.ticketType).filter(Boolean).length}>
+        {/*<FilterSection title="نوع بلیط" count={Object.values(filters.ticketType).filter(Boolean).length}>
           <FilterCheckbox
             label="چارتر"
             checked={filters.ticketType.charter}
@@ -424,7 +424,7 @@ export function FlightFilters({
             checked={filters.ticketType.system}
             onChange={(v) => updateFilter("ticketType", "system", v)}
           />
-        </FilterSection>
+        </FilterSection>*/}
 
         {/* Cabin class */}
         <FilterSection title="کلاس پروازی" count={Object.values(filters.cabinClass).filter(Boolean).length}>
