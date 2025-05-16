@@ -59,7 +59,7 @@ export default function ComparisonDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="bg-Gray-N100 gap-0 border-none p-0 shadow-none m-0 w-full h-full  
+      <DialogContent  className="bg-Gray-N100 gap-0 border-none p-0 shadow-none m-0 w-full h-full  
                       lg:h-[641px] lg:max-w-[968px] rounded-none lg:rounded-2xl ">
         
         <DialogHeader className="bg-Shade-white rounded-none lg:rounded-t-2xl ">
