@@ -1,2 +1,2 @@
-export { FlightCard } from './flight-card'
-export type { FlightCardProps } from './flight-card' 
+export { FlightCard } from "./flight-card"
+export type { FlightCardProps } from "./flight-card"

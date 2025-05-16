@@ -196,45 +196,40 @@ export function TextField({
   const customStyles: React.CSSProperties = {}
   if (customWidth) {
     // Support for responsive width values (min/max/clamp)
-    customStyles.width = customWidth.includes('clamp') || customWidth.includes('min') || customWidth.includes('max') 
-      ? customWidth 
-      : customWidth;
+    customStyles.width =
+      customWidth.includes("clamp") || customWidth.includes("min") || customWidth.includes("max")
+        ? customWidth
+        : customWidth
   }
   if (customHeight) {
     // Support for responsive height values (min/max/clamp)
-    customStyles.height = customHeight.includes('clamp') || customHeight.includes('min') || customHeight.includes('max')
-      ? customHeight
-      : customHeight;
+    customStyles.height =
+      customHeight.includes("clamp") || customHeight.includes("min") || customHeight.includes("max")
+        ? customHeight
+        : customHeight
   }
 
   return (
-    <Form.Root className={twMerge(
-      textFieldContainer({ intent, disabled, className: containerClassName }),
-      noBorder && "gap-0"
-    )}>
+    <Form.Root
+      className={twMerge(textFieldContainer({ intent, disabled, className: containerClassName }), noBorder && "gap-0")}
+    >
       <Form.Field name={id || "textfield"}>
         {label && (
           <Form.Label className={twMerge(textFieldLabel({ intent, className: labelClassName }))}>{label}</Form.Label>
         )}
-        
-        <div 
-          className={twMerge(textFieldWrapper({ intent, size, width, filled, disabled }), 
-            noBorder && "border-0 bg-transparent")}
+
+        <div
+          className={twMerge(
+            textFieldWrapper({ intent, size, width, filled, disabled }),
+            noBorder && "border-0 bg-transparent"
+          )}
           style={Object.keys(customStyles).length > 0 ? customStyles : undefined}
         >
-          <div className={`flex items-center h-full w-full ${noBorder ? '' : 'px-4'}`}>
-            {rightIcon && (
-              <div className={twMerge(textFieldIcon({ position: "right" }))}>
-                {rightIcon}
-              </div>
-            )}
-            
-            {prefix && (
-              <div className={twMerge(textFieldAffix({ position: "prefix" }))}>
-                {prefix}
-              </div>
-            )}
-            
+          <div className={`flex h-full w-full items-center ${noBorder ? "" : "px-4"}`}>
+            {rightIcon && <div className={twMerge(textFieldIcon({ position: "right" }))}>{rightIcon}</div>}
+
+            {prefix && <div className={twMerge(textFieldAffix({ position: "prefix" }))}>{prefix}</div>}
+
             <Form.Control asChild>
               <input
                 id={id}

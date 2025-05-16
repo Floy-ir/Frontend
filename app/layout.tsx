@@ -5,7 +5,6 @@ import { ActiveMenuProvider } from "@/components/ActiveMenuProvider/ActiveMenuPr
 import Footer from "@/components/Footer/Footer"
 import { anjomanMaxVF } from "../lib/fonts"
 
-
 // Define metadata
 export const metadata: Metadata = {
   title: "فلوی | موتور جستجوی بلیط هواپیما و رزرو اقامتگاه",
@@ -21,14 +20,12 @@ export default function RootLayout({
     <html lang="fa" dir="rtl">
       <body className={`${anjomanMaxVF.variable} font-anjoman-max`}>
         {/* Global Header with dynamic active state */}
-        
+
         <ActiveMenuProvider />
-        
+
         {/* Main Content */}
-        <main className="min-h-screen">
-          {children}
-        </main>
-        
+        <main className="min-h-screen">{children}</main>
+
         {/* Global Footer */}
         <Footer />
       </body>

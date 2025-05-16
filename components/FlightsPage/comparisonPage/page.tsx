@@ -19,12 +19,11 @@ export default function ComparisonDialog({
   otherSellersCount,
   airline,
   flightInfo,
-  onBuy
-
+  onBuy,
 }: {
-  onBuy: () => void 
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
+  onBuy: () => void
+  open: boolean
+  onOpenChange: (open: boolean) => void
   departureTime: string
   arrivalTime: string
   origin: string
@@ -56,13 +55,10 @@ export default function ComparisonDialog({
     two_adult_redirect_url: string
   }[]
 }) {
-
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent  className="bg-Gray-N100 gap-0 border-none p-0 shadow-none m-0 w-full h-full  
-                      lg:h-[641px] lg:max-w-[968px] rounded-none lg:rounded-2xl ">
-        
-        <DialogHeader className="bg-Shade-white rounded-none lg:rounded-t-2xl ">
+      <DialogContent className="bg-Gray-N100 m-0 h-full w-full gap-0 rounded-none border-none p-0 shadow-none lg:h-[641px] lg:max-w-[968px] lg:rounded-2xl">
+        <DialogHeader className="bg-Shade-white rounded-none lg:rounded-t-2xl">
           <div className="flex flex-row items-center justify-between px-6 py-4">
             <DialogTitle className="text-Gray-N600 text-sm leading-normal font-semibold">جزییات پرواز</DialogTitle>
             <DialogClose>
@@ -74,7 +70,7 @@ export default function ComparisonDialog({
           <div className="bg-Gray-N200 h-px self-stretch" />
         </DialogHeader>
 
-        <div className="mb-7 flex overflow-y-auto flex-col lg:flex-row items-start gap-4 md:px-24 lg:px-6.5 md:pt-6.5">
+        <div className="mb-7 flex flex-col items-start gap-4 overflow-y-auto md:px-24 md:pt-6.5 lg:flex-row lg:px-6.5">
           {/* flight info */}
           <FlightInfo
             departureTime={departureTime}
@@ -83,13 +79,13 @@ export default function ComparisonDialog({
             destination={destination}
             duration={duration}
             otherSellersCount={otherSellersCount}
-            airline={airline} 
-            flightInfo={flightInfo}/>
+            airline={airline}
+            flightInfo={flightInfo}
+          />
 
           {/* ticket cards */}
-          <TicketCard websites={websites}/>
+          <TicketCard websites={websites} />
         </div>
-        
       </DialogContent>
     </Dialog>
   )

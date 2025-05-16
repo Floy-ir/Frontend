@@ -265,12 +265,14 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
       const changes = drawerChangesRef.current[drawer] as Record<string, unknown>
 
       // Apply changes based on drawer type
-      if (drawer === "priceRange" && typeof changes.priceRange !== 'undefined') {
+      if (drawer === "priceRange" && typeof changes.priceRange !== "undefined") {
         setPriceRange(changes.priceRange as [number, number])
-      } else if (drawer === "flightTime" && typeof changes.flightTimeRange !== 'undefined') {
+      } else if (drawer === "flightTime" && typeof changes.flightTimeRange !== "undefined") {
         setFlightTimeRange(changes.flightTimeRange as [number, number])
-      } else if (["ticketType", "cabinClass", "airlines", "agencies"].includes(drawer) && 
-                 typeof changes.filters !== 'undefined') {
+      } else if (
+        ["ticketType", "cabinClass", "airlines", "agencies"].includes(drawer) &&
+        typeof changes.filters !== "undefined"
+      ) {
         // Apply filter changes
         const category = drawer
         const newFilters = changes.filters as Record<string, boolean>
@@ -286,14 +288,14 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
             _updateFilter(category, key, value as boolean)
           }
         })
-      } else if (drawer === "all" && typeof changes.all !== 'undefined') {
+      } else if (drawer === "all" && typeof changes.all !== "undefined") {
         // Apply all changes from the "all filters" drawer
         const allChanges = changes.all as {
-          filters?: Record<string, Record<string, boolean>>,
-          priceRange?: [number, number],
+          filters?: Record<string, Record<string, boolean>>
+          priceRange?: [number, number]
           flightTimeRange?: [number, number]
         }
-        
+
         const { filters: newFilters, priceRange: newPriceRange, flightTimeRange: newFlightTimeRange } = allChanges
 
         // Update filters
@@ -447,11 +449,11 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
       agencies: { alibaba: false, flytoday: false, mrbilit: false },
     })
   }
-  
+
   const _setFlightTimeRange = (range: [number, number]) => {
     // Implementation would go here
   }
-  
+
   const _setPriceRange = (range: [number, number]) => {
     // Implementation would go here
   }
@@ -505,78 +507,77 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
   const [flights, setFlights] = useState<TransformedFlight[]>([])
   const pathname = usePathname()
   // const [error, setError] = useState<string | null>(null);
-    function transformFlightData(input: FlightData, id: string = "1"): TransformedFlight {
-      const departure = new Date(input.departure_timestamp * 1000)
-      const arrival = new Date(input.arrival_timestamp * 1000)
+  function transformFlightData(input: FlightData, id: string = "1"): TransformedFlight {
+    const departure = new Date(input.departure_timestamp * 1000)
+    const arrival = new Date(input.arrival_timestamp * 1000)
 
-      const durationMs = arrival.getTime() - departure.getTime()
-      const duration = {
-        hours: Math.floor(durationMs / (1000 * 60 * 60)),
-        minutes: Math.floor((durationMs % (1000 * 60 * 60)) / (1000 * 60)),
-      }
-
-      const toPersianTime = (date: Date) =>
-        date
-          .toLocaleTimeString("fa-IR", { hour: "2-digit", minute: "2-digit", hour12: false })
-          .replace(/\d/g, (d) => "۰۱۲۳۴۵۶۷۸۹".charAt(parseInt(d)))
-
-      return {
-        id,
-        departureTime: toPersianTime(departure),
-        arrivalTime: toPersianTime(arrival),
-        duration,
-        origin: input.origin,
-        destination: input.destination,
-        airline: {
-          name: input.airline.name || "نامشخص",
-          logo: input.airline.image ?? dude.src,
-        },
-        flightInfo: {
-          baggage: `${input.allowed_weight} `,
-          // ticketType: "سیستمی",
-          cabinClass:
-            input.seat_class === "Economy" ? "اکونومی" : input.seat_class === "Business" ? "بیزینس" : input.seat_class,
-        },
-        price: {
-          amount: input.cheapest_price,
-          formattedAmount: input.cheapest_price.toLocaleString("fa-IR"),
-          agency: input.cheapest_website?.name_fa ?? "",
-          agencyLogo: input.cheapest_website?.image ?? "",
-          label: "ارزان ترین",
-          base_redirect_url: input.cheapest_base_redirect_url ?? "",
-          one_adult_redirect_url: input.cheapest_one_adult_redirect_url ?? input.cheapest_base_redirect_url,
-          two_adults_redirect_url: input.cheapest_two_adult_redirect_url ?? input.cheapest_base_redirect_url,
-        },
-        otherSellersCount: input.websites.length,
-        websites: input.websites,
-      }
+    const durationMs = arrival.getTime() - departure.getTime()
+    const duration = {
+      hours: Math.floor(durationMs / (1000 * 60 * 60)),
+      minutes: Math.floor((durationMs % (1000 * 60 * 60)) / (1000 * 60)),
     }
 
-    const getFlights = async (departureDate: string) => {
-      
-      try {
-        const startOfDay = new Date(`${departureDate}T00:00:00`).getTime() / 1000
-        const endOfDay = new Date(`${departureDate}T23:59:59`).getTime() / 1000 + 1
-        const [originCode, destinationCode] = unwrappedParams.route.split("-")
-        const data = await apiFetch<{ results: FlightData[] }>("/flights", {
-          params: {
-            origin: originCode,
-            destination: destinationCode,
-            departure_timestamp__gte: startOfDay,
-            departure_timestamp__lte: endOfDay,
-          },
-        })
+    const toPersianTime = (date: Date) =>
+      date
+        .toLocaleTimeString("fa-IR", { hour: "2-digit", minute: "2-digit", hour12: false })
+        .replace(/\d/g, (d) => "۰۱۲۳۴۵۶۷۸۹".charAt(parseInt(d)))
 
-        // console.log(params)
-
-        if (data?.results) {
-          const transformed = data.results.map((flight, index) => transformFlightData(flight, (index + 1).toString()))
-          setFlights(transformed)
-        }
-      } catch (err) {
-        console.error("Error fetching flights:", err)
-      }
+    return {
+      id,
+      departureTime: toPersianTime(departure),
+      arrivalTime: toPersianTime(arrival),
+      duration,
+      origin: input.origin,
+      destination: input.destination,
+      airline: {
+        name: input.airline.name || "نامشخص",
+        logo: input.airline.image ?? dude.src,
+      },
+      flightInfo: {
+        baggage: `${input.allowed_weight} `,
+        // ticketType: "سیستمی",
+        cabinClass:
+          input.seat_class === "Economy" ? "اکونومی" : input.seat_class === "Business" ? "بیزینس" : input.seat_class,
+      },
+      price: {
+        amount: input.cheapest_price,
+        formattedAmount: input.cheapest_price.toLocaleString("fa-IR"),
+        agency: input.cheapest_website?.name_fa ?? "",
+        agencyLogo: input.cheapest_website?.image ?? "",
+        label: "ارزان ترین",
+        base_redirect_url: input.cheapest_base_redirect_url ?? "",
+        one_adult_redirect_url: input.cheapest_one_adult_redirect_url ?? input.cheapest_base_redirect_url,
+        two_adults_redirect_url: input.cheapest_two_adult_redirect_url ?? input.cheapest_base_redirect_url,
+      },
+      otherSellersCount: input.websites.length,
+      websites: input.websites,
     }
+  }
+
+  const getFlights = async (departureDate: string) => {
+    try {
+      const startOfDay = new Date(`${departureDate}T00:00:00`).getTime() / 1000
+      const endOfDay = new Date(`${departureDate}T23:59:59`).getTime() / 1000 + 1
+      const [originCode, destinationCode] = unwrappedParams.route.split("-")
+      const data = await apiFetch<{ results: FlightData[] }>("/flights", {
+        params: {
+          origin: originCode,
+          destination: destinationCode,
+          departure_timestamp__gte: startOfDay,
+          departure_timestamp__lte: endOfDay,
+        },
+      })
+
+      // console.log(params)
+
+      if (data?.results) {
+        const transformed = data.results.map((flight, index) => transformFlightData(flight, (index + 1).toString()))
+        setFlights(transformed)
+      }
+    } catch (err) {
+      console.error("Error fetching flights:", err)
+    }
+  }
 
   //fetch flights
   useEffect(() => {
@@ -1335,7 +1336,7 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
 
               {/* Flight results list */}
               <div className="flex-1">
-                <FlightResultsList flights={sortedFlights} onRefresh={() => getFlights(departureDate)}/>
+                <FlightResultsList flights={sortedFlights} onRefresh={() => getFlights(departureDate)} />
               </div>
             </div>
           </>

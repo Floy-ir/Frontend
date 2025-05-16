@@ -2,51 +2,49 @@
 
 import { ArrowDown2, ArrowLeft2, InfoCircle } from "iconsax-react"
 import Image from "next/image"
+import { useRouter } from "next/navigation"
 import { useEffect, useRef, useState } from "react"
 import { Button } from "@/components/Button/Button"
-import { englishToFarsiNumber } from "@/utils/numbers"
 import dude from "@/public/images/flash-circle-outline.svg"
-import { useRouter } from "next/navigation"
+import { englishToFarsiNumber } from "@/utils/numbers"
 
 type dude = {
-  adult_price: number;
-  base_redirect_url: string;
-  child_price: number | null;
+  adult_price: number
+  base_redirect_url: string
+  child_price: number | null
   detail: {
-    uid: string;
-    name: string;
-    name_fa: string;
-    image: string | null;
-  };
-  infant_price: number | null;
-  one_adult_redirect_url: string;
-  remaining_seat: number;
-  two_adult_redirect_url: string;
-};
+    uid: string
+    name: string
+    name_fa: string
+    image: string | null
+  }
+  infant_price: number | null
+  one_adult_redirect_url: string
+  remaining_seat: number
+  two_adult_redirect_url: string
+}
 
 export default function TicketCard({ websites }: { websites: dude[] }) {
-  
   const [openPriceDetails, setOpenPriceDetails] = useState<boolean[]>(new Array(websites.length).fill(false)) // for each card's price details
   const [openRefundRules, setOpenRefundRules] = useState<boolean[]>(new Array(websites.length).fill(false)) // for each card's refund rules
   const refundRefs = useRef<(HTMLDivElement | null)[]>([])
   const [refundHeights, setRefundHeights] = useState<string[]>(new Array(websites.length).fill("0px"))
-  const searchParams = new URLSearchParams(typeof window !== "undefined" ? window.location.search : "");
-  const adultCount = searchParams.get("adult") ?? "0";
-  const childCount = searchParams.get("child") ?? "0";
-  const infantCount = searchParams.get("infant") ?? "0";
+  const searchParams = new URLSearchParams(typeof window !== "undefined" ? window.location.search : "")
+  const adultCount = searchParams.get("adult") ?? "0"
+  const childCount = searchParams.get("child") ?? "0"
+  const infantCount = searchParams.get("infant") ?? "0"
 
-   const router = useRouter();
+  const router = useRouter()
 
   // Calculate total price for a website
-  const getTotalPrice = (website: dude) => (
-    (website.adult_price * Number(adultCount)) +
-    ((website.child_price ?? 0) * Number(childCount)) +
-    ((website.infant_price ?? 0) * Number(infantCount))
-  );
+  const getTotalPrice = (website: dude) =>
+    website.adult_price * Number(adultCount) +
+    (website.child_price ?? 0) * Number(childCount) +
+    (website.infant_price ?? 0) * Number(infantCount)
   // Find the minimum price among all websites
-  const minPrice = Math.min(...websites.map(getTotalPrice));
-  const sortedWebsites = [...websites].sort((a, b) => getTotalPrice(a) - getTotalPrice(b));
- 
+  const minPrice = Math.min(...websites.map(getTotalPrice))
+  const sortedWebsites = [...websites].sort((a, b) => getTotalPrice(a) - getTotalPrice(b))
+
   useEffect(() => {
     const newRefundHeights = openRefundRules.map((isOpen, i) =>
       isOpen && refundRefs.current[i] ? `${refundRefs.current[i]!.scrollHeight}px` : "0px"
@@ -54,8 +52,7 @@ export default function TicketCard({ websites }: { websites: dude[] }) {
     setRefundHeights(newRefundHeights)
   }, [openRefundRules])
 
-  const handleBuy = (website:dude) => {
-
+  const handleBuy = (website: dude) => {
     let redirectUrl = ""
 
     if (adultCount === "1" && childCount === "0" && infantCount === "0") {
@@ -98,7 +95,9 @@ export default function TicketCard({ websites }: { websites: dude[] }) {
                 {/* badge */}
                 {getTotalPrice(website) === minPrice && (
                   <div className="bg-Success-s50 absolute top-0 left-0 inline-flex items-center justify-center gap-1 rounded-tl-sm rounded-br-sm px-2.5 py-1">
-                    <div className="text-Success-s700 justify-center text-right text-[8px] font-semibold">ارزان‌ترین</div>
+                    <div className="text-Success-s700 justify-center text-right text-[8px] font-semibold">
+                      ارزان‌ترین
+                    </div>
                   </div>
                 )}
 
@@ -132,17 +131,17 @@ export default function TicketCard({ websites }: { websites: dude[] }) {
                           newPriceDetails[index] = !newPriceDetails[index]
                           setOpenPriceDetails(newPriceDetails)
                         }}
-                        className="text-Gray-N500 mx-2 md:mx-4 flex flex-row items-center justify-start w-full gap-1 text-right text-[11px] font-normal"
+                        className="text-Gray-N500 mx-2 flex w-full flex-row items-center justify-start gap-1 text-right text-[11px] font-normal md:mx-4"
                       >
                         جزئیات قیمت
                         <ArrowDown2 size="14" color="#748297" />
                       </div>
-                      <div className="text-Gray-N700 justify-start text-right text-sm  md:text-base font-bold">
+                      <div className="text-Gray-N700 justify-start text-right text-sm font-bold md:text-base">
                         {englishToFarsiNumber(
                           (
-                            (website.adult_price * Number(adultCount)) +
-                            ((website.child_price ?? 0) * Number(childCount)) +
-                            ((website.infant_price ?? 0) * Number(infantCount))
+                            website.adult_price * Number(adultCount) +
+                            (website.child_price ?? 0) * Number(childCount) +
+                            (website.infant_price ?? 0) * Number(infantCount)
                           ).toLocaleString("fa-IR")
                         )}
                       </div>
@@ -170,7 +169,9 @@ export default function TicketCard({ websites }: { websites: dude[] }) {
                             <div className="text-Gray-N700 text-left text-sm leading-normal font-normal">
                               {englishToFarsiNumber(website.adult_price)}
                             </div>
-                            <div className="text-Gray-N500 justify-start text-right text-[11px] font-semibold">تومان</div>
+                            <div className="text-Gray-N500 justify-start text-right text-[11px] font-semibold">
+                              تومان
+                            </div>
                           </div>
                         )}
                         {Number(childCount) > 0 && (
@@ -181,7 +182,9 @@ export default function TicketCard({ websites }: { websites: dude[] }) {
                             <div className="text-Gray-N700 text-left text-sm leading-normal font-normal">
                               {englishToFarsiNumber(website.child_price ?? "نامشخص")}
                             </div>
-                            <div className="text-Gray-N500 justify-start text-right text-[11px] font-semibold">تومان</div>
+                            <div className="text-Gray-N500 justify-start text-right text-[11px] font-semibold">
+                              تومان
+                            </div>
                           </div>
                         )}
                         {Number(infantCount) > 0 && (
@@ -192,7 +195,9 @@ export default function TicketCard({ websites }: { websites: dude[] }) {
                             <div className="text-Gray-N700 text-left text-sm leading-normal font-normal">
                               {englishToFarsiNumber(website.infant_price ?? "نامشخص")}
                             </div>
-                            <div className="text-Gray-N500 justify-start text-right text-[11px] font-semibold">تومان</div>
+                            <div className="text-Gray-N500 justify-start text-right text-[11px] font-semibold">
+                              تومان
+                            </div>
                           </div>
                         )}
                       </div>
@@ -208,12 +213,12 @@ export default function TicketCard({ websites }: { websites: dude[] }) {
                   <div className="inline-flex items-center justify-between self-stretch">
                     {/* refund */}
                     <div
-                        className={`${
-                          website.remaining_seat < 6 ? "text-Error-E500main" : "text-Gray-N600"
-                        } hidden justify-end text-center text-[10px] font-semibold md:block mr-3 md:text-[12px]`}
-                      >
-                        {englishToFarsiNumber(website.remaining_seat)} صندلی باقی مانده
-                      </div>
+                      className={`${
+                        website.remaining_seat < 6 ? "text-Error-E500main" : "text-Gray-N600"
+                      } mr-3 hidden justify-end text-center text-[10px] font-semibold md:block md:text-[12px]`}
+                    >
+                      {englishToFarsiNumber(website.remaining_seat)} صندلی باقی مانده
+                    </div>
                     <div className="flex flex-col items-center justify-between gap-3">
                       {/* sm: seats */}
                       <div
@@ -244,18 +249,14 @@ export default function TicketCard({ websites }: { websites: dude[] }) {
                     </div>
                     {/* button and seats */}
                     {/* md: seats */}
-                    
-                    <div className="flex flex-col items-center justify-center gap-4 md:flex-row">
-                      
-                      
 
+                    <div className="flex flex-col items-center justify-center gap-4 md:flex-row">
                       {/* button */}
-                      <Button intent="primary" size="small" onClick={()=> handleBuy(website)}>
+                      <Button intent="primary" size="small" onClick={() => handleBuy(website)}>
                         مشاهده و خرید
                         <ArrowLeft2 color="#FFFFFF" size="16" />
                       </Button>
                     </div>
-                    
                   </div>
                 </div>
 

@@ -51,7 +51,7 @@ export function FlightSearchForm({
   useEffect(() => {
     // console.log("Origin on mount:", origin);
     // console.log("Destination on mount:", destination);
-  }, []);
+  }, [])
   // Custom onChange handlers
   const handleOriginChange = async (value: string) => {
     console.log("hellooowofjl;asfje")
@@ -158,7 +158,7 @@ export function FlightSearchForm({
                 {/* Fields Container - Mobile & Tablet */}
                 <div className="flex flex-1 flex-col">
                   {/* Origin Field - Mobile & Tablet */}
-                  <div className="w-full z-150 ">
+                  <div className="z-150 w-full">
                     <ComboboxSelect
                       noBorder
                       expandDropdown
@@ -205,7 +205,7 @@ export function FlightSearchForm({
             {/* Origin/Destination Section - Desktop layout (1170px and up) */}
             <div className="hidden w-full items-start gap-4 lg:flex lg:w-auto lg:flex-row lg:items-center xl:gap-6">
               {/* Origin Field - Desktop */}
-              <div className="w-full xl:w-47 ">
+              <div className="w-full xl:w-47">
                 <ComboboxSelect
                   noBorder
                   expandDropdown

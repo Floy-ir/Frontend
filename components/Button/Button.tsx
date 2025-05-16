@@ -72,7 +72,7 @@ export const button = cva(
           "inline-flex",
           "justify-center",
           "items-center",
-          "gap-1"
+          "gap-1",
         ],
         custom: [],
       },
@@ -109,7 +109,7 @@ export function Button({
   ...props
 }: ButtonProps) {
   const Component = asChild ? Slot : href ? "a" : "button"
-  
+
   // Determine icon spacing based on button size
   const iconGap = size === "small" ? "gap-1" : "gap-2"
 

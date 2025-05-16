@@ -1,6 +1,6 @@
 import { Meta, StoryObj } from "@storybook/react"
-import { Button, ButtonProps } from "./Button"
 import { FiArrowLeft, FiArrowRight } from "react-icons/fi"
+import { Button, ButtonProps } from "./Button"
 
 export default {
   title: "Components/Button",

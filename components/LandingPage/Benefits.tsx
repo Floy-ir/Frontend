@@ -13,9 +13,7 @@ export default function Benefits() {
       <div className="mt-17 mb-16 inline-flex h-[54px] min-w-max shrink-0 snap-x snap-mandatory items-center justify-center gap-18">
         {/*Title */}
         <div className="hidden flex-col items-end justify-end gap-1 md:inline-flex">
-          <div className="text-Gray-N700 w-full text-end  text-[25px] leading-10 font-bold lg:mr-0">
-            فلوی
-          </div>
+          <div className="text-Gray-N700 w-full text-end text-[25px] leading-10 font-bold lg:mr-0">فلوی</div>
           <Image src={line} width={100} height={100} alt="underline" className="h-[9.19px] w-[49px] text-start" />
         </div>
 
@@ -33,9 +31,7 @@ export default function Benefits() {
                 className="absolute top-[-1.5px] left-[1px]"
               />
             </div>
-            <span className="text-Gray-N700 text-right  text-base leading-7 font-medium">
-              سریع‌ترین روش خرید
-            </span>
+            <span className="text-Gray-N700 text-right text-base leading-7 font-medium">سریع‌ترین روش خرید</span>
           </div>
 
           {/* Divider */}
@@ -53,9 +49,7 @@ export default function Benefits() {
                 className="absolute top-[1.5px] left-[-1px]"
               />
             </div>
-            <span className="text-Gray-N700 text-right  text-base leading-7 font-medium">
-              ارزان‌ترین قیمت
-            </span>
+            <span className="text-Gray-N700 text-right text-base leading-7 font-medium">ارزان‌ترین قیمت</span>
           </div>
 
           {/* Divider */}
@@ -73,9 +67,7 @@ export default function Benefits() {
                 className="absolute top-[2.5px] left-[-1px]"
               />
             </div>
-            <span className="text-Gray-N700 text-right text-base leading-7 font-medium">
-              بهترین برای مقایسه
-            </span>
+            <span className="text-Gray-N700 text-right text-base leading-7 font-medium">بهترین برای مقایسه</span>
           </div>
         </div>
       </div>

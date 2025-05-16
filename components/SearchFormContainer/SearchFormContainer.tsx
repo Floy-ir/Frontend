@@ -1,14 +1,13 @@
 "use client"
 
+import { Airplane, Building3, Buildings } from "iconsax-react"
+
 import React from "react"
 import { FlightSearchForm } from "@/components/FlightSearchForm/FlightSearchForm"
-import { Building3 } from "iconsax-react"
-import { Airplane } from "iconsax-react"
-import { Buildings } from "iconsax-react"
 
 export function SearchFormContainer() {
   return (
-    <div className="outline-Gray-N100 relative mx-auto flex w-full max-w-[calc(100%-2rem)] xl:max-w-full flex-col items-start gap-4 rounded-xl bg-white p-4 shadow-[0px_25px_66px_-12px_rgba(0,0,0,0.08)] outline-1 outline-offset-[-1px] md:gap-6 md:rounded-3xl md:px-8 md:pt-6 md:pb-5">
+    <div className="outline-Gray-N100 relative mx-auto flex w-full max-w-[calc(100%-2rem)] flex-col items-start gap-4 rounded-xl bg-white p-4 shadow-[0px_25px_66px_-12px_rgba(0,0,0,0.08)] outline-1 outline-offset-[-1px] md:gap-6 md:rounded-3xl md:px-8 md:pt-6 md:pb-5 xl:max-w-full">
       {/* Tabs Navigation */}
       <div className="border-Gray-N200 flex w-full items-center justify-start gap-4 border-b pb-4 md:gap-6 md:pb-6">
         {/* Service Type Tabs */}
@@ -44,7 +43,7 @@ export function SearchFormContainer() {
           </button>
         </div>
       </div>
-      <FlightSearchForm contextPage = "landing"/>
+      <FlightSearchForm contextPage="landing" />
     </div>
   )
 }

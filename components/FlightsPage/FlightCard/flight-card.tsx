@@ -8,8 +8,8 @@ import { PiSuitcaseRollingLight } from "react-icons/pi"
 import { twMerge } from "tailwind-merge"
 import { Button } from "@/components/Button/Button"
 import ComparisonDialog from "@/components/FlightsPage/comparisonPage/page"
-import { englishToFarsiNumber } from "@/utils/numbers"
 import dude from "@/public/images/flash-circle-outline.svg"
+import { englishToFarsiNumber } from "@/utils/numbers"
 
 // Card wrapper styles with variants
 const flightCardVariants = cva(
@@ -153,7 +153,7 @@ const BaggageBadge = ({ text }: { text: string }) => (
   <div className={badgeStyles()}>
     <PiSuitcaseRollingLight className="text-Gray-N600 h-3 w-3" />
     <div
-      className={`text-Gray-N600 justify-center text-right text-[12px] leading-3 inline-flex gap-1 font-normal ${textStyles.small} ${textStyles.normal}`}
+      className={`text-Gray-N600 inline-flex justify-center gap-1 text-right text-[12px] leading-3 font-normal ${textStyles.small} ${textStyles.normal}`}
     >
       {text} کیلوگرم
     </div>
@@ -212,9 +212,7 @@ const PriceInfo = ({ price }: { price: FlightCardProps["price"] }) => (
         <div className="text-Gray-N700 justify-start text-right text-base text-[17px] leading-7 font-semibold">
           {englishToFarsiNumber(price.formattedAmount)}
         </div>
-        <div className={`text-Gray-N500 justify-start text-right ${textStyles.medium} ${textStyles.normal}`}>
-          تومان
-        </div>
+        <div className={`text-Gray-N500 justify-start text-right ${textStyles.medium} ${textStyles.normal}`}>تومان</div>
       </div>
     </div>
   </div>
@@ -306,7 +304,6 @@ const FlightDetailsSection = ({
   )
 }
 
-
 export function FlightCard({
   departureTime,
   arrivalTime,
@@ -344,12 +341,7 @@ export function FlightCard({
                 خرید
               </Button>
 
-              <Button
-                intent="text"
-                size="small"
-                className="self-stretch"
-                onClick={() => setShowComparison(true)}
-              >
+              <Button intent="text" size="small" className="self-stretch" onClick={() => setShowComparison(true)}>
                 مشاهده {englishToFarsiNumber(otherSellersCount)} فروشنده
               </Button>
             </div>
@@ -368,12 +360,7 @@ export function FlightCard({
               خرید
             </Button>
 
-            <Button
-              intent="text"
-              size="small"
-              className="self-stretch"
-              onClick={() => setShowComparison(true)}
-            >
+            <Button intent="text" size="small" className="self-stretch" onClick={() => setShowComparison(true)}>
               مشاهده {englishToFarsiNumber(otherSellersCount)} فروشنده
             </Button>
           </div>
@@ -468,7 +455,9 @@ export function FlightCard({
                   </div>
                   <div data-layer="Frame 1000002408" className="flex flex-row-reverse items-center justify-end gap-2">
                     <div className="inline-flex flex-col items-end justify-center gap-1">
-                      <div className={`text-Gray-N600 justify-start self-stretch text-right text-[11px] leading-none font-semibold`}>
+                      <div
+                        className={`text-Gray-N600 justify-start self-stretch text-right text-[11px] leading-none font-semibold`}
+                      >
                         {price.agency}
                       </div>
                     </div>
@@ -498,7 +487,12 @@ export function FlightCard({
                   خرید
                 </Button>
 
-                <Button intent="text" size="small" className="self-stretch px-5 py-3.5" onClick={()=>setShowComparison(true)}>
+                <Button
+                  intent="text"
+                  size="small"
+                  className="self-stretch px-5 py-3.5"
+                  onClick={() => setShowComparison(true)}
+                >
                   مشاهده {englishToFarsiNumber(otherSellersCount)} فروشنده
                 </Button>
               </div>
@@ -525,11 +519,7 @@ export function FlightCard({
         <div className="bg-Gray-N100 relative h-40 w-[1px]" />
 
         {/* Price and action section - Left */}
-        <PriceActionSection
-          price={price}
-          onBuy={onBuy}
-          otherSellersCount={otherSellersCount}
-        />
+        <PriceActionSection price={price} onBuy={onBuy} otherSellersCount={otherSellersCount} />
       </div>
       {showComparison && (
         <ComparisonDialog

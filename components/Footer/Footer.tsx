@@ -17,7 +17,7 @@ const Footer: React.FC = () => {
       {/* tablet and desktop */}
       <footer className="hidden w-full flex-col items-center justify-center text-gray-600 md:flex">
         {/* Main footer container */}
-        <div className=" flex w-full flex-col justify-between bg-white px-2  md:px-28">
+        <div className="flex w-full flex-col justify-between bg-white px-2 md:px-28">
           <div className="mt-10 mb-9 flex w-full flex-row justify-between">
             {/* First Grid */}
             <div className="my-2 grid grid-cols-3 gap-10 text-right">
@@ -83,9 +83,9 @@ const Footer: React.FC = () => {
             </div>
             <p className="text-Gray-N500 flex flex-col items-start justify-start text-right text-[13px] leading-normal">
               فلوی یک پلتفرم جستجوی بلیط است که امکان مقایسه و خرید آسان بلیط هواپیما، هتل و اقامتگاه های مسافرتی را از
-              میان ارائه دهندگان معتبر فراهم می‌کند. ما با جمع آوری داده‌های به‌روز و قیمت‌های متفاوت به کاربران کمک می‌کنیم
-              تا بهترین انتخاب را برای سفرهای خود داشته باشند. هدف ما ساده‌سازی فرآیند جستجو و رزرو، صرفه‌جویی در زمان و
-              هزینه، و ایجاد تجربه‌ای لذت‌بخش برای مسافران است.
+              میان ارائه دهندگان معتبر فراهم می‌کند. ما با جمع آوری داده‌های به‌روز و قیمت‌های متفاوت به کاربران کمک
+              می‌کنیم تا بهترین انتخاب را برای سفرهای خود داشته باشند. هدف ما ساده‌سازی فرآیند جستجو و رزرو، صرفه‌جویی
+              در زمان و هزینه، و ایجاد تجربه‌ای لذت‌بخش برای مسافران است.
             </p>
           </div>
         </div>
@@ -101,7 +101,7 @@ const Footer: React.FC = () => {
       {/* mobile */}
       <footer className="flex w-full flex-col items-center justify-center text-gray-600 md:hidden">
         {/* Main footer container */}
-        <div className=" flex w-full flex-col justify-between bg-white px-4">
+        <div className="flex w-full flex-col justify-between bg-white px-4">
           {/* Accordion instead of Grid */}
           <Accordion type="single" collapsible className="w-full">
             <AccordionItem value="floy">
