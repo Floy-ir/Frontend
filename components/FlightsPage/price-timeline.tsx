@@ -70,7 +70,7 @@ const Timeline = ({
     }).toString()
     try {
       const response: FlightResponse | undefined = await apiFetch(`/flights/cheapest?${query}`)
-      console.log("Cheapest flight data:", response)
+      // console.log("Cheapest flight data:", response)
       if (response) {
         setData(response.results || [])
         isScroll = true
@@ -127,10 +127,6 @@ const Timeline = ({
 
     return () => cancelAnimationFrame(raf)
   }, [selectedDate, autoScrollToSelected])
-
-
-  console.log("data ==>> ", data)
-  console.log("!data ==>> ", !data)
 
   return (
     <div className="relative max-w-screen items-center justify-center">

@@ -126,7 +126,6 @@ export function FlightSearchHeader({
                   </div>
                 </div>
               </div>
-
               <Button
                 intent="primary"
                 size="small"
@@ -140,7 +139,7 @@ export function FlightSearchHeader({
           </motion.div>
         ) : (
           <div className="border-Gray-N200 flex w-full items-center justify-center gap-3 border-b bg-white px-4 py-4 md:px-0">
-            <div className="flex gap-3">
+            <div className="flex gap-2">
               {/* Arrow */}
               <div>
                 <Link href="/" className="mt-3.5 sm-md:mt-1 flex items-center gap-1 text-sm">

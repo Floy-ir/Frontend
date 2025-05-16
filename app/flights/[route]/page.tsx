@@ -553,14 +553,15 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
     }
 
     const getFlights = async (departureDate: string) => {
+      
       try {
         const startOfDay = new Date(`${departureDate}T00:00:00`).getTime() / 1000
         const endOfDay = new Date(`${departureDate}T23:59:59`).getTime() / 1000 + 1
-
+        const [originCode, destinationCode] = unwrappedParams.route.split("-")
         const data = await apiFetch<{ results: FlightData[] }>("/flights", {
           params: {
-            origin: "THR",
-            destination: "MHD",
+            origin: originCode,
+            destination: destinationCode,
             departure_timestamp__gte: startOfDay,
             departure_timestamp__lte: endOfDay,
           },
@@ -1535,7 +1536,7 @@ const FilterDrawerContent = React.forwardRef<
                     value && (
                       <div
                         key={`ticketType-${key}`}
-                        className="bg-Shade-White outline-Gray-N100 flex flex-shrink-0 items-center justify-center gap-1 overflow-hidden rounded-2xl px-3 py-1 outline outline-2 outline-offset-[-2px]"
+                        className="bg-Shade-White outline-Gray-N100 flex flex-shrink-0 items-center justify-center gap-1 overflow-hidden rounded-2xl px-3 py-1 outline-2 outline-offset-[-2px]"
                       >
                         <div
                           className="flex cursor-pointer items-center justify-start gap-2 py-1"
@@ -1560,7 +1561,7 @@ const FilterDrawerContent = React.forwardRef<
                     value && (
                       <div
                         key={`cabinClass-${key}`}
-                        className="bg-Shade-White outline-Gray-N100 flex flex-shrink-0 items-center justify-center gap-1 overflow-hidden rounded-2xl px-3 py-1 outline outline-2 outline-offset-[-2px]"
+                        className="bg-Shade-White outline-Gray-N100 flex flex-shrink-0 items-center justify-center gap-1 overflow-hidden rounded-2xl px-3 py-1 outline-2 outline-offset-[-2px]"
                       >
                         <div
                           className="flex cursor-pointer items-center justify-start gap-2 py-1"
@@ -1585,7 +1586,7 @@ const FilterDrawerContent = React.forwardRef<
                     value && (
                       <div
                         key={`airlines-${key}`}
-                        className="bg-Shade-White outline-Gray-N100 flex flex-shrink-0 items-center justify-center gap-1 overflow-hidden rounded-2xl px-3 py-1 outline outline-2 outline-offset-[-2px]"
+                        className="bg-Shade-White outline-Gray-N100 flex flex-shrink-0 items-center justify-center gap-1 overflow-hidden rounded-2xl px-3 py-1 outline-2 outline-offset-[-2px]"
                       >
                         <div
                           className="flex cursor-pointer items-center justify-start gap-2 py-1"
@@ -1610,7 +1611,7 @@ const FilterDrawerContent = React.forwardRef<
                     value && (
                       <div
                         key={`agencies-${key}`}
-                        className="bg-Shade-White outline-Gray-N100 flex flex-shrink-0 items-center justify-center gap-1 overflow-hidden rounded-2xl px-3 py-1 outline outline-2 outline-offset-[-2px]"
+                        className="bg-Shade-White outline-Gray-N100 flex flex-shrink-0 items-center justify-center gap-1 overflow-hidden rounded-2xl px-3 py-1 outline-2 outline-offset-[-2px]"
                       >
                         <div
                           className="flex cursor-pointer items-center justify-start gap-2 py-1"
@@ -1651,7 +1652,7 @@ const FilterDrawerContent = React.forwardRef<
 
                 {/* Flight Time Range Filter */}
                 {(localFlightTimeRange[0] !== 4 || localFlightTimeRange[1] !== 24) && (
-                  <div className="bg-Shade-White outline-Gray-N100 flex flex-shrink-0 items-center justify-center gap-1 overflow-hidden rounded-2xl px-3 py-1 outline outline-2 outline-offset-[-2px]">
+                  <div className="bg-Shade-White outline-Gray-N100 flex flex-shrink-0 items-center justify-center gap-1 overflow-hidden rounded-2xl px-3 py-1 outline-2 outline-offset-[-2px]">
                     <div
                       className="flex cursor-pointer items-center justify-start gap-2 py-1"
                       onClick={() => setLocalFlightTimeRange([4, 24])}
