@@ -26,13 +26,6 @@ const getDestinationImage = (destinationCode: string): StaticImageData => {
   }
 }
 
-const cities: { city: string; price: string; bg: StaticImageData; large?: boolean }[] = [
-  { city: "کیش", price: "۱،۹۲۵،۷۰۰", bg: mashhad, large: true },
-  { city: "کیش", price: "۱،۹۲۵،۷۰۰", bg: tabriz },
-  { city: "قشم", price: "۱،۹۲۵،۷۰۰", bg: kish },
-  { city: "قشم", price: "۱،۹۲۵،۷۰۰", bg: kish },
-  { city: "قشم", price: "۱،۹۲۵،۷۰۰", bg: shiraz },
-]
 
 function CityRow({ cities }: { cities: { city: string; price: string; bg: StaticImageData }[] }) {
   return (
@@ -83,7 +76,7 @@ export default function PopularCities() {
   const [cityData, setCityData] = useState<{ count: number; results: any[] } | null>(null)
 
   useEffect(() => {
-    const defaultOriginList = ["THR", "MHD", "KHD", "TBZ", "SYZ"]
+    const defaultOriginList = ["THR", "MHD", "KIH"]
     let originList = [...defaultOriginList]
 
     try {
@@ -185,30 +178,7 @@ export default function PopularCities() {
                 )}
             </div>
           </>
-        ) : (
-          <>
-            {cities[0] && (
-              <div className="mb-4 shrink-0 snap-center">
-                <CityCard {...cities[0]} />
-              </div>
-            )}
-            <div className="flex flex-1 flex-col gap-2">
-              {cities
-                .slice(1)
-                .reduce<{ city: string; price: string; bg: StaticImageData; large?: boolean }[][]>(
-                  (rows, city, index) => {
-                    if (index % 2 === 0) rows.push(cities.slice(index, index + 2))
-                    return rows
-                  }, []
-                )
-                .map((pair, index) => (
-                  <div key={index} className="shrink-0 snap-center">
-                    <CityRow cities={[...pair]} />
-                  </div>
-                ))}
-            </div>
-          </>
-        )}
+        ) : null}
       </div>
     </div>
   )
