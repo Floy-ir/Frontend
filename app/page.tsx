@@ -11,10 +11,12 @@ import Questions from "@/components/LandingPage/Questions"
 import img from "../public/images/Underline_06.svg"
 
 export const metadata: Metadata = {
-  title: "Next.js Enterprise Boilerplate",
+  title:"فلوی | موتور جست و جوی سفر",
   twitter: {
     card: "summary_large_image",
   },
+
+  
   openGraph: {
     url: "https://next-enterprise.vercel.app/",
     images: [
