@@ -14,8 +14,7 @@ const config: NextConfig = {
     remotePatterns: [
       {
         protocol: "http",
-        hostname: "localhost",
-        port: "9000",
+        hostname: "cdn.floy.ir",
         pathname: "/**", // Allow all paths
       },
     ],
