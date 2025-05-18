@@ -188,14 +188,14 @@ const PriceInfo = ({ price }: { price: FlightCardProps["price"] }) => (
     <div className="inline-flex items-center justify-between self-stretch">
       <div className="flex items-center justify-start gap-1">
         <div className="inline-flex flex-col items-start justify-center gap-1"></div>
-        <div className="outline-Gray-N200 relative size-6 overflow-hidden rounded-[48px] bg-white outline-1 outline-offset-[-1px]">
+        <div className="outline-Gray-N200 size-6 overflow-hidden rounded-[48px] bg-white outline-1 outline-offset-[-1px]">
           {price.agencyLogo && (
             <Image
               src={price.agencyLogo}
               alt={`${price.agency} logo`}
-              width={11}
-              height={13}
-              className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 object-cover"
+              width={24}
+              height={24}
+              className="rounded-full object-cover"
             />
           )}
         </div>
@@ -338,12 +338,14 @@ export function FlightCard({
 
             <div className="flex flex-col items-start justify-start gap-2 self-stretch">
               <Button intent="primary" size="small" className="self-stretch" onClick={onBuy}>
-                خرید
-              </Button>
+             رفتن به ارزان ترین
+            </Button>
 
-              <Button intent="text" size="small" className="self-stretch" onClick={() => setShowComparison(true)}>
-                مشاهده {englishToFarsiNumber(otherSellersCount)} فروشنده
-              </Button>
+            <Button intent="text" size="small" className="self-stretch" onClick={() => setShowComparison(true)}>
+              {otherSellersCount > 1
+                ? `مشاهده ${englishToFarsiNumber(otherSellersCount - 1)}  فروشنده دیگر`
+                : "مشاهده جزئیات "}
+            </Button>
             </div>
           </div>
         </div>
@@ -357,17 +359,20 @@ export function FlightCard({
 
           <div className="flex flex-col items-start justify-start gap-1 self-stretch">
             <Button intent="primary" size="small" className="self-stretch" onClick={onBuy}>
-              خرید
+             رفتن به ارزان ترین
             </Button>
 
             <Button intent="text" size="small" className="self-stretch" onClick={() => setShowComparison(true)}>
-              مشاهده {englishToFarsiNumber(otherSellersCount)} فروشنده
+              {otherSellersCount > 1
+                ? `مشاهده ${englishToFarsiNumber(otherSellersCount - 1)}  فروشنده دیگر`
+                : "مشاهده جزئیات "}
             </Button>
           </div>
         </div>
       </div>
     )
   }
+  console.log(airline.logo)
   return (
     <article className={twMerge(flightCardVariants({ intent, className }))}>
       {/* Mobile/Tablet Layout */}
@@ -437,13 +442,19 @@ export function FlightCard({
                 className="bg-Gray-N50 outline-Gray-N200 relative flex flex-col items-end justify-center gap-1 self-stretch rounded-lg px-3 py-2 outline-1 outline-offset-[-1px]"
               >
                 {price.label && (
-                  <div className="text-Gray-N500 justify-center self-stretch text-right text-[10px] leading-3 font-normal">
-                    {price.label}
+                  <div className="flex w-full items-center justify-start gap-1">
+                    <div className="text-Gray-N500 justify-center self-stretch text-right text-[10px] leading-3 font-normal">
+                      {price.label}
+                    </div>
+                    <div className="text-Gray-N600 justify-start self-stretch text-right text-[11px] leading-none font-normal">
+                      در
+                    </div>
                   </div>
                 )}
+
                 <div
                   data-layer="Frame 1000002410"
-                  className="inline-flex flex-row-reverse items-center justify-between self-stretch"
+                  className="mt-1 mb-0.5 inline-flex flex-row-reverse items-center justify-between self-stretch"
                 >
                   <div data-layer="Frame 1000002342" className="flex flex-row-reverse items-center justify-end gap-1">
                     <div className="text-Gray-N500 justify-start text-right text-[11px] leading-none font-normal">
@@ -456,28 +467,24 @@ export function FlightCard({
                   <div data-layer="Frame 1000002408" className="flex flex-row-reverse items-center justify-end gap-2">
                     <div className="inline-flex flex-col items-end justify-center gap-1">
                       <div
-                        className={`text-Gray-N600 justify-start self-stretch text-right text-[11px] leading-none font-semibold`}
+                        className={`text-Gray-N600 justify-start self-stretch text-right text-[12px] leading-none font-semibold`}
                       >
                         {price.agency}
                       </div>
                     </div>
-                    <div className="outline-Gray-N200 relative size-5 overflow-hidden rounded-full bg-white outline-1 outline-offset-[-1px]">
-                    {price.agencyLogo && (
-                      <Image
-                        src={price.agencyLogo}
-                        alt={`${price.agency} logo`}
-                        width={10}
-                        height={13}
-                        className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 object-contain"
-                      />
-                    )}
-                  </div>
-
-                    <div className="inline-flex flex-col items-end justify-center gap-1">
-                      <div className="text-Gray-N600 justify-start self-stretch text-right text-[11px] leading-none font-normal">
-                        در
-                      </div>
+                    <div className="outline-Gray-N200 flex size-8 items-center justify-center overflow-hidden rounded-[48px] bg-white outline-1 outline-offset-[-1px]">
+                      {price.agencyLogo && (
+                        <Image
+                          src={price.agencyLogo}
+                          alt={`${price.agency} logo`}
+                          width={32}
+                          height={32}
+                          className="rounded-full object-cover"
+                        />
+                      )}
                     </div>
+
+                    <div className="inline-flex flex-col items-end justify-center gap-1"></div>
                   </div>
                 </div>
               </div>
