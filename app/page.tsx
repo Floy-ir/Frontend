@@ -90,9 +90,9 @@ export default function Web() {
         </div>
 
         {/* suggestions */}
-        <div className="mt-12 flex w-full max-w-[1500px] shrink-0 flex-col items-center justify-center px-4 py-8 lg:px-38 lg:py-12">
-          {/* <Suggestions /> */}
-        </div>
+        {/* <div className="mt-12 flex w-full max-w-[1500px] shrink-0 flex-col items-center justify-center px-4 py-8 lg:px-38 lg:py-12">
+          <Suggestions />
+        </div> */}
         <div className="mb-13 w-full" id="faq">
           <Questions />
         </div>
