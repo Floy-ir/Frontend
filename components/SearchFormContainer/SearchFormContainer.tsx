@@ -4,6 +4,7 @@ import { Airplane, Building3, Buildings } from "iconsax-react"
 
 import React from "react"
 import { FlightSearchForm } from "@/components/FlightSearchForm/FlightSearchForm"
+import { Button } from "../Button/Button"
 
 export function SearchFormContainer() {
   return (
@@ -19,26 +20,26 @@ export function SearchFormContainer() {
 
           <div className="bg-Gray-N200 hidden h-6 w-px md:block" />
 
-          <div className="flex flex-1 items-center justify-center gap-1 rounded-lg px-2 py-1 sm:px-3 sm:py-2 md:flex-initial md:gap-3 md:px-6">
+          <div className="cursor-not-allowed flex flex-1 items-center justify-center gap-1 rounded-lg px-2 py-1 sm:px-3 sm:py-2 md:flex-initial md:gap-3 md:px-6">
             <Buildings size={16} variant="Bold" color="var(--color-Gray-N400)" className="size-4 md:size-5" />
             <div className="flex relative">
             <span className="text-Gray-N400 text-xs font-medium sm:text-sm md:text-lg">هتل</span>
-            <span className="bg-primary-500 absolute -top-3 -left-8 rounded-full px-1 py-0.5 text-[8px] font-normal text-white sm:text-[10px]">
+            <Button intent="secondary" size="small" className="absolute -top-3 -left-8 rounded-full px-1 py-0.5 text-[8px] font-normal sm:text-[10px]">
               به‌زودی
-            </span>
+            </Button>
           </div>
 
           </div>
 
           <div className="bg-Gray-N200 hidden h-6 w-px justify-center md:block" />
 
-          <div className="flex flex-1 items-center gap-1 rounded-lg px-2 py-1 sm:px-3 sm:py-2 md:flex-initial md:gap-3 md:px-6">
+          <div className="cursor-not-allowed flex flex-1 items-center gap-1 rounded-lg px-2 py-1 sm:px-3 sm:py-2 md:flex-initial md:gap-3 md:px-6">
             <Building3 size={16} variant="Bold" color="var(--color-Gray-N400)" className="size-4 md:size-5" />
             <div className="flex relative">
             <span className="text-Gray-N400 text-xs font-medium sm:text-sm md:text-lg">اقامتگاه</span>
-            <span className="bg-primary-500 absolute -top-3 -left-8 rounded-full px-1 py-0.5 text-[8px] font-normal text-white sm:text-[10px]">
+            <Button intent="secondary" size="small" className="absolute -top-3 -left-8 rounded-full px-1.5 py-1 text-[8px] font-normal sm:text-[10px]">
               به‌زودی
-            </span>
+            </Button>
           </div>
           </div>
         </nav>
