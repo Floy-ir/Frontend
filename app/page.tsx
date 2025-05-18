@@ -60,7 +60,7 @@ export default function Web() {
         <Companies />
         <Benefits />
         {/* Cities */}
-        <div className="flex w-full shrink-0 flex-col items-center justify-between bg-white px-4 py-8 lg:px-38 lg:py-12">
+        <div className="flex w-full shrink-0 flex-col items-center justify-between bg-white px-4 py-8 lg:px-38 lg:py-12" id="cheapest-week">
           <div className="max-w-20/21">
             {/* Title */}
             <div className="flex w-full items-center justify-between">
@@ -93,7 +93,7 @@ export default function Web() {
         <div className="mt-12 flex w-full max-w-[1500px] shrink-0 flex-col items-center justify-center px-4 py-8 lg:px-38 lg:py-12">
           {/* <Suggestions /> */}
         </div>
-        <div className="mb-13 w-full">
+        <div className="mb-13 w-full" id="faq">
           <Questions />
         </div>
       </main>

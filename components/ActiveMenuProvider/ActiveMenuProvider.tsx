@@ -23,10 +23,9 @@ export function ActiveMenuProvider() {
   // Base menu items
   const baseMenuItems: MenuItem[] = [
     { label: "صفحه اصلی", href: "/", isActive: false },
-    { label: "پروازها", href: "/flights", isActive: false },
-    { label: "هتل‌ها", href: "/hotels", isActive: false },
-    { label: "اقامتگاه‌ها", href: "/accommodations", isActive: false },
-    { label: "درباره ما", href: "/about", isActive: false },
+    { label: "پرواز", href: "/", isActive: false },
+    { label: "سوالات متداول", href: "/#faq", isActive: false },
+    { label: "ارزان ترین هفته", href: "/#cheapest-week", isActive: false },
   ]
 
   // Determine active menu item based on current path

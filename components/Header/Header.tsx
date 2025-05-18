@@ -119,6 +119,14 @@ export function Header({ menuItems, className, forceScrolledStyle = false }: Hea
     return () => window.removeEventListener("resize", checkScreen)
   }, [])
 
+  // Add smooth scrolling behavior
+  useEffect(() => {
+    document.documentElement.style.scrollBehavior = 'smooth'
+    return () => {
+      document.documentElement.style.scrollBehavior = 'auto'
+    }
+  }, [])
+
   if (pathname.startsWith("/flights") && isSmallScreen) {
     return <></>
   }
@@ -142,51 +150,31 @@ export function Header({ menuItems, className, forceScrolledStyle = false }: Hea
                 {menuItems.map((item, index) => (
                   <NavigationMenu.Item key={index}>
                     <NavigationMenu.Link asChild>
-                      {item.href === "/" ? (
-                        <Link
-                          href={item.href}
-                          className={navItem({
-                            isActive: item.isActive,
-                            isScrolled: isScrolled,
-                          })}
-                        >
-                          <span className="text-lg">{item.label}</span>
-                          {item.isActive && (
-                            <div className="relative h-1 w-1">
-                              <div
-                                className={`absolute h-1.5 w-1.5 rounded-sm ${
-                                  isScrolled ? "bg-Primary-P300" : "bg-white"
-                                }`}
-                              ></div>
-                            </div>
-                          )}
-                        </Link>
-                      ) : (
-                        <span
-                          className={navItem({
-                            isActive: item.isActive,
-                            isScrolled: isScrolled,
-                          }) + " cursor-not-allowed opacity-50"}
-                        >
-                          <span className="text-lg">{item.label}</span>
-                          {item.isActive && (
-                            <div className="relative h-1 w-1">
-                              <div
-                                className={`absolute h-1.5 w-1.5 rounded-sm ${
-                                  isScrolled ? "bg-Primary-P300" : "bg-white"
-                                }`}
-                              ></div>
-                            </div>
-                          )}
-                        </span>
-                      )}
+                      <Link
+                        href={item.href}
+                        className={navItem({
+                          // isActive: item.isActive,
+                          isScrolled: isScrolled,
+                        })}
+                      >
+                        <span className="text-lg">{item.label}</span>
+                        {/* {item.isActive && (
+                          <div className="relative h-1 w-1">
+                            <div
+                              className={`absolute h-1.5 w-1.5 rounded-sm ${
+                                isScrolled ? "bg-Primary-P300" : "bg-white"
+                              }`}
+                            ></div>
+                          </div>
+                        )} */}
+                      </Link>
                     </NavigationMenu.Link>
                   </NavigationMenu.Item>
                 ))}
               </NavigationMenu.List>
             </NavigationMenu.Root>
             {/* Login Button - Left Side in RTL */}
-            <div>
+            {/* <div>
               <Button
                 href="/login"
                 intent="secondary"
@@ -201,7 +189,7 @@ export function Header({ menuItems, className, forceScrolledStyle = false }: Hea
               >
                 ورود | ثبت‌نام
               </Button>
-            </div>
+            </div> */}
           </div>
 
           {/* Mobile view */}
