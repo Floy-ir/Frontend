@@ -60,7 +60,7 @@ export default function Web() {
         <Companies />
         <Benefits />
         {/* Cities */}
-        <div className="flex w-full shrink-0 flex-col items-center justify-between bg-white px-4 py-8 lg:px-38 lg:py-12" id="cheapest-week">
+        <div className="flex w-full shrink-0 flex-col items-center justify-between bg-white px-4 py-8 lg:px-38 lg:pb-4 lg:pt-12" id="cheapest-week">
           <div className="max-w-20/21">
             {/* Title */}
             <div className="flex w-full items-center justify-between">
