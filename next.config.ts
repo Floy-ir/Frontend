@@ -13,7 +13,7 @@ const config: NextConfig = {
   images: {
     remotePatterns: [
       {
-        protocol: "http",
+        protocol: "https",
         hostname: "cdn.floy.ir",
         pathname: "/**", // Allow all paths
       },
