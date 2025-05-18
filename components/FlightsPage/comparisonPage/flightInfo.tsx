@@ -74,9 +74,15 @@ export default function TicketCard({
           </div>
 
           {/* airline image */}
-          <div className="outline-Gray-N200 border-Gray-N200 flex h-9 w-9 items-center justify-center rounded-full border bg-white outline-[1.20px] outline-offset-[-1.20px]">
-            <Image alt="airline" width={37} height={37} src={airline.logo} />
-          </div>
+          <div className="outline-Gray-N200 border-Gray-N200 flex h-9 w-9 items-center justify-center rounded-full border bg-white overflow-hidden outline-[1.20px] outline-offset-[-1.20px]">
+  <Image
+    alt="airline"
+    src={airline.logo}
+    width={36}
+    height={36}
+    className="object-cover rounded-full"
+  />
+</div>
         </div>
         {/* time and location */}
         <div className="mt-3 flex flex-col items-center justify-start self-stretch pb-1">

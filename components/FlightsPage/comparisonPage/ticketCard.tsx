@@ -66,16 +66,22 @@ export default function TicketCard({ websites }: { websites: dude[] }) {
     //     .replace("${infant_len}", infantCount)
     // }
     redirectUrl = website.base_redirect_url
-        .replace("${adult_len}", adultCount)
-        .replace("${child_len}", childCount)
-        .replace("${infant_len}", infantCount)
-        
-    window.open(`/redirect?redirect_url=${redirectUrl}&agency=${website.detail.name_fa}&agency_eng=${website.detail.name}`, "_blank")
+      .replace("${adult_len}", adultCount)
+      .replace("${child_len}", childCount)
+      .replace("${infant_len}", infantCount)
+
+    window.open(
+      `/redirect?redirect_url=${redirectUrl}&agency=${website.detail.name_fa}&agency_eng=${website.detail.name}`,
+      "_blank"
+    )
   }
-  
+
   return (
     <div className="flex w-full flex-col items-start gap-5 lg:w-3/5">
-      <div className="cards-container h-[550px] w-full snap-y snap-mandatory overflow-y-auto px-3 md:px-0" style={{ scrollbarWidth: "none" }}>
+      <div
+        className="cards-container h-[550px] w-full snap-y snap-mandatory overflow-y-auto px-3 md:px-0"
+        style={{ scrollbarWidth: "none" }}
+      >
         <div className="text-Gray-N600 mt-5 mb-5 h-6 self-stretch text-right text-sm leading-normal font-semibold md:mt-0">
           {englishToFarsiNumber(websites.length)} فروشنده
         </div>
@@ -108,16 +114,15 @@ export default function TicketCard({ websites }: { websites: dude[] }) {
                   <div className="inline-flex items-center justify-between self-stretch">
                     {/* name and icon */}
                     <div className="flex items-center justify-end gap-2">
-                    <div className="flex h-6 w-6 items-center justify-center rounded-full bg-white outline outline-[1.2px] outline-Gray-N200 outline-offset-[-1.2px]">
-  <Image
-    alt={website.detail.name_fa}
-    width={12}
-    height={16}
-    className="h-[15.6px] w-[12.48px] object-contain"
-    src={website.detail.image ?? dude.src}
-  />
-</div>
-
+                      <div className="outline-Gray-N200 flex h-6 w-6 items-center justify-center overflow-hidden rounded-full bg-white outline outline-[1.2px] outline-offset-[-1.2px]">
+                        <Image
+                          alt={website.detail.name_fa}
+                          src={website.detail.image ?? dude.src}
+                          width={24}
+                          height={24}
+                          className="rounded-full object-cover"
+                        />
+                      </div>
 
                       <div className="flex flex-col items-start justify-center gap-1">
                         <div className="text-Gray-N600 justify-start text-right text-xs font-semibold">
