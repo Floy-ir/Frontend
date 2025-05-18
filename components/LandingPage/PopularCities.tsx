@@ -26,6 +26,46 @@ const getDestinationImage = (destinationCode: string): StaticImageData => {
   }
 }
 
+const staticCityData = {
+  count: 5,
+  results: [
+    {
+      origin: "THR",
+      destination: "KIH",
+      originLabel: "تهران",
+      destinationLabel: "کیش",
+      price: 1200000,
+    },
+    {
+      origin: "THR",
+      destination: "MHD",
+      originLabel: "تهران",
+      destinationLabel: "مشهد",
+      price: 950000,
+    },
+    {
+      origin: "THR",
+      destination: "SYZ",
+      originLabel: "تهران",
+      destinationLabel: "شیراز",
+      price: 1100000,
+    },
+    {
+      origin: "THR",
+      destination: "TBZ",
+      originLabel: "تهران",
+      destinationLabel: "تبریز",
+      price: 1050000,
+    },
+    {
+      origin: "THR",
+      destination: "MHD",
+      originLabel: "تهران",
+      destinationLabel: "مشهد",
+      price: 990000,
+    },
+  ],
+}
 
 function CityRow({ cities }: { cities: { city: string; price: string; bg: StaticImageData }[] }) {
   return (
@@ -73,56 +113,57 @@ function CityCard({ city, price, bg, large }: { city: string; price: string; bg:
 }
 
 export default function PopularCities() {
-  const [cityData, setCityData] = useState<{ count: number; results: any[] } | null>(null)
+  // const [cityData, setCityData] = useState<{ count: number; results: any[] } | null>(null)
 
-  useEffect(() => {
-    const defaultOriginList = ["THR", "MHD", "KIH"]
-    let originList = [...defaultOriginList]
+  // useEffect(() => {
+  //   const defaultOriginList = ["THR", "MHD", "KIH"]
+  //   let originList = [...defaultOriginList]
 
-    try {
-      const stored = localStorage.getItem("app:cities:recentSelections")
-      if (stored) {
-        const parsed = JSON.parse(stored) as Array<{ value: string; label: string; code: string }>
-        const recentCodes = parsed.map((c) => c.code)
-        originList = Array.from(new Set([...recentCodes, ...defaultOriginList]))
-      }
-    } catch (e) {
-      console.error("Failed to read from localStorage:", e)
-    }
+  //   try {
+  //     const stored = localStorage.getItem("app:cities:recentSelections")
+  //     if (stored) {
+  //       const parsed = JSON.parse(stored) as Array<{ value: string; label: string; code: string }>
+  //       const recentCodes = parsed.map((c) => c.code)
+  //       originList = Array.from(new Set([...recentCodes, ...defaultOriginList]))
+  //     }
+  //   } catch (e) {
+  //     console.error("Failed to read from localStorage:", e)
+  //   }
 
-    ;(async () => {
-      try {
-        const query = `?favorite_cities=${originList.join(",")}`
-        const response = (await apiFetch(`/flights/favorite_cities/${query}`, {
-          method: "GET",
-        })) as { count: number; results: unknown[] }
+  //   ;(async () => {
+  //     try {
+  //       const query = `?favorite_cities=${originList.join(",")}`
+  //       const response = (await apiFetch(`/flights/favorite_cities/${query}`, {
+  //         method: "GET",
+  //       })) as { count: number; results: unknown[] }
 
-        const resultsWithLabels = await Promise.all(
-          response.results.map(async (flight: any) => {
-            const originCity = flight.origin ? await getCityByCode(flight.origin) : undefined
-            const destinationCity = flight.destination ? await getCityByCode(flight.destination) : undefined
-            return {
-              ...flight,
-              originLabel: originCity ? originCity.label : flight.origin,
-              destinationLabel: destinationCity ? destinationCity.label : flight.destination,
-            }
-          })
-        )
+  //       const resultsWithLabels = await Promise.all(
+  //         response.results.map(async (flight: any) => {
+  //           const originCity = flight.origin ? await getCityByCode(flight.origin) : undefined
+  //           const destinationCity = flight.destination ? await getCityByCode(flight.destination) : undefined
+  //           return {
+  //             ...flight,
+  //             originLabel: originCity ? originCity.label : flight.origin,
+  //             destinationLabel: destinationCity ? destinationCity.label : flight.destination,
+  //           }
+  //         })
+  //       )
 
-        setCityData({ count: response.count, results: resultsWithLabels })
-      } catch (error) {
-        console.error("Failed to fetch flight data:", error)
-      }
-    })()
-  }, [])
+  //       setCityData({ count: response.count, results: resultsWithLabels })
+  //     } catch (error) {
+  //       console.error("Failed to fetch flight data:", error)
+  //     }
+  //   })()
+  // }, [])
+  const cityData = staticCityData;
 
   return (
     <div className="mt-6 mb-8 flex w-full gap-2 md:mt-10 lg:mt-14 lg:flex-row">
-      <div className="relative flex w-full snap-x snap-proximity flex-nowrap gap-2 overflow-x-auto scroll-smooth sm:justify-center sm:px-12">
+      <div className="relative flex w-full snap-x snap-mandatory flex-nowrap gap-2 overflow-x-auto scroll-smooth sm:px-0">
         {cityData && cityData.results.length > 0 ? (
           <>
             {cityData.results[0] && (
-              <div className="mb-4 shrink-0 snap-center">
+              <div className="mb-4 shrink-0 snap-start">
                 <CityCard
                   city={`${cityData.results[0].originLabel} به ${cityData.results[0].destinationLabel}`}
                   price={cityData.results[0].price.toLocaleString()}
@@ -165,7 +206,7 @@ export default function PopularCities() {
                     }[],
                     index: number
                   ) => (
-                    <div key={index} className="shrink-0 snap-center">
+                    <div key={index} className="shrink-0 snap-start">
                       <CityRow
                         cities={pair.map((flight, i) => ({
                           city: `${flight.originLabel} به ${flight.destinationLabel}`,
