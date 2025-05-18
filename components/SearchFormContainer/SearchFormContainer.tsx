@@ -24,7 +24,7 @@ export function SearchFormContainer() {
             <Buildings size={16} variant="Bold" color="var(--color-Gray-N400)" className="size-4 md:size-5" />
             <div className="flex relative">
             <span className="text-Gray-N400 text-xs font-medium sm:text-sm md:text-lg">هتل</span>
-            <Button intent="secondary" size="small" className="absolute -top-3 -left-8 rounded-full px-1 py-0.5 text-[8px] font-normal sm:text-[10px]">
+            <Button intent="secondary" size="small" className="cursor-not-allowed absolute -top-3 -left-8 rounded-full px-1 py-0.5 text-[8px] font-normal sm:text-[10px]">
               به‌زودی
             </Button>
           </div>
@@ -37,7 +37,7 @@ export function SearchFormContainer() {
             <Building3 size={16} variant="Bold" color="var(--color-Gray-N400)" className="size-4 md:size-5" />
             <div className="flex relative">
             <span className="text-Gray-N400 text-xs font-medium sm:text-sm md:text-lg">اقامتگاه</span>
-            <Button intent="secondary" size="small" className="absolute -top-3 -left-8 rounded-full px-1.5 py-1 text-[8px] font-normal sm:text-[10px]">
+            <Button intent="secondary" size="small" className="cursor-not-allowed absolute -top-3 -left-8 rounded-full px-1.5 py-1 text-[8px] font-normal sm:text-[10px]">
               به‌زودی
             </Button>
           </div>

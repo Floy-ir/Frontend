@@ -278,8 +278,8 @@ export function FlightSearchForm({
                 />
               </div>
 
-              {/* Return Date Button - Hidden on mobile and tablet */}
-              <div className="hidden xl:block">
+              {/* Return Date Button - Hidden on mobile but visible on tablet and desktop */}
+              <div className="hidden md:block">
                 <Button
                   disabled
                   intent="text"
@@ -313,7 +313,7 @@ export function FlightSearchForm({
         </div>
 
         {/* Search Button */}
-        <div className="mt-4 flex w-full items-center justify-center gap-4 px-4 lg:mt-0 lg:w-1/4">
+        <div className="mt-4 flex w-full items-center justify-center gap-4 pr-4 lg:mt-0 lg:w-1/4">
           <Button intent="primary" size="large" className="w-full" onClick={handleSearch}>
             جستجوی پرواز
           </Button>
