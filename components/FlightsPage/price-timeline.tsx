@@ -13,14 +13,13 @@ interface FlightResponse {
 
 // import { ArrowLeft2, ArrowRight2 } from "iconsax-react"
 import Image from "next/image"
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import React, { useEffect, useRef, useState } from "react"
 import img from "@/public/images/arrow-right.svg"
 import { apiFetch } from "@/services/api"
 import { formatToJalali } from "@/utils/dateUtils"
 import { createFlightSearchUrl } from "@/utils/navigation"
 import { englishToFarsiNumber } from "@/utils/numbers"
-
 const Timeline = ({
   originCityCode,
   destinationCityCode,
@@ -38,13 +37,18 @@ const Timeline = ({
   infant: string
   autoScrollToSelected?: boolean
 }) => {
-  const scrollRef = useRef<HTMLDivElement>(null)
   const router = useRouter()
 
   // Initialize the selected date from the 'departing' query param
-  const [selectedDay, setSelectedDay] = useState<string>(selectedDate)
+  const searchParams = useSearchParams();
+  const departingParam = searchParams.get("departing") || selectedDate;
+  const [selectedDay, setSelectedDay] = useState<string>(departingParam)
   const [data, setData] = useState<FlightData[]>([])
   const [isLoading, setIsLoading] = useState<boolean>(true)
+
+  // Calculate the min and max price
+  const minPrice = Math.min(...data.filter((item) => item.price).map((item) => item.price || Infinity))
+  const maxPrice = Math.max(...data.filter((item) => item.price).map((item) => item.price || -Infinity))
 
   // Passengers count
   const passengers = {
@@ -53,10 +57,10 @@ const Timeline = ({
     infant: parseInt(infant, 10),
   }
 
-  // Fetch cheapest flights for timeline
+  // Update selectedDay whenever selectedDate (departingParam) changes
   useEffect(() => {
-    fetchCheapestFlights(selectedDate)
-  }, []) // runs once on mount
+    setSelectedDay(selectedDate)
+  }, [selectedDate])
 
   const fetchCheapestFlights = async (referenceDate: string) => {
     setIsLoading(true)
@@ -73,7 +77,6 @@ const Timeline = ({
       // console.log("Cheapest flight data:", response)
       if (response) {
         setData(response.results || [])
-        isScroll = true
       } else {
         console.error("No flight data returned")
         setData([])
@@ -84,14 +87,15 @@ const Timeline = ({
     setIsLoading(false)
   }
 
-  // Calculate the min and max price
-  const minPrice = Math.min(...data.filter((item) => item.price).map((item) => item.price || Infinity))
-  const maxPrice = Math.max(...data.filter((item) => item.price).map((item) => item.price || -Infinity))
+  // Fetch cheapest flights for timeline
+  useEffect(() => {
+    fetchCheapestFlights(selectedDate)
+  }, []) // runs once on mount
 
-  let isScroll = true
+
+  const scrollRef = useRef<HTMLDivElement>(null)
 
   const handleDateSelection = (newDate: string) => {
-    isScroll = false
 
     const dates = data.map((item) => item.date)
     const isEdge = newDate === dates[0] || newDate === dates[dates.length - 1]
@@ -105,29 +109,16 @@ const Timeline = ({
 
     setSelectedDay(newDate)
   }
-
+  // Auto-scroll the selected date into view after data is fetched and DOM is updated
   useEffect(() => {
-    if (!autoScrollToSelected || !scrollRef.current) return
-
-    const scrollToSelected = () => {
-      const container = scrollRef.current
-      if (!container) return
-      const selectedEl = container.querySelector('[data-selected="true"]') as HTMLElement
-      if (selectedEl) {
-        const offsetLeft = selectedEl.offsetLeft - container.offsetWidth / 2 + selectedEl.offsetWidth / 2
-        container.scrollTo({ left: offsetLeft, behavior: "smooth" })
-      }
+    if (!scrollRef.current) return;
+    const selectedEl = scrollRef.current.querySelector('[data-selected="true"]') as HTMLElement;
+    if (selectedEl) {
+      const scrollContainer = scrollRef.current;
+      const offset = selectedEl.offsetLeft - scrollContainer.offsetWidth / 2 + selectedEl.offsetWidth / 2;
+      scrollContainer.scrollTo({ left: offset, behavior: "smooth" });
     }
-
-    const raf = requestAnimationFrame(() => {
-      setTimeout(() => {
-        scrollToSelected()
-      }, 100)
-    })
-
-    return () => cancelAnimationFrame(raf)
-  }, [selectedDate, autoScrollToSelected])
-
+  }, [selectedDay, data]);
   return (
     <div className="relative max-w-screen items-center justify-center">
       {/* Gradient */}
@@ -244,3 +235,4 @@ const Timeline = ({
 }
 
 export default Timeline
+
