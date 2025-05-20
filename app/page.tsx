@@ -11,7 +11,7 @@ import Questions from "@/components/LandingPage/Questions"
 import img from "../public/images/Underline_06.svg"
 
 export const metadata: Metadata = {
-  title:"فلوی | موتور جست و جوی سفر",
+  title:"فلوی | مقایسه بلیط هواپیما",
   twitter: {
     card: "summary_large_image",
   },
