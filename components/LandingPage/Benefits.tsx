@@ -10,7 +10,7 @@ import line from "../../public/images/Underline_06_small.svg"
 export default function Benefits() {
   return (
     <div className="w-full justify-start overflow-x-auto md:flex md:items-center md:justify-center">
-      <div className="mb-20 mt-16 inline-flex h-[54px] min-w-max shrink-0 snap-x snap-mandatory items-center justify-center gap-18">
+      <div className="mb-4 mt-8 inline-flex h-[54px] min-w-max shrink-0 snap-x snap-mandatory items-center justify-center gap-18">
         {/*Title */}
         <div className="hidden flex-col items-end justify-end gap-1 md:inline-flex">
           <div className="text-Gray-N700 w-full text-end text-[25px] leading-10 font-bold lg:mr-0">فلوی</div>

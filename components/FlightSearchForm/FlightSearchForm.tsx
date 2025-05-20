@@ -136,7 +136,7 @@ export function FlightSearchForm({
           <div className={`bg-Gray-N200 h-px w-full ${contextPage == "flights" ? "block md:hidden" : "hidden"}`}></div>
 
           {/* Form Fields */}
-          <div className="mt-4 flex w-full flex-col items-start gap-1 px-4 lg:mt-0 lg:flex-row lg:items-center lg:gap-6 lg:px-0">
+          <div className="mt-4 flex w-full flex-col items-start gap-1 px-4 lg:mt-0 lg:flex-row lg:items-center lg:gap-3 xl:gap-6 lg:px-0">
             {/* Origin/Destination Section - Mobile & Tablet layout (until 1169px) */}
             <div className="flex w-full flex-col lg:hidden">
               <div className="flex w-full flex-row-reverse items-center gap-4">
@@ -205,7 +205,7 @@ export function FlightSearchForm({
             {/* Origin/Destination Section - Desktop layout (1170px and up) */}
             <div className="hidden w-full items-start gap-4 lg:flex lg:w-auto lg:flex-row lg:items-center xl:gap-6">
               {/* Origin Field - Desktop */}
-              <div className="w-full lg:w-47">
+              <div className="w-full lg:w-40 xl:w-47">
                 <ComboboxSelect
                   noBorder
                   expandDropdown
@@ -238,7 +238,7 @@ export function FlightSearchForm({
               </div>
 
               {/* Destination Field - Desktop */}
-              <div className="w-full lg:w-47">
+              <div className="w-full lg:w-40 xl:w-47">
                 <ComboboxSelect
                   noBorder
                   expandDropdown
@@ -256,12 +256,12 @@ export function FlightSearchForm({
               </div>
             </div>
 
-            <div className="bg-Gray-N200 hidden h-12 w-px xl:block" />
+            <div className="bg-Gray-N200 h-12 w-px hidden lg:block" />
 
             {/* Date and Passenger Fields - Side by side on all devices */}
-            <div className="mt-4 flex w-full flex-row items-center gap-4 xl:mt-0">
+            <div className="flex w-full flex-row items-center gap-4">
               {/* Departure Date Field */}
-              <div className="w-1/2 xl:w-20">
+              <div className="w-1/2 lg:w-20 xl:w-20">
                 <DatePicker
                   noBorder
                   placeholder="انتخاب تاریخ"
@@ -279,7 +279,7 @@ export function FlightSearchForm({
               </div>
 
               {/* Return Date Button - Hidden on mobile but visible on tablet and desktop */}
-              <div className="hidden md:block">
+              <div className="hidden lg:block">
                 <Button
                   disabled
                   intent="text"
@@ -293,7 +293,7 @@ export function FlightSearchForm({
               <div className="bg-Gray-N200 h-12 w-px" />
 
               {/* Passengers Field */}
-              <div className="w-1/2 xl:w-18">
+              <div className="w-1/2 lg:w-16 xl:w-18">
                 <PassengerSelector
                   noBorder
                   placeholder="۱ مسافر"

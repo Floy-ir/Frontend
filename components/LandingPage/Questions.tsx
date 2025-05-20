@@ -26,7 +26,7 @@ const faqData = [
 
 const Questions = () => {
   return (
-    <div className="items-right flex w-full flex-col justify-center px-4 pb-8 lg:px-38">
+    <div className="items-right flex w-full flex-col justify-center pb-8">
       <h2 className="text-Gray-N600 my-8 text-right text-xl leading-loose font-bold">سوالات متداول</h2>
       <Accordion type="single" collapsible className="space-y-3">
         {faqData.map((item, index) => (

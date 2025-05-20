@@ -135,9 +135,9 @@ export function Header({ menuItems, className, forceScrolledStyle = false }: Hea
     <>
       <header className={headerClasses}>
         {/* Content container - only constrain width for content, not background */}
-        <div className={`mx-auto max-w-[1136px] ${isScrolled ? "w-full" : ""}`}>
+        <div className={`mx-auto w-full max-w-[1136px] px-4 md:px-4 lg-xl:px-6 lg:px-6 ${isScrolled ? "w-full" : ""}`}>
           {/* Desktop view */}
-          <div className="hidden h-22 items-center justify-between md:flex">
+          <div className="hidden h-22 items-center justify-between lg:flex">
             {/* Logo - Right Side in RTL */}
             <div className="flex items-center gap-2">
               <span className={`text-lg font-semibold ${isScrolled ? "text-Gray-N700" : "text-white"}`}>فلوی</span>
@@ -193,7 +193,7 @@ export function Header({ menuItems, className, forceScrolledStyle = false }: Hea
           </div>
 
           {/* Mobile view */}
-          <div className="flex items-center justify-between md:hidden">
+          <div className="flex items-center justify-between lg:hidden">
             {/* Drawer for mobile menu */}
             <Drawer open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
               <DrawerTrigger asChild>
@@ -235,7 +235,7 @@ export function Header({ menuItems, className, forceScrolledStyle = false }: Hea
             </Drawer>
 
             {/* Login Button */}
-            <Button
+            {/* <Button
               href="/login"
               intent="secondary"
               size="small"
@@ -248,13 +248,13 @@ export function Header({ menuItems, className, forceScrolledStyle = false }: Hea
               )}
             >
               ورود | ثبت‌نام
-            </Button>
+            </Button> */}
           </div>
         </div>
       </header>
 
       {/* Spacer div to prevent layout shifts - matches header height */}
-      <div className="h-16 w-full md:h-22"></div>
+      <div className="h-16 w-full lg:h-22"></div>
     </>
   )
 }

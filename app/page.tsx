@@ -33,7 +33,7 @@ export default function Web() {
   return (
     <>
       {/* Background Image with Oval Bottom */}
-      <div className="rounded-oval-mobile md:rounded-oval absolute inset-0 -z-10 h-[775px] max-h-[775px] w-full overflow-hidden md:h-[775px] lg:h-[478px]">
+      <div className="rounded-oval-mobile absolute inset-0 -z-10 h-[720px] max-h-[775px] w-full overflow-hidden sm:h-[720px] md:h-[760px] lg:h-[478px]">
         {/* Main image container */}
         <Image
           src="/images/landing2.webp"
@@ -53,15 +53,19 @@ export default function Web() {
       </div> */}
 
       <main className="rtl relative z-10 flex min-h-screen flex-col items-center bg-transparent">
-        <div className="mx-auto w-full max-w-[1136px] px-4 md:px-0">
+        <div className="w-full">
           <HeroSection />
         </div>
 
         <Companies />
-        <Benefits />
+
+        <div className="w-full py-16">
+          <Benefits />
+        </div>
+        
         {/* Cities */}
-        <div className="flex w-full shrink-0 flex-col items-center justify-between bg-white px-4 py-8 lg:px-38 lg:pb-4 lg:pt-12" id="cheapest-week">
-          <div className="max-w-20/21">
+        <div data-name="Container-for-cities" className="flex w-full shrink-0 flex-col items-center justify-between bg-white py-8 lg:pb-4 lg:pt-12" id="cheapest-week">
+          <div className="mx-auto w-full max-w-[1136px] px-6 xl:px-0">
             {/* Title */}
             <div className="flex w-full items-center justify-between">
               <div className="flex flex-col justify-start">
@@ -93,8 +97,10 @@ export default function Web() {
         {/* <div className="mt-12 flex w-full max-w-[1500px] shrink-0 flex-col items-center justify-center px-4 py-8 lg:px-38 lg:py-12">
           <Suggestions />
         </div> */}
-        <div className="mb-13 w-full" id="faq">
-          <Questions />
+        <div data-name="Container-for-questions" className="mb-13 w-full" id="faq">
+          <div className="mx-auto w-full max-w-[1136px] px-6 xl:px-0">
+            <Questions />
+          </div>
         </div>
       </main>
     </>
