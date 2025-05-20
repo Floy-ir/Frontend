@@ -59,7 +59,7 @@ export default function Web() {
 
         <Companies />
 
-        <div className="w-full py-16">
+        <div className="w-full pb-12 pt-8 lg:py-16">
           <Benefits />
         </div>
         

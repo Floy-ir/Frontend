@@ -6,7 +6,7 @@ import { SearchFormContainer } from "@/components/SearchFormContainer/SearchForm
 
 export function HeroSection() {
   return (
-    <section data-name="Container-for-hero-section" className="relative mx-auto mt-4 flex h-[700px] md:h-[800px] w-full max-w-[1136px] px-6 lg:mt-11 lg:h-[487px] xl:px-0">
+    <section data-name="Container-for-hero-section" className="relative mx-auto mt-4 flex h-[700px] md:h-[740px] w-full max-w-[1136px] px-6 lg:mt-11 lg:h-[487px] xl:px-0">
       <div className="flex w-full flex-col items-start">
         {/* Main Title */}
         <div className="mb-6 flex w-full flex-col items-start gap-[9px] lg:mb-10 lg:inline-flex lg:w-auto lg:flex-row lg:items-baseline">
