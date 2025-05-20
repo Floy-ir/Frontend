@@ -94,9 +94,15 @@ const FilterCheckbox = ({
     </div>
     {logo && (
       <div className="flex items-center justify-start gap-2 self-stretch">
-        <div className="border-Gray-N200 size-8 overflow-hidden rounded-[48px] border p-2">
-          <Image src={logo} alt={label} width={32} height={32} className="object-contain" />
-        </div>
+        <div className="border-Gray-N200 size-8 overflow-hidden rounded-full border">
+  <Image
+    src={logo}
+    alt={label}
+    width={32}
+    height={32}
+    className="object-cover rounded-full"
+  />
+</div>
       </div>
     )}
 
@@ -471,7 +477,7 @@ export function FlightFilters({
               <FilterCheckbox
                 key={website.uid}
                 label={website.name_fa}
-                logo={website.image || "/images/logo.webp"}
+                logo={website.image || "/images/logo.webp"} 
                 extraText={formatMinPrice(website.min_price)}
                 checked={filters.agencies[website.uid] || false}
                 onChange={(v) => updateFilter("agencies", website.uid, v)}

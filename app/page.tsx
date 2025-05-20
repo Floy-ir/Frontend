@@ -11,10 +11,12 @@ import Questions from "@/components/LandingPage/Questions"
 import img from "../public/images/Underline_06.svg"
 
 export const metadata: Metadata = {
-  title: "فلوی | مقایسه بلیط هواپیما",
+  title:"فلوی | موتور جست و جوی سفر",
   twitter: {
     card: "summary_large_image",
   },
+
+  
   openGraph: {
     url: "https://flow.ir/",
     images: [
@@ -31,7 +33,7 @@ export default function Web() {
   return (
     <>
       {/* Background Image with Oval Bottom */}
-      <div className="rounded-oval-mobile md:rounded-oval absolute inset-0 -z-10 h-[775px] max-h-[775px] w-full overflow-hidden md:h-[775px] xl:h-[478px]">
+      <div className="rounded-oval-mobile md:rounded-oval absolute inset-0 -z-10 h-[775px] max-h-[775px] w-full overflow-hidden md:h-[775px] lg:h-[478px]">
         {/* Main image container */}
         <Image
           src="/images/landing2.webp"
@@ -58,7 +60,7 @@ export default function Web() {
         <Companies />
         <Benefits />
         {/* Cities */}
-        <div className="flex w-full shrink-0 flex-col items-center justify-between bg-white px-4 py-8 lg:px-38 lg:py-12">
+        <div className="flex w-full shrink-0 flex-col items-center justify-between bg-white px-4 py-8 lg:px-38 lg:pb-4 lg:pt-12" id="cheapest-week">
           <div className="max-w-20/21">
             {/* Title */}
             <div className="flex w-full items-center justify-between">
@@ -88,10 +90,10 @@ export default function Web() {
         </div>
 
         {/* suggestions */}
-        <div className="mt-12 flex w-full max-w-[1500px] shrink-0 flex-col items-center justify-center px-4 py-8 lg:px-38 lg:py-12">
-          {/* <Suggestions /> */}
-        </div>
-        <div className="mb-13 w-full">
+        {/* <div className="mt-12 flex w-full max-w-[1500px] shrink-0 flex-col items-center justify-center px-4 py-8 lg:px-38 lg:py-12">
+          <Suggestions />
+        </div> */}
+        <div className="mb-13 w-full" id="faq">
           <Questions />
         </div>
       </main>

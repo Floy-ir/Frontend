@@ -26,14 +26,14 @@ const faqData = [
 
 const Questions = () => {
   return (
-    <div className="items-right flex w-full flex-col justify-center bg-white px-4 pb-8 lg:px-38">
+    <div className="items-right flex w-full flex-col justify-center px-4 pb-8 lg:px-38">
       <h2 className="text-Gray-N600 my-8 text-right text-xl leading-loose font-bold">سوالات متداول</h2>
       <Accordion type="single" collapsible className="space-y-3">
         {faqData.map((item, index) => (
           <AccordionItem
             key={index}
             value={`item-${index}`}
-            className="outline-Gray-N200 data-[state=open]:outline-Primary-P500main flex flex-col items-stretch justify-center self-stretch rounded-xl outline-2 outline-offset-[-2px] data-[state=open]:outline-1 data-[state=open]:outline-offset-[-1px]"
+            className="bg-[#fcfcfc] pb-2 outline-Gray-N200 data-[state=open]:outline-Primary-P500main flex flex-col items-stretch justify-center self-stretch rounded-xl outline-2 outline-offset-[-2px] data-[state=open]:outline-1 data-[state=open]:outline-offset-[-1px]"
           >
             <AccordionTrigger className="data-[state=open]:text-Primary-P500main text-Gray-N600 -mb-2 flex items-center justify-between p-5 text-right text-base leading-7 font-medium md:text-lg">
               {item.question}

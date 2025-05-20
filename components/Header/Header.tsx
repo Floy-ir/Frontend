@@ -119,6 +119,14 @@ export function Header({ menuItems, className, forceScrolledStyle = false }: Hea
     return () => window.removeEventListener("resize", checkScreen)
   }, [])
 
+  // Add smooth scrolling behavior
+  useEffect(() => {
+    document.documentElement.style.scrollBehavior = 'smooth'
+    return () => {
+      document.documentElement.style.scrollBehavior = 'auto'
+    }
+  }, [])
+
   if (pathname.startsWith("/flights") && isSmallScreen) {
     return <></>
   }
@@ -127,7 +135,7 @@ export function Header({ menuItems, className, forceScrolledStyle = false }: Hea
     <>
       <header className={headerClasses}>
         {/* Content container - only constrain width for content, not background */}
-        <div className={`mx-auto max-w-[1136px] px-4 md:px-8 ${isScrolled ? "w-full" : ""}`}>
+        <div className={`mx-auto max-w-[1136px] ${isScrolled ? "w-full" : ""}`}>
           {/* Desktop view */}
           <div className="hidden h-22 items-center justify-between md:flex">
             {/* Logo - Right Side in RTL */}
@@ -145,12 +153,12 @@ export function Header({ menuItems, className, forceScrolledStyle = false }: Hea
                       <Link
                         href={item.href}
                         className={navItem({
-                          isActive: item.isActive,
+                          // isActive: item.isActive,
                           isScrolled: isScrolled,
                         })}
                       >
                         <span className="text-lg">{item.label}</span>
-                        {item.isActive && (
+                        {/* {item.isActive && (
                           <div className="relative h-1 w-1">
                             <div
                               className={`absolute h-1.5 w-1.5 rounded-sm ${
@@ -158,7 +166,7 @@ export function Header({ menuItems, className, forceScrolledStyle = false }: Hea
                               }`}
                             ></div>
                           </div>
-                        )}
+                        )} */}
                       </Link>
                     </NavigationMenu.Link>
                   </NavigationMenu.Item>
@@ -171,6 +179,7 @@ export function Header({ menuItems, className, forceScrolledStyle = false }: Hea
                 href="/login"
                 intent="secondary"
                 size="small"
+                disabled
                 className={twMerge(
                   "rounded-xl px-6 py-4",
                   isScrolled
@@ -197,18 +206,29 @@ export function Header({ menuItems, className, forceScrolledStyle = false }: Hea
                 <DrawerTitle className="sr-only">Navigation Menu</DrawerTitle>
                 <div className="overflow-auto p-6">
                   <nav className="flex flex-col items-end space-y-3">
-                    {menuItems.map((item, index) => (
-                      <Link
-                        key={index}
-                        href={item.href}
-                        className={`w-full px-6 py-3 text-right text-[1.15rem] ${
-                          item.isActive ? "font-semibold text-slate-800" : "text-slate-500"
-                        }`}
-                        onClick={() => setMobileMenuOpen(false)}
-                      >
-                        {item.label}
-                      </Link>
-                    ))}
+                    {menuItems.map((item, index) => {
+                      return item.href === "/" ? (
+                        <Link
+                          key={index}
+                          href={item.href}
+                          className={`w-full px-6 py-3 text-right text-[1.15rem] ${
+                            item.isActive ? "font-semibold text-slate-800" : "text-slate-500"
+                          }`}
+                          onClick={() => setMobileMenuOpen(false)}
+                        >
+                          {item.label}
+                        </Link>
+                      ) : (
+                        <span
+                          key={index}
+                          className={`w-full px-6 py-3 text-right text-[1.15rem] cursor-not-allowed opacity-50 ${
+                            item.isActive ? "font-semibold text-slate-800" : "text-slate-500"
+                          }`}
+                        >
+                          {item.label}
+                        </span>
+                      )
+                    })}
                   </nav>
                 </div>
               </DrawerContent>
@@ -219,6 +239,7 @@ export function Header({ menuItems, className, forceScrolledStyle = false }: Hea
               href="/login"
               intent="secondary"
               size="small"
+              disabled
               className={twMerge(
                 "rounded-xl px-4 py-3 text-sm",
                 isScrolled

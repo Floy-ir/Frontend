@@ -4,10 +4,11 @@ import { Airplane, Building3, Buildings } from "iconsax-react"
 
 import React from "react"
 import { FlightSearchForm } from "@/components/FlightSearchForm/FlightSearchForm"
+import { Button } from "../Button/Button"
 
 export function SearchFormContainer() {
   return (
-    <div className="outline-Gray-N100 relative mx-auto flex w-full max-w-[calc(100%-2rem)] flex-col items-start gap-4 rounded-xl bg-white p-4 shadow-[0px_25px_66px_-12px_rgba(0,0,0,0.08)] outline-1 outline-offset-[-1px] md:gap-6 md:rounded-3xl md:px-8 md:pt-6 md:pb-5 xl:max-w-full">
+    <div className="outline-Gray-N100 relative mx-auto flex w-full max-w-[calc(100%-2rem)] lg:max-w-auto flex-col items-start gap-4 rounded-xl bg-white p-4 shadow-[0px_25px_66px_-12px_rgba(0,0,0,0.08)] outline-1 outline-offset-[-1px] md:gap-6 md:rounded-3xl md:px-8 md:pt-6 md:pb-5 lg:max-w-full">
       {/* Tabs Navigation */}
       <div className="border-Gray-N200 flex w-full items-center justify-start gap-4 border-b pb-4 md:gap-6 md:pb-6">
         {/* Service Type Tabs */}
@@ -19,16 +20,27 @@ export function SearchFormContainer() {
 
           <div className="bg-Gray-N200 hidden h-6 w-px md:block" />
 
-          <div className="flex flex-1 items-center justify-center gap-1 rounded-lg px-3 py-2 md:flex-initial md:gap-3 md:px-6">
-            <Buildings size={16} variant="Bold" color="var(--color-Gray-N500)" className="md:size-5" />
-            <span className="text-Gray-N500 text-sm font-semibold md:text-lg">هتل</span>
+          <div className="cursor-not-allowed flex flex-1 items-center justify-center gap-1 rounded-lg px-2 py-1 sm:px-3 sm:py-2 md:flex-initial md:gap-3 md:px-6">
+            <Buildings size={16} variant="Bold" color="var(--color-Gray-N400)" className="size-4 md:size-5" />
+            <div className="flex relative">
+            <span className="text-Gray-N400 text-xs font-medium sm:text-sm md:text-lg">هتل</span>
+            <Button intent="secondary" size="small" className="cursor-not-allowed absolute -top-3 -left-8 rounded-full px-1 py-0.5 text-[8px] font-normal sm:text-[10px]">
+              به‌زودی
+            </Button>
+          </div>
+
           </div>
 
           <div className="bg-Gray-N200 hidden h-6 w-px justify-center md:block" />
 
-          <div className="flex flex-1 items-center gap-1 rounded-lg px-3 py-2 md:flex-initial md:gap-3 md:px-6">
-            <Building3 size={16} variant="Bold" color="var(--color-Gray-N500)" className="md:size-5" />
-            <span className="text-Gray-N500 text-sm font-semibold md:text-lg">اقامتگاه</span>
+          <div className="cursor-not-allowed flex flex-1 items-center gap-1 rounded-lg px-2 py-1 sm:px-3 sm:py-2 md:flex-initial md:gap-3 md:px-6">
+            <Building3 size={16} variant="Bold" color="var(--color-Gray-N400)" className="size-4 md:size-5" />
+            <div className="flex relative">
+            <span className="text-Gray-N400 text-xs font-medium sm:text-sm md:text-lg">اقامتگاه</span>
+            <Button intent="secondary" size="small" className="cursor-not-allowed absolute -top-3 -left-9 rounded-full px-1.5 py-1 text-[8px] font-normal sm:text-[10px]">
+              به‌زودی
+            </Button>
+          </div>
           </div>
         </nav>
 
