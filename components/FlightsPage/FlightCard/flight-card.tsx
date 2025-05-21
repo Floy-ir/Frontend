@@ -372,7 +372,7 @@ export function FlightCard({
       </div>
     )
   }
-  console.log(airline.logo)
+
   return (
     <article className={twMerge(flightCardVariants({ intent, className }))}>
       {/* Mobile/Tablet Layout */}
@@ -392,13 +392,13 @@ export function FlightCard({
                 className="inline-flex flex-row-reverse items-center justify-start self-stretch"
               >
                 <time className="text-Gray-N800 flex-1 justify-start text-center text-lg leading-loose font-semibold">
-                  {englishToFarsiNumber(departureTime)}
+                  {englishToFarsiNumber(arrivalTime)}
                 </time>
 
                 <FlightRouteVisualization isMobile={true} />
 
                 <time className="text-Gray-N800 flex-1 justify-start text-center text-lg leading-loose font-semibold">
-                  {englishToFarsiNumber(arrivalTime)}
+                  {englishToFarsiNumber(departureTime)}
                 </time>
               </div>
 
