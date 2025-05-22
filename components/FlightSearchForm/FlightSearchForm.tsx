@@ -23,6 +23,8 @@ type FlightSearchFormProps = {
   onClose?: () => void
   className?: string
   contextPage?: "landing" | "flights"
+  id?: string
+  autoFocus?: boolean
 }
 
 export function FlightSearchForm({
@@ -33,6 +35,8 @@ export function FlightSearchForm({
   onClose,
   className = "",
   contextPage,
+  id,
+  autoFocus,
 }: FlightSearchFormProps) {
   const router = useRouter()
   const [origin, setOrigin] = useState(initialOrigin)
@@ -116,12 +120,30 @@ export function FlightSearchForm({
     // Navigate to the flights page with the query parameters
     router.push(createFlightSearchUrl(originCity.code, destinationCity.code, departureDate, passengers))
   }
+
+  // Create a ref for the first input field to enable autofocus
+  const originInputRef = React.useRef<HTMLInputElement>(null);
+  
+  // Handle autofocus when the form is opened
+  useEffect(() => {
+    if (autoFocus && originInputRef.current) {
+      // Small delay to ensure component is fully rendered
+      const timer = setTimeout(() => {
+        originInputRef.current?.focus();
+      }, 100);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [autoFocus]);
+
   return (
-    <div className="m-0 flex w-full flex-col items-center">
+    <div className="m-0 flex w-full flex-col items-center" id={id}>
       <div
         className={`relative flex h-full w-full flex-col items-center lg:flex-row lg:justify-center ${
           contextPage == "flights" ? "px-0 lg:px-30" : ""
         }`}
+        role="dialog"
+        aria-label="جستجوی پرواز"
       >
         <div className={`flex w-full flex-col items-start gap-4 lg:flex-row lg:items-center lg:gap-6 ${className}`}>
           {/* mobile title and Arrow */}
@@ -172,6 +194,7 @@ export function FlightSearchForm({
                       value={origin}
                       onChange={handleOriginChange}
                       recentSelections={recentSelections}
+                      ref={originInputRef}
                     />
                   </div>
 

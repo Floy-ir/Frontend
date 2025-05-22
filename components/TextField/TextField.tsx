@@ -152,33 +152,39 @@ export interface TextFieldProps
   noBorder?: boolean
 }
 
-export function TextField({
-  id,
-  label,
-  helperText,
-  leftIcon,
-  rightIcon,
-  prefix,
-  suffix,
-  maxLength,
-  showCharCount = false,
-  intent,
-  size,
-  width,
-  filled,
-  disabled,
-  placeholder,
-  value = "",
-  onChange,
-  containerClassName,
-  labelClassName,
-  inputClassName,
-  helperTextClassName,
-  customWidth,
-  customHeight,
-  noBorder = false,
-  ...props
-}: TextFieldProps) {
+export const TextField = React.forwardRef<
+  HTMLInputElement,
+  TextFieldProps
+>(function TextField(
+  {
+    id,
+    label,
+    helperText,
+    leftIcon,
+    rightIcon,
+    prefix,
+    suffix,
+    maxLength,
+    showCharCount = false,
+    intent,
+    size,
+    width,
+    filled,
+    disabled,
+    placeholder,
+    value = "",
+    onChange,
+    containerClassName,
+    labelClassName,
+    inputClassName,
+    helperTextClassName,
+    customWidth,
+    customHeight,
+    noBorder = false,
+    ...props
+  },
+  ref
+) {
   const [inputValue, setInputValue] = React.useState(value?.toString() || "")
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -240,6 +246,7 @@ export function TextField({
                 placeholder={placeholder}
                 className={twMerge(textFieldInput({ textAlign, disabled, className: inputClassName }))}
                 {...props}
+                ref={ref}
               />
             </Form.Control>
 
@@ -269,4 +276,4 @@ export function TextField({
       </Form.Field>
     </Form.Root>
   )
-}
+})

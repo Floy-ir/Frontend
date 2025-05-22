@@ -528,6 +528,9 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
   // Add a state to track if we've already loaded flights for this route
   const [hasLoadedFlights, setHasLoadedFlights] = useState(false);
 
+  // Add a new ref for search toggle
+  const searchToggleRef = useRef<HTMLButtonElement>(null);
+
   // Update the getFlights function to be simpler
   const getFlights = async (departureDate: string) => {
     try {
@@ -1378,10 +1381,59 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
               </div>
             </div>
           </>
+        ) : flights.length > 0 ? (
+          // No flights due to filters
+          <>
+            <div className="flex flex-row gap-4">
+              {/* Flight filters sidebar - keep visible */}
+              <div className="hidden lg:block">
+                <FlightFilters
+                  filters={filters}
+                  updateFilter={_updateFilter}
+                  clearFilters={_clearFilters}
+                  flightTimeRange={flightTimeRange}
+                  setFlightTimeRange={_setFlightTimeRange}
+                  priceRange={priceRange}
+                  setPriceRange={_setPriceRange}
+                  activeFiltersCount={_activeFiltersCount}
+                  priceRangeBounds={priceRangeBounds}
+                  availableSeatClasses={availableSeatClasses}
+                  availableWebsites={availableWebsites}
+                  availableAirlines={availableAirlines}
+                />
+              </div>
+
+              {/* No flights found message with actions - FOR FILTERED RESULTS */}
+              <div className="flex-1">
+                <NoTicketFound 
+                  type="filter"
+                  onClearFilters={_clearFilters}
+                />
+              </div>
+            </div>
+          </>
         ) : (
-          <div className="container mx-auto flex max-w-266 flex-col items-center justify-center p-0 lg:px-4 lg:py-6">
-            <NoTicketFound />
-          </div>
+          // No flights at all for this day
+          <>
+            <div className="container mx-auto flex max-w-266 flex-col items-center justify-center p-0 lg:px-4 lg:py-6">
+              <NoTicketFound 
+                type="noFlights"
+                onChangeSearch={() => {
+                  // Scroll to the top of the page
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                  
+                  // Find header search toggle button and click it
+                  const searchToggleElement = document.querySelector('[data-search-toggle="true"]');
+                  if (searchToggleElement instanceof HTMLElement) {
+                    searchToggleElement.click();
+                  } else {
+                    // Fallback in case button isn't found
+                    router.push('/');
+                  }
+                }}
+              />
+            </div>
+          </>
         )}
       </div>
     </div>

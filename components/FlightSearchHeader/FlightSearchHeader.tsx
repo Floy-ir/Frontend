@@ -132,6 +132,10 @@ export function FlightSearchHeader({
                 className="mr-16 px-5 py-3.5"
                 rightIcon={<SearchNormal size={16} color="#FFFFFF" />}
                 onClick={toggleSearchForm}
+                data-search-toggle="true"
+                aria-expanded={showSearchForm}
+                aria-controls="flight-search-form"
+                aria-label={showSearchForm ? "بستن فرم جستجو" : "تغییر جستجو"}
               >
                 تغییر
               </Button>
@@ -178,6 +182,10 @@ export function FlightSearchHeader({
               className="mr-16 px-5 py-3.5"
               rightIcon={<SearchNormal size={16} color="#FFFFFF" />}
               onClick={toggleSearchForm}
+              data-search-toggle="true"
+              aria-expanded={showSearchForm}
+              aria-controls="flight-search-form"
+              aria-label={showSearchForm ? "بستن فرم جستجو" : "تغییر جستجو"}
             >
               تغییر
             </Button>
@@ -200,6 +208,8 @@ export function FlightSearchHeader({
                 initialDepartureDate={parsedDate}
                 initialPassengers={initialPassengers}
                 contextPage="flights"
+                id="flight-search-form"
+                autoFocus={true}
               />
             </div>
           </div>
@@ -214,6 +224,8 @@ export function FlightSearchHeader({
               initialDepartureDate={parsedDate}
               initialPassengers={initialPassengers}
               contextPage="flights"
+              id="flight-search-form"
+              autoFocus={true}
             />
           </div>
         </div>

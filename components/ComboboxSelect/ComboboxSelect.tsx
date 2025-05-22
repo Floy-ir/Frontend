@@ -31,37 +31,43 @@ export interface ComboboxSelectProps extends Omit<TextFieldProps, "onChange" | "
   recentSelections?: Array<{ value: string; label: string }>
 }
 
-export function ComboboxSelect({
-  id,
-  label,
-  helperText,
-  options,
-  value = "",
-  onChange,
-  placeholder = "یک گزینه را انتخاب کنید",
-  noResultsText = "نتیجه‌ای پیدا نشد",
-  disabled,
-  rightIcon,
-  intent,
-  size,
-  width,
-  filled,
-  containerClassName,
-  labelClassName,
-  inputClassName,
-  helperTextClassName,
-  customWidth,
-  customHeight,
-  dir = "rtl",
-  showSelectedIcon = true,
-  maxHeight = "300px",
-  searchPlaceholder,
-  leftIcon,
-  dropdownWidth,
-  expandDropdown = false,
-  recentSelections = [],
-  ...props
-}: ComboboxSelectProps) {
+export const ComboboxSelect = React.forwardRef<
+  HTMLInputElement,
+  ComboboxSelectProps
+>(function ComboboxSelect(
+  {
+    id,
+    label,
+    helperText,
+    options,
+    value = "",
+    onChange,
+    placeholder = "یک گزینه را انتخاب کنید",
+    noResultsText = "نتیجه‌ای پیدا نشد",
+    disabled,
+    rightIcon,
+    intent,
+    size,
+    width,
+    filled,
+    containerClassName,
+    labelClassName,
+    inputClassName,
+    helperTextClassName,
+    customWidth,
+    customHeight,
+    dir = "rtl",
+    showSelectedIcon = true,
+    maxHeight = "300px",
+    searchPlaceholder,
+    leftIcon,
+    dropdownWidth,
+    expandDropdown = false,
+    recentSelections = [],
+    ...props
+  },
+  ref
+) {
   const [open, setOpen] = React.useState(false)
   const isDesktop = useMediaQuery("(min-width: 768px)")
 
@@ -98,6 +104,7 @@ export function ComboboxSelect({
           <ArrowDown2 size={16} color="var(--color-Gray-N500)" />
         ))
       }
+      ref={ref}
       {...props}
     />
   )
@@ -281,4 +288,4 @@ export function ComboboxSelect({
       </Drawer>
     </Container>
   )
-}
+})

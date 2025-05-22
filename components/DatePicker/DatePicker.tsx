@@ -26,31 +26,37 @@ export interface DatePickerProps extends Omit<TextFieldProps, "onChange" | "valu
   calendarProps?: Partial<React.ComponentProps<typeof JalaliCalendar>>
 }
 
-export function DatePicker({
-  id,
-  label,
-  helperText,
-  value = null,
-  onChange,
-  placeholder = "انتخاب تاریخ",
-  disabled,
-  intent,
-  size = "md",
-  width,
-  filled = false,
-  containerClassName,
-  labelClassName,
-  inputClassName,
-  helperTextClassName,
-  customWidth,
-  customHeight,
-  dir = "rtl",
-  minDate,
-  maxDate,
-  formatDate,
-  calendarProps,
-  ...props
-}: DatePickerProps) {
+export const DatePicker = React.forwardRef<
+  HTMLInputElement,
+  DatePickerProps
+>(function DatePicker(
+  {
+    id,
+    label,
+    helperText,
+    value = null,
+    onChange,
+    placeholder = "انتخاب تاریخ",
+    disabled,
+    intent,
+    size = "md",
+    width,
+    filled = false,
+    containerClassName,
+    labelClassName,
+    inputClassName,
+    helperTextClassName,
+    customWidth,
+    customHeight,
+    dir = "rtl",
+    minDate,
+    maxDate,
+    formatDate,
+    calendarProps,
+    ...props
+  },
+  ref
+) {
   const [open, setOpen] = React.useState(false)
   const isDesktop = useMediaQuery("(min-width: 768px)")
 
@@ -117,6 +123,7 @@ export function DatePicker({
       customHeight={customHeight}
       dir={dir}
       readOnly
+      ref={ref}
       {...props}
     />
   )
@@ -379,4 +386,4 @@ export function DatePicker({
       )}
     </Container>
   )
-}
+})
