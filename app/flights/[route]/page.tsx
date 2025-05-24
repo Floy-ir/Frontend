@@ -826,7 +826,12 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
           />
         </div>
 
-                {filteredFlights.length > 0 ? (
+        {isLoading ? (
+          <div className="flex flex-col items-center justify-center py-12">
+            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary mb-4"></div>
+            <p className="text-Gray-N600 text-lg font-medium">در حال جستجوی پروازها...</p>
+          </div>
+        ) : filteredFlights.length > 0 ? (
           <>
             <div className="mb-6 hidden flex-row items-start justify-between lg:flex">
               <p className="text-Gray-N800 hidden text-right text-sm font-semibold lg:block">
