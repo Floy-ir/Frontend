@@ -121,19 +121,12 @@ export function FlightSearchForm({
     router.push(createFlightSearchUrl(originCity.code, destinationCity.code, departureDate, passengers))
   }
 
-  // Create a ref for the first input field to enable autofocus
-  const originInputRef = React.useRef<HTMLInputElement>(null);
+  // Create a state to track if we should focus the input
+  const [shouldFocus, setShouldFocus] = useState(autoFocus);
   
   // Handle autofocus when the form is opened
   useEffect(() => {
-    if (autoFocus && originInputRef.current) {
-      // Small delay to ensure component is fully rendered
-      const timer = setTimeout(() => {
-        originInputRef.current?.focus();
-      }, 100);
-      
-      return () => clearTimeout(timer);
-    }
+    setShouldFocus(autoFocus);
   }, [autoFocus]);
 
   return (
@@ -194,7 +187,7 @@ export function FlightSearchForm({
                       value={origin}
                       onChange={handleOriginChange}
                       recentSelections={recentSelections}
-                      ref={originInputRef}
+                      autoFocus={shouldFocus}
                     />
                   </div>
 

@@ -29,6 +29,7 @@ export interface ComboboxSelectProps extends Omit<TextFieldProps, "onChange" | "
   dropdownWidth?: string | number
   expandDropdown?: boolean
   recentSelections?: Array<{ value: string; label: string }>
+  autoFocus?: boolean
 }
 
 export const ComboboxSelect = React.forwardRef<
@@ -64,6 +65,7 @@ export const ComboboxSelect = React.forwardRef<
     dropdownWidth,
     expandDropdown = false,
     recentSelections = [],
+    autoFocus,
     ...props
   },
   ref
@@ -104,6 +106,7 @@ export const ComboboxSelect = React.forwardRef<
           <ArrowDown2 size={16} color="var(--color-Gray-N500)" />
         ))
       }
+      autoFocus={autoFocus}
       ref={ref}
       {...props}
     />
