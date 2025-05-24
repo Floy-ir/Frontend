@@ -3,6 +3,9 @@
 import { Add, ArrowRight, ArrowSwapHorizontal, ArrowUp2 } from "iconsax-react"
 import { useRouter } from "next/navigation"
 import React, { useEffect, useState } from "react"
+import { useForm, Controller } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { z } from "zod"
 
 import { Button } from "@/components/Button/Button"
 import { ComboboxSelect } from "@/components/ComboboxSelect/ComboboxSelect"
@@ -13,7 +16,20 @@ import { getCityByName, getCityOptions } from "@/config/cities"
 import { useStoredCities } from "@/hooks/useStoredCities"
 import { formatDate } from "@/utils/dateUtils"
 import { createFlightSearchUrl } from "@/utils/navigation"
-import FormExample from "../FormExample/FormExample"
+
+// Define zod schema for form validation
+const searchFormSchema = z.object({
+  origin: z.string().min(1, { message: "مبدا الزامی است" }),
+  destination: z.string().min(1, { message: "مقصد الزامی است" }),
+  departureDate: z.date({ invalid_type_error: "تاریخ رفت الزامی است" }),
+  passengers: z.object({
+    adult: z.number().int().min(1),
+    child: z.number().int().min(0),
+    infant: z.number().int().min(0),
+  }),
+});
+
+type SearchFormValues = z.infer<typeof searchFormSchema>;
 
 type FlightSearchFormProps = {
   initialOrigin?: string
@@ -39,27 +55,32 @@ export function FlightSearchForm({
   autoFocus,
 }: FlightSearchFormProps) {
   const router = useRouter()
-  const [origin, setOrigin] = useState(initialOrigin)
-  const [destination, setDestination] = useState(initialDestination)
-  const [departureDate, setDepartureDate] = useState<Date | null>(initialDepartureDate)
-  const [passengers, setPassengers] = useState<PassengerCount>(initialPassengers)
   const [options, setOptions] = useState<Pick<CityOption, "value" | "label">[]>([])
   // Use our custom hook
   const { recentSelections, addRecentSelection, saveSearch } = useStoredCities()
 
-  // Get city options from config
+  // Create form with react-hook-form
+  const { control, handleSubmit, setValue, watch, formState: { errors } } = useForm<SearchFormValues>({
+    resolver: zodResolver(searchFormSchema),
+    defaultValues: {
+      origin: initialOrigin,
+      destination: initialDestination,
+      departureDate: initialDepartureDate || undefined,
+      passengers: initialPassengers,
+    },
+  });
 
+  const origin = watch("origin");
+  const destination = watch("destination");
+
+  // Get city options from config
   useEffect(() => {
     getCityOptions().then(setOptions)
   }, [])
-  useEffect(() => {
-    // console.log("Origin on mount:", origin);
-    // console.log("Destination on mount:", destination);
-  }, [])
+
   // Custom onChange handlers
   const handleOriginChange = async (value: string) => {
-    console.log("hellooowofjl;asfje")
-    setOrigin(value)
+    setValue("origin", value);
     const cityOption = await getCityByName(value)
     if (cityOption) {
       addRecentSelection(value, cityOption.label, cityOption.code)
@@ -67,7 +88,7 @@ export function FlightSearchForm({
   }
 
   const handleDestinationChange = async (value: string) => {
-    setDestination(value)
+    setValue("destination", value);
     const cityOption = await getCityByName(value)
     if (cityOption) {
       addRecentSelection(value, cityOption.label, cityOption.code)
@@ -76,31 +97,17 @@ export function FlightSearchForm({
 
   // Handle exchange of origin and destination
   const handleExchange = () => {
-    const temp = origin
-    setOrigin(destination)
-    setDestination(temp)
+    const currentOrigin = watch("origin");
+    const currentDestination = watch("destination");
+    setValue("origin", currentDestination);
+    setValue("destination", currentOrigin);
   }
 
-  // Add a wrapper handler function for the DatePicker
-  const handleDateChange = (date: string | Date | null) => {
-    // Convert string dates to Date objects if needed
-    if (typeof date === "string") {
-      setDepartureDate(new Date(date))
-    } else {
-      setDepartureDate(date)
-    }
-  }
-
-  // Handle search button click
-  const handleSearch = async () => {
-    // Don't proceed if required fields are missing
-    if (!origin || !destination || !departureDate) {
-      return
-    }
-
+  // Handle search form submission
+  const onSubmit = async (data: SearchFormValues) => {
     // Get the city objects with their codes
-    const originCity = await getCityByName(origin)
-    const destinationCity = await getCityByName(destination)
+    const originCity = await getCityByName(data.origin)
+    const destinationCity = await getCityByName(data.destination)
 
     // If we can't find the codes, don't proceed
     if (!originCity || !destinationCity) {
@@ -108,9 +115,7 @@ export function FlightSearchForm({
     }
 
     // Save search when user submits
-    if (departureDate) {
-      saveSearch(originCity.code, destinationCity.code, formatDate(departureDate))
-    }
+    saveSearch(originCity.code, destinationCity.code, formatDate(data.departureDate))
 
     // Close form if needed
     if (onClose) {
@@ -118,7 +123,7 @@ export function FlightSearchForm({
     }
 
     // Navigate to the flights page with the query parameters
-    router.push(createFlightSearchUrl(originCity.code, destinationCity.code, departureDate, passengers))
+    router.push(createFlightSearchUrl(originCity.code, destinationCity.code, data.departureDate, data.passengers))
   }
 
   // Create a state to track if we should focus the input
@@ -174,20 +179,26 @@ export function FlightSearchForm({
                 <div className="flex flex-1 flex-col">
                   {/* Origin Field - Mobile & Tablet */}
                   <div className="z-150 w-full">
-                    <ComboboxSelect
-                      noBorder
-                      expandDropdown
-                      placeholder="انتخاب شهر"
-                      options={options}
-                      filled={true}
-                      size="md"
-                      dir="rtl"
-                      label="مبدا"
-                      searchPlaceholder="جستجوی شهر مبدا"
-                      value={origin}
-                      onChange={handleOriginChange}
-                      recentSelections={recentSelections}
-                      autoFocus={shouldFocus}
+                    <Controller
+                      name="origin"
+                      control={control}
+                      render={({ field }) => (
+                        <ComboboxSelect
+                          noBorder
+                          expandDropdown
+                          placeholder="انتخاب شهر"
+                          options={options}
+                          filled={true}
+                          size="md"
+                          dir="rtl"
+                          label="مبدا"
+                          searchPlaceholder="جستجوی شهر مبدا"
+                          value={field.value}
+                          onChange={handleOriginChange}
+                          recentSelections={recentSelections}
+                          autoFocus={shouldFocus}
+                        />
+                      )}
                     />
                   </div>
 
@@ -196,19 +207,25 @@ export function FlightSearchForm({
 
                   {/* Destination Field - Mobile & Tablet */}
                   <div className="w-full">
-                    <ComboboxSelect
-                      noBorder
-                      expandDropdown
-                      placeholder="انتخاب شهر"
-                      options={options}
-                      filled={true}
-                      size="md"
-                      dir="rtl"
-                      label="مقصد"
-                      searchPlaceholder="جستجوی شهر مقصد"
-                      value={destination}
-                      onChange={handleDestinationChange}
-                      recentSelections={recentSelections}
+                    <Controller
+                      name="destination"
+                      control={control}
+                      render={({ field }) => (
+                        <ComboboxSelect
+                          noBorder
+                          expandDropdown
+                          placeholder="انتخاب شهر"
+                          options={options}
+                          filled={true}
+                          size="md"
+                          dir="rtl"
+                          label="مقصد"
+                          searchPlaceholder="جستجوی شهر مقصد"
+                          value={field.value}
+                          onChange={handleDestinationChange}
+                          recentSelections={recentSelections}
+                        />
+                      )}
                     />
                   </div>
                 </div>
@@ -222,19 +239,25 @@ export function FlightSearchForm({
             <div className="hidden w-full items-start gap-4 lg:flex lg:w-auto lg:flex-row lg:items-center xl:gap-6">
               {/* Origin Field - Desktop */}
               <div className="w-full lg:w-40 xl:w-47">
-                <ComboboxSelect
-                  noBorder
-                  expandDropdown
-                  placeholder="انتخاب شهر"
-                  options={options}
-                  filled={true}
-                  size="md"
-                  dir="rtl"
-                  label="مبدا"
-                  searchPlaceholder="جستجوی شهر مبدا"
-                  value={origin}
-                  onChange={handleOriginChange}
-                  recentSelections={recentSelections}
+                <Controller
+                  name="origin"
+                  control={control}
+                  render={({ field }) => (
+                    <ComboboxSelect
+                      noBorder
+                      expandDropdown
+                      placeholder="انتخاب شهر"
+                      options={options}
+                      filled={true}
+                      size="md"
+                      dir="rtl"
+                      label="مبدا"
+                      searchPlaceholder="جستجوی شهر مبدا"
+                      value={field.value}
+                      onChange={handleOriginChange}
+                      recentSelections={recentSelections}
+                    />
+                  )}
                 />
               </div>
 
@@ -255,19 +278,25 @@ export function FlightSearchForm({
 
               {/* Destination Field - Desktop */}
               <div className="w-full lg:w-40 xl:w-47">
-                <ComboboxSelect
-                  noBorder
-                  expandDropdown
-                  placeholder="انتخاب شهر"
-                  options={options}
-                  filled={true}
-                  size="md"
-                  dir="rtl"
-                  label="مقصد"
-                  searchPlaceholder="جستجوی شهر مقصد"
-                  value={destination}
-                  onChange={handleDestinationChange}
-                  recentSelections={recentSelections}
+                <Controller
+                  name="destination"
+                  control={control}
+                  render={({ field }) => (
+                    <ComboboxSelect
+                      noBorder
+                      expandDropdown
+                      placeholder="انتخاب شهر"
+                      options={options}
+                      filled={true}
+                      size="md"
+                      dir="rtl"
+                      label="مقصد"
+                      searchPlaceholder="جستجوی شهر مقصد"
+                      value={field.value}
+                      onChange={handleDestinationChange}
+                      recentSelections={recentSelections}
+                    />
+                  )}
                 />
               </div>
             </div>
@@ -278,19 +307,25 @@ export function FlightSearchForm({
             <div className="flex w-full flex-row items-center gap-4">
               {/* Departure Date Field */}
               <div className="w-1/2 lg:w-20 xl:w-20">
-                <DatePicker
-                  noBorder
-                  placeholder="انتخاب تاریخ"
-                  label="تاریخ رفت"
-                  size="md"
-                  filled={true}
-                  dir="rtl"
-                  value={departureDate}
-                  onChange={handleDateChange}
-                  minDate={new Date()} // Can't select dates in the past
-                  calendarProps={{
-                    className: "w-full",
-                  }}
+                <Controller
+                  name="departureDate"
+                  control={control}
+                  render={({ field }) => (
+                    <DatePicker
+                      noBorder
+                      placeholder="انتخاب تاریخ"
+                      label="تاریخ رفت"
+                      size="md"
+                      filled={true}
+                      dir="rtl"
+                      value={field.value}
+                      onChange={field.onChange}
+                      minDate={new Date()}
+                      calendarProps={{
+                        className: "w-full",
+                      }}
+                    />
+                  )}
                 />
               </div>
 
@@ -310,15 +345,21 @@ export function FlightSearchForm({
 
               {/* Passengers Field */}
               <div className="w-1/2 lg:w-16 xl:w-18">
-                <PassengerSelector
-                  noBorder
-                  placeholder="۱ مسافر"
-                  label="مسافران"
-                  size="md"
-                  filled={true}
-                  dir="rtl"
-                  value={passengers}
-                  onChange={setPassengers}
+                <Controller
+                  name="passengers"
+                  control={control}
+                  render={({ field }) => (
+                    <PassengerSelector
+                      noBorder
+                      placeholder="۱ مسافر"
+                      label="مسافران"
+                      size="md"
+                      filled={true}
+                      dir="rtl"
+                      value={field.value}
+                      onChange={field.onChange}
+                    />
+                  )}
                 />
               </div>
             </div>
@@ -330,15 +371,17 @@ export function FlightSearchForm({
 
         {/* Search Button */}
         <div className="mt-4 flex w-full items-center justify-center gap-4 pr-4 lg:mt-0 lg:w-1/4">
-          <Button intent="primary" size="large" className="w-full" onClick={handleSearch}>
+          <Button 
+            intent="primary" 
+            size="large" 
+            className="w-full" 
+            onClick={handleSubmit(onSubmit)}
+          >
             جستجوی پرواز
           </Button>
         </div>
       </div>
 
-      {/* <div
-        className={`bg-Gray-N100 my-2 h-px w-full md:mt-5 ${contextPage == "flights" ? "hidden md:block" : "hidden"}`}
-      ></div> */}
       <Button
         intent="text"
         size="medium"
