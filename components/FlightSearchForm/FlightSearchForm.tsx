@@ -2,7 +2,7 @@
 
 import { Add, ArrowRight, ArrowSwapHorizontal, ArrowUp2 } from "iconsax-react"
 import { useRouter } from "next/navigation"
-import React, { useEffect, useState } from "react"
+import React, { useEffect, useState, useMemo } from "react"
 import { useForm, Controller } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
@@ -72,6 +72,23 @@ export function FlightSearchForm({
 
   const origin = watch("origin");
   const destination = watch("destination");
+
+  // Filter options to exclude selected cities
+  const originOptions = useMemo(() => {
+    return options.filter(option => option.value !== destination);
+  }, [options, destination]);
+
+  const destinationOptions = useMemo(() => {
+    return options.filter(option => option.value !== origin);
+  }, [options, origin]);
+
+  const filteredRecentSelectionsOrigin = useMemo(() => {
+    return recentSelections.filter(city => city.value !== destination);
+  }, [recentSelections, destination]);
+
+  const filteredRecentSelectionsDestination = useMemo(() => {
+    return recentSelections.filter(city => city.value !== origin);
+  }, [recentSelections, origin]);
 
   // Get city options from config
   useEffect(() => {
@@ -187,7 +204,7 @@ export function FlightSearchForm({
                           noBorder
                           expandDropdown
                           placeholder="انتخاب شهر"
-                          options={options}
+                          options={originOptions}
                           filled={true}
                           size="md"
                           dir="rtl"
@@ -195,7 +212,7 @@ export function FlightSearchForm({
                           searchPlaceholder="جستجوی شهر مبدا"
                           value={field.value}
                           onChange={handleOriginChange}
-                          recentSelections={recentSelections}
+                          recentSelections={filteredRecentSelectionsOrigin}
                           autoFocus={shouldFocus}
                         />
                       )}
@@ -215,7 +232,7 @@ export function FlightSearchForm({
                           noBorder
                           expandDropdown
                           placeholder="انتخاب شهر"
-                          options={options}
+                          options={destinationOptions}
                           filled={true}
                           size="md"
                           dir="rtl"
@@ -223,7 +240,7 @@ export function FlightSearchForm({
                           searchPlaceholder="جستجوی شهر مقصد"
                           value={field.value}
                           onChange={handleDestinationChange}
-                          recentSelections={recentSelections}
+                          recentSelections={filteredRecentSelectionsDestination}
                         />
                       )}
                     />
@@ -247,7 +264,7 @@ export function FlightSearchForm({
                       noBorder
                       expandDropdown
                       placeholder="انتخاب شهر"
-                      options={options}
+                      options={originOptions}
                       filled={true}
                       size="md"
                       dir="rtl"
@@ -255,7 +272,7 @@ export function FlightSearchForm({
                       searchPlaceholder="جستجوی شهر مبدا"
                       value={field.value}
                       onChange={handleOriginChange}
-                      recentSelections={recentSelections}
+                      recentSelections={filteredRecentSelectionsOrigin}
                     />
                   )}
                 />
@@ -286,7 +303,7 @@ export function FlightSearchForm({
                       noBorder
                       expandDropdown
                       placeholder="انتخاب شهر"
-                      options={options}
+                      options={destinationOptions}
                       filled={true}
                       size="md"
                       dir="rtl"
@@ -294,7 +311,7 @@ export function FlightSearchForm({
                       searchPlaceholder="جستجوی شهر مقصد"
                       value={field.value}
                       onChange={handleDestinationChange}
-                      recentSelections={recentSelections}
+                      recentSelections={filteredRecentSelectionsDestination}
                     />
                   )}
                 />
