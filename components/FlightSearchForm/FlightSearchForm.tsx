@@ -17,6 +17,7 @@ import { useStoredCities } from "@/hooks/useStoredCities"
 import { formatDate } from "@/utils/dateUtils"
 import { createFlightSearchUrl } from "@/utils/navigation"
 import { Info } from "lucide-react"
+import { Loader } from "lucide-react"
 
 // Define zod schema for form validation
 const searchFormSchema = z.object({
@@ -59,6 +60,7 @@ export function FlightSearchForm({
   const [options, setOptions] = useState<Pick<CityOption, "value" | "label">[]>([])
   // Use our custom hook
   const { recentSelections, addRecentSelection, saveSearch } = useStoredCities()
+  const [isLoading, setIsLoading] = useState(false)
 
   // Create form with react-hook-form
   const { control, handleSubmit, setValue, watch, formState: { errors, isSubmitted } } = useForm<SearchFormValues>({
@@ -124,25 +126,33 @@ export function FlightSearchForm({
 
   // Handle search form submission
   const onSubmit = async (data: SearchFormValues) => {
-    // Get the city objects with their codes
-    const originCity = await getCityByName(data.origin)
-    const destinationCity = await getCityByName(data.destination)
+    setIsLoading(true)
+    
+    try {
+      // Get the city objects with their codes
+      const originCity = await getCityByName(data.origin)
+      const destinationCity = await getCityByName(data.destination)
 
-    // If we can't find the codes, don't proceed
-    if (!originCity || !destinationCity) {
-      return
+      // If we can't find the codes, don't proceed
+      if (!originCity || !destinationCity) {
+        setIsLoading(false)
+        return
+      }
+
+      // Save search when user submits
+      saveSearch(originCity.code, destinationCity.code, formatDate(data.departureDate))
+
+      // Close form if needed
+      if (onClose) {
+        onClose()
+      }
+
+      // Navigate to the flights page with the query parameters
+      router.push(createFlightSearchUrl(originCity.code, destinationCity.code, data.departureDate, data.passengers))
+    } catch (error) {
+      // In case of error, reset loading state
+      setIsLoading(false)
     }
-
-    // Save search when user submits
-    saveSearch(originCity.code, destinationCity.code, formatDate(data.departureDate))
-
-    // Close form if needed
-    if (onClose) {
-      onClose()
-    }
-
-    // Navigate to the flights page with the query parameters
-    router.push(createFlightSearchUrl(originCity.code, destinationCity.code, data.departureDate, data.passengers))
   }
 
   // Create a state to track if we should focus the input
@@ -430,8 +440,16 @@ export function FlightSearchForm({
             size="large" 
             className="w-full" 
             onClick={handleSubmit(onSubmit)}
+            disabled={isLoading}
           >
-            جستجوی پرواز
+            {isLoading ? (
+              <>
+                <Loader className="mr-2 h-4 w-4 animate-spin" />
+                <span>در حال جستجو...</span>
+              </>
+            ) : (
+              "جستجوی پرواز"
+            )}
           </Button>
         </div>
       </div>
