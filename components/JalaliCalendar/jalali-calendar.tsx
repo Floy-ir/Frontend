@@ -46,7 +46,7 @@ function JalaliCalendar({
         button_next: cn(button({ intent: "outline2" }), "h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100 z-10"),
         weeks: "w-full border-collapse space-y-",
         weekdays: "flex bg-slate-50 py-1",
-        weekday: "text-muted-foreground w-9 font-normal text-[0.8rem]",
+        weekday: "text-muted-foreground w-10 font-normal text-[0.8rem] text-center",
         week: "flex w-full mt-2",
         day_button: "h-9 w-9 text-center text-sm p-0 relative focus-within:relative focus-within:z-20",
         day: cn(button({ intent: "ghost" }), "h-9 w-9 p-0 font-normal text-Gray-N600 text-sm"),

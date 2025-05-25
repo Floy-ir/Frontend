@@ -204,7 +204,7 @@ export const DatePicker = React.forwardRef<
             months: "flex flex-col space-y-4 w-full",
             month: "w-full",
             month_grid: "w-full",
-            weekdays: "self-stretch p-3 bg-slate-50 inline-flex justify-start items-start w-full",
+            weekdays: "py-3 mb-1 mt-6 self-stretch bg-slate-50 inline-flex justify-start items-start w-full",
             weekday: "flex-1 text-center justify-start text-slate-500 text-sm font-medium leading-normal",
             table: "w-full border-collapse",
             row: "flex w-full justify-between mb-2",
@@ -212,6 +212,8 @@ export const DatePicker = React.forwardRef<
             day: "w-12 h-12 p-0 flex items-center justify-center text-base rounded-full mx-auto",
             day_today: "bg-Primary-P50",
             day_selected: "!bg-Primary-P300 !text-white !font-bold hover:!bg-Primary-P300",
+            button_previous: "px-10 pt-1 z-10",
+            button_next: "px-10 pt-1 z-10",
           }}
           {...calendarProps}
         />
@@ -312,6 +314,7 @@ export const DatePicker = React.forwardRef<
                 justify-content: space-between !important;
                 padding: 0 !important;
                 width: calc(100% - 3rem) !important;
+                z-index: 2 !important;
               }
 
               /* Also add padding to the table */
