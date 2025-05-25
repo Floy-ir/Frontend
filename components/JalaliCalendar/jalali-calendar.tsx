@@ -51,7 +51,7 @@ function JalaliCalendar({
         day_button: "h-9 w-9 text-center text-sm p-0 relative focus-within:relative focus-within:z-20",
         day: cn(button({ intent: "ghost" }), "h-9 w-9 p-0 font-normal text-Gray-N600 text-sm"),
         range_end: "day-range-end",
-        selected: "",
+        selected: "bg-Primary-P300 text-white font-bold hover:bg-Primary-P300",
         today:
           "bg-accent text-accent-foreground outline outline-1 outline-offset-[-1px] outline-Primary-P300 rounded-md",
         outside:
