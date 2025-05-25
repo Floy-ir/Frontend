@@ -597,9 +597,16 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
         
         // Mark that we've loaded data
         setHasLoadedFlights(true);
+      } else {
+        // No results returned, clear previous flights
+        setFlights([]);
+        setHasLoadedFlights(true);
       }
     } catch (err) {
       console.error("Error fetching flights:", err)
+      // Clear previous flights on error
+      setFlights([]);
+      setHasLoadedFlights(true);
     } finally {
       setIsLoading(false);
     }
@@ -609,6 +616,8 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
   // 1. Reset the loaded flag when dependencies change
   useEffect(() => {
     setHasLoadedFlights(false);
+    // Also clear flights when route or date changes to prevent showing old flights
+    setFlights([]);
   }, [unwrappedParams.route, departureDate]);
 
   // 2. Load the data only when needed
@@ -1381,7 +1390,7 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
               </div>
             </div>
           </>
-        ) : flights.length > 0 ? (
+        ) : flights.length > 0 && _activeFiltersCount > 0 ? (
           // No flights due to filters
           <>
             <div className="flex flex-row gap-4">
