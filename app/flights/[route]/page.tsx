@@ -1435,10 +1435,7 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                   const searchToggleElement = document.querySelector('[data-search-toggle="true"]');
                   if (searchToggleElement instanceof HTMLElement) {
                     searchToggleElement.click();
-                  } else {
-                    // Fallback in case button isn't found
-                    router.push('/');
-                  }
+                  } 
                 }}
               />
             </div>
