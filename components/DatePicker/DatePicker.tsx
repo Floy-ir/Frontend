@@ -24,6 +24,7 @@ export interface DatePickerProps extends Omit<TextFieldProps, "onChange" | "valu
   maxDate?: Date
   formatDate?: (date: Date) => string
   calendarProps?: Partial<React.ComponentProps<typeof JalaliCalendar>>
+  hasError?: boolean
 }
 
 export const DatePicker = React.forwardRef<
@@ -53,6 +54,7 @@ export const DatePicker = React.forwardRef<
     maxDate,
     formatDate,
     calendarProps,
+    hasError,
     ...props
   },
   ref
@@ -123,6 +125,7 @@ export const DatePicker = React.forwardRef<
       customHeight={customHeight}
       dir={dir}
       readOnly
+      hasError={hasError}
       ref={ref}
       {...props}
     />

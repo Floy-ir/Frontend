@@ -61,6 +61,7 @@ export interface PassengerSelectorProps extends Omit<TextFieldProps, "onChange" 
   value: PassengerCount | string
   onChange: (value: PassengerCount) => void
   maxTotalPassengers?: number
+  hasError?: boolean
 }
 
 export function PassengerSelector({
@@ -83,6 +84,7 @@ export function PassengerSelector({
   customHeight,
   dir = "rtl",
   maxTotalPassengers = 9,
+  hasError,
   ...props
 }: PassengerSelectorProps) {
   // Convert string value to PassengerCount if needed
@@ -143,6 +145,7 @@ export function PassengerSelector({
       customHeight={customHeight}
       dir={dir}
       readOnly
+      hasError={hasError}
       {...props}
     />
   )

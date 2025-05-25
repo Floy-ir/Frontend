@@ -150,6 +150,7 @@ export interface TextFieldProps
   customWidth?: string
   customHeight?: string
   noBorder?: boolean
+  hasError?: boolean
 }
 
 export const TextField = React.forwardRef<
@@ -181,11 +182,15 @@ export const TextField = React.forwardRef<
     customWidth,
     customHeight,
     noBorder = false,
+    hasError = false,
     ...props
   },
   ref
 ) {
   const [inputValue, setInputValue] = React.useState(value?.toString() || "")
+
+  // Set the intent to error if hasError is true
+  const fieldIntent = hasError ? "error" : intent
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = e.target.value
@@ -217,16 +222,16 @@ export const TextField = React.forwardRef<
 
   return (
     <Form.Root
-      className={twMerge(textFieldContainer({ intent, disabled, className: containerClassName }), noBorder && "gap-0")}
+      className={twMerge(textFieldContainer({ intent: fieldIntent, disabled, className: containerClassName }), noBorder && "gap-0")}
     >
       <Form.Field name={id || "textfield"}>
         {label && (
-          <Form.Label className={twMerge(textFieldLabel({ intent, className: labelClassName }))}>{label}</Form.Label>
+          <Form.Label className={twMerge(textFieldLabel({ intent: fieldIntent, className: labelClassName }))}>{label}</Form.Label>
         )}
 
         <div
           className={twMerge(
-            textFieldWrapper({ intent, size, width, filled, disabled }),
+            textFieldWrapper({ intent: fieldIntent, size, width, filled, disabled }),
             noBorder && "border-0 bg-transparent"
           )}
           style={Object.keys(customStyles).length > 0 ? customStyles : undefined}
@@ -257,18 +262,15 @@ export const TextField = React.forwardRef<
         </div>
 
         {(helperText || (showCharCount && maxLength)) && (
-          <div className="flex w-full justify-between">
-            {showCharCount && maxLength && (
-              <div className={twMerge(textFieldHelperText({ intent }))}>
-                {props.dir === "rtl"
-                  ? `${englishToFarsiNumber(inputValue.length)} / ${englishToFarsiNumber(maxLength || 0)}`
-                  : `${inputValue.length} / ${maxLength}`}
+          <div className="flex justify-between">
+            {helperText && (
+              <div className={twMerge(textFieldHelperText({ intent: fieldIntent, className: helperTextClassName }))}>
+                {helperText}
               </div>
             )}
-
-            {helperText && (
-              <div className={twMerge(textFieldHelperText({ intent, className: helperTextClassName }))}>
-                {helperText}
+            {showCharCount && maxLength && (
+              <div className="text-xs text-slate-500 px-3">
+                {inputValue.length}/{maxLength}
               </div>
             )}
           </div>

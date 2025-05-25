@@ -16,16 +16,17 @@ import { getCityByName, getCityOptions } from "@/config/cities"
 import { useStoredCities } from "@/hooks/useStoredCities"
 import { formatDate } from "@/utils/dateUtils"
 import { createFlightSearchUrl } from "@/utils/navigation"
+import { Info } from "lucide-react"
 
 // Define zod schema for form validation
 const searchFormSchema = z.object({
-  origin: z.string().min(1, { message: "مبدا الزامی است" }),
-  destination: z.string().min(1, { message: "مقصد الزامی است" }),
-  departureDate: z.date({ invalid_type_error: "تاریخ رفت الزامی است" }),
+  origin: z.string().min(1, { message: "مبدا را انتخاب کنید" }),
+  destination: z.string().min(1, { message: "مقصد را انتخاب کنید" }),
+  departureDate: z.date({ message: "تاریخ رفت را انتخاب کنید" }),
   passengers: z.object({
-    adult: z.number().int().min(1),
-    child: z.number().int().min(0),
-    infant: z.number().int().min(0),
+    adult: z.number().int().min(1, { message: "تعداد مسافران را مشخص کنید" }),
+    child: z.number().int().min(0, { message: "تعداد مسافران را مشخص کنید" }),
+    infant: z.number().int().min(0, { message: "تعداد مسافران را مشخص کنید" }),
   }),
 });
 
@@ -60,7 +61,7 @@ export function FlightSearchForm({
   const { recentSelections, addRecentSelection, saveSearch } = useStoredCities()
 
   // Create form with react-hook-form
-  const { control, handleSubmit, setValue, watch, formState: { errors } } = useForm<SearchFormValues>({
+  const { control, handleSubmit, setValue, watch, formState: { errors, isSubmitted } } = useForm<SearchFormValues>({
     resolver: zodResolver(searchFormSchema),
     defaultValues: {
       origin: initialOrigin,
@@ -68,6 +69,7 @@ export function FlightSearchForm({
       departureDate: initialDepartureDate || undefined,
       passengers: initialPassengers,
     },
+    mode: "onBlur",
   });
 
   const origin = watch("origin");
@@ -151,6 +153,17 @@ export function FlightSearchForm({
     setShouldFocus(autoFocus);
   }, [autoFocus]);
 
+  // Error message renderer
+  const renderErrorMessage = (errorMessage?: string) => {
+    if (!errorMessage) return null;
+    
+    return (
+      <div className="text-Error-E500main text-xs absolute -bottom-2">
+        <span>{errorMessage}</span>
+      </div>
+    );
+  };
+
   return (
     <div className="m-0 flex w-full flex-col items-center" id={id}>
       <div
@@ -200,21 +213,25 @@ export function FlightSearchForm({
                       name="origin"
                       control={control}
                       render={({ field }) => (
-                        <ComboboxSelect
-                          noBorder
-                          expandDropdown
-                          placeholder="انتخاب شهر"
-                          options={originOptions}
-                          filled={true}
-                          size="md"
-                          dir="rtl"
-                          label="مبدا"
-                          searchPlaceholder="جستجوی شهر مبدا"
-                          value={field.value}
-                          onChange={handleOriginChange}
-                          recentSelections={filteredRecentSelectionsOrigin}
-                          autoFocus={shouldFocus}
-                        />
+                        <>
+                          <ComboboxSelect
+                            noBorder
+                            expandDropdown
+                            placeholder="انتخاب شهر"
+                            options={originOptions}
+                            filled={true}
+                            size="md"
+                            dir="rtl"
+                            label="مبدا"
+                            searchPlaceholder="جستجوی شهر مبدا"
+                            value={field.value}
+                            onChange={handleOriginChange}
+                            recentSelections={filteredRecentSelectionsOrigin}
+                            autoFocus={shouldFocus}
+                            hasError={isSubmitted && !!errors.origin}
+                          />
+                          {isSubmitted && renderErrorMessage(errors.origin?.message)}
+                        </>
                       )}
                     />
                   </div>
@@ -228,20 +245,24 @@ export function FlightSearchForm({
                       name="destination"
                       control={control}
                       render={({ field }) => (
-                        <ComboboxSelect
-                          noBorder
-                          expandDropdown
-                          placeholder="انتخاب شهر"
-                          options={destinationOptions}
-                          filled={true}
-                          size="md"
-                          dir="rtl"
-                          label="مقصد"
-                          searchPlaceholder="جستجوی شهر مقصد"
-                          value={field.value}
-                          onChange={handleDestinationChange}
-                          recentSelections={filteredRecentSelectionsDestination}
-                        />
+                        <>
+                          <ComboboxSelect
+                            noBorder
+                            expandDropdown
+                            placeholder="انتخاب شهر"
+                            options={destinationOptions}
+                            filled={true}
+                            size="md"
+                            dir="rtl"
+                            label="مقصد"
+                            searchPlaceholder="جستجوی شهر مقصد"
+                            value={field.value}
+                            onChange={handleDestinationChange}
+                            recentSelections={filteredRecentSelectionsDestination}
+                            hasError={isSubmitted && !!errors.destination}
+                          />
+                          {isSubmitted && renderErrorMessage(errors.destination?.message)}
+                        </>
                       )}
                     />
                   </div>
@@ -260,20 +281,24 @@ export function FlightSearchForm({
                   name="origin"
                   control={control}
                   render={({ field }) => (
-                    <ComboboxSelect
-                      noBorder
-                      expandDropdown
-                      placeholder="انتخاب شهر"
-                      options={originOptions}
-                      filled={true}
-                      size="md"
-                      dir="rtl"
-                      label="مبدا"
-                      searchPlaceholder="جستجوی شهر مبدا"
-                      value={field.value}
-                      onChange={handleOriginChange}
-                      recentSelections={filteredRecentSelectionsOrigin}
-                    />
+                    <>
+                      <ComboboxSelect
+                        noBorder
+                        expandDropdown
+                        placeholder="انتخاب شهر"
+                        options={originOptions}
+                        filled={true}
+                        size="md"
+                        dir="rtl"
+                        label="مبدا"
+                        searchPlaceholder="جستجوی شهر مبدا"
+                        value={field.value}
+                        onChange={handleOriginChange}
+                        recentSelections={filteredRecentSelectionsOrigin}
+                        hasError={isSubmitted && !!errors.origin}
+                      />
+                      {isSubmitted && renderErrorMessage(errors.origin?.message)}
+                    </>
                   )}
                 />
               </div>
@@ -299,20 +324,24 @@ export function FlightSearchForm({
                   name="destination"
                   control={control}
                   render={({ field }) => (
-                    <ComboboxSelect
-                      noBorder
-                      expandDropdown
-                      placeholder="انتخاب شهر"
-                      options={destinationOptions}
-                      filled={true}
-                      size="md"
-                      dir="rtl"
-                      label="مقصد"
-                      searchPlaceholder="جستجوی شهر مقصد"
-                      value={field.value}
-                      onChange={handleDestinationChange}
-                      recentSelections={filteredRecentSelectionsDestination}
-                    />
+                    <>
+                      <ComboboxSelect
+                        noBorder
+                        expandDropdown
+                        placeholder="انتخاب شهر"
+                        options={destinationOptions}
+                        filled={true}
+                        size="md"
+                        dir="rtl"
+                        label="مقصد"
+                        searchPlaceholder="جستجوی شهر مقصد"
+                        value={field.value}
+                        onChange={handleDestinationChange}
+                        recentSelections={filteredRecentSelectionsDestination}
+                        hasError={isSubmitted && !!errors.destination}
+                      />
+                      {isSubmitted && renderErrorMessage(errors.destination?.message)}
+                    </>
                   )}
                 />
               </div>
@@ -328,20 +357,24 @@ export function FlightSearchForm({
                   name="departureDate"
                   control={control}
                   render={({ field }) => (
-                    <DatePicker
-                      noBorder
-                      placeholder="انتخاب تاریخ"
-                      label="تاریخ رفت"
-                      size="md"
-                      filled={true}
-                      dir="rtl"
-                      value={field.value}
-                      onChange={field.onChange}
-                      minDate={new Date()}
-                      calendarProps={{
-                        className: "w-full",
-                      }}
-                    />
+                    <>
+                      <DatePicker
+                        noBorder
+                        placeholder="انتخاب تاریخ"
+                        label="تاریخ رفت"
+                        size="md"
+                        filled={true}
+                        dir="rtl"
+                        value={field.value}
+                        onChange={field.onChange}
+                        minDate={new Date()}
+                        calendarProps={{
+                          className: "w-full",
+                        }}
+                        hasError={isSubmitted && !!errors.departureDate}
+                      />
+                      {isSubmitted && renderErrorMessage(errors.departureDate?.message)}
+                    </>
                   )}
                 />
               </div>
@@ -366,16 +399,20 @@ export function FlightSearchForm({
                   name="passengers"
                   control={control}
                   render={({ field }) => (
-                    <PassengerSelector
-                      noBorder
-                      placeholder="۱ مسافر"
-                      label="مسافران"
-                      size="md"
-                      filled={true}
-                      dir="rtl"
-                      value={field.value}
-                      onChange={field.onChange}
-                    />
+                    <>
+                      <PassengerSelector
+                        noBorder
+                        placeholder="۱ مسافر"
+                        label="مسافران"
+                        size="md"
+                        filled={true}
+                        dir="rtl"
+                        value={field.value}
+                        onChange={field.onChange}
+                        hasError={isSubmitted && !!errors.passengers}
+                      />
+                      {isSubmitted && errors.passengers && renderErrorMessage("لطفا تعداد مسافران را مشخص کنید")}
+                    </>
                   )}
                 />
               </div>
