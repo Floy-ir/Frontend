@@ -63,7 +63,7 @@ export function FlightSearchForm({
   const [isLoading, setIsLoading] = useState(false)
 
   // Create form with react-hook-form
-  const { control, handleSubmit, setValue, watch, formState: { errors, isSubmitted } } = useForm<SearchFormValues>({
+  const { control, handleSubmit, setValue, watch, formState: { errors, isSubmitted }, trigger } = useForm<SearchFormValues>({
     resolver: zodResolver(searchFormSchema),
     defaultValues: {
       origin: initialOrigin,
@@ -71,7 +71,7 @@ export function FlightSearchForm({
       departureDate: initialDepartureDate || undefined,
       passengers: initialPassengers,
     },
-    mode: "onBlur",
+    mode: "onChange",
   });
 
   const origin = watch("origin");
@@ -102,6 +102,9 @@ export function FlightSearchForm({
   // Custom onChange handlers
   const handleOriginChange = async (value: string) => {
     setValue("origin", value);
+    // Trigger validation immediately
+    trigger("origin");
+    
     const cityOption = await getCityByName(value)
     if (cityOption) {
       addRecentSelection(value, cityOption.label, cityOption.code)
@@ -110,10 +113,29 @@ export function FlightSearchForm({
 
   const handleDestinationChange = async (value: string) => {
     setValue("destination", value);
+    // Trigger validation immediately
+    trigger("destination");
+    
     const cityOption = await getCityByName(value)
     if (cityOption) {
       addRecentSelection(value, cityOption.label, cityOption.code)
     }
+  }
+  
+  // Add function to handle date change with validation
+  const handleDateChange = (date: Date | string | null) => {
+    if (date) {
+      setValue("departureDate", date instanceof Date ? date : new Date(date));
+      // Trigger validation immediately
+      trigger("departureDate");
+    }
+  }
+  
+  // Add function to handle passengers change with validation
+  const handlePassengersChange = (passengers: PassengerCount) => {
+    setValue("passengers", passengers);
+    // Trigger validation immediately
+    trigger("passengers");
   }
 
   // Handle exchange of origin and destination
@@ -222,7 +244,7 @@ export function FlightSearchForm({
                     <Controller
                       name="origin"
                       control={control}
-                      render={({ field }) => (
+                      render={({ field, fieldState }) => (
                         <>
                           <ComboboxSelect
                             noBorder
@@ -238,9 +260,9 @@ export function FlightSearchForm({
                             onChange={handleOriginChange}
                             recentSelections={filteredRecentSelectionsOrigin}
                             autoFocus={shouldFocus}
-                            hasError={isSubmitted && !!errors.origin}
+                            hasError={!!fieldState.error}
                           />
-                          {isSubmitted && renderErrorMessage(errors.origin?.message)}
+                          {renderErrorMessage(fieldState.error?.message)}
                         </>
                       )}
                     />
@@ -254,7 +276,7 @@ export function FlightSearchForm({
                     <Controller
                       name="destination"
                       control={control}
-                      render={({ field }) => (
+                      render={({ field, fieldState }) => (
                         <>
                           <ComboboxSelect
                             noBorder
@@ -269,9 +291,9 @@ export function FlightSearchForm({
                             value={field.value}
                             onChange={handleDestinationChange}
                             recentSelections={filteredRecentSelectionsDestination}
-                            hasError={isSubmitted && !!errors.destination}
+                            hasError={!!fieldState.error}
                           />
-                          {isSubmitted && renderErrorMessage(errors.destination?.message)}
+                          {renderErrorMessage(fieldState.error?.message)}
                         </>
                       )}
                     />
@@ -290,7 +312,7 @@ export function FlightSearchForm({
                 <Controller
                   name="origin"
                   control={control}
-                  render={({ field }) => (
+                  render={({ field, fieldState }) => (
                     <>
                       <ComboboxSelect
                         noBorder
@@ -305,9 +327,9 @@ export function FlightSearchForm({
                         value={field.value}
                         onChange={handleOriginChange}
                         recentSelections={filteredRecentSelectionsOrigin}
-                        hasError={isSubmitted && !!errors.origin}
+                        hasError={!!fieldState.error}
                       />
-                      {isSubmitted && renderErrorMessage(errors.origin?.message)}
+                      {renderErrorMessage(fieldState.error?.message)}
                     </>
                   )}
                 />
@@ -333,7 +355,7 @@ export function FlightSearchForm({
                 <Controller
                   name="destination"
                   control={control}
-                  render={({ field }) => (
+                  render={({ field, fieldState }) => (
                     <>
                       <ComboboxSelect
                         noBorder
@@ -348,9 +370,9 @@ export function FlightSearchForm({
                         value={field.value}
                         onChange={handleDestinationChange}
                         recentSelections={filteredRecentSelectionsDestination}
-                        hasError={isSubmitted && !!errors.destination}
+                        hasError={!!fieldState.error}
                       />
-                      {isSubmitted && renderErrorMessage(errors.destination?.message)}
+                      {renderErrorMessage(fieldState.error?.message)}
                     </>
                   )}
                 />
@@ -366,7 +388,7 @@ export function FlightSearchForm({
                 <Controller
                   name="departureDate"
                   control={control}
-                  render={({ field }) => (
+                  render={({ field, fieldState }) => (
                     <>
                       <DatePicker
                         noBorder
@@ -376,14 +398,14 @@ export function FlightSearchForm({
                         filled={true}
                         dir="rtl"
                         value={field.value}
-                        onChange={field.onChange}
+                        onChange={handleDateChange}
                         minDate={new Date()}
                         calendarProps={{
                           className: "w-full",
                         }}
-                        hasError={isSubmitted && !!errors.departureDate}
+                        hasError={!!fieldState.error}
                       />
-                      {isSubmitted && renderErrorMessage(errors.departureDate?.message)}
+                      {renderErrorMessage(fieldState.error?.message)}
                     </>
                   )}
                 />
@@ -408,7 +430,7 @@ export function FlightSearchForm({
                 <Controller
                   name="passengers"
                   control={control}
-                  render={({ field }) => (
+                  render={({ field, fieldState }) => (
                     <>
                       <PassengerSelector
                         noBorder
@@ -418,10 +440,10 @@ export function FlightSearchForm({
                         filled={true}
                         dir="rtl"
                         value={field.value}
-                        onChange={field.onChange}
-                        hasError={isSubmitted && !!errors.passengers}
+                        onChange={handlePassengersChange}
+                        hasError={!!fieldState.error}
                       />
-                      {isSubmitted && errors.passengers && renderErrorMessage("لطفا تعداد مسافران را مشخص کنید")}
+                      {fieldState.error && renderErrorMessage(fieldState.error?.message)}
                     </>
                   )}
                 />
