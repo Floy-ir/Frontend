@@ -15,7 +15,7 @@ export default function NoTicketFound({
   onChangeSearch 
 }: NoTicketFoundProps) {
   return (
-    <div className="flex w-full flex-col items-center justify-center gap-4 rounded-lg bg-white p-8 text-center shadow-sm">
+    <div className="flex w-full flex-col items-center justify-center gap-4 rounded-lg bg-white p-8 text-center">
       {type === 'filter' ? (
         // No flights due to filters
         <>
