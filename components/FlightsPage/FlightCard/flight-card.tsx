@@ -8,7 +8,6 @@ import { PiSuitcaseRollingLight } from "react-icons/pi"
 import { twMerge } from "tailwind-merge"
 import { Button } from "@/components/Button/Button"
 import ComparisonDialog from "@/components/FlightsPage/comparisonPage/page"
-import dude from "@/public/images/flash-circle-outline.svg"
 import { englishToFarsiNumber } from "@/utils/numbers"
 
 // Card wrapper styles with variants
