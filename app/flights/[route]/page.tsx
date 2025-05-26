@@ -400,7 +400,7 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
   const sortOptions = [
     { key: "cheapest" as SortKey, label: "ارزان‌ترین" },
     { key: "mostExpensive" as SortKey, label: "گران‌ترین" },
-    { key: "earliest" as SortKey, label: "نزدیک‌ترین" },
+    { key: "earliest" as SortKey, label: "زودترین" },
     { key: "latest" as SortKey, label: "دیر‌ترین" },
   ]
 
