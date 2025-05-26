@@ -114,7 +114,7 @@ export default function TicketCard({ websites }: { websites: dude[] }) {
                   <div className="inline-flex items-center justify-between self-stretch">
                     {/* name and icon */}
                     <div className="flex items-center justify-end gap-2">
-                      <div className="outline-Gray-N200 flex h-6 w-6 items-center justify-center overflow-hidden rounded-full bg-white outline outline-[1.2px] outline-offset-[-1.2px]">
+                      <div className="outline-Gray-N200 flex h-6 w-6 items-center justify-center overflow-hidden rounded-full bg-white outline-[1.2px] outline-offset-[-1.2px]">
                         <Image
                           alt={website.detail.name_fa}
                           src={website.detail.image ?? dude.src}

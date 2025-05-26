@@ -254,7 +254,7 @@ export function FlightFilters({
 
           {/* Cabin Class Filters */}
           {Object.values(filters.cabinClass).some(Boolean) && (
-            <div className="bg-Primary-P50 outline-Primary-P500main flex items-center justify-center gap-1 overflow-hidden rounded-2xl px-3 py-1 outline outline-2 outline-offset-[-2px]">
+            <div className="bg-Primary-P50 outline-Primary-P500main flex items-center justify-center gap-1 overflow-hidden rounded-2xl px-3 py-1 outline-2 outline-offset-[-2px]">
               <div
                 className="flex cursor-pointer items-center justify-start gap-2 py-1"
                 onClick={() => updateFilter("cabinClass", "all", false)}
@@ -280,7 +280,7 @@ export function FlightFilters({
 
           {/* Airlines Filters */}
           {Object.values(filters.airlines).some(Boolean) && (
-            <div className="bg-Primary-P50 outline-Primary-P500main flex items-center justify-center gap-1 overflow-hidden rounded-2xl px-3 py-1 outline outline-2 outline-offset-[-2px]">
+            <div className="bg-Primary-P50 outline-Primary-P500main flex items-center justify-center gap-1 overflow-hidden rounded-2xl px-3 py-1 outline-2 outline-offset-[-2px]">
               <div
                 className="flex cursor-pointer items-center justify-start gap-2 py-1"
                 onClick={() => updateFilter("airlines", "all", false)}
@@ -303,7 +303,7 @@ export function FlightFilters({
 
           {/* Agencies Filters */}
           {Object.values(filters.agencies).some(Boolean) && (
-            <div className="bg-Primary-P50 outline-Primary-P500main flex items-center justify-center gap-1 overflow-hidden rounded-2xl px-3 py-1 outline outline-2 outline-offset-[-2px]">
+            <div className="bg-Primary-P50 outline-Primary-P500main flex items-center justify-center gap-1 overflow-hidden rounded-2xl px-3 py-1 outline-2 outline-offset-[-2px]">
               <div
                 className="flex cursor-pointer items-center justify-start gap-2 py-1"
                 onClick={() => updateFilter("agencies", "all", false)}
@@ -326,7 +326,7 @@ export function FlightFilters({
 
           {/* Price Range Filter */}
           {(priceRange[0] !== priceRangeBounds[0] || priceRange[1] !== priceRangeBounds[1]) && (
-            <div className="bg-Primary-P50 outline-Primary-P500main flex items-center justify-center gap-1 overflow-hidden rounded-2xl px-3 py-1 outline outline-2 outline-offset-[-2px]">
+            <div className="bg-Primary-P50 outline-Primary-P500main flex items-center justify-center gap-1 overflow-hidden rounded-2xl px-3 py-1 outline-2 outline-offset-[-2px]">
               <div
                 className="flex cursor-pointer items-center justify-start gap-2 py-1"
                 onClick={() => setPriceRange(priceRangeBounds)}
@@ -346,7 +346,7 @@ export function FlightFilters({
 
           {/* Flight Time Range Filter */}
           {(flightTimeRange[0] !== 4 || flightTimeRange[1] !== 24) && (
-            <div className="bg-Primary-P50 outline-Primary-P500main flex items-center justify-center gap-1 overflow-hidden rounded-2xl px-3 py-1 outline outline-2 outline-offset-[-2px]">
+            <div className="bg-Primary-P50 outline-Primary-P500main flex items-center justify-center gap-1 overflow-hidden rounded-2xl px-3 py-1 outline-2 outline-offset-[-2px]">
               <div
                 className="flex cursor-pointer items-center justify-start gap-2 py-1"
                 onClick={() => setFlightTimeRange([4, 24])}

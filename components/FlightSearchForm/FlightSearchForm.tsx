@@ -14,6 +14,7 @@ import { PassengerCount, PassengerSelector } from "@/components/PassengerSelecto
 import type { CityOption } from "@/config/cities"
 import { getCityByName, getCityOptions } from "@/config/cities"
 import { useStoredCities } from "@/hooks/useStoredCities"
+import { useFlightFormPersistence } from "@/hooks/useFlightFormPersistence"
 import { formatDate } from "@/utils/dateUtils"
 import { createFlightSearchUrl } from "@/utils/navigation"
 import { Info } from "lucide-react"
@@ -58,24 +59,44 @@ export function FlightSearchForm({
 }: FlightSearchFormProps) {
   const router = useRouter()
   const [options, setOptions] = useState<Pick<CityOption, "value" | "label">[]>([])
-  // Use our custom hook
+  // Use our custom hooks
   const { recentSelections, addRecentSelection, saveSearch } = useStoredCities()
+  const { loadFormData, saveFormData, clearFormData } = useFlightFormPersistence()
   const [isLoading, setIsLoading] = useState(false)
+
+  // Load persisted form data
+  const persistedFormData = useMemo(() => loadFormData(), [])
 
   // Create form with react-hook-form
   const { control, handleSubmit, setValue, watch, formState: { errors, isSubmitted }, trigger } = useForm<SearchFormValues>({
     resolver: zodResolver(searchFormSchema),
     defaultValues: {
-      origin: initialOrigin,
-      destination: initialDestination,
-      departureDate: initialDepartureDate || undefined,
-      passengers: initialPassengers,
+      // Prioritize prop values over persisted values
+      origin: initialOrigin || persistedFormData.origin,
+      destination: initialDestination || persistedFormData.destination,
+      departureDate: initialDepartureDate || 
+                   (persistedFormData.departureDate ? new Date(persistedFormData.departureDate) : undefined),
+      passengers: initialPassengers || persistedFormData.passengers,
     },
     mode: "onChange",
   });
 
   const origin = watch("origin");
   const destination = watch("destination");
+  const departureDate = watch("departureDate");
+  const passengers = watch("passengers");
+
+  // Save form values to localStorage whenever they change
+  useEffect(() => {
+    if (origin || destination || departureDate || passengers) {
+      saveFormData({
+        origin,
+        destination,
+        departureDate: departureDate ? departureDate.toISOString() : null,
+        passengers,
+      });
+    }
+  }, [origin, destination, departureDate, passengers, saveFormData]);
 
   // Filter options to exclude selected cities
   const originOptions = useMemo(() => {
