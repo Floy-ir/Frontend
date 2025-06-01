@@ -1,10 +1,11 @@
 "use client"
 
-import { Add, ArrowRight, ArrowSwapHorizontal, ArrowUp2 } from "iconsax-react"
-import { useRouter } from "next/navigation"
-import React, { useEffect, useState, useMemo } from "react"
-import { useForm, Controller } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
+import { Add, ArrowRight, ArrowSwapHorizontal, ArrowUp2 } from "iconsax-react"
+import { Loader } from "lucide-react"
+import { useRouter } from "next/navigation"
+import React, { useEffect, useMemo, useState } from "react"
+import { Controller, useForm } from "react-hook-form"
 import { z } from "zod"
 
 import { Button } from "@/components/Button/Button"
@@ -13,12 +14,11 @@ import { DatePicker } from "@/components/DatePicker/DatePicker"
 import { PassengerCount, PassengerSelector } from "@/components/PassengerSelector/PassengerSelector"
 import type { CityOption } from "@/config/cities"
 import { getCityByName, getCityOptions } from "@/config/cities"
-import { useStoredCities } from "@/hooks/useStoredCities"
 import { useFlightFormPersistence } from "@/hooks/useFlightFormPersistence"
+import { useStoredCities } from "@/hooks/useStoredCities"
 import { formatDate } from "@/utils/dateUtils"
 import { createFlightSearchUrl } from "@/utils/navigation"
-import { Info } from "lucide-react"
-import { Loader } from "lucide-react"
+
 
 // Define zod schema for form validation
 const searchFormSchema = z.object({
@@ -61,14 +61,14 @@ export function FlightSearchForm({
   const [options, setOptions] = useState<Pick<CityOption, "value" | "label">[]>([])
   // Use our custom hooks
   const { recentSelections, addRecentSelection, saveSearch } = useStoredCities()
-  const { loadFormData, saveFormData, clearFormData } = useFlightFormPersistence()
+  const { loadFormData, saveFormData } = useFlightFormPersistence()
   const [isLoading, setIsLoading] = useState(false)
 
   // Load persisted form data
   const persistedFormData = useMemo(() => loadFormData(), [])
 
   // Create form with react-hook-form
-  const { control, handleSubmit, setValue, watch, formState: { errors, isSubmitted }, trigger } = useForm<SearchFormValues>({
+  const { control, handleSubmit, setValue, watch, trigger } = useForm<SearchFormValues>({
     resolver: zodResolver(searchFormSchema),
     defaultValues: {
       // Prioritize prop values over persisted values
@@ -193,6 +193,7 @@ export function FlightSearchForm({
       // Navigate to the flights page with the query parameters
       router.push(createFlightSearchUrl(originCity.code, destinationCity.code, data.departureDate, data.passengers))
     } catch (error) {
+      console.error(error)
       // In case of error, reset loading state
       setIsLoading(false)
     }

@@ -10,7 +10,6 @@ export default function TicketCard({
   origin,
   destination,
   duration,
-  otherSellersCount,
   flightInfo,
   airline,
 }: {
@@ -28,7 +27,6 @@ export default function TicketCard({
     // ticketType: string
     cabinClass: string
   }
-  otherSellersCount: number
 }) {
   const [openDetails, setOpenDetails] = useState(false)
   const contentRef = useRef<HTMLDivElement>(null)

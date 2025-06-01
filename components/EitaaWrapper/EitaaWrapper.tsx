@@ -1,7 +1,7 @@
 'use client';
 
-import { useEffect, useState, ReactNode } from 'react';
-import { isRunningInEitaa, notifyEitaaReady, expandEitaaApp } from '@/utils/eitaa';
+import { ReactNode, useEffect, useState } from 'react';
+import { expandEitaaApp, isRunningInEitaa, notifyEitaaReady } from '@/utils/eitaa';
 
 interface EitaaWrapperProps {
   children: ReactNode;
@@ -18,7 +18,7 @@ const EitaaWrapper: React.FC<EitaaWrapperProps> = ({
   autoReady = true,
   autoExpand = false
 }) => {
-  const [isClient, setIsClient] = useState(false);
+  const [, setIsClient] = useState(false);
   
   useEffect(() => {
     // Mark as client-side rendered

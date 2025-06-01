@@ -1,6 +1,5 @@
 "use client"
 
-import { ArrowSquareUp } from "iconsax-react"
 import * as React from "react"
 
 import { ComboboxSelect } from "@/components/ComboboxSelect/ComboboxSelect"
@@ -24,7 +23,6 @@ export default function FormExample() {
       // helperText="Select the current status"
       placeholder="انتخاب شهر"
       searchPlaceholder="جستجوی شهر مبدا"
-      // leftIcon=<ArrowSquareUp color="var(--color-Gray-N500)" />
       dir="rtl"
     />
   )

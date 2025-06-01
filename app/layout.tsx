@@ -3,9 +3,9 @@ import type { Metadata } from "next"
 import Script from "next/script"
 
 import { ActiveMenuProvider } from "@/components/ActiveMenuProvider/ActiveMenuProvider"
+import EitaaDynamicInitializer from "@/components/EitaaDynamicInitializer/EitaaDynamicInitializer"
 import Footer from "@/components/Footer/Footer"
 import { anjomanMaxVF } from "../lib/fonts"
-import EitaaDynamicInitializer from "@/components/EitaaDynamicInitializer/EitaaDynamicInitializer"
 
 // Define metadata
 export const metadata: Metadata = {

@@ -4,7 +4,6 @@ import * as Form from "@radix-ui/react-form"
 import { cva, type VariantProps } from "class-variance-authority"
 import * as React from "react"
 import { twMerge } from "tailwind-merge"
-import { englishToFarsiNumber } from "utils/numbers"
 
 export const textFieldContainer = cva(["flex", "flex-col", "gap-2", "w-full"], {
   variants: {

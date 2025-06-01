@@ -1,6 +1,6 @@
 "use client"
 
-import { ArrowDown2, ArrowUp2, Check, CloseCircle, Location, SearchNormal } from "iconsax-react"
+import { ArrowDown2, ArrowUp2, CloseCircle, Location } from "iconsax-react"
 import * as React from "react"
 import { twMerge } from "tailwind-merge"
 import {
@@ -9,10 +9,9 @@ import {
   textFieldHelperText,
   textFieldLabel,
   TextFieldProps,
-  TextField as TextFieldRawImport,
 } from "@/components/TextField/TextField"
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command"
-import { Drawer, DrawerContent, DrawerFooter, DrawerHeader, DrawerTitle, DrawerTrigger } from "@/components/ui/drawer"
+import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerTrigger } from "@/components/ui/drawer"
 
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 

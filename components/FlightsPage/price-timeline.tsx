@@ -27,7 +27,6 @@ const Timeline = ({
   adult,
   child,
   infant,
-  autoScrollToSelected,
 }: {
   originCityCode: string
   destinationCityCode: string
@@ -35,7 +34,6 @@ const Timeline = ({
   adult: string
   child: string
   infant: string
-  autoScrollToSelected?: boolean
 }) => {
   const router = useRouter()
 

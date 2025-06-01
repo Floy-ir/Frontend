@@ -2,8 +2,21 @@
 import { DialogTitle } from "@radix-ui/react-dialog"
 import { CloseCircle, Setting5, Sort } from "iconsax-react"
 import Image from "next/image"
-import { usePathname, useRouter, useSearchParams } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import React, { use, useEffect, useRef, useState } from "react"
+import { 
+  Airline,
+  DrawerContentRefType,
+  FilterCheckboxProps,
+  FilterSectionProps,
+  FilterState,
+  FlightResult,
+  FlightSearchResponseData,
+  RouteParams,
+  SortKey,
+  TransformedFlight,
+  Website
+} from "@/app/types"
 import { FlightFilters } from "@/components/FlightFilters"
 import { FlightSearchHeader } from "@/components/FlightSearchHeader/FlightSearchHeader"
 import NoTicketFound from "@/components/FlightsPage/NoTicketFound"
@@ -17,19 +30,7 @@ import { apiFetch } from "@/services/api/index"
 import { formatDate } from "@/utils/dateUtils"
 import { englishToFarsiNumber } from "@/utils/numbers"
 import { FlightResultsList } from "./FlightResultsList"
-import { 
-  FilterState, 
-  RouteParams, 
-  SortKey, 
-  TransformedFlight, 
-  DrawerContentRefType, 
-  FilterSectionProps, 
-  FilterCheckboxProps, 
-  FlightResult, 
-  FlightSearchResponseData,
-  Website,
-  Airline
-} from "@/app/types"
+
 
 // Extend the FilterDrawerContentProps to include priceRangeBounds
 interface FilterDrawerContentProps {
@@ -449,7 +450,6 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
   // Add state for available websites and airlines
   const [availableWebsites, setAvailableWebsites] = useState<Website[]>([])
   const [availableAirlines, setAvailableAirlines] = useState<Airline[]>([])
-  const pathname = usePathname()
   // const [error, setError] = useState<string | null>(null);
   function transformFlightData(input: FlightResult, id: string = "1"): TransformedFlight {
     const departure = new Date(input.departure_timestamp * 1000)
@@ -522,14 +522,8 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
   // Add loading state near other state declarations
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
-  // Add a requestId tracker to avoid duplicate calls
-  const [currentRequestId, setCurrentRequestId] = useState<string>("");
-
   // Add a state to track if we've already loaded flights for this route
   const [hasLoadedFlights, setHasLoadedFlights] = useState(false);
-
-  // Add a new ref for search toggle
-  const searchToggleRef = useRef<HTMLButtonElement>(null);
 
   // Update the getFlights function to be simpler
   const getFlights = async (departureDate: string) => {
@@ -831,7 +825,6 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
             adult={String(adult)}
             child={String(child)}
             infant={String(infant)}
-            autoScrollToSelected={true}
           />
         </div>
 
@@ -1454,15 +1447,10 @@ const FilterDrawerContent = React.forwardRef<
   (
     {
       title,
-      activeFiltersCount,
-      clearFilters,
       activeSection,
       filters,
-      updateFilter,
       flightTimeRange,
-      setFlightTimeRange,
       priceRange,
-      setPriceRange,
       priceRangeBounds,
       availableSeatClasses,
       availableWebsites,

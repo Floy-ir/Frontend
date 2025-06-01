@@ -3,10 +3,10 @@
 import { CloseCircle, Setting5 } from "iconsax-react"
 import Image from "next/image"
 import React, { useState } from "react"
+import { Airline , Website } from "@/app/types/flight"
 import { FancySlider } from "@/components/ui/fancy-slider"
 import { englishToFarsiNumber } from "@/utils/numbers"
-import { Website } from "@/app/types/flight"
-import { Airline } from "@/app/types/flight"
+
 
 // Filter section with expandable header
 const FilterSection = ({
@@ -119,17 +119,9 @@ const FilterCheckbox = ({
 
 // Range slider for price and time filters
 const _RangeSlider = ({
-  min,
-  max,
-  value,
-  onChange,
   minValue,
   maxValue,
 }: {
-  min: number
-  max: number
-  value: [number, number]
-  onChange: (value: [number, number]) => void
   minValue: number
   maxValue: number
 }) => {

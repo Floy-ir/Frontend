@@ -1,6 +1,6 @@
 // Filter-related type definitions
 
-import { Website, Airline } from "./flight";
+import { Airline, Website } from "./flight";
 
 export interface FilterState {
   ticketType: { 

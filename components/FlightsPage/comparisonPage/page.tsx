@@ -16,12 +16,9 @@ export default function ComparisonDialog({
   origin,
   destination,
   duration,
-  otherSellersCount,
   airline,
   flightInfo,
-  onBuy,
 }: {
-  onBuy: () => void
   open: boolean
   onOpenChange: (open: boolean) => void
   departureTime: string
@@ -29,7 +26,6 @@ export default function ComparisonDialog({
   origin: string
   destination: string
   duration: { hours: number; minutes: number }
-  otherSellersCount: number
   airline: {
     name: string
     logo: string
@@ -78,7 +74,6 @@ export default function ComparisonDialog({
             origin={origin}
             destination={destination}
             duration={duration}
-            otherSellersCount={otherSellersCount}
             airline={airline}
             flightInfo={flightInfo}
           />

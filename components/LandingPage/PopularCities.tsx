@@ -1,6 +1,7 @@
 "use client"
 
 import Image, { StaticImageData } from "next/image"
+import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import { getCityByCode } from "@/config/cities"
 import { apiFetch } from "@/services/api"
@@ -10,8 +11,6 @@ import mashhad from "../../public/images/mashhad.jpg"
 import shiraz from "../../public/images/shiraz.jpg"
 import tabriz from "../../public/images/tabriz.jpg"
 import tehran from "../../public/images/tehran.jpg"
-import Link from "next/link"
-import { useRouter } from "next/navigation"
 
 const getDestinationImage = (destinationCode: string): StaticImageData => {
   switch (destinationCode) {
@@ -191,7 +190,7 @@ export default function PopularCities() {
                   ) => (
                     <div key={index} className="shrink-0 snap-start">
                       <CityRow
-                        cities={pair.map((flight, i) => ({
+                        cities={pair.map((flight) => ({
                           city: `${flight.originLabel} به ${flight.destinationLabel}`,
                           price: flight.price.toLocaleString(),
                           bg: getDestinationImage(flight.destination),

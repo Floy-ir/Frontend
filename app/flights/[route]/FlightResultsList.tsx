@@ -1,6 +1,5 @@
 "use client"
 
-import { useRouter } from "next/navigation"
 import React, { useEffect, useState } from "react"
 import { EXPIRATION_MODAL_SETTINGS } from "@/app/config/settings"
 import ExpirationModal from "@/components/FlightsPage/expiration-modal/page"
@@ -60,7 +59,6 @@ type FlightResultsListProps = {
 export function FlightResultsList({ flights, onRefresh }: FlightResultsListProps) {
   // Handle actions
 
-  const router = useRouter()
   const [showExpirationModal, setShowExpirationModal] = useState(false)
 
   useEffect(() => {

@@ -2,12 +2,11 @@
 
 import * as NavigationMenu from "@radix-ui/react-navigation-menu"
 import { cva } from "class-variance-authority"
-import { Airplane, ArrowRight, ArrowRight2, HambergerMenu } from "iconsax-react"
+import { Airplane, HambergerMenu } from "iconsax-react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import React, { useEffect, useState } from "react"
 import { twMerge } from "tailwind-merge"
-import { Button } from "../Button/Button"
 import { Drawer, DrawerContent, DrawerTitle, DrawerTrigger } from "../ui/drawer"
 
 interface MenuItem {
