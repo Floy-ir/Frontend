@@ -24,7 +24,7 @@ import { Loader } from "lucide-react"
 const searchFormSchema = z.object({
   origin: z.string().min(1, { message: "مبدا را انتخاب کنید" }),
   destination: z.string().min(1, { message: "مقصد را انتخاب کنید" }),
-  departureDate: z.date({ message: "تاریخ رفت را انتخاب کنید" }),
+  departureDate: z.date({ message: "انتخاب کنید" }),
   passengers: z.object({
     adult: z.number().int().min(1, { message: "تعداد مسافران را مشخص کنید" }),
     child: z.number().int().min(0, { message: "تعداد مسافران را مشخص کنید" }),
@@ -211,7 +211,7 @@ export function FlightSearchForm({
     if (!errorMessage) return null;
     
     return (
-      <div className="text-Error-E500main text-xs absolute -bottom-2">
+      <div className="text-Error-E500main text-xs absolute -bottom-2 right-0 z-20">
         <span>{errorMessage}</span>
       </div>
     );
@@ -261,7 +261,7 @@ export function FlightSearchForm({
                 {/* Fields Container - Mobile & Tablet */}
                 <div className="flex flex-1 flex-col">
                   {/* Origin Field - Mobile & Tablet */}
-                  <div className="z-150 w-full">
+                  <div className="z-150 w-full relative">
                     <Controller
                       name="origin"
                       control={control}
@@ -293,7 +293,7 @@ export function FlightSearchForm({
                   <div className="bg-Gray-N200 my-2 h-px w-full"></div>
 
                   {/* Destination Field - Mobile & Tablet */}
-                  <div className="w-full">
+                  <div className="w-full relative">
                     <Controller
                       name="destination"
                       control={control}
@@ -329,7 +329,7 @@ export function FlightSearchForm({
             {/* Origin/Destination Section - Desktop layout (1170px and up) */}
             <div className="hidden w-full items-start gap-4 lg:flex lg:w-auto lg:flex-row lg:items-center xl:gap-6">
               {/* Origin Field - Desktop */}
-              <div className="w-full lg:w-40 xl:w-47">
+              <div className="w-full relative lg:w-40 xl:w-47">
                 <Controller
                   name="origin"
                   control={control}
@@ -372,7 +372,7 @@ export function FlightSearchForm({
               </div>
 
               {/* Destination Field - Desktop */}
-              <div className="w-full lg:w-40 xl:w-47">
+              <div className="w-full relative lg:w-40 xl:w-47">
                 <Controller
                   name="destination"
                   control={control}
@@ -405,7 +405,7 @@ export function FlightSearchForm({
             {/* Date and Passenger Fields - Side by side on all devices */}
             <div className="flex w-full flex-row items-center gap-4">
               {/* Departure Date Field */}
-              <div className="w-1/2 lg:w-20 xl:w-20">
+              <div className="w-1/2 relative lg:pb-0 lg:w-20 xl:w-20">
                 <Controller
                   name="departureDate"
                   control={control}
@@ -447,7 +447,7 @@ export function FlightSearchForm({
               <div className="bg-Gray-N200 h-12 w-px" />
 
               {/* Passengers Field */}
-              <div className="w-1/2 lg:w-16 xl:w-18">
+              <div className="w-1/2 relative lg:pb-0 lg:w-16 xl:w-18">
                 <Controller
                   name="passengers"
                   control={control}
