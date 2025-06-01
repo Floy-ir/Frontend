@@ -9,6 +9,7 @@ import PopularCities from "@/components/LandingPage/PopularCities"
 // import Suggestions from "@/components/LandingPage/suggestions"
 import Questions from "@/components/LandingPage/Questions"
 import img from "../public/images/Underline_06.svg"
+import Link from "next/link"
 
 export const metadata: Metadata = {
   title:"فلوی | مقایسه بلیط هواپیما",

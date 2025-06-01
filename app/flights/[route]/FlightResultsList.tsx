@@ -5,6 +5,7 @@ import React, { useEffect, useState } from "react"
 import { EXPIRATION_MODAL_SETTINGS } from "@/app/config/settings"
 import ExpirationModal from "@/components/FlightsPage/expiration-modal/page"
 import { FlightCard } from "@/components/FlightsPage/FlightCard"
+import { isRunningInEitaa, openExternalLink } from "@/utils/eitaa"
 
 type FlightData = {
   id: string
@@ -93,7 +94,14 @@ export function FlightResultsList({ flights, onRefresh }: FlightResultsListProps
         .replace("${child_len}", child)
         .replace("${infant_len}", infant)
 
-    window.open(`/redirect?redirect_url=${redirectUrl}&agency=${price.agency}&agency_eng=${price.agency_eng}`, "_blank")
+    const finalRedirectUrl = `/redirect?redirect_url=${redirectUrl}&agency=${price.agency}&agency_eng=${price.agency_eng}`
+    
+    // Use Eitaa's link handling when running in Eitaa mini app, otherwise use regular window.open
+    if (isRunningInEitaa()) {
+      openExternalLink(finalRedirectUrl)
+    } else {
+      window.open(finalRedirectUrl, "_blank")
+    }
   }
 
   return (
