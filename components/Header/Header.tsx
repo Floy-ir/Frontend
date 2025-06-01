@@ -126,7 +126,7 @@ export function Header({ menuItems, className, forceScrolledStyle = false }: Hea
     }
   }, [])
 
-  if (pathname.startsWith("/flights") && isSmallScreen) {
+  if (pathname?.startsWith("/flights") && isSmallScreen) {
     return <></>
   }
 
