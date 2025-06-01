@@ -7,6 +7,7 @@ import { useEffect, useRef, useState } from "react"
 import { Button } from "@/components/Button/Button"
 import dude from "@/public/images/flash-circle-outline.svg"
 import { englishToFarsiNumber } from "@/utils/numbers"
+import { isRunningInEitaa, openExternalLink } from "@/utils/eitaa"
 
 type dude = {
   adult_price: number
@@ -70,10 +71,14 @@ export default function TicketCard({ websites }: { websites: dude[] }) {
       .replace("${child_len}", childCount)
       .replace("${infant_len}", infantCount)
 
-    window.open(
-      `/redirect?redirect_url=${redirectUrl}&agency=${website.detail.name_fa}&agency_eng=${website.detail.name}`,
-      "_blank"
-    )
+    const finalRedirectUrl = `/redirect?redirect_url=${redirectUrl}&agency=${website.detail.name_fa}&agency_eng=${website.detail.name}`
+    
+    // Use Eitaa's link handling when running in Eitaa mini app, otherwise use regular window.open
+    if (isRunningInEitaa()) {
+      openExternalLink(finalRedirectUrl)
+    } else {
+      window.open(finalRedirectUrl, "_blank")
+    }
   }
 
   return (
