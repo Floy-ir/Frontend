@@ -28,4 +28,4 @@ const config = {
 module.exports = async () => {
   const { env } = await import("./env.mjs")
   return env.ANALYZE ? withBundleAnalyzer({ enabled: env.ANALYZE })(config) : config
-} 
+}
