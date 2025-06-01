@@ -4,22 +4,18 @@ import { CalendarSearch, FilterSearch } from "iconsax-react"
 import React from "react"
 
 type NoTicketFoundProps = {
-  type?: 'filter' | 'noFlights'
+  type?: "filter" | "noFlights"
   onClearFilters?: () => void
   onChangeSearch?: () => void
 }
 
-export default function NoTicketFound({ 
-  type = 'noFlights', 
-  onClearFilters, 
-  onChangeSearch 
-}: NoTicketFoundProps) {
+export default function NoTicketFound({ type = "noFlights", onClearFilters, onChangeSearch }: NoTicketFoundProps) {
   return (
     <div className="flex w-full flex-col items-center justify-center gap-4 rounded-lg bg-white p-8 text-center">
-      {type === 'filter' ? (
+      {type === "filter" ? (
         // No flights due to filters
         <>
-          <div className="mb-4 text-Gray-N400">
+          <div className="text-Gray-N400 mb-4">
             <FilterSearch size="100" color="#5A28EE" />
           </div>
           <h3 className="text-Gray-N800 mb-2 text-lg font-semibold" aria-live="assertive" role="status">
@@ -41,7 +37,7 @@ export default function NoTicketFound({
       ) : (
         // No flights for this day
         <>
-          <div className="mb-4 text-Gray-N400">
+          <div className="text-Gray-N400 mb-4">
             <CalendarSearch size="100" color="#5A28EE" />
           </div>
           <h3 className="text-Gray-N800 mb-2 text-lg font-semibold" aria-live="assertive" role="status">

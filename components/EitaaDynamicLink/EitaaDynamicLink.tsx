@@ -1,34 +1,22 @@
-'use client';
+"use client"
 
-import dynamic from 'next/dynamic';
-import { ReactNode } from 'react';
+import dynamic from "next/dynamic"
+import { ReactNode } from "react"
 
 // Dynamically import EitaaLink with no SSR to prevent hydration mismatch
-const EitaaLink = dynamic(
-  () => import('@/components/EitaaLink/EitaaLink'),
-  { ssr: false }
-);
+const EitaaLink = dynamic(() => import("@/components/EitaaLink/EitaaLink"), { ssr: false })
 
 interface EitaaDynamicLinkProps {
-  href: string;
-  children: ReactNode;
-  className?: string;
-  options?: any;
+  href: string
+  children: ReactNode
+  className?: string
+  options?: any
 }
 
-export default function EitaaDynamicLink({
-  href,
-  children,
-  className,
-  options
-}: EitaaDynamicLinkProps) {
+export default function EitaaDynamicLink({ href, children, className, options }: EitaaDynamicLinkProps) {
   return (
-    <EitaaLink 
-      href={href}
-      className={className}
-      options={options}
-    >
+    <EitaaLink href={href} className={className} options={options}>
       {children}
     </EitaaLink>
-  );
-} 
+  )
+}

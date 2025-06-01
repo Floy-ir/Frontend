@@ -25,10 +25,7 @@ export interface DatePickerProps extends Omit<TextFieldProps, "onChange" | "valu
   hasError?: boolean
 }
 
-export const DatePicker = React.forwardRef<
-  HTMLInputElement,
-  DatePickerProps
->(function DatePicker(
+export const DatePicker = React.forwardRef<HTMLInputElement, DatePickerProps>(function DatePicker(
   {
     id,
     label,

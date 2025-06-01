@@ -11,12 +11,11 @@ import Questions from "@/components/LandingPage/Questions"
 import img from "../public/images/Underline_06.svg"
 
 export const metadata: Metadata = {
-  title:"فلوی | مقایسه بلیط هواپیما",
+  title: "فلوی | مقایسه بلیط هواپیما",
   twitter: {
     card: "summary_large_image",
   },
 
-  
   openGraph: {
     url: "https://flow.ir/",
     images: [
@@ -59,17 +58,23 @@ export default function Web() {
 
         <Companies />
 
-        <div className="w-full pb-12 pt-8 lg:py-16">
+        <div className="w-full pt-8 pb-12 lg:py-16">
           <Benefits />
         </div>
-        
+
         {/* Cities */}
-        <div data-name="Container-for-cities" className="flex w-full shrink-0 flex-col items-center justify-between bg-white py-8 lg:pb-4 lg:pt-12" id="cheapest-week">
+        <div
+          data-name="Container-for-cities"
+          className="flex w-full shrink-0 flex-col items-center justify-between bg-white py-8 lg:pt-12 lg:pb-4"
+          id="cheapest-week"
+        >
           <div className="mx-auto w-full max-w-[1136px] px-6 xl:px-0">
             {/* Title */}
             <div className="flex w-full items-center justify-between">
               <div className="flex flex-col justify-start">
-                <h2 className="mb-1 text-xl md:text-2xl font-semibold text-[#334155]">ارزان ترین پرواز های هفته آينده</h2>
+                <h2 className="mb-1 text-xl font-semibold text-[#334155] md:text-2xl">
+                  ارزان ترین پرواز های هفته آينده
+                </h2>
                 <Image alt="" src={img} width={100} height={100} />
               </div>
 

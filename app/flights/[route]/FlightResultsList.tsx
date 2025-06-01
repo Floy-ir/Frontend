@@ -27,7 +27,7 @@ type FlightData = {
     amount: number
     formattedAmount: string
     agency: string
-    agency_eng:string
+    agency_eng: string
     agencyLogo: string
     label: string
     base_redirect_url: string
@@ -88,12 +88,12 @@ export function FlightResultsList({ flights, onRefresh }: FlightResultsListProps
     //     .replace("${infant_len}", infant)
     // }
     redirectUrl = price.base_redirect_url
-        .replace("${adult_len}", adult)
-        .replace("${child_len}", child)
-        .replace("${infant_len}", infant)
+      .replace("${adult_len}", adult)
+      .replace("${child_len}", child)
+      .replace("${infant_len}", infant)
 
     const finalRedirectUrl = `/redirect?redirect_url=${redirectUrl}&agency=${price.agency}&agency_eng=${price.agency_eng}`
-    
+
     // Use Eitaa's link handling when running in Eitaa mini app, otherwise use regular window.open
     if (isRunningInEitaa()) {
       openExternalLink(finalRedirectUrl)

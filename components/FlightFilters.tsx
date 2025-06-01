@@ -3,10 +3,9 @@
 import { CloseCircle, Setting5 } from "iconsax-react"
 import Image from "next/image"
 import React, { useState } from "react"
-import { Airline , Website } from "@/app/types/flight"
+import { Airline, Website } from "@/app/types/flight"
 import { FancySlider } from "@/components/ui/fancy-slider"
 import { englishToFarsiNumber } from "@/utils/numbers"
-
 
 // Filter section with expandable header
 const FilterSection = ({
@@ -95,14 +94,8 @@ const FilterCheckbox = ({
     {logo && (
       <div className="flex items-center justify-start gap-2 self-stretch">
         <div className="border-Gray-N200 size-8 overflow-hidden rounded-full border">
-  <Image
-    src={logo}
-    alt={label}
-    width={32}
-    height={32}
-    className="object-cover rounded-full"
-  />
-</div>
+          <Image src={logo} alt={label} width={32} height={32} className="rounded-full object-cover" />
+        </div>
       </div>
     )}
 
@@ -118,13 +111,7 @@ const FilterCheckbox = ({
 )
 
 // Range slider for price and time filters
-const _RangeSlider = ({
-  minValue,
-  maxValue,
-}: {
-  minValue: number
-  maxValue: number
-}) => {
+const _RangeSlider = ({ minValue, maxValue }: { minValue: number; maxValue: number }) => {
   return (
     <div className="flex flex-col items-center justify-start gap-1 self-stretch py-3">
       <div className="relative inline-flex items-center justify-center self-stretch py-2">
@@ -211,9 +198,9 @@ export function FlightFilters({
 
   // Helper to format price for display in filter options
   const formatMinPrice = (price?: number) => {
-    if (!price) return "";
-    return `از ${englishToFarsiNumber(Math.floor(price).toLocaleString())}`;
-  };
+    if (!price) return ""
+    return `از ${englishToFarsiNumber(Math.floor(price).toLocaleString())}`
+  }
 
   // Filter chips component
   const FilterChips = () => {
@@ -259,7 +246,7 @@ export function FlightFilters({
                 <div className="text-Primary-P500main text-sm leading-normal font-medium">
                   کلاس پروازی:{" "}
                   {[
-                    filters.cabinClass.economy ? "اکونومی" : null, 
+                    filters.cabinClass.economy ? "اکونومی" : null,
                     filters.cabinClass.premiumEconomy ? "اکونومی پریمیوم" : null,
                     filters.cabinClass.business ? "بیزینس" : null,
                   ]
@@ -285,8 +272,8 @@ export function FlightFilters({
                 <div className="text-Primary-P500main text-sm leading-normal font-medium">
                   ایرلاین‌ها:{" "}
                   {availableAirlines
-                    .filter(airline => filters.airlines[airline.uid])
-                    .map(airline => airline.name)
+                    .filter((airline) => filters.airlines[airline.uid])
+                    .map((airline) => airline.name)
                     .join("، ")}
                 </div>
               </div>
@@ -308,8 +295,8 @@ export function FlightFilters({
                 <div className="text-Primary-P500main text-sm leading-normal font-medium">
                   وبسایت‌ها:{" "}
                   {availableWebsites
-                    .filter(website => filters.agencies[website.uid])
-                    .map(website => website.name_fa)
+                    .filter((website) => filters.agencies[website.uid])
+                    .map((website) => website.name_fa)
                     .join("، ")}
                 </div>
               </div>
@@ -469,14 +456,14 @@ export function FlightFilters({
               <FilterCheckbox
                 key={website.uid}
                 label={website.name_fa}
-                logo={website.image || "/images/logo.webp"} 
+                logo={website.image || "/images/logo.webp"}
                 extraText={formatMinPrice(website.min_price)}
                 checked={filters.agencies[website.uid] || false}
                 onChange={(v) => updateFilter("agencies", website.uid, v)}
               />
             ))
           ) : (
-            <div className="text-Gray-N500 text-center text-sm py-2">هیچ وبسایتی یافت نشد</div>
+            <div className="text-Gray-N500 py-2 text-center text-sm">هیچ وبسایتی یافت نشد</div>
           )}
         </FilterSection>
 
@@ -498,7 +485,7 @@ export function FlightFilters({
               />
             ))
           ) : (
-            <div className="text-Gray-N500 text-center text-sm py-2">هیچ ایرلاینی یافت نشد</div>
+            <div className="text-Gray-N500 py-2 text-center text-sm">هیچ ایرلاینی یافت نشد</div>
           )}
         </FilterSection>
       </div>

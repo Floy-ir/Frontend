@@ -33,7 +33,7 @@ const Questions = () => {
           <AccordionItem
             key={index}
             value={`item-${index}`}
-            className="bg-[#fcfcfc] pb-2 outline-Gray-N200 data-[state=open]:outline-Primary-P500main flex flex-col items-stretch justify-center self-stretch rounded-xl outline-2 outline-offset-[-2px] data-[state=open]:outline-1 data-[state=open]:outline-offset-[-1px]"
+            className="outline-Gray-N200 data-[state=open]:outline-Primary-P500main flex flex-col items-stretch justify-center self-stretch rounded-xl bg-[#fcfcfc] pb-2 outline-2 outline-offset-[-2px] data-[state=open]:outline-1 data-[state=open]:outline-offset-[-1px]"
           >
             <AccordionTrigger className="data-[state=open]:text-Primary-P500main text-Gray-N600 -mb-2 flex items-center justify-between p-5 text-right text-base leading-7 font-medium md:text-lg">
               {item.question}

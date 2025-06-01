@@ -4,7 +4,7 @@ import { CloseCircle, Setting5, Sort } from "iconsax-react"
 import Image from "next/image"
 import { useRouter, useSearchParams } from "next/navigation"
 import React, { use, useEffect, useRef, useState } from "react"
-import { 
+import {
   Airline,
   DrawerContentRefType,
   FilterCheckboxProps,
@@ -15,7 +15,7 @@ import {
   RouteParams,
   SortKey,
   TransformedFlight,
-  Website
+  Website,
 } from "@/app/types"
 import { FlightFilters } from "@/components/FlightFilters"
 import { FlightSearchHeader } from "@/components/FlightSearchHeader/FlightSearchHeader"
@@ -31,23 +31,22 @@ import { formatDate } from "@/utils/dateUtils"
 import { englishToFarsiNumber } from "@/utils/numbers"
 import { FlightResultsList } from "./FlightResultsList"
 
-
 // Extend the FilterDrawerContentProps to include priceRangeBounds
 interface FilterDrawerContentProps {
-  title: string;
-  activeFiltersCount: number;
-  clearFilters: () => void;
-  activeSection: string;
-  filters: FilterState;
-  updateFilter: (category: string, key: string, value: boolean) => void;
-  flightTimeRange: [number, number];
-  setFlightTimeRange: (range: [number, number]) => void;
-  priceRange: [number, number];
-  setPriceRange: (range: [number, number]) => void;
-  priceRangeBounds: [number, number];
-  availableSeatClasses: string[];
-  availableWebsites: Website[];
-  availableAirlines: Airline[];
+  title: string
+  activeFiltersCount: number
+  clearFilters: () => void
+  activeSection: string
+  filters: FilterState
+  updateFilter: (category: string, key: string, value: boolean) => void
+  flightTimeRange: [number, number]
+  setFlightTimeRange: (range: [number, number]) => void
+  priceRange: [number, number]
+  setPriceRange: (range: [number, number]) => void
+  priceRangeBounds: [number, number]
+  availableSeatClasses: string[]
+  availableWebsites: Website[]
+  availableAirlines: Airline[]
 }
 
 export default function FlightResults({ params, searchParams }: RouteParams) {
@@ -91,9 +90,7 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
   const selectedDate = unwrappedSearchParams.departing || formatDate(new Date())
 
   // State for sorting
-  const [sortKey, setSortKey] = React.useState<SortKey>(
-    (urlSearchParams.get("sort") as SortKey) || "cheapest"
-  )
+  const [sortKey, setSortKey] = React.useState<SortKey>((urlSearchParams.get("sort") as SortKey) || "cheapest")
 
   // Parse filter values from URL
   const getInitialFilterState = () => {
@@ -104,14 +101,20 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
 
     // Create record objects for airlines and agencies
     const airlineValues: Record<string, boolean> = {}
-    airlinesParam.split(",").filter(Boolean).forEach(airline => {
-      airlineValues[airline] = true
-    })
+    airlinesParam
+      .split(",")
+      .filter(Boolean)
+      .forEach((airline) => {
+        airlineValues[airline] = true
+      })
 
     const agencyValues: Record<string, boolean> = {}
-    agenciesParam.split(",").filter(Boolean).forEach(agency => {
-      agencyValues[agency] = true
-    })
+    agenciesParam
+      .split(",")
+      .filter(Boolean)
+      .forEach((agency) => {
+        agencyValues[agency] = true
+      })
 
     return {
       ticketType: {
@@ -384,9 +387,9 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
       cabinClass: { economy: false, business: false, premiumEconomy: false },
       airlines: {},
       agencies: {},
-    });
-    setFlightTimeRange([4, 24]);
-    setPriceRange(priceRangeBounds); // Use dynamic bounds instead of hardcoded values
+    })
+    setFlightTimeRange([4, 24])
+    setPriceRange(priceRangeBounds) // Use dynamic bounds instead of hardcoded values
   }
 
   const _setFlightTimeRange = (range: [number, number]) => {
@@ -467,7 +470,7 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
         .replace(/\d/g, (d) => "۰۱۲۳۴۵۶۷۸۹".charAt(parseInt(d)))
 
     // Transform websites to match FlightData's websites structure
-    const transformedWebsites = input.websites.map(website => ({
+    const transformedWebsites = input.websites.map((website) => ({
       adult_price: website.adult_price,
       base_redirect_url: website.base_redirect_url,
       child_price: website.child_price,
@@ -475,13 +478,13 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
         uid: website.detail.uid,
         name: website.detail.name,
         name_fa: website.detail.name_fa,
-        image: website.detail.image
+        image: website.detail.image,
       },
       infant_price: website.infant_price,
       one_adult_redirect_url: website.one_adult_redirect_url || "",
       remaining_seat: website.remaining_seat,
-      two_adult_redirect_url: website.two_adult_redirect_url || ""
-    }));
+      two_adult_redirect_url: website.two_adult_redirect_url || "",
+    }))
 
     return {
       id,
@@ -520,16 +523,16 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
   const lastFetchedDateRef = useRef<string>("")
 
   // Add loading state near other state declarations
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isLoading, setIsLoading] = useState<boolean>(true)
 
   // Add a state to track if we've already loaded flights for this route
-  const [hasLoadedFlights, setHasLoadedFlights] = useState(false);
+  const [hasLoadedFlights, setHasLoadedFlights] = useState(false)
 
   // Update the getFlights function to be simpler
   const getFlights = async (departureDate: string) => {
     try {
-      setIsLoading(true);
-      
+      setIsLoading(true)
+
       const startOfDay = new Date(`${departureDate}T00:00:00`).getTime() / 1000
       const endOfDay = new Date(`${departureDate}T23:59:59`).getTime() / 1000 + 1
       const [originCode, destinationCode] = unwrappedParams.route.split("-")
@@ -547,32 +550,34 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
         setFlights(transformed)
 
         // Update price range bounds if available in the API response
-        if (data.filters && typeof data.filters.min_price === 'number' && typeof data.filters.max_price === 'number') {
+        if (data.filters && typeof data.filters.min_price === "number" && typeof data.filters.max_price === "number") {
           // Make sure max is at least min + 1 to avoid slider issues
           const max = Math.max(data.filters.max_price, data.filters.min_price + 1)
           const newBounds: [number, number] = [data.filters.min_price, max]
-          
+
           // Only update if bounds actually changed or date changed
-          const boundsChanged = newBounds[0] !== priceRangeBounds[0] || newBounds[1] !== priceRangeBounds[1];
-          const dateChanged = lastFetchedDateRef.current !== departureDate;
-          
+          const boundsChanged = newBounds[0] !== priceRangeBounds[0] || newBounds[1] !== priceRangeBounds[1]
+          const dateChanged = lastFetchedDateRef.current !== departureDate
+
           if (boundsChanged) {
-            setPriceRangeBounds(newBounds);
-            
+            setPriceRangeBounds(newBounds)
+
             // Update price range when either:
             // 1. The date has changed (new search)
             // 2. It's still at default values
             // 3. Current range is outside new bounds
-            if (dateChanged || 
-                (priceRange[0] === 500000 && priceRange[1] === 5000000) ||
-                priceRange[0] < newBounds[0] || 
-                priceRange[1] > newBounds[1]) {
-              setPriceRange(newBounds);
+            if (
+              dateChanged ||
+              (priceRange[0] === 500000 && priceRange[1] === 5000000) ||
+              priceRange[0] < newBounds[0] ||
+              priceRange[1] > newBounds[1]
+            ) {
+              setPriceRange(newBounds)
             }
           }
-          
+
           // Update last fetched date
-          lastFetchedDateRef.current = departureDate;
+          lastFetchedDateRef.current = departureDate
         }
 
         // Update available seat classes from API response
@@ -588,38 +593,38 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
         if (data.filters && data.filters.airlines) {
           setAvailableAirlines(data.filters.airlines)
         }
-        
+
         // Mark that we've loaded data
-        setHasLoadedFlights(true);
+        setHasLoadedFlights(true)
       } else {
         // No results returned, clear previous flights
-        setFlights([]);
-        setHasLoadedFlights(true);
+        setFlights([])
+        setHasLoadedFlights(true)
       }
     } catch (err) {
       console.error("Error fetching flights:", err)
       // Clear previous flights on error
-      setFlights([]);
-      setHasLoadedFlights(true);
+      setFlights([])
+      setHasLoadedFlights(true)
     } finally {
-      setIsLoading(false);
+      setIsLoading(false)
     }
   }
 
   // Split the effect into two parts:
   // 1. Reset the loaded flag when dependencies change
   useEffect(() => {
-    setHasLoadedFlights(false);
+    setHasLoadedFlights(false)
     // Also clear flights when route or date changes to prevent showing old flights
-    setFlights([]);
-  }, [unwrappedParams.route, departureDate]);
+    setFlights([])
+  }, [unwrappedParams.route, departureDate])
 
   // 2. Load the data only when needed
   useEffect(() => {
     if (!hasLoadedFlights) {
-      getFlights(departureDate);
+      getFlights(departureDate)
     }
-  }, [hasLoadedFlights, departureDate]);
+  }, [hasLoadedFlights, departureDate])
 
   // Sort flights based on selected sort key, safely handling empty/incomplete objects
   const sortedFlights = [...flights]
@@ -648,43 +653,42 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
   const filteredFlights = sortedFlights.filter((flight) => {
     // Filter by price range
     if (flight.price.amount < priceRange[0] || flight.price.amount > priceRange[1]) {
-      return false;
+      return false
     }
 
     // Filter by flight time range
     // Only apply if we have a valid departure time
-    const departureTime = flight.departureTime;
+    const departureTime = flight.departureTime
     if (departureTime) {
       // Try to extract hour as a number by:
       // 1. First checking for Persian digits (۰-۹)
       // 2. If not found, try normal digits (0-9)
-      let departureHour: number | null = null;
-      
+      let departureHour: number | null = null
+
       // First try Persian digits pattern
-      const persianMatch = departureTime.match(/^([۰۱۲۳۴۵۶۷۸۹]+):/);
+      const persianMatch = departureTime.match(/^([۰۱۲۳۴۵۶۷۸۹]+):/)
       if (persianMatch && persianMatch[1]) {
         // Convert Persian digits to numbers
-        const persianDigits = "۰۱۲۳۴۵۶۷۸۹";
-        let hour = 0;
+        const persianDigits = "۰۱۲۳۴۵۶۷۸۹"
+        let hour = 0
         for (const digit of persianMatch[1]) {
-          const index = persianDigits.indexOf(digit);
+          const index = persianDigits.indexOf(digit)
           if (index !== -1) {
-            hour = hour * 10 + index;
+            hour = hour * 10 + index
           }
         }
-        departureHour = hour;
+        departureHour = hour
       } else {
         // Try regular digits
-        const regularMatch = departureTime.match(/^(\d+):/);
+        const regularMatch = departureTime.match(/^(\d+):/)
         if (regularMatch && regularMatch[1]) {
-          departureHour = parseInt(regularMatch[1], 10);
+          departureHour = parseInt(regularMatch[1], 10)
         }
       }
-      
+
       // Apply filter if we successfully extracted a valid hour
-      if (departureHour !== null && 
-          (departureHour < flightTimeRange[0] || departureHour > flightTimeRange[1])) {
-        return false;
+      if (departureHour !== null && (departureHour < flightTimeRange[0] || departureHour > flightTimeRange[1])) {
+        return false
       }
     }
 
@@ -692,44 +696,42 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
     if (Object.values(filters.cabinClass).some(Boolean)) {
       // Map cabin class from flight to filter key
       const cabinClassMapping: Record<string, string> = {
-        "اکونومی": "economy",
-        "بیزینس": "business",
-        "اکونومی پریمیوم": "premiumEconomy"
-      };
-      
-      const flightCabinClass = flight.flightInfo.cabinClass || "";
-      const cabinClassKey = cabinClassMapping[flightCabinClass];
-      
+        اکونومی: "economy",
+        بیزینس: "business",
+        "اکونومی پریمیوم": "premiumEconomy",
+      }
+
+      const flightCabinClass = flight.flightInfo.cabinClass || ""
+      const cabinClassKey = cabinClassMapping[flightCabinClass]
+
       // Only check if we found a matching cabin class key
       if (cabinClassKey && !filters.cabinClass[cabinClassKey as keyof typeof filters.cabinClass]) {
-        return false;
+        return false
       }
     }
 
     // Filter by airlines if any selected
     if (Object.values(filters.airlines).some(Boolean)) {
       // Find the airline UID based on name
-      const airlineUID = availableAirlines.find(a => a.name === flight.airline.name)?.uid;
-      
+      const airlineUID = availableAirlines.find((a) => a.name === flight.airline.name)?.uid
+
       if (!airlineUID || !filters.airlines[airlineUID]) {
-        return false;
+        return false
       }
     }
 
     // Filter by agencies (websites) if any selected
     if (Object.values(filters.agencies).some(Boolean)) {
       // Check if at least one website offering this flight matches the filter
-      const hasMatchingWebsite = flight.websites.some(website => 
-        filters.agencies[website.detail.uid]
-      );
-      
+      const hasMatchingWebsite = flight.websites.some((website) => filters.agencies[website.detail.uid])
+
       if (!hasMatchingWebsite) {
-        return false;
+        return false
       }
     }
 
-    return true;
-  });
+    return true
+  })
 
   // Create a drawer content ref to communicate with the FilterDrawerContent
   const drawerContentRef = useRef<DrawerContentRefType>(null)
@@ -830,7 +832,7 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
 
         {isLoading ? (
           <div className="flex flex-col items-center justify-center py-12">
-            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary mb-4"></div>
+            <div className="border-primary mb-4 h-12 w-12 animate-spin rounded-full border-t-2 border-b-2"></div>
             <p className="text-Gray-N600 text-lg font-medium">در حال جستجوی پروازها...</p>
           </div>
         ) : filteredFlights.length > 0 ? (
@@ -984,7 +986,9 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                       <FilterDrawerContent
                         ref={drawerContentRef}
                         title="بازه قیمت"
-                        activeFiltersCount={priceRange[0] !== priceRangeBounds[0] || priceRange[1] !== priceRangeBounds[1] ? 1 : 0}
+                        activeFiltersCount={
+                          priceRange[0] !== priceRangeBounds[0] || priceRange[1] !== priceRangeBounds[1] ? 1 : 0
+                        }
                         clearFilters={() => setPriceRange(priceRangeBounds)}
                         activeSection="priceRange"
                         filters={filters}
@@ -1115,8 +1119,8 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                           <div className="text-Primary-P500main text-sm leading-normal font-medium">
                             ایرلاین‌ها:{" "}
                             {availableAirlines
-                              .filter(airline => filters.airlines[airline.uid])
-                              .map(airline => airline.name)
+                              .filter((airline) => filters.airlines[airline.uid])
+                              .map((airline) => airline.name)
                               .join("، ")}
                           </div>
                         </div>
@@ -1162,8 +1166,8 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                           <div className="text-Primary-P500main text-sm leading-normal font-medium">
                             وبسایت‌ها:{" "}
                             {availableWebsites
-                              .filter(website => filters.agencies[website.uid])
-                              .map(website => website.name_fa)
+                              .filter((website) => filters.agencies[website.uid])
+                              .map((website) => website.name_fa)
                               .join("، ")}
                           </div>
                         </div>
@@ -1215,7 +1219,9 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                       <FilterDrawerContent
                         ref={drawerContentRef}
                         title="بازه قیمت"
-                        activeFiltersCount={priceRange[0] !== priceRangeBounds[0] || priceRange[1] !== priceRangeBounds[1] ? 1 : 0}
+                        activeFiltersCount={
+                          priceRange[0] !== priceRangeBounds[0] || priceRange[1] !== priceRangeBounds[1] ? 1 : 0
+                        }
                         clearFilters={() => setPriceRange(priceRangeBounds)}
                         activeSection="priceRange"
                         filters={filters}
@@ -1407,10 +1413,7 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
 
               {/* No flights found message with actions - FOR FILTERED RESULTS */}
               <div className="flex-1">
-                <NoTicketFound 
-                  type="filter"
-                  onClearFilters={_clearFilters}
-                />
+                <NoTicketFound type="filter" onClearFilters={_clearFilters} />
               </div>
             </div>
           </>
@@ -1418,17 +1421,17 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
           // No flights at all for this day
           <>
             <div className="container mx-auto flex max-w-266 flex-col items-center justify-center p-0 lg:px-4 lg:py-6">
-              <NoTicketFound 
+              <NoTicketFound
                 type="noFlights"
                 onChangeSearch={() => {
                   // Scroll to the top of the page
-                  window.scrollTo({ top: 0, behavior: 'smooth' });
-                  
+                  window.scrollTo({ top: 0, behavior: "smooth" })
+
                   // Find header search toggle button and click it
-                  const searchToggleElement = document.querySelector('[data-search-toggle="true"]');
+                  const searchToggleElement = document.querySelector('[data-search-toggle="true"]')
                   if (searchToggleElement instanceof HTMLElement) {
-                    searchToggleElement.click();
-                  } 
+                    searchToggleElement.click()
+                  }
                 }}
               />
             </div>
@@ -1440,10 +1443,7 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
 }
 
 // Simpler drawer content component with ref API
-const FilterDrawerContent = React.forwardRef<
-  DrawerContentRefType,
-  FilterDrawerContentProps
->(
+const FilterDrawerContent = React.forwardRef<DrawerContentRefType, FilterDrawerContentProps>(
   (
     {
       title,
@@ -1529,9 +1529,9 @@ const FilterDrawerContent = React.forwardRef<
         cabinClass: { economy: false, business: false, premiumEconomy: false },
         airlines: {},
         agencies: {},
-      });
-      setLocalFlightTimeRange([4, 24]);
-      setLocalPriceRange(localPriceRangeBounds);
+      })
+      setLocalFlightTimeRange([4, 24])
+      setLocalPriceRange(localPriceRangeBounds)
     }
 
     // Calculate local active filters count
@@ -1662,7 +1662,7 @@ const FilterDrawerContent = React.forwardRef<
                         </div>
                         <div className="flex items-center justify-center gap-1">
                           <div className="text-Gray-N700 text-sm leading-normal font-medium">
-                            {availableAirlines.find(airline => airline.uid === key)?.name || key}
+                            {availableAirlines.find((airline) => airline.uid === key)?.name || key}
                           </div>
                         </div>
                       </div>
@@ -1687,7 +1687,7 @@ const FilterDrawerContent = React.forwardRef<
                         </div>
                         <div className="flex items-center justify-center gap-1">
                           <div className="text-Gray-N700 text-sm leading-normal font-medium">
-                            {availableWebsites.find(website => website.uid === key)?.name_fa || key}
+                            {availableWebsites.find((website) => website.uid === key)?.name_fa || key}
                           </div>
                         </div>
                       </div>
@@ -1695,7 +1695,8 @@ const FilterDrawerContent = React.forwardRef<
                 )}
 
                 {/* Price Range Filter */}
-                {(localPriceRange[0] !== localPriceRangeBounds[0] || localPriceRange[1] !== localPriceRangeBounds[1]) && (
+                {(localPriceRange[0] !== localPriceRangeBounds[0] ||
+                  localPriceRange[1] !== localPriceRangeBounds[1]) && (
                   <div className="bg-Shade-White outline-Gray-N100 flex flex-shrink-0 items-center justify-center gap-1 overflow-hidden rounded-2xl px-3 py-1 outline-2 outline-offset-[-2px]">
                     <div
                       className="flex cursor-pointer items-center justify-start gap-2 py-1"
@@ -1813,36 +1814,41 @@ const FilterDrawerContent = React.forwardRef<
                       key={airline.uid}
                       label={airline.name}
                       logo={airline.image || "/images/logo.webp"}
-                      extraText={airline.min_price ? `از ${englishToFarsiNumber(Math.floor(airline.min_price).toLocaleString())}` : ""}
+                      extraText={
+                        airline.min_price
+                          ? `از ${englishToFarsiNumber(Math.floor(airline.min_price).toLocaleString())}`
+                          : ""
+                      }
                       checked={localFilters.airlines[airline.uid] || false}
                       onChange={(v) => handleLocalFilterUpdate("airlines", airline.uid, v)}
                     />
                   ))
                 ) : (
-                  <div className="text-Gray-N500 text-center text-sm py-2">هیچ ایرلاینی یافت نشد</div>
+                  <div className="text-Gray-N500 py-2 text-center text-sm">هیچ ایرلاینی یافت نشد</div>
                 )}
               </FilterSection>
             )}
 
             {/* Agencies */}
             {(activeSection === "all" || activeSection === "agencies") && (
-              <FilterSection
-                title="وبسایت‌ها"
-                count={Object.values(localFilters.agencies).filter(Boolean).length}
-              >
+              <FilterSection title="وبسایت‌ها" count={Object.values(localFilters.agencies).filter(Boolean).length}>
                 {availableWebsites.length > 0 ? (
                   availableWebsites.map((website) => (
                     <FilterCheckbox
                       key={website.uid}
                       label={website.name_fa}
                       logo={website.image || "/images/logo.webp"}
-                      extraText={website.min_price ? `از ${englishToFarsiNumber(Math.floor(website.min_price).toLocaleString())}` : ""}
+                      extraText={
+                        website.min_price
+                          ? `از ${englishToFarsiNumber(Math.floor(website.min_price).toLocaleString())}`
+                          : ""
+                      }
                       checked={localFilters.agencies[website.uid] || false}
                       onChange={(v) => handleLocalFilterUpdate("agencies", website.uid, v)}
                     />
                   ))
                 ) : (
-                  <div className="text-Gray-N500 text-center text-sm py-2">هیچ وبسایتی یافت نشد</div>
+                  <div className="text-Gray-N500 py-2 text-center text-sm">هیچ وبسایتی یافت نشد</div>
                 )}
               </FilterSection>
             )}
@@ -1864,13 +1870,7 @@ const formatTime = (hour: number) => {
 }
 
 // Filter section with expandable header
-const FilterSection: React.FC<FilterSectionProps> = ({
-  title,
-  children,
-  count = 0,
-  isOpen = true,
-  isLast = false,
-}) => {
+const FilterSection: React.FC<FilterSectionProps> = ({ title, children, count = 0, isOpen = true, isLast = false }) => {
   const [expanded, setExpanded] = React.useState(isOpen)
 
   return (
@@ -1913,13 +1913,7 @@ const FilterSection: React.FC<FilterSectionProps> = ({
 }
 
 // Checkbox component for filters
-const FilterCheckbox: React.FC<FilterCheckboxProps> = ({
-  label,
-  checked,
-  onChange,
-  logo,
-  extraText,
-}) => (
+const FilterCheckbox: React.FC<FilterCheckboxProps> = ({ label, checked, onChange, logo, extraText }) => (
   <div className="inline-flex items-center justify-end gap-2 self-stretch">
     <div className="flex items-center justify-center gap-2 p-[3px]">
       <div

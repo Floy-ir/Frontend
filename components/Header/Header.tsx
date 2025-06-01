@@ -120,9 +120,9 @@ export function Header({ menuItems, className, forceScrolledStyle = false }: Hea
 
   // Add smooth scrolling behavior
   useEffect(() => {
-    document.documentElement.style.scrollBehavior = 'smooth'
+    document.documentElement.style.scrollBehavior = "smooth"
     return () => {
-      document.documentElement.style.scrollBehavior = 'auto'
+      document.documentElement.style.scrollBehavior = "auto"
     }
   }, [])
 
@@ -134,7 +134,7 @@ export function Header({ menuItems, className, forceScrolledStyle = false }: Hea
     <>
       <header className={headerClasses}>
         {/* Content container - only constrain width for content, not background */}
-        <div className={`mx-auto w-full max-w-[1136px] px-4 md:px-4 lg-xl:px-6 lg:px-6 ${isScrolled ? "w-full" : ""}`}>
+        <div className={`lg-xl:px-6 mx-auto w-full max-w-[1136px] px-4 md:px-4 lg:px-6 ${isScrolled ? "w-full" : ""}`}>
           {/* Desktop view */}
           <div className="hidden h-22 items-center justify-between lg:flex">
             {/* Logo - Right Side in RTL */}
@@ -220,7 +220,7 @@ export function Header({ menuItems, className, forceScrolledStyle = false }: Hea
                       ) : (
                         <span
                           key={index}
-                          className={`w-full px-6 py-3 text-right text-[1.15rem] cursor-not-allowed opacity-50 ${
+                          className={`w-full cursor-not-allowed px-6 py-3 text-right text-[1.15rem] opacity-50 ${
                             item.isActive ? "font-semibold text-slate-800" : "text-slate-500"
                           }`}
                         >

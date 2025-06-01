@@ -32,10 +32,7 @@ export interface ComboboxSelectProps extends Omit<TextFieldProps, "onChange" | "
   hasError?: boolean
 }
 
-export const ComboboxSelect = React.forwardRef<
-  HTMLInputElement,
-  ComboboxSelectProps
->(function ComboboxSelect(
+export const ComboboxSelect = React.forwardRef<HTMLInputElement, ComboboxSelectProps>(function ComboboxSelect(
   {
     id,
     label,

@@ -27,7 +27,11 @@ const getDestinationImage = (destinationCode: string): StaticImageData => {
   }
 }
 
-function CityRow({ cities }: { cities: { city: string; price: string; bg: StaticImageData; origin: string; destination: string }[] }) {
+function CityRow({
+  cities,
+}: {
+  cities: { city: string; price: string; bg: StaticImageData; origin: string; destination: string }[]
+}) {
   return (
     <div className="flex w-full gap-2">
       {cities.map((city, index) => (
@@ -37,33 +41,40 @@ function CityRow({ cities }: { cities: { city: string; price: string; bg: Static
   )
 }
 
-function CityCard({ city, price, bg, large, origin, destination }: { 
-  city: string; 
-  price: string; 
-  bg: StaticImageData; 
-  large?: boolean;
-  origin?: string;
-  destination?: string;
+function CityCard({
+  city,
+  price,
+  bg,
+  large,
+  origin,
+  destination,
+}: {
+  city: string
+  price: string
+  bg: StaticImageData
+  large?: boolean
+  origin?: string
+  destination?: string
 }) {
-  const router = useRouter();
-  
+  const router = useRouter()
+
   const handleClick = () => {
     if (origin && destination) {
       // Get tomorrow's date for the default departing date
-      const tomorrow = new Date();
-      tomorrow.setDate(tomorrow.getDate() + 1);
-      const formattedDate = tomorrow.toISOString().split('T')[0];
-      
-      router.push(`/flights/${origin}-${destination}?adult=1&child=0&infant=0&departing=${formattedDate}&sort=cheapest`);
+      const tomorrow = new Date()
+      tomorrow.setDate(tomorrow.getDate() + 1)
+      const formattedDate = tomorrow.toISOString().split("T")[0]
+
+      router.push(`/flights/${origin}-${destination}?adult=1&child=0&infant=0&departing=${formattedDate}&sort=cheapest`)
     }
-  };
+  }
 
   return (
     <div
       onClick={handleClick}
       className={`relative flex ${
         large ? "h-80 w-67 px-8 py-4 md:w-80 lg:w-120" : "h-39 w-69 px-6 py-4"
-      } flex-1 flex-col justify-end overflow-hidden rounded-2xl border-2 border-slate-200 cursor-pointer hover:border-blue-400 transition-colors`}
+      } flex-1 cursor-pointer flex-col justify-end overflow-hidden rounded-2xl border-2 border-slate-200 transition-colors hover:border-blue-400`}
     >
       {/* Background Image */}
       <Image src={bg} alt={city} fill className="h-full w-full object-cover" priority />
@@ -76,7 +87,7 @@ function CityCard({ city, price, bg, large, origin, destination }: {
         {/* City Name */}
         <div className="flex flex-col items-start">
           <div className="text-Shade-White z-10 justify-center self-stretch text-right text-lg leading-loose font-semibold">
-             {city}
+            {city}
           </div>
           <div className="text-Shade-White z-10 justify-center text-sm leading-normal font-normal">شروع قیمت از</div>
         </div>
@@ -85,7 +96,7 @@ function CityCard({ city, price, bg, large, origin, destination }: {
         <div className="flex flex-col items-end text-right">
           <div className="text-Shade-White z-10 mb-1 text-xs leading-none font-normal">تومان</div>
           <div className="text-Shade-White z-10 justify-center self-stretch text-base leading-7 font-semibold">
-                        {englishToFarsiNumber(price)}
+            {englishToFarsiNumber(price)}
           </div>
         </div>
       </div>
@@ -165,18 +176,10 @@ export default function PopularCities() {
                     destinationLabel: string
                     price: number
                   }[][]
-                >(
-                  (
-                    rows,
-                    flight,
-                    index,
-                    arr
-                  ) => {
-                    if (index % 2 === 0) rows.push(arr.slice(index, index + 2))
-                    return rows
-                  },
-                  []
-                )
+                >((rows, flight, index, arr) => {
+                  if (index % 2 === 0) rows.push(arr.slice(index, index + 2))
+                  return rows
+                }, [])
                 .map(
                   (
                     pair: {
@@ -195,7 +198,7 @@ export default function PopularCities() {
                           price: flight.price.toLocaleString(),
                           bg: getDestinationImage(flight.destination),
                           origin: flight.origin,
-                          destination: flight.destination
+                          destination: flight.destination,
                         }))}
                       />
                     </div>

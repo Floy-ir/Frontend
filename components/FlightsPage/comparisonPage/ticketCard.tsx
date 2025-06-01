@@ -69,7 +69,7 @@ export default function TicketCard({ websites }: { websites: dude[] }) {
       .replace("${infant_len}", infantCount)
 
     const finalRedirectUrl = `/redirect?redirect_url=${redirectUrl}&agency=${website.detail.name_fa}&agency_eng=${website.detail.name}`
-    
+
     // Use Eitaa's link handling when running in Eitaa mini app, otherwise use regular window.open
     if (isRunningInEitaa()) {
       openExternalLink(finalRedirectUrl)
