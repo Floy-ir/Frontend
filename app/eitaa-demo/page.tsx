@@ -6,7 +6,7 @@ import EitaaWrapper from '@/components/EitaaWrapper/EitaaWrapper';
 export default function EitaaDemoPage() {
   return (
     <EitaaWrapper autoReady={true} autoExpand={true}>
-      <div className="p-4 max-w-4xl mx-auto">
+      <div className="p-4 max-w-4xl mx-auto" suppressHydrationWarning>
         <h1 className="text-2xl font-bold mb-6">فلوی - برنامک ایتا</h1>
         
         <div className="bg-white rounded-lg shadow-md p-6 mb-6">

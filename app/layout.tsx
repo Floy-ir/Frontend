@@ -41,7 +41,7 @@ export default function RootLayout({
           content="telephone=no, date=no, email=no, address=no"
         />
       </head>
-      <body className={`${anjomanMaxVF.variable} font-anjoman-max`}>
+      <body className={`${anjomanMaxVF.variable} font-anjoman-max`} suppressHydrationWarning={true}>
         {/* Eitaa Mini App Initializer */}
         <EitaaDynamicInitializer />
         

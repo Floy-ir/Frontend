@@ -31,21 +31,14 @@ export const EitaaLink: React.FC<EitaaLinkProps> = ({
     openExternalLink(href, options);
   };
 
-  // When rendering on the server or during initial hydration, render a placeholder
-  if (!isClient) {
-    return (
-      <span className={className}>
-        {children}
-      </span>
-    );
-  }
-
-  // On the client, after hydration, render the actual link
+  // Use the same structure for both server and client rendering
+  // but only attach the click handler on the client
   return (
     <a 
       href={href}
-      onClick={handleClick}
+      onClick={isClient ? handleClick : undefined}
       className={className}
+      suppressHydrationWarning
     >
       {children}
     </a>

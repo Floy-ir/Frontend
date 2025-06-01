@@ -36,11 +36,9 @@ const EitaaWrapper: React.FC<EitaaWrapperProps> = ({
     }
   }, [autoReady, autoExpand]);
   
-  return (
-    <>
-      {isClient ? children : null}
-    </>
-  );
+  // Return children on both server and client side to prevent hydration mismatch
+  // Use suppressHydrationWarning to avoid issues with attributes like cz-shortcut-listen
+  return <div suppressHydrationWarning>{children}</div>;
 };
 
 export default EitaaWrapper; 
