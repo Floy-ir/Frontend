@@ -1,9 +1,11 @@
 import "styles/tailwind.css"
 import type { Metadata } from "next"
+import Script from "next/script"
 
 import { ActiveMenuProvider } from "@/components/ActiveMenuProvider/ActiveMenuProvider"
 import Footer from "@/components/Footer/Footer"
 import { anjomanMaxVF } from "../lib/fonts"
+import EitaaDynamicInitializer from "@/components/EitaaDynamicInitializer/EitaaDynamicInitializer"
 
 // Define metadata
 export const metadata: Metadata = {
@@ -31,10 +33,19 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="fa" dir="rtl">
+    <html lang="fa" dir="rtl" suppressHydrationWarning>
+      <head>
+        <Script src="https://developer.eitaa.com/eitaa-web-app.js" strategy="beforeInteractive" />
+        <meta
+          name="format-detection"
+          content="telephone=no, date=no, email=no, address=no"
+        />
+      </head>
       <body className={`${anjomanMaxVF.variable} font-anjoman-max`}>
+        {/* Eitaa Mini App Initializer */}
+        <EitaaDynamicInitializer />
+        
         {/* Global Header with dynamic active state */}
-
         <ActiveMenuProvider />
 
         {/* Main Content */}
