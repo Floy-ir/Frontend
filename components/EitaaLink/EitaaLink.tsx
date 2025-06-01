@@ -7,7 +7,11 @@ interface EitaaLinkProps {
   href: string
   children: ReactNode
   className?: string
-  options?: any
+  options?: {
+    target?: string
+    rel?: string
+    [key: string]: string | undefined
+  }
 }
 
 /**

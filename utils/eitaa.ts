@@ -53,7 +53,14 @@ export const expandEitaaApp = (): void => {
  * @param url URL to open
  * @param options Additional options
  */
-export const openExternalLink = (url: string, options?: any): void => {
+export const openExternalLink = (
+  url: string, 
+  options?: {
+    target?: string;
+    rel?: string;
+    [key: string]: string | undefined;
+  }
+): void => {
   if (isRunningInEitaa()) {
     window.Eitaa?.WebApp?.openLink(url, options)
   } else {

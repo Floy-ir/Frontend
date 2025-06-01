@@ -12,6 +12,19 @@ import shiraz from "../../public/images/shiraz.jpg"
 import tabriz from "../../public/images/tabriz.jpg"
 import tehran from "../../public/images/tehran.jpg"
 
+// Define interface for flight data
+interface FlightData {
+  origin: string
+  destination: string
+  price: number
+  [key: string]: string | number | boolean | undefined
+}
+
+interface FlightDataWithLabels extends FlightData {
+  originLabel: string
+  destinationLabel: string
+}
+
 const getDestinationImage = (destinationCode: string): StaticImageData => {
   switch (destinationCode) {
     case "KIH":
@@ -105,7 +118,7 @@ function CityCard({
 }
 
 export default function PopularCities() {
-  const [cityData, setCityData] = useState<{ count: number; results: any[] } | null>(null)
+  const [cityData, setCityData] = useState<{ count: number; results: FlightDataWithLabels[] } | null>(null)
 
   useEffect(() => {
     const defaultOriginList = ["THR", "MHD", "KIH"]
@@ -127,10 +140,10 @@ export default function PopularCities() {
         const query = `?favorite_cities=${originList.join(",")}`
         const response = (await apiFetch(`/flights/favorite_cities/${query}`, {
           method: "GET",
-        })) as { count: number; results: unknown[] }
+        })) as { count: number; results: FlightData[] }
 
         const resultsWithLabels = await Promise.all(
-          response.results.map(async (flight: any) => {
+          response.results.map(async (flight) => {
             const originCity = flight.origin ? await getCityByCode(flight.origin) : undefined
             const destinationCity = flight.destination ? await getCityByCode(flight.destination) : undefined
             return {

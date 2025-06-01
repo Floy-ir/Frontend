@@ -149,9 +149,9 @@ export const DatePicker = React.forwardRef<HTMLInputElement, DatePickerProps>(fu
       ...(maxDate && { after: maxDate }),
     }
 
-    // We need to cast this component as any due to type compatibility issues between the date types
-    // The JalaliCalendar expects DateRange but our component provides Date
-    const SafeCalendar = JalaliCalendar as any
+    // The JalaliCalendar has complex typing that is hard to match exactly
+    // @ts-expect-error - This is a deliberate cast to make the component work with our Date types instead of DateRange
+    const SafeCalendar = JalaliCalendar
 
     return (
       <div className="p-6">
@@ -187,8 +187,9 @@ export const DatePicker = React.forwardRef<HTMLInputElement, DatePickerProps>(fu
       handleDateSelect(day)
     }
 
-    // We need to cast this component as any due to type compatibility issues between the date types
-    const SafeCalendar = JalaliCalendar as any
+    // The JalaliCalendar has complex typing that is hard to match exactly
+    // @ts-expect-error - This is a deliberate cast to make the component work with our Date types instead of DateRange
+    const SafeCalendar = JalaliCalendar
 
     return (
       <div className="h-full w-full">
