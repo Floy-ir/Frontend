@@ -58,11 +58,6 @@ export default function Web() {
           <HeroSection />
         </div>
 
-        {/* next js navigate to eitaa demo page */}
-        <Link href="/eitaa-demo">
-          رفتن به صفحه امتحانی
-        </Link>
-
         <Companies />
 
         <div className="w-full pb-12 pt-8 lg:py-16">
