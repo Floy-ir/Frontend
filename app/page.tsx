@@ -10,7 +10,6 @@ import PopularCities from "@/components/LandingPage/PopularCities"
 import Questions from "@/components/LandingPage/Questions"
 import img from "../public/images/Underline_06.svg"
 import Link from "next/link"
-import EitaaDemoPage from "@/app/eitaa-demo/page"
 
 export const metadata: Metadata = {
   title:"فلوی | مقایسه بلیط هواپیما",
@@ -61,7 +60,7 @@ export default function Web() {
 
         {/* next js navigate to eitaa demo page */}
         <Link href="/eitaa-demo">
-          <EitaaDemoPage />
+          رفتن به صفحه امتحانی
         </Link>
 
         <Companies />
