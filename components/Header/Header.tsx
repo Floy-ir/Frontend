@@ -207,7 +207,7 @@ export function Header({ menuItems, className, forceScrolledStyle = false }: Hea
                 <div className="overflow-auto p-6">
                   <nav className="flex flex-col items-end space-y-3">
                     {menuItems.map((item, index) => {
-                      return item.href === "/" ? (
+                      return (
                         <Link
                           key={index}
                           href={item.href}
@@ -218,15 +218,6 @@ export function Header({ menuItems, className, forceScrolledStyle = false }: Hea
                         >
                           {item.label}
                         </Link>
-                      ) : (
-                        <span
-                          key={index}
-                          className={`w-full px-6 py-3 text-right text-[1.15rem] cursor-not-allowed opacity-50 ${
-                            item.isActive ? "font-semibold text-slate-800" : "text-slate-500"
-                          }`}
-                        >
-                          {item.label}
-                        </span>
                       )
                     })}
                   </nav>
