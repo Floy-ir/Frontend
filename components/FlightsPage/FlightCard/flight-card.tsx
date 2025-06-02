@@ -536,11 +536,9 @@ export function FlightCard({
           origin={origin}
           destination={destination}
           duration={duration}
-          otherSellersCount={otherSellersCount}
           airline={airline}
           flightInfo={flightInfo}
           websites={websites}
-          onBuy={onBuy}
         />
       )}
     </article>
