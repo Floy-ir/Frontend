@@ -54,11 +54,11 @@ export const expandEitaaApp = (): void => {
  * @param options Additional options
  */
 export const openExternalLink = (
-  url: string, 
+  url: string,
   options?: {
-    target?: string;
-    rel?: string;
-    [key: string]: string | undefined;
+    target?: string
+    rel?: string
+    [key: string]: string | undefined
   }
 ): void => {
   if (isRunningInEitaa()) {

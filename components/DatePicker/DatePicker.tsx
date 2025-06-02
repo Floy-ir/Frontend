@@ -164,8 +164,8 @@ export const DatePicker = React.forwardRef<HTMLInputElement, DatePickerProps>(fu
         caption: "p-2",
         caption_label: "text-base font-semibold",
       },
-      ...calendarProps
-    };
+      ...calendarProps,
+    }
 
     return (
       <div className="p-6">
@@ -205,8 +205,8 @@ export const DatePicker = React.forwardRef<HTMLInputElement, DatePickerProps>(fu
         button_previous: "px-10 pt-1 z-10",
         button_next: "px-10 pt-1 z-10",
       },
-      ...calendarProps
-    };
+      ...calendarProps,
+    }
 
     return (
       <div className="h-full w-full">
