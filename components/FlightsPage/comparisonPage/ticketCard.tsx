@@ -1,13 +1,12 @@
 "use client"
 
-import { ArrowDown2, ArrowLeft2, InfoCircle } from "iconsax-react"
+import { ArrowDown2, ArrowLeft2 } from "iconsax-react"
 import Image from "next/image"
-import { useRouter } from "next/navigation"
 import { useEffect, useRef, useState } from "react"
 import { Button } from "@/components/Button/Button"
 import dude from "@/public/images/flash-circle-outline.svg"
-import { englishToFarsiNumber } from "@/utils/numbers"
 import { isRunningInEitaa, openExternalLink } from "@/utils/eitaa"
+import { englishToFarsiNumber } from "@/utils/numbers"
 
 type dude = {
   adult_price: number
@@ -27,15 +26,13 @@ type dude = {
 
 export default function TicketCard({ websites }: { websites: dude[] }) {
   const [openPriceDetails, setOpenPriceDetails] = useState<boolean[]>(new Array(websites.length).fill(false)) // for each card's price details
-  const [openRefundRules, setOpenRefundRules] = useState<boolean[]>(new Array(websites.length).fill(false)) // for each card's refund rules
+  const [openRefundRules, _] = useState<boolean[]>(new Array(websites.length).fill(false)) // for each card's refund rules
   const refundRefs = useRef<(HTMLDivElement | null)[]>([])
-  const [refundHeights, setRefundHeights] = useState<string[]>(new Array(websites.length).fill("0px"))
+  const [, setRefundHeights] = useState<string[]>(new Array(websites.length).fill("0px"))
   const searchParams = new URLSearchParams(typeof window !== "undefined" ? window.location.search : "")
   const adultCount = searchParams.get("adult") ?? "0"
   const childCount = searchParams.get("child") ?? "0"
   const infantCount = searchParams.get("infant") ?? "0"
-
-  const router = useRouter()
 
   // Calculate total price for a website
   const getTotalPrice = (website: dude) =>
@@ -72,7 +69,7 @@ export default function TicketCard({ websites }: { websites: dude[] }) {
       .replace("${infant_len}", infantCount)
 
     const finalRedirectUrl = `/redirect?redirect_url=${redirectUrl}&agency=${website.detail.name_fa}&agency_eng=${website.detail.name}`
-    
+
     // Use Eitaa's link handling when running in Eitaa mini app, otherwise use regular window.open
     if (isRunningInEitaa()) {
       openExternalLink(finalRedirectUrl)

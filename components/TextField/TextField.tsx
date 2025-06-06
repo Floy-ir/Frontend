@@ -4,7 +4,6 @@ import * as Form from "@radix-ui/react-form"
 import { cva, type VariantProps } from "class-variance-authority"
 import * as React from "react"
 import { twMerge } from "tailwind-merge"
-import { englishToFarsiNumber } from "utils/numbers"
 
 export const textFieldContainer = cva(["flex", "flex-col", "gap-2", "w-full"], {
   variants: {
@@ -153,10 +152,7 @@ export interface TextFieldProps
   hasError?: boolean
 }
 
-export const TextField = React.forwardRef<
-  HTMLInputElement,
-  TextFieldProps
->(function TextField(
+export const TextField = React.forwardRef<HTMLInputElement, TextFieldProps>(function TextField(
   {
     id,
     label,
@@ -222,11 +218,16 @@ export const TextField = React.forwardRef<
 
   return (
     <Form.Root
-      className={twMerge(textFieldContainer({ intent: fieldIntent, disabled, className: containerClassName }), noBorder && "gap-0")}
+      className={twMerge(
+        textFieldContainer({ intent: fieldIntent, disabled, className: containerClassName }),
+        noBorder && "gap-0"
+      )}
     >
       <Form.Field name={id || "textfield"}>
         {label && (
-          <Form.Label className={twMerge(textFieldLabel({ intent: fieldIntent, className: labelClassName }))}>{label}</Form.Label>
+          <Form.Label className={twMerge(textFieldLabel({ intent: fieldIntent, className: labelClassName }))}>
+            {label}
+          </Form.Label>
         )}
 
         <div
@@ -269,7 +270,7 @@ export const TextField = React.forwardRef<
               </div>
             )}
             {showCharCount && maxLength && (
-              <div className="text-xs text-slate-500 px-3">
+              <div className="px-3 text-xs text-slate-500">
                 {inputValue.length}/{maxLength}
               </div>
             )}

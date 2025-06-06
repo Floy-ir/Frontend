@@ -1,10 +1,11 @@
 "use client"
 
-import { Add, ArrowRight, ArrowSwapHorizontal, ArrowUp2 } from "iconsax-react"
-import { useRouter } from "next/navigation"
-import React, { useEffect, useState, useMemo } from "react"
-import { useForm, Controller } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
+import { Add, ArrowRight, ArrowSwapHorizontal, ArrowUp2 } from "iconsax-react"
+import { Loader } from "lucide-react"
+import { useRouter } from "next/navigation"
+import React, { useEffect, useMemo, useState } from "react"
+import { Controller, useForm } from "react-hook-form"
 import { z } from "zod"
 
 import { Button } from "@/components/Button/Button"
@@ -13,12 +14,10 @@ import { DatePicker } from "@/components/DatePicker/DatePicker"
 import { PassengerCount, PassengerSelector } from "@/components/PassengerSelector/PassengerSelector"
 import type { CityOption } from "@/config/cities"
 import { getCityByName, getCityOptions } from "@/config/cities"
-import { useStoredCities } from "@/hooks/useStoredCities"
 import { useFlightFormPersistence } from "@/hooks/useFlightFormPersistence"
+import { useStoredCities } from "@/hooks/useStoredCities"
 import { formatDate } from "@/utils/dateUtils"
 import { createFlightSearchUrl } from "@/utils/navigation"
-import { Info } from "lucide-react"
-import { Loader } from "lucide-react"
 
 // Define zod schema for form validation
 const searchFormSchema = z.object({
@@ -30,9 +29,9 @@ const searchFormSchema = z.object({
     child: z.number().int().min(0, { message: "تعداد مسافران را مشخص کنید" }),
     infant: z.number().int().min(0, { message: "تعداد مسافران را مشخص کنید" }),
   }),
-});
+})
 
-type SearchFormValues = z.infer<typeof searchFormSchema>;
+type SearchFormValues = z.infer<typeof searchFormSchema>
 
 type FlightSearchFormProps = {
   initialOrigin?: string
@@ -61,30 +60,31 @@ export function FlightSearchForm({
   const [options, setOptions] = useState<Pick<CityOption, "value" | "label">[]>([])
   // Use our custom hooks
   const { recentSelections, addRecentSelection, saveSearch } = useStoredCities()
-  const { loadFormData, saveFormData, clearFormData } = useFlightFormPersistence()
+  const { loadFormData, saveFormData } = useFlightFormPersistence()
   const [isLoading, setIsLoading] = useState(false)
 
   // Load persisted form data
   const persistedFormData = useMemo(() => loadFormData(), [])
 
   // Create form with react-hook-form
-  const { control, handleSubmit, setValue, watch, formState: { errors, isSubmitted }, trigger } = useForm<SearchFormValues>({
+  const { control, handleSubmit, setValue, watch, trigger } = useForm<SearchFormValues>({
     resolver: zodResolver(searchFormSchema),
     defaultValues: {
       // Prioritize prop values over persisted values
       origin: initialOrigin || persistedFormData.origin,
       destination: initialDestination || persistedFormData.destination,
-      departureDate: initialDepartureDate || 
-                   (persistedFormData.departureDate ? new Date(persistedFormData.departureDate) : undefined),
+      departureDate:
+        initialDepartureDate ||
+        (persistedFormData.departureDate ? new Date(persistedFormData.departureDate) : undefined),
       passengers: initialPassengers || persistedFormData.passengers,
     },
     mode: "onChange",
-  });
+  })
 
-  const origin = watch("origin");
-  const destination = watch("destination");
-  const departureDate = watch("departureDate");
-  const passengers = watch("passengers");
+  const origin = watch("origin")
+  const destination = watch("destination")
+  const departureDate = watch("departureDate")
+  const passengers = watch("passengers")
 
   // Save form values to localStorage whenever they change
   useEffect(() => {
@@ -94,26 +94,26 @@ export function FlightSearchForm({
         destination,
         departureDate: departureDate ? departureDate.toISOString() : null,
         passengers,
-      });
+      })
     }
-  }, [origin, destination, departureDate, passengers, saveFormData]);
+  }, [origin, destination, departureDate, passengers, saveFormData])
 
   // Filter options to exclude selected cities
   const originOptions = useMemo(() => {
-    return options.filter(option => option.value !== destination);
-  }, [options, destination]);
+    return options.filter((option) => option.value !== destination)
+  }, [options, destination])
 
   const destinationOptions = useMemo(() => {
-    return options.filter(option => option.value !== origin);
-  }, [options, origin]);
+    return options.filter((option) => option.value !== origin)
+  }, [options, origin])
 
   const filteredRecentSelectionsOrigin = useMemo(() => {
-    return recentSelections.filter(city => city.value !== destination);
-  }, [recentSelections, destination]);
+    return recentSelections.filter((city) => city.value !== destination)
+  }, [recentSelections, destination])
 
   const filteredRecentSelectionsDestination = useMemo(() => {
-    return recentSelections.filter(city => city.value !== origin);
-  }, [recentSelections, origin]);
+    return recentSelections.filter((city) => city.value !== origin)
+  }, [recentSelections, origin])
 
   // Get city options from config
   useEffect(() => {
@@ -122,10 +122,10 @@ export function FlightSearchForm({
 
   // Custom onChange handlers
   const handleOriginChange = async (value: string) => {
-    setValue("origin", value);
+    setValue("origin", value)
     // Trigger validation immediately
-    trigger("origin");
-    
+    trigger("origin")
+
     const cityOption = await getCityByName(value)
     if (cityOption) {
       addRecentSelection(value, cityOption.label, cityOption.code)
@@ -133,44 +133,44 @@ export function FlightSearchForm({
   }
 
   const handleDestinationChange = async (value: string) => {
-    setValue("destination", value);
+    setValue("destination", value)
     // Trigger validation immediately
-    trigger("destination");
-    
+    trigger("destination")
+
     const cityOption = await getCityByName(value)
     if (cityOption) {
       addRecentSelection(value, cityOption.label, cityOption.code)
     }
   }
-  
+
   // Add function to handle date change with validation
   const handleDateChange = (date: Date | string | null) => {
     if (date) {
-      setValue("departureDate", date instanceof Date ? date : new Date(date));
+      setValue("departureDate", date instanceof Date ? date : new Date(date))
       // Trigger validation immediately
-      trigger("departureDate");
+      trigger("departureDate")
     }
   }
-  
+
   // Add function to handle passengers change with validation
   const handlePassengersChange = (passengers: PassengerCount) => {
-    setValue("passengers", passengers);
+    setValue("passengers", passengers)
     // Trigger validation immediately
-    trigger("passengers");
+    trigger("passengers")
   }
 
   // Handle exchange of origin and destination
   const handleExchange = () => {
-    const currentOrigin = watch("origin");
-    const currentDestination = watch("destination");
-    setValue("origin", currentDestination);
-    setValue("destination", currentOrigin);
+    const currentOrigin = watch("origin")
+    const currentDestination = watch("destination")
+    setValue("origin", currentDestination)
+    setValue("destination", currentOrigin)
   }
 
   // Handle search form submission
   const onSubmit = async (data: SearchFormValues) => {
     setIsLoading(true)
-    
+
     try {
       // Get the city objects with their codes
       const originCity = await getCityByName(data.origin)
@@ -193,29 +193,30 @@ export function FlightSearchForm({
       // Navigate to the flights page with the query parameters
       router.push(createFlightSearchUrl(originCity.code, destinationCity.code, data.departureDate, data.passengers))
     } catch (error) {
+      console.error(error)
       // In case of error, reset loading state
       setIsLoading(false)
     }
   }
 
   // Create a state to track if we should focus the input
-  const [shouldFocus, setShouldFocus] = useState(autoFocus);
-  
+  const [shouldFocus, setShouldFocus] = useState(autoFocus)
+
   // Handle autofocus when the form is opened
   useEffect(() => {
-    setShouldFocus(autoFocus);
-  }, [autoFocus]);
+    setShouldFocus(autoFocus)
+  }, [autoFocus])
 
   // Error message renderer
   const renderErrorMessage = (errorMessage?: string) => {
-    if (!errorMessage) return null;
-    
+    if (!errorMessage) return null
+
     return (
-      <div className="text-Error-E500main text-xs absolute -bottom-2 right-0 z-20">
+      <div className="text-Error-E500main absolute right-0 -bottom-2 z-20 text-xs">
         <span>{errorMessage}</span>
       </div>
-    );
-  };
+    )
+  }
 
   return (
     <div className="m-0 flex w-full flex-col items-center" id={id}>
@@ -239,7 +240,7 @@ export function FlightSearchForm({
           <div className={`bg-Gray-N200 h-px w-full ${contextPage == "flights" ? "block md:hidden" : "hidden"}`}></div>
 
           {/* Form Fields */}
-          <div className="mt-4 flex w-full flex-col items-start gap-1 px-4 lg:mt-0 lg:flex-row lg:items-center lg:gap-3 xl:gap-6 lg:px-0">
+          <div className="mt-4 flex w-full flex-col items-start gap-1 px-4 lg:mt-0 lg:flex-row lg:items-center lg:gap-3 lg:px-0 xl:gap-6">
             {/* Origin/Destination Section - Mobile & Tablet layout (until 1169px) */}
             <div className="flex w-full flex-col lg:hidden">
               <div className="flex w-full flex-row-reverse items-center gap-4">
@@ -261,7 +262,7 @@ export function FlightSearchForm({
                 {/* Fields Container - Mobile & Tablet */}
                 <div className="flex flex-1 flex-col">
                   {/* Origin Field - Mobile & Tablet */}
-                  <div className="z-150 w-full relative">
+                  <div className="relative z-150 w-full">
                     <Controller
                       name="origin"
                       control={control}
@@ -293,7 +294,7 @@ export function FlightSearchForm({
                   <div className="bg-Gray-N200 my-2 h-px w-full"></div>
 
                   {/* Destination Field - Mobile & Tablet */}
-                  <div className="w-full relative">
+                  <div className="relative w-full">
                     <Controller
                       name="destination"
                       control={control}
@@ -329,7 +330,7 @@ export function FlightSearchForm({
             {/* Origin/Destination Section - Desktop layout (1170px and up) */}
             <div className="hidden w-full items-start gap-4 lg:flex lg:w-auto lg:flex-row lg:items-center xl:gap-6">
               {/* Origin Field - Desktop */}
-              <div className="w-full relative lg:w-40 xl:w-47">
+              <div className="relative w-full lg:w-40 xl:w-47">
                 <Controller
                   name="origin"
                   control={control}
@@ -372,7 +373,7 @@ export function FlightSearchForm({
               </div>
 
               {/* Destination Field - Desktop */}
-              <div className="w-full relative lg:w-40 xl:w-47">
+              <div className="relative w-full lg:w-40 xl:w-47">
                 <Controller
                   name="destination"
                   control={control}
@@ -400,12 +401,12 @@ export function FlightSearchForm({
               </div>
             </div>
 
-            <div className="bg-Gray-N200 h-12 w-px hidden lg:block" />
+            <div className="bg-Gray-N200 hidden h-12 w-px lg:block" />
 
             {/* Date and Passenger Fields - Side by side on all devices */}
             <div className="flex w-full flex-row items-center gap-4">
               {/* Departure Date Field */}
-              <div className="w-1/2 relative lg:pb-0 lg:w-20 xl:w-20">
+              <div className="relative w-1/2 lg:w-20 lg:pb-0 xl:w-20">
                 <Controller
                   name="departureDate"
                   control={control}
@@ -447,7 +448,7 @@ export function FlightSearchForm({
               <div className="bg-Gray-N200 h-12 w-px" />
 
               {/* Passengers Field */}
-              <div className="w-1/2 relative lg:pb-0 lg:w-16 xl:w-18">
+              <div className="relative w-1/2 lg:w-16 lg:pb-0 xl:w-18">
                 <Controller
                   name="passengers"
                   control={control}
@@ -478,10 +479,10 @@ export function FlightSearchForm({
 
         {/* Search Button */}
         <div className="mt-4 flex w-full items-center justify-center gap-4 pr-4 lg:mt-0 lg:w-1/4">
-          <Button 
-            intent="primary" 
-            size="large" 
-            className="w-full" 
+          <Button
+            intent="primary"
+            size="large"
+            className="w-full"
             onClick={handleSubmit(onSubmit)}
             disabled={isLoading}
           >

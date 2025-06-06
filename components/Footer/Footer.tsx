@@ -83,10 +83,10 @@ const Footer: React.FC = () => {
                 فلوی{" "}
               </div>
               <p className="text-Gray-N500 flex flex-col items-start justify-start text-right text-[13px] leading-normal">
-                فلوی یک پلتفرم جستجوی بلیط است که امکان مقایسه و خرید آسان بلیط هواپیما، هتل و اقامتگاه های مسافرتی را از
-                میان ارائه دهندگان معتبر فراهم می‌کند. ما با جمع آوری داده‌های به‌روز و قیمت‌های متفاوت به کاربران کمک
-                می‌کنیم تا بهترین انتخاب را برای سفرهای خود داشته باشند. هدف ما ساده‌سازی فرآیند جستجو و رزرو، صرفه‌جویی
-                در زمان و هزینه، و ایجاد تجربه‌ای لذت‌بخش برای مسافران است.
+                فلوی یک پلتفرم جستجوی بلیط است که امکان مقایسه و خرید آسان بلیط هواپیما، هتل و اقامتگاه های مسافرتی را
+                از میان ارائه دهندگان معتبر فراهم می‌کند. ما با جمع آوری داده‌های به‌روز و قیمت‌های متفاوت به کاربران
+                کمک می‌کنیم تا بهترین انتخاب را برای سفرهای خود داشته باشند. هدف ما ساده‌سازی فرآیند جستجو و رزرو،
+                صرفه‌جویی در زمان و هزینه، و ایجاد تجربه‌ای لذت‌بخش برای مسافران است.
               </p>
             </div>
           </div>
@@ -169,7 +169,9 @@ const Footer: React.FC = () => {
 
             {/* Third Grid */}
             <div className="my-6 flex w-full flex-col">
-              <div className="text-Gray-N600 mb-1 justify-center text-right text-lg leading-loose font-medium">فلوی</div>
+              <div className="text-Gray-N600 mb-1 justify-center text-right text-lg leading-loose font-medium">
+                فلوی
+              </div>
               <p className="text-Gray-N500 flex flex-col items-start justify-start text-right text-[13px] leading-normal">
                 {isExpanded
                   ? `فلوی یک پلتفرم جستجوی بلیط است که امکان مقایسه و رزرو آسان بلیط پرواز، هتل، قطار و دیگر خدمات سفر را از

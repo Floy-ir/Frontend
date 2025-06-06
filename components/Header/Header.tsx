@@ -2,12 +2,11 @@
 
 import * as NavigationMenu from "@radix-ui/react-navigation-menu"
 import { cva } from "class-variance-authority"
-import { Airplane, ArrowRight, ArrowRight2, HambergerMenu } from "iconsax-react"
+import { Airplane, HambergerMenu } from "iconsax-react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import React, { useEffect, useState } from "react"
 import { twMerge } from "tailwind-merge"
-import { Button } from "../Button/Button"
 import { Drawer, DrawerContent, DrawerTitle, DrawerTrigger } from "../ui/drawer"
 
 interface MenuItem {
@@ -121,13 +120,13 @@ export function Header({ menuItems, className, forceScrolledStyle = false }: Hea
 
   // Add smooth scrolling behavior
   useEffect(() => {
-    document.documentElement.style.scrollBehavior = 'smooth'
+    document.documentElement.style.scrollBehavior = "smooth"
     return () => {
-      document.documentElement.style.scrollBehavior = 'auto'
+      document.documentElement.style.scrollBehavior = "auto"
     }
   }, [])
 
-  if (pathname.startsWith("/flights") && isSmallScreen) {
+  if (pathname?.startsWith("/flights") && isSmallScreen) {
     return <></>
   }
 
@@ -135,7 +134,7 @@ export function Header({ menuItems, className, forceScrolledStyle = false }: Hea
     <>
       <header className={headerClasses}>
         {/* Content container - only constrain width for content, not background */}
-        <div className={`mx-auto w-full max-w-[1136px] px-4 md:px-4 lg-xl:px-6 lg:px-6 ${isScrolled ? "w-full" : ""}`}>
+        <div className={`lg-xl:px-6 mx-auto w-full max-w-[1136px] px-4 md:px-4 lg:px-6 ${isScrolled ? "w-full" : ""}`}>
           {/* Desktop view */}
           <div className="hidden h-22 items-center justify-between lg:flex">
             {/* Logo - Right Side in RTL */}
@@ -218,6 +217,15 @@ export function Header({ menuItems, className, forceScrolledStyle = false }: Hea
                         >
                           {item.label}
                         </Link>
+                      ) : (
+                        <span
+                          key={index}
+                          className={`w-full cursor-not-allowed px-6 py-3 text-right text-[1.15rem] opacity-50 ${
+                            item.isActive ? "font-semibold text-slate-800" : "text-slate-500"
+                          }`}
+                        >
+                          {item.label}
+                        </span>
                       )
                     })}
                   </nav>

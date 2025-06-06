@@ -1,5 +1,4 @@
 const withBundleAnalyzer = require("@next/bundle-analyzer")
-const { env } = require("./env.mjs")
 
 /** @type {import('next').NextConfig} */
 const config = {
@@ -26,4 +25,7 @@ const config = {
   ],
 }
 
-module.exports = env.ANALYZE ? withBundleAnalyzer({ enabled: env.ANALYZE })(config) : config 
+module.exports = async () => {
+  const { env } = await import("./env.mjs")
+  return env.ANALYZE ? withBundleAnalyzer({ enabled: env.ANALYZE })(config) : config
+}

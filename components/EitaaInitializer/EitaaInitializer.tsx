@@ -1,28 +1,26 @@
-'use client';
+"use client"
 
-import { useEffect } from 'react';
-import { isRunningInEitaa, notifyEitaaReady } from '@/utils/eitaa';
+import { useEffect } from "react"
+import { isRunningInEitaa, notifyEitaaReady } from "@/utils/eitaa"
 
 interface EitaaInitializerProps {
-  autoReady?: boolean;
+  autoReady?: boolean
 }
 
 /**
  * Component to initialize the Eitaa mini app
  * This should be placed high in the component tree
  */
-export const EitaaInitializer: React.FC<EitaaInitializerProps> = ({ 
-  autoReady = true 
-}) => {
+export const EitaaInitializer: React.FC<EitaaInitializerProps> = ({ autoReady = true }) => {
   useEffect(() => {
     // Check if running in Eitaa and notify it's ready
     if (autoReady && isRunningInEitaa()) {
-      notifyEitaaReady();
+      notifyEitaaReady()
     }
-  }, [autoReady]);
+  }, [autoReady])
 
   // This is a utility component that doesn't render anything
-  return null;
-};
+  return null
+}
 
-export default EitaaInitializer; 
+export default EitaaInitializer

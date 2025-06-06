@@ -27,7 +27,6 @@ const Timeline = ({
   adult,
   child,
   infant,
-  autoScrollToSelected,
 }: {
   originCityCode: string
   destinationCityCode: string
@@ -35,13 +34,12 @@ const Timeline = ({
   adult: string
   child: string
   infant: string
-  autoScrollToSelected?: boolean
 }) => {
   const router = useRouter()
 
   // Initialize the selected date from the 'departing' query param
-  const searchParams = useSearchParams();
-  const departingParam = searchParams.get("departing") || selectedDate;
+  const searchParams = useSearchParams()
+  const departingParam = searchParams.get("departing") || selectedDate
   const [selectedDay, setSelectedDay] = useState<string>(departingParam)
   const [data, setData] = useState<FlightData[]>([])
   const [isLoading, setIsLoading] = useState<boolean>(true)
@@ -92,11 +90,9 @@ const Timeline = ({
     fetchCheapestFlights(selectedDate)
   }, []) // runs once on mount
 
-
   const scrollRef = useRef<HTMLDivElement>(null)
 
   const handleDateSelection = (newDate: string) => {
-
     const dates = data.map((item) => item.date)
     const isEdge = newDate === dates[0] || newDate === dates[dates.length - 1]
 
@@ -111,14 +107,14 @@ const Timeline = ({
   }
   // Auto-scroll the selected date into view after data is fetched and DOM is updated
   useEffect(() => {
-    if (!scrollRef.current) return;
-    const selectedEl = scrollRef.current.querySelector('[data-selected="true"]') as HTMLElement;
+    if (!scrollRef.current) return
+    const selectedEl = scrollRef.current.querySelector('[data-selected="true"]') as HTMLElement
     if (selectedEl) {
-      const scrollContainer = scrollRef.current;
-      const offset = selectedEl.offsetLeft - scrollContainer.offsetWidth / 2 + selectedEl.offsetWidth / 2;
-      scrollContainer.scrollTo({ left: offset, behavior: "smooth" });
+      const scrollContainer = scrollRef.current
+      const offset = selectedEl.offsetLeft - scrollContainer.offsetWidth / 2 + selectedEl.offsetWidth / 2
+      scrollContainer.scrollTo({ left: offset, behavior: "smooth" })
     }
-  }, [selectedDay, data]);
+  }, [selectedDay, data])
   return (
     <div className="relative max-w-screen items-center justify-center">
       {/* Gradient */}
@@ -235,4 +231,3 @@ const Timeline = ({
 }
 
 export default Timeline
-

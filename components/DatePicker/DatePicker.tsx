@@ -2,7 +2,6 @@
 
 import { ArrowRight } from "lucide-react"
 import * as React from "react"
-import { twMerge } from "tailwind-merge"
 import { JalaliCalendar } from "@/components/JalaliCalendar/jalali-calendar"
 import {
   TextField,
@@ -11,7 +10,6 @@ import {
   textFieldLabel,
   TextFieldProps,
 } from "@/components/TextField/TextField"
-import { Button } from "@/components/ui/button"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { useMediaQuery } from "@/hooks/use-media-query"
 import { cn } from "@/lib/utils"
@@ -27,10 +25,7 @@ export interface DatePickerProps extends Omit<TextFieldProps, "onChange" | "valu
   hasError?: boolean
 }
 
-export const DatePicker = React.forwardRef<
-  HTMLInputElement,
-  DatePickerProps
->(function DatePicker(
+export const DatePicker = React.forwardRef<HTMLInputElement, DatePickerProps>(function DatePicker(
   {
     id,
     label,
@@ -154,27 +149,28 @@ export const DatePicker = React.forwardRef<
       ...(maxDate && { after: maxDate }),
     }
 
-    // We need to cast this component as any due to type compatibility issues between the date types
-    // The JalaliCalendar expects DateRange but our component provides Date
-    const SafeCalendar = JalaliCalendar as any
+    // The JalaliCalendar has complex typing that is hard to match exactly
+    // Using type assertion to fix TypeScript errors while maintaining runtime behavior
+    const calendarProps1 = {
+      mode: "single",
+      selected: selectedDate,
+      onSelect: handleDateSelect,
+      disabled: disabledDates,
+      className: "origin-top scale-110",
+      classNames: {
+        day: "w-10 h-10 p-0 flex items-center justify-center text-base rounded-full mx-auto",
+        day_today: "bg-Primary-P50",
+        day_selected: "!bg-Primary-P300 !text-white !font-bold hover:!bg-Primary-P300",
+        caption: "p-2",
+        caption_label: "text-base font-semibold",
+      },
+      ...calendarProps,
+    }
 
     return (
       <div className="p-6">
-        <SafeCalendar
-          mode="single"
-          selected={selectedDate}
-          onSelect={handleDateSelect}
-          disabled={disabledDates}
-          className="origin-top scale-110"
-          classNames={{
-            day: "w-10 h-10 p-0 flex items-center justify-center text-base rounded-full mx-auto",
-            day_today: "bg-Primary-P50",
-            day_selected: "!bg-Primary-P300 !text-white !font-bold hover:!bg-Primary-P300",
-            caption: "p-2",
-            caption_label: "text-base font-semibold",
-          }}
-          {...calendarProps}
-        />
+        {/* @ts-ignore - Type errors are due to mismatch between "range" and "single" mode */}
+        <JalaliCalendar {...calendarProps1} />
       </div>
     )
   }
@@ -187,39 +183,35 @@ export const DatePicker = React.forwardRef<
       ...(maxDate && { after: maxDate }),
     }
 
-    // Add direct handler for mobile
-    const handleMobileSelect = (day: Date | undefined) => {
-      handleDateSelect(day)
+    // Using type assertion to fix TypeScript errors while maintaining runtime behavior
+    const calendarProps2 = {
+      mode: "single",
+      selected: selectedDate,
+      onSelect: (day: Date | undefined) => handleDateSelect(day),
+      disabled: disabledDates,
+      className: "mx-auto w-full",
+      classNames: {
+        months: "flex flex-col space-y-4 w-full",
+        month: "w-full",
+        month_grid: "w-full",
+        weekdays: "py-3 mb-1 mt-6 self-stretch bg-slate-50 inline-flex justify-start items-start w-full",
+        weekday: "flex-1 text-center justify-start text-slate-500 text-sm font-medium leading-normal",
+        table: "w-full border-collapse",
+        row: "flex w-full justify-between mb-2",
+        cell: "text-center flex-1 p-0 relative",
+        day: "w-12 h-12 p-0 flex items-center justify-center text-base rounded-full mx-auto",
+        day_today: "bg-Primary-P50",
+        day_selected: "!bg-Primary-P300 !text-white !font-bold hover:!bg-Primary-P300",
+        button_previous: "px-10 pt-1 z-10",
+        button_next: "px-10 pt-1 z-10",
+      },
+      ...calendarProps,
     }
-
-    // We need to cast this component as any due to type compatibility issues between the date types
-    const SafeCalendar = JalaliCalendar as any
 
     return (
       <div className="h-full w-full">
-        <SafeCalendar
-          mode="single"
-          selected={selectedDate}
-          onSelect={handleMobileSelect}
-          disabled={disabledDates}
-          className="mx-auto w-full"
-          classNames={{
-            months: "flex flex-col space-y-4 w-full",
-            month: "w-full",
-            month_grid: "w-full",
-            weekdays: "py-3 mb-1 mt-6 self-stretch bg-slate-50 inline-flex justify-start items-start w-full",
-            weekday: "flex-1 text-center justify-start text-slate-500 text-sm font-medium leading-normal",
-            table: "w-full border-collapse",
-            row: "flex w-full justify-between mb-2",
-            cell: "text-center flex-1 p-0 relative",
-            day: "w-12 h-12 p-0 flex items-center justify-center text-base rounded-full mx-auto",
-            day_today: "bg-Primary-P50",
-            day_selected: "!bg-Primary-P300 !text-white !font-bold hover:!bg-Primary-P300",
-            button_previous: "px-10 pt-1 z-10",
-            button_next: "px-10 pt-1 z-10",
-          }}
-          {...calendarProps}
-        />
+        {/* @ts-ignore - Type errors are due to mismatch between "range" and "single" mode */}
+        <JalaliCalendar {...calendarProps2} />
       </div>
     )
   }

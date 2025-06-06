@@ -11,9 +11,7 @@ function RedirectContent() {
   const agency = searchParams.get("agency")
   const agency_eng = searchParams.get("agency_eng")
 
-
   useEffect(() => {
-  
     if (redirectUrl) {
       const timeout = setTimeout(async () => {
         const fixedUrl = redirectUrl.startsWith("http") ? redirectUrl : `https://${redirectUrl}`

@@ -337,14 +337,14 @@ export function FlightCard({
 
             <div className="flex flex-col items-start justify-start gap-2 self-stretch">
               <Button intent="primary" size="small" className="self-stretch" onClick={onBuy}>
-             رفتن به ارزان ترین
-            </Button>
+                رفتن به ارزان ترین
+              </Button>
 
-            <Button intent="text" size="small" className="self-stretch" onClick={() => setShowComparison(true)}>
-              {otherSellersCount > 1
-                ? `مشاهده ${englishToFarsiNumber(otherSellersCount - 1)}  فروشنده دیگر`
-                : "مشاهده جزئیات "}
-            </Button>
+              <Button intent="text" size="small" className="self-stretch" onClick={() => setShowComparison(true)}>
+                {otherSellersCount > 1
+                  ? `مشاهده ${englishToFarsiNumber(otherSellersCount - 1)}  فروشنده دیگر`
+                  : "مشاهده جزئیات "}
+              </Button>
             </div>
           </div>
         </div>
@@ -358,7 +358,7 @@ export function FlightCard({
 
           <div className="flex flex-col items-start justify-start gap-1 self-stretch">
             <Button intent="primary" size="small" className="self-stretch" onClick={onBuy}>
-             رفتن به ارزان ترین
+              رفتن به ارزان ترین
             </Button>
 
             <Button intent="text" size="small" className="self-stretch" onClick={() => setShowComparison(true)}>
@@ -536,11 +536,9 @@ export function FlightCard({
           origin={origin}
           destination={destination}
           duration={duration}
-          otherSellersCount={otherSellersCount}
           airline={airline}
           flightInfo={flightInfo}
           websites={websites}
-          onBuy={onBuy}
         />
       )}
     </article>
