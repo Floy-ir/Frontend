@@ -460,14 +460,14 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
 
     // Calculate duration handling cross-day flights and midnight arrivals properly
     let durationMs = arrival.getTime() - departure.getTime()
-    
+
     // Ensure duration is always positive (handles date changes and midnight arrivals)
     if (durationMs < 0) {
       // This can happen when a flight arrives at midnight (00:00) of the next day
       // Add 24 hours to fix the calculation
       durationMs += 24 * 60 * 60 * 1000
     }
-    
+
     const duration = {
       hours: Math.floor(durationMs / (1000 * 60 * 60)),
       minutes: Math.floor((durationMs % (1000 * 60 * 60)) / (1000 * 60)),
