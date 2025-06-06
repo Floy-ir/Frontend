@@ -169,7 +169,7 @@ export const DatePicker = React.forwardRef<HTMLInputElement, DatePickerProps>(fu
 
     return (
       <div className="p-6">
-        {/* @ts-ignore - Type errors are due to mismatch between "range" and "single" mode */}
+        {/* @ts-expect-error - Type errors are due to mismatch between "range" and "single" mode */}
         <JalaliCalendar {...calendarProps1} />
       </div>
     )
@@ -210,7 +210,7 @@ export const DatePicker = React.forwardRef<HTMLInputElement, DatePickerProps>(fu
 
     return (
       <div className="h-full w-full">
-        {/* @ts-ignore - Type errors are due to mismatch between "range" and "single" mode */}
+        {/* @ts-expect-error - Type errors are due to mismatch between "range" and "single" mode */}
         <JalaliCalendar {...calendarProps2} />
       </div>
     )

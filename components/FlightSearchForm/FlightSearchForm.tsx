@@ -1,6 +1,5 @@
 "use client"
 
-import { zodResolver } from "@hookform/resolvers/zod"
 import { Add, ArrowRight, ArrowSwapHorizontal, ArrowUp2 } from "iconsax-react"
 import { Loader } from "lucide-react"
 import { useRouter } from "next/navigation"
@@ -68,7 +67,12 @@ export function FlightSearchForm({
 
   // Create form with react-hook-form
   const { control, handleSubmit, setValue, watch, trigger } = useForm<SearchFormValues>({
-    resolver: zodResolver(searchFormSchema),
+    resolver: async (values, context, options) => {
+      // Dynamically import zodResolver
+      const { zodResolver } = await import("@hookform/resolvers/zod")
+      const resolver = zodResolver(searchFormSchema)
+      return resolver(values, context, options)
+    },
     defaultValues: {
       // Prioritize prop values over persisted values
       origin: initialOrigin || persistedFormData.origin,

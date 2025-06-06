@@ -217,15 +217,6 @@ export function Header({ menuItems, className, forceScrolledStyle = false }: Hea
                         >
                           {item.label}
                         </Link>
-                      ) : (
-                        <span
-                          key={index}
-                          className={`w-full cursor-not-allowed px-6 py-3 text-right text-[1.15rem] opacity-50 ${
-                            item.isActive ? "font-semibold text-slate-800" : "text-slate-500"
-                          }`}
-                        >
-                          {item.label}
-                        </span>
                       )
                     })}
                   </nav>
