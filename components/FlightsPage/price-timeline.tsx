@@ -62,15 +62,29 @@ const Timeline = ({
 
   const fetchCheapestFlights = async (referenceDate: string) => {
     setIsLoading(true)
-    // const referenceDate = selectedDate // should be in 'YYYY-MM-DD' format
+    // Dynamically adjust backward_day to avoid including days before today
+    const today = new Date()
+    today.setHours(0, 0, 0, 0)
+    const refDate = new Date(referenceDate)
+    refDate.setHours(0, 0, 0, 0)
+
+    const finalReferenceDate = refDate < today ? today : refDate
+    const finalReferenceDateStr = finalReferenceDate.toISOString().split("T")[0]
+
+    const timeDiff = refDate.getTime() - today.getTime()
+    const daysDiff = Math.floor(timeDiff / (1000 * 60 * 60 * 24))
+    const safeBackwardDay = Math.max(-1,daysDiff-1)
+    const forward = safeBackwardDay>7? 11:15-safeBackwardDay
+
     const query = new URLSearchParams({
       origin: originCityCode,
       destination: destinationCityCode,
-      reference_date: referenceDate,
-      forward_day: "7",
-      backward_day: "8",
-    }).toString()
+      reference_date: finalReferenceDateStr || "",
+      forward_day: forward.toString(),
+      backward_day: safeBackwardDay>10? 10: safeBackwardDay.toString(),
+    } as Record<string, string>).toString()
     try {
+      console.log(query)
       const response: FlightResponse | undefined = await apiFetch(`/flights/cheapest?${query}`)
       // console.log("Cheapest flight data:", response)
       if (response) {
@@ -89,6 +103,25 @@ const Timeline = ({
   useEffect(() => {
     fetchCheapestFlights(selectedDate)
   }, []) // runs once on mount
+  
+  //scroll with mouse option
+  // useEffect(() => {
+  //   const container = scrollRef.current
+  //   if (!container) return
+
+  //   const onWheel = (e: WheelEvent) => {
+  //     if (e.deltaY !== 0) {
+  //       e.preventDefault()
+  //       container.scrollBy({ left: e.deltaY, behavior: "smooth" })
+  //     }
+  //   }
+
+  //   container.addEventListener("wheel", onWheel, { passive: false })
+
+  //   return () => {
+  //     container.removeEventListener("wheel", onWheel)
+  //   }
+  // }, [])
 
   const scrollRef = useRef<HTMLDivElement>(null)
 
