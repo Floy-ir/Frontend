@@ -1,7 +1,7 @@
 import { Metadata } from "next"
 import Image from "next/image"
 
-import { HeroSection } from "@/components/HeroSection/HeroSection"
+import { HeroSection } from "@/components/LandingPage/HeroSection/HeroSection"
 import Benefits from "@/components/LandingPage/Benefits"
 import Companies from "@/components/LandingPage/Companies"
 
