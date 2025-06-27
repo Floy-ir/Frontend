@@ -3,12 +3,12 @@ import { ArrowDown2, ArrowUp2 } from "iconsax-react"
 import Image from "next/image"
 import { useState } from "react"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
-import aparat from "../../public/images/Frame 4402.svg"
-import instagram from "../../public/images/instagram.svg"
-import linkdin from "../../public/images/linkedin-svgrepo-com 1.svg"
-import telegram from "../../public/images/send-2.svg"
-import youtube from "../../public/images/youtube.svg"
-import { Button } from "../Button/Button"
+import aparat from "../../../public/images/Frame 4402.svg"
+import instagram from "../../../public/images/instagram.svg"
+import linkdin from "../../../public/images/linkedin-svgrepo-com 1.svg"
+import telegram from "../../../public/images/send-2.svg"
+import youtube from "../../../public/images/youtube.svg"
+import { Button } from "../../elements/Button/Button"
 const Footer: React.FC = () => {
   const [isExpanded, setIsExpanded] = useState(false)
 

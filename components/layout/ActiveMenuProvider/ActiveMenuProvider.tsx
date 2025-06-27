@@ -2,7 +2,7 @@
 
 import { usePathname } from "next/navigation"
 import { useEffect, useMemo, useState } from "react"
-import { Header } from "@/components/Header/Header"
+import { Header } from "../Header/Header"
 
 type MenuItem = {
   label: string

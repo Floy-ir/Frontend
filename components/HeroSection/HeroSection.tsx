@@ -2,7 +2,7 @@
 
 import React from "react"
 
-import { SearchFormContainer } from "@/components/SearchFormContainer/SearchFormContainer"
+import { SearchFormContainer } from "@/components/LandingPage/SearchFormContainer/SearchFormContainer"
 
 export function HeroSection() {
   return (

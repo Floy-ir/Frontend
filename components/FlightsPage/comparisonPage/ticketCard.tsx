@@ -3,7 +3,7 @@
 import { ArrowDown2, ArrowLeft2 } from "iconsax-react"
 import Image from "next/image"
 import { useEffect, useRef, useState } from "react"
-import { Button } from "@/components/Button/Button"
+import { Button } from "@/components/elements/Button/Button"
 import dude from "@/public/images/flash-circle-outline.svg"
 import { isRunningInEitaa, openExternalLink } from "@/utils/eitaa"
 import { englishToFarsiNumber } from "@/utils/numbers"

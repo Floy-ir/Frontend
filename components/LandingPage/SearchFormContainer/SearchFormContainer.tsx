@@ -4,7 +4,7 @@ import { Airplane, Building3, Buildings } from "iconsax-react"
 
 import React from "react"
 import { FlightSearchForm } from "@/components/FlightSearchForm/FlightSearchForm"
-import { Button } from "../Button/Button"
+import { Button } from "../../elements/Button/Button"
 
 export function SearchFormContainer() {
   return (
