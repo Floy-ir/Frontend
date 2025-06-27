@@ -73,15 +73,15 @@ const Timeline = ({
 
     const timeDiff = refDate.getTime() - today.getTime()
     const daysDiff = Math.floor(timeDiff / (1000 * 60 * 60 * 24))
-    const safeBackwardDay = Math.max(-1,daysDiff-1)
-    const forward = safeBackwardDay>7? 11:15-safeBackwardDay
+    const safeBackwardDay = Math.max(-1, daysDiff - 1)
+    const forward = safeBackwardDay > 7 ? 11 : 15 - safeBackwardDay
 
     const query = new URLSearchParams({
       origin: originCityCode,
       destination: destinationCityCode,
       reference_date: finalReferenceDateStr || "",
       forward_day: forward.toString(),
-      backward_day: safeBackwardDay>10? 10: safeBackwardDay.toString(),
+      backward_day: safeBackwardDay > 10 ? 10 : safeBackwardDay.toString(),
     } as Record<string, string>).toString()
     try {
       console.log(query)
@@ -103,7 +103,7 @@ const Timeline = ({
   useEffect(() => {
     fetchCheapestFlights(selectedDate)
   }, []) // runs once on mount
-  
+
   //scroll with mouse option
   // useEffect(() => {
   //   const container = scrollRef.current
