@@ -3,7 +3,7 @@
 import { ChevronLeft, ChevronRight } from "lucide-react"
 import * as React from "react"
 import { DayPicker } from "react-day-picker/persian"
-import { button } from "@/components/Button/Button"
+import { button } from "@/components/elements/Button/Button"
 import { cn } from "@/lib/utils"
 
 export type JalaliCalendarProps = React.ComponentProps<typeof DayPicker>

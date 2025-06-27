@@ -17,8 +17,8 @@ import {
   TransformedFlight,
   Website,
 } from "@/app/types"
-import { FlightFilters } from "@/components/FlightFilters"
-import { FlightSearchHeader } from "@/components/FlightSearchHeader/FlightSearchHeader"
+import { FlightFilters } from "@/components/FlightsPage/FlightFilters"
+import { FlightSearchHeader } from "@/components/FlightsPage/FlightSearchHeader/FlightSearchHeader"
 import NoTicketFound from "@/components/FlightsPage/NoTicketFound"
 import Timeline from "@/components/FlightsPage/price-timeline"
 import { Checkbox } from "@/components/ui/checkbox"

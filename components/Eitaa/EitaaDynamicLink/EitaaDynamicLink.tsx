@@ -4,7 +4,7 @@ import dynamic from "next/dynamic"
 import { ReactNode } from "react"
 
 // Dynamically import EitaaLink with no SSR to prevent hydration mismatch
-const EitaaLink = dynamic(() => import("@/components/EitaaLink/EitaaLink"), { ssr: false })
+const EitaaLink = dynamic(() => import("@/components/Eitaa/EitaaLink/EitaaLink"), { ssr: false })
 
 interface EitaaDynamicLinkProps {
   href: string

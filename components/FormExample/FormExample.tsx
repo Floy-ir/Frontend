@@ -2,7 +2,7 @@
 
 import * as React from "react"
 
-import { ComboboxSelect } from "@/components/ComboboxSelect/ComboboxSelect"
+import { ComboboxSelect } from "@/components/elements/ComboboxSelect/ComboboxSelect"
 
 export default function FormExample() {
   const [status, setStatus] = React.useState("")

@@ -7,7 +7,7 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import React, { useEffect, useState } from "react"
 import { twMerge } from "tailwind-merge"
-import { Drawer, DrawerContent, DrawerTitle, DrawerTrigger } from "../ui/drawer"
+import { Drawer, DrawerContent, DrawerTitle, DrawerTrigger } from "../../ui/drawer"
 
 interface MenuItem {
   label: string
