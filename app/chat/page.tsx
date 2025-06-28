@@ -17,6 +17,8 @@ import {
   Status,
   TypingIndicator,
 } from "@chatscope/chat-ui-kit-react"
+import { Circle, CircleIcon } from "lucide-react"
+import { TickCircle } from "iconsax-react"
 
 export default function FullChatDemo() {
   const [messages, setMessages] = useState([
@@ -70,11 +72,14 @@ export default function FullChatDemo() {
             <Avatar src="../apple-icon.png" name="Floy" />
             <ConversationHeader.Content userName="فلوی" className="font-anjoman-max" />
           </ConversationHeader>
-          <MessageList
+          <MessageList 
           //   typingIndicator={typing ? <TypingIndicator content="Alice is typing" /> : null}
           >
             {messages.map((msg, i) => (
+              <div className="flex gap-1 justify-center items-center">
+              <CircleIcon />
               <Message key={i} model={msg} />
+              </div>
             ))}
           </MessageList>
 

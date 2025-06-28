@@ -1,6 +1,6 @@
 /* custom.css */
 .cs-message--outgoing .cs-message__content {
-  background-color: #efefef !important;
+  background-color: rgba(255, 255, 255, 1) !important;
 }
 
 .cs-message--incoming .cs-message__content {
@@ -14,20 +14,21 @@
 
 
 .cs-message-input__content-editor-wrapper {
-  background-color: #1111 !important;
+  background-color: rgba(229, 229, 229, 1) !important;
+}
+
+
+div.cs-message-input__tools button.cs-button--send {
+  background-color: rgba(255, 255, 255, 1) !important;
+}
+.cs-button{
+  background-color: rgba(255, 255, 255, 1) !important;
+  color: rgba(90, 40, 238, 1) !important;
 }
 
 .cs-button--send {
-  background-color: #0000 !important;
-  color: #333 !important;
-}
-
-div.cs-message-input__tools button.cs-button--send {
-  background-color: white !important;
-}
-.cs-button.cs-button--send {
-  background-color: white !important;
-  color: black !important;
+  background-color: rgba(255, 255, 255, 1) !important;
+  color: rgba(90, 40, 238, 1) !important;
 }
 
 .cs-conversation-header{
@@ -39,6 +40,11 @@ div.cs-message-input__tools button.cs-button--send {
 .cs-conversation-header__user-name{
     background-color: transparent !important;
 }
-.cs-message-input__content-editor{
+.ps .ps__rail-y:hover > .ps__thumb-y, .ps__rail-y:focus > .ps__thumb-y, .ps__rail-y.ps--clicking .ps__thumb-y{
+  background-color: rgba(90, 40, 238, 1) !important;
+}
+
+
+.cs-message-input__content-editor-container .ps__thumb-y .scrollbar-container {
   background-color: transparent !important;
 }
