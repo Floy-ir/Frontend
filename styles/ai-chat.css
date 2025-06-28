@@ -1,0 +1,44 @@
+/* custom.css */
+.cs-message--outgoing .cs-message__content {
+  background-color: #efefef !important;
+}
+
+.cs-message--incoming .cs-message__content {
+  background-color: #ffffff00 !important;
+}
+
+.cs-message-list::-webkit-scrollbar-thumb {
+  background-color: #888 !important;
+  border-radius: 6px;
+}
+
+
+.cs-message-input__content-editor-wrapper {
+  background-color: #1111 !important;
+}
+
+.cs-button--send {
+  background-color: #0000 !important;
+  color: #333 !important;
+}
+
+div.cs-message-input__tools button.cs-button--send {
+  background-color: white !important;
+}
+.cs-button.cs-button--send {
+  background-color: white !important;
+  color: black !important;
+}
+
+.cs-conversation-header{
+    background-color: transparent !important;
+}
+.cs-conversation-header__content{
+    background-color: transparent !important;
+}
+.cs-conversation-header__user-name{
+    background-color: transparent !important;
+}
+.cs-message-input__content-editor{
+  background-color: transparent !important;
+}
