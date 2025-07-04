@@ -1,50 +1,83 @@
-/* custom.css */
-.cs-message--outgoing .cs-message__content {
-  background-color: rgba(255, 255, 255, 1) !important;
+/* incomping messages*/
+.cs-message.cs-message--incoming.cs-message--single .cs-message__content {
+  /* background-color: #f2f2f2 !important; */
+  background-color: transparent !important;
+  /* margin-top: 3px !important;
+  margin-bottom: 3px !important; */
 }
 
-.cs-message--incoming .cs-message__content {
-  background-color: #ffffff00 !important;
+/* outgoing messages*/
+.cs-message.cs-message--outgoing.cs-message--single .cs-message__content {
+  background-color: #ececec !important;
+  /* margin-top: 3px !important;
+  margin-bottom: 3px !important; */
 }
 
-.cs-message-list::-webkit-scrollbar-thumb {
-  background-color: #888 !important;
-  border-radius: 6px;
-}
-
-
-.cs-message-input__content-editor-wrapper {
-  background-color: rgba(229, 229, 229, 1) !important;
-}
-
-
-div.cs-message-input__tools button.cs-button--send {
-  background-color: rgba(255, 255, 255, 1) !important;
-}
+/* send button */
 .cs-button{
-  background-color: rgba(255, 255, 255, 1) !important;
   color: rgba(90, 40, 238, 1) !important;
+  margin-bottom: 5px !important;
 }
 
-.cs-button--send {
-  background-color: rgba(255, 255, 255, 1) !important;
-  color: rgba(90, 40, 238, 1) !important;
-}
-
+/* chat header */
 .cs-conversation-header{
     background-color: transparent !important;
 }
-.cs-conversation-header__content{
-    background-color: transparent !important;
-}
+
 .cs-conversation-header__user-name{
     background-color: transparent !important;
 }
-.ps .ps__rail-y:hover > .ps__thumb-y, .ps__rail-y:focus > .ps__thumb-y, .ps__rail-y.ps--clicking .ps__thumb-y{
-  background-color: rgba(90, 40, 238, 1) !important;
+
+/* message input */
+.cs-message-input__content-editor {
+  background-color: rgb(255, 255, 255) !important;
+  margin-top: 5px !important;
+  font-size: medium;
+}
+.cs-message-input__content-editor-container{
+  background-color: rgb(255, 255, 255) !important;
 }
 
+.cs-message-input{
+  margin-top: 3px !important;
+}
 
-.cs-message-input__content-editor-container .ps__thumb-y .scrollbar-container {
-  background-color: transparent !important;
+.cs-message-input__content-editor{
+  text-align: right !important;
+}
+
+.cs-message-input__content-editor-wrapper {
+  background-color: rgb(255, 255, 255) !important;
+  border: 1px solid #e5e5e5;
+  border-radius: 0.9rem !important;
+  position: relative !important;
+  
+}
+.cs-chat-container .cs-message-input {
+  /* border: none !important; */
+  margin-top: 15px !important;
+  /* padding-top : 15px !important; */
+
+  margin-bottom: 15px !important;
+  height: 60px !important;
+}
+
+.cs-message-input__send-inside {
+  position: absolute !important;
+  right: 0.75rem !important;
+  bottom: 0.5rem !important;
+}
+
+/* scrollbar */
+.ps__thumb-y{
+    background-color: #878787 !important;
+}
+
+/* chat main container */
+.cs-main-container {
+  position: fixed !important;
+
+  border-top: none !important;
+  border-bottom: none !important;
+  border-top: right !important;
 }

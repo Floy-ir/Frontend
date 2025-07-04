@@ -11,7 +11,7 @@ import PropTypes from "prop-types";
 import classNames from "classnames";
 import { prefix } from "../settings";
 import ContentEditable from "../ContentEditable";
-import SendButton from "../Buttons/SendButton";
+// import SendButton from "../Buttons/SendButton";
 import AttachmentButton from "../Buttons/AttachmentButton";
 import PerfectScrollbar from "../Scroll";
 
@@ -213,14 +213,14 @@ function MessageInputInner(
           />
         </EditorContainer>
       </div>
-      {sendButton === true && (
+      {/* {sendButton === true && (
         <div className={`${cName}__tools`}>
           <SendButton
             onClick={send}
             disabled={disabled === true || stateSendDisabled === true}
           />
         </div>
-      )}
+      )} */}
     </div>
   );
 }

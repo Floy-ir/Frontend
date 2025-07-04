@@ -2,8 +2,8 @@ import "styles/tailwind.css"
 import type { Metadata } from "next"
 import Script from "next/script"
 
-import { ActiveMenuProvider } from "@/components/layout/ActiveMenuProvider/ActiveMenuProvider"
 import EitaaDynamicInitializer from "@/components/Eitaa/EitaaDynamicInitializer/EitaaDynamicInitializer"
+import { ActiveMenuProvider } from "@/components/layout/ActiveMenuProvider/ActiveMenuProvider"
 import Footer from "@/components/layout/Footer/Footer"
 import { anjomanMaxVF } from "../lib/fonts"
 

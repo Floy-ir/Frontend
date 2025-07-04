@@ -1,10 +1,9 @@
 "use client"
 
 import "@chatscope/chat-ui-kit-styles/dist/default/styles.min.css"
-import React, { useState, useEffect } from "react"
 import {
   Avatar,
-  Button,
+  // Button,
   ChatContainer,
   //   ChatHeader,
   ConversationHeader,
@@ -12,33 +11,20 @@ import {
   Message,
   MessageInput,
   MessageList,
-  Search,
-  Sidebar,
-  Status,
-  TypingIndicator,
+  // Search,
+  // Sidebar,
+  // Status,
+  // TypingIndicator,
 } from "@chatscope/chat-ui-kit-react"
-import { Circle, CircleIcon } from "lucide-react"
-import { TickCircle } from "iconsax-react"
+import type { MessageModel } from "@chatscope/chat-ui-kit-react"
+import { Dot } from "lucide-react"
+import React, { useEffect, useState } from "react"
 
 export default function FullChatDemo() {
-  const [messages, setMessages] = useState([
-    {
-      message: "Hello there!",
-      sentTime: "10:00 AM",
-      sender: "Alice",
-      direction: "incoming",
-      position: "single",
-    },
-    {
-      message: "Hi! How are you?",
-      sentTime: "10:01 AM",
-      sender: "You",
-      direction: "outgoing",
-      position: "single",
-    },
-  ])
+  const [messages, setMessages] = useState<MessageModel[]>([])
 
   const [input, setInput] = useState("")
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [typing, setTyping] = useState(false)
 
   const handleSend = (text: string) => {
@@ -49,7 +35,7 @@ export default function FullChatDemo() {
       sender: "You",
       direction: "outgoing",
       position: "single",
-    }
+    } as MessageModel
     setMessages([...messages, newMessage])
     setInput("")
     setTyping(false)
@@ -62,7 +48,12 @@ export default function FullChatDemo() {
     return () => window.removeEventListener("resize", handleResize)
   }, [])
 
-  const containerWidth = width >= 900 ? "33%" : "100%"
+  let containerWidth = "100%"
+  if (width > 900) {
+    containerWidth = "40%"
+    // } else if (width > 700) {
+    //   containerWidth = "30%"
+  }
 
   return (
     <div className="flex h-screen justify-start" dir="ltr">
@@ -72,17 +63,28 @@ export default function FullChatDemo() {
             <Avatar src="../apple-icon.png" name="Floy" />
             <ConversationHeader.Content userName="فلوی" className="font-anjoman-max" />
           </ConversationHeader>
-          <MessageList 
-          //   typingIndicator={typing ? <TypingIndicator content="Alice is typing" /> : null}
+          <MessageList
+          // typingIndicator={typing ? <TypingIndicator content="Alice is typing" /> : null}
           >
-            {messages.map((msg, i) => (
-              <div className="flex gap-1 justify-center items-center">
-              <CircleIcon />
-              <Message key={i} model={msg} />
+            {messages.length === 0 ? (
+              <div className="flex h-full flex-col items-center justify-center text-center">
+                <div className="text-primary-500 font-semibold xs:text-2xl sm-md2:text-3xl text-3xl md:text-2xl lg:text-3xl">
+                  !برنامه سفرت رو با فولی بچین
+                </div>
+                <div className="text-Gray-N700 mt-5 max-w-xs font-normal sm-md2:text-md text-md md:text-sm lg:text-md" dir="rtl">
+                  تاریخ، مبدا و مقصدت رو بگو تا بهترین پرواز و برنامه سفر رو برات پیدا کنیم.
+                </div>
               </div>
-            ))}
+            ) : (
+              messages.map((msg, i) => (
+                <div key={i} className="flex items-center justify-center">
+                  {/* #ededed */}
+                  {msg.direction === "incoming" && <Dot size={60} color="#5a28ee" className="mt-2 -mr-6" />}
+                  <Message model={msg} />
+                </div>
+              ))
+            )}
           </MessageList>
-
           <MessageInput
             placeholder="برنامه سفرت چیه؟"
             value={input}
