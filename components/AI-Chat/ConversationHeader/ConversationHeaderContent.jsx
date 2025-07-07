@@ -1,16 +1,10 @@
-import React from "react";
-import PropTypes from "prop-types";
-import classNames from "classnames";
-import { prefix } from "../settings";
+import React from "react"
+import PropTypes from "prop-types"
+import classNames from "classnames"
+import { prefix } from "../settings"
 
-export const ConversationHeaderContent = ({
-  userName = "",
-  info = "",
-  children = undefined,
-  className,
-  ...rest
-}) => {
-  const cName = `${prefix}-conversation-header__content`;
+export const ConversationHeaderContent = ({ userName = "", info = "", children = undefined, className, ...rest }) => {
+  const cName = `${prefix}-conversation-header__content`
 
   return (
     <div {...rest} className={classNames(cName, className)}>
@@ -18,17 +12,15 @@ export const ConversationHeaderContent = ({
         children
       ) : (
         <>
-          <div className={`${prefix}-conversation-header__user-name`}>
-            {userName}
-          </div>
+          <div className={`${prefix}-conversation-header__user-name`}>{userName}</div>
           <div className={`${prefix}-conversation-header__info`}>{info}</div>
         </>
       )}
     </div>
-  );
-};
+  )
+}
 
-ConversationHeaderContent.displayName = "ConversationHeader.Content";
+ConversationHeaderContent.displayName = "ConversationHeader.Content"
 
 ConversationHeaderContent.propTypes = {
   /** Primary content. Has precedence over userName and info properties. */
@@ -38,6 +30,6 @@ ConversationHeaderContent.propTypes = {
 
   /** Additional classes. */
   className: PropTypes.string,
-};
+}
 
-export default ConversationHeaderContent;
+export default ConversationHeaderContent

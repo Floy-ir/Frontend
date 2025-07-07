@@ -1,74 +1,70 @@
-import React, { Component } from "react";
-import PropTypes from "prop-types";
+import React, { Component } from "react"
+import PropTypes from "prop-types"
 
 const replaceCaret = (el, activateAfterChange) => {
-  const isTargetFocused = document.activeElement === el;
+  const isTargetFocused = document.activeElement === el
 
   // Place the caret at the end of the element
-  const target = document.createTextNode("");
+  const target = document.createTextNode("")
 
   // Put empty text node at the end of input
-  el.appendChild(target);
+  el.appendChild(target)
 
   // do not move caret if element was not focused
-  if (
-    target !== null &&
-    target.nodeValue !== null &&
-    (isTargetFocused || activateAfterChange)
-  ) {
-    const sel = window.getSelection();
+  if (target !== null && target.nodeValue !== null && (isTargetFocused || activateAfterChange)) {
+    const sel = window.getSelection()
     if (sel !== null) {
-      const range = document.createRange();
-      range.setStart(target, target.nodeValue.length);
-      range.collapse(true);
-      sel.removeAllRanges();
-      sel.addRange(range);
+      const range = document.createRange()
+      range.setStart(target, target.nodeValue.length)
+      range.collapse(true)
+      sel.removeAllRanges()
+      sel.addRange(range)
     }
   }
-};
+}
 
 export class ContentEditable extends Component {
   constructor(props) {
-    super(props);
-    this.msgRef = React.createRef();
+    super(props)
+    this.msgRef = React.createRef()
   }
 
   innerHTML = () => {
     const {
       props: { value },
-    } = this;
+    } = this
 
     return {
       __html: typeof value !== "undefined" ? value : "",
-    };
-  };
+    }
+  }
 
   handleKeyPress = (evt) => {
     const {
       props: { onKeyPress },
-    } = this;
-    onKeyPress?.(evt);
-  };
+    } = this
+    onKeyPress?.(evt)
+  }
 
   handleInput = (evt) => {
     const {
       props: { onChange },
-    } = this;
+    } = this
 
-    const target = evt.target;
-    onChange?.(target.innerHTML, target.textContent, target.innerText);
-  };
+    const target = evt.target
+    onChange?.(target.innerHTML, target.textContent, target.innerText)
+  }
 
   // Public API
   focus() {
     if (typeof this.msgRef.current !== "undefined") {
-      this.msgRef.current.focus();
+      this.msgRef.current.focus()
     }
   }
 
   componentDidMount() {
     if (this.props.autoFocus === true) {
-      this.msgRef.current.focus();
+      this.msgRef.current.focus()
     }
   }
 
@@ -76,14 +72,14 @@ export class ContentEditable extends Component {
     const {
       msgRef,
       props: { placeholder, disabled, activateAfterChange },
-    } = this;
+    } = this
 
     if (typeof msgRef.current === "undefined") {
-      return true;
+      return true
     }
 
     if (nextProps.value !== msgRef.current.innerHTML) {
-      return true;
+      return true
     }
 
     // DO NOT place callbacks here in comparison!
@@ -91,20 +87,20 @@ export class ContentEditable extends Component {
       placeholder !== nextProps.placeholder ||
       disabled !== nextProps.disabled ||
       activateAfterChange !== nextProps.activateAfterChange
-    );
+    )
   }
 
   componentDidUpdate() {
     const {
       msgRef,
       props: { value, activateAfterChange },
-    } = this;
+    } = this
 
     if (value !== msgRef.current.innerHTML) {
-      msgRef.current.innerHTML = typeof value === "string" ? value : "";
+      msgRef.current.innerHTML = typeof value === "string" ? value : ""
     }
 
-    replaceCaret(msgRef.current, activateAfterChange);
+    replaceCaret(msgRef.current, activateAfterChange)
   }
 
   render() {
@@ -115,7 +111,7 @@ export class ContentEditable extends Component {
         innerHTML,
         props: { placeholder, disabled, className },
       } = this,
-      ph = typeof placeholder === "string" ? placeholder : "";
+      ph = typeof placeholder === "string" ? placeholder : ""
 
     return (
       <div
@@ -128,7 +124,7 @@ export class ContentEditable extends Component {
         onKeyPress={handleKeyPress}
         dangerouslySetInnerHTML={innerHTML()}
       ></div>
-    );
+    )
   }
 }
 
@@ -165,6 +161,6 @@ ContentEditable.propTypes = {
 
   /** Additional classes. */
   className: PropTypes.string,
-};
+}
 
-export default ContentEditable;
+export default ContentEditable

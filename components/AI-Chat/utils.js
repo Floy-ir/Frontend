@@ -1,7 +1,7 @@
-import React from "react";
+import React from "react"
 
 /* eslint-disable  @typescript-eslint/no-empty-function */
-export const noop = () => {};
+export const noop = () => {}
 
 /**
  * Tests if children are nil in React and Preact.
@@ -9,9 +9,7 @@ export const noop = () => {};
  * @returns {Boolean}
  */
 export const isChildrenNil = (children) =>
-  children === null ||
-  children === undefined ||
-  (Array.isArray(children) && children.length === 0);
+  children === null || children === undefined || (Array.isArray(children) && children.length === 0)
 
 /**
  * Gets only specified types children
@@ -20,67 +18,67 @@ export const isChildrenNil = (children) =>
  * @returns {[]}
  */
 export const getChildren = (children, types) => {
-  const ret = [];
-  const strTypes = types.map((t) => t.displayName || t.name);
+  const ret = []
+  const strTypes = types.map((t) => t.displayName || t.name)
 
   React.Children.toArray(children).forEach((item) => {
-    const idx = types.indexOf(item.type);
+    const idx = types.indexOf(item.type)
     if (idx !== -1) {
-      ret[idx] = item;
+      ret[idx] = item
     } else {
-      const is = item?.props?.as ?? item?.props?.is;
-      const typeofIs = typeof is;
+      const is = item?.props?.as ?? item?.props?.is
+      const typeofIs = typeof is
       if (typeofIs === "function") {
         // Type
-        const fIdx = types.indexOf(is);
+        const fIdx = types.indexOf(is)
         if (fIdx !== -1) {
-          ret[fIdx] = React.cloneElement(item, { ...item.props, as: null }); // Cloning to remove "as" attribute, which is not desirable
+          ret[fIdx] = React.cloneElement(item, { ...item.props, as: null }) // Cloning to remove "as" attribute, which is not desirable
         }
       } else if (typeofIs === "object") {
         // forward ref
 
-        const typeName = is.name || is.displayName;
-        const tIdx = strTypes.indexOf(typeName);
+        const typeName = is.name || is.displayName
+        const tIdx = strTypes.indexOf(typeName)
         if (tIdx !== -1) {
-          ret[tIdx] = React.cloneElement(item, { ...item.props, as: null }); // Cloning to remove "as" attribute, which is not desirable
+          ret[tIdx] = React.cloneElement(item, { ...item.props, as: null }) // Cloning to remove "as" attribute, which is not desirable
         }
       } else if (typeofIs === "string") {
-        const sIdx = strTypes.indexOf(is);
+        const sIdx = strTypes.indexOf(is)
         if (sIdx !== -1) {
-          ret[sIdx] = item;
+          ret[sIdx] = item
         }
       }
     }
-  });
+  })
 
-  return ret;
-};
+  return ret
+}
 
 export const getComponentName = (component) => {
   if (typeof component === "string") {
-    return component;
+    return component
   }
 
   if ("type" in component) {
-    const componentType = typeof component.type;
+    const componentType = typeof component.type
 
     if (componentType === "function" || componentType === "object") {
       if ("displayName" in component.type) {
-        return component.type.displayName;
+        return component.type.displayName
       }
 
       if ("name" in component.type) {
-        return component.type.name;
+        return component.type.name
       }
     } else if (componentType === "string") {
-      return component.type;
+      return component.type
     }
 
-    return "undefined";
+    return "undefined"
   }
 
-  return "undefined";
-};
+  return "undefined"
+}
 
 /**
  * PropTypes validator.
@@ -90,14 +88,8 @@ export const getComponentName = (component) => {
  * @param {Array} allowedTypes
  * @return {Function}
  */
-export const allowedChildren = (allowedTypes) => (
-  props,
-  propName,
-  componentName
-) => {
-  const allowedTypesAsStrings = allowedTypes.map(
-    (t) => t.name || t.displayName
-  );
+export const allowedChildren = (allowedTypes) => (props, propName, componentName) => {
+  const allowedTypesAsStrings = allowedTypes.map((t) => t.name || t.displayName)
 
   // Function as Child is not supported by React.Children... functions
   // and can be antipattern: https://americanexpress.io/faccs-are-an-antipattern/
@@ -106,39 +98,37 @@ export const allowedChildren = (allowedTypes) => (
   const forbidden = React.Children.toArray(props[propName]).find((item) => {
     if (typeof item === "string" && item.trim().length === 0) {
       // Ignore string
-      return false;
+      return false
     }
 
     if (allowedTypes.indexOf(item.type) === -1) {
-      const is = item?.props?.as || item?.props?.is;
+      const is = item?.props?.as || item?.props?.is
 
-      const typeofIs = typeof is;
+      const typeofIs = typeof is
 
       if (typeofIs === "function") {
         // Type
-        return allowedTypes.indexOf(is) === -1;
+        return allowedTypes.indexOf(is) === -1
       } else if (typeofIs === "object") {
         // Forward ref
-        const typeName = is.name || is.displayName;
-        return allowedTypesAsStrings.indexOf(typeName) === -1;
+        const typeName = is.name || is.displayName
+        return allowedTypesAsStrings.indexOf(typeName) === -1
       } else if (typeofIs === "string") {
-        return allowedTypesAsStrings.indexOf(is) === -1;
+        return allowedTypesAsStrings.indexOf(is) === -1
       } else {
-        return true;
+        return true
       }
     }
 
-    return undefined;
-  });
+    return undefined
+  })
 
   if (typeof forbidden !== "undefined") {
-    const typeName = getComponentName(forbidden);
+    const typeName = getComponentName(forbidden)
 
-    const allowedNames = allowedTypes
-      .map((t) => t.name || t.displayName)
-      .join(", ");
-    const errMessage = `"${typeName}" is not a valid child for ${componentName}. Allowed types: ${allowedNames}`;
+    const allowedNames = allowedTypes.map((t) => t.name || t.displayName).join(", ")
+    const errMessage = `"${typeName}" is not a valid child for ${componentName}. Allowed types: ${allowedNames}`
 
-    return new Error(errMessage);
+    return new Error(errMessage)
   }
-};
+}

@@ -1,20 +1,20 @@
-import React from "react";
-import PropTypes from "prop-types";
-import { allowedChildren, getChildren } from "../utils";
-import classNames from "classnames";
-import cName from "./cName";
-import ConversationOperations from "./ConversationOperations";
-import ConversationContent from "./ConversationContent";
-import Avatar from "../Avatar";
-import AvatarGroup from "../AvatarGroup";
+import React from "react"
+import PropTypes from "prop-types"
+import { allowedChildren, getChildren } from "../utils"
+import classNames from "classnames"
+import cName from "./cName"
+import ConversationOperations from "./ConversationOperations"
+import ConversationContent from "./ConversationContent"
+import Avatar from "../Avatar"
+import AvatarGroup from "../AvatarGroup"
 
 const LastActivityTime = ({ time }) => (
   <div className={`${cName}__last-activity-time`} title={time}>
     {time}
   </div>
-);
+)
 
-const UnreadDot = () => <div className={`${cName}__unread-dot`}></div>;
+const UnreadDot = () => <div className={`${cName}__unread-dot`}></div>
 
 export const Conversation = ({
   name = undefined,
@@ -33,24 +33,15 @@ export const Conversation = ({
     AvatarGroup,
     ConversationOperations,
     ConversationContent,
-  ]);
+  ])
 
   return (
-    <div
-      {...rest}
-      className={classNames(cName, { [`${cName}--active`]: active }, className)}
-    >
+    <div {...rest} className={classNames(cName, { [`${cName}--active`]: active }, className)}>
       {avatar}
       {avatarGroup}
 
-      {(typeof name !== "undefined" ||
-        typeof lastSenderName !== "undefined" ||
-        typeof info !== "undefined") && (
-        <ConversationContent
-          name={name}
-          lastSenderName={lastSenderName}
-          info={info}
-        />
+      {(typeof name !== "undefined" || typeof lastSenderName !== "undefined" || typeof info !== "undefined") && (
+        <ConversationContent name={name} lastSenderName={lastSenderName} info={info} />
       )}
 
       {(typeof name === "undefined" || name === null) &&
@@ -65,16 +56,14 @@ export const Conversation = ({
       {unreadDot && <UnreadDot />}
 
       {operations}
-      {unreadCnt !== null &&
-        typeof unreadCnt !== "undefined" &&
-        parseInt(unreadCnt) > 0 && (
-          <div className={`${cName}__unread`} title={unreadCnt}>
-            {unreadCnt}
-          </div>
-        )}
+      {unreadCnt !== null && typeof unreadCnt !== "undefined" && parseInt(unreadCnt) > 0 && (
+        <div className={`${cName}__unread`} title={unreadCnt}>
+          {unreadCnt}
+        </div>
+      )}
     </div>
-  );
-};
+  )
+}
 
 Conversation.propTypes = {
   /**
@@ -86,12 +75,7 @@ Conversation.propTypes = {
    * * &lt;Conversation.Content /&gt;
    * * &lt;Conversation.Operations /&gt;
    */
-  children: allowedChildren([
-    Avatar,
-    AvatarGroup,
-    ConversationOperations,
-    ConversationContent,
-  ]),
+  children: allowedChildren([Avatar, AvatarGroup, ConversationOperations, ConversationContent]),
 
   /** First text line in &lt;Conversation.Content /&gt; contact name etc. */
   name: PropTypes.node,
@@ -116,9 +100,9 @@ Conversation.propTypes = {
 
   /** Additional classes. */
   className: PropTypes.string,
-};
+}
 
-Conversation.Operations = ConversationOperations;
-Conversation.Content = ConversationContent;
+Conversation.Operations = ConversationOperations
+Conversation.Content = ConversationContent
 
-export default Conversation;
+export default Conversation

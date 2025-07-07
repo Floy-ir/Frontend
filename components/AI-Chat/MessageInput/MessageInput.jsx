@@ -1,19 +1,12 @@
-import React, {
-  Component,
-  useRef,
-  useState,
-  useEffect,
-  useImperativeHandle,
-  forwardRef,
-} from "react";
-import { noop } from "../utils";
-import PropTypes from "prop-types";
-import classNames from "classnames";
-import { prefix } from "../settings";
-import ContentEditable from "../ContentEditable";
+import React, { Component, useRef, useState, useEffect, useImperativeHandle, forwardRef } from "react"
+import { noop } from "../utils"
+import PropTypes from "prop-types"
+import classNames from "classnames"
+import { prefix } from "../settings"
+import ContentEditable from "../ContentEditable"
 // import SendButton from "../Buttons/SendButton";
-import AttachmentButton from "../Buttons/AttachmentButton";
-import PerfectScrollbar from "../Scroll";
+import AttachmentButton from "../Buttons/AttachmentButton"
+import PerfectScrollbar from "../Scroll"
 
 // Because container depends on fancyScroll
 // it must be wrapped in additional container
@@ -22,7 +15,7 @@ function editorContainer() {
     render() {
       const {
         props: { fancyScroll, children, forwardedRef, ...rest },
-      } = this;
+      } = this
 
       return (
         <>
@@ -41,29 +34,29 @@ function editorContainer() {
             </div>
           )}
         </>
-      );
+      )
     }
   }
 
   return React.forwardRef((props, ref) => {
-    return <Container forwardedRef={ref} {...props} />;
-  });
+    return <Container forwardedRef={ref} {...props} />
+  })
 }
 
-const EditorContainer = editorContainer();
+const EditorContainer = editorContainer()
 
 const useControllableState = (value, initialValue) => {
-  const initial = typeof value !== "undefined" ? value : initialValue;
-  const [stateValue, setStateValue] = useState(initial);
-  const effectiveValue = typeof value !== "undefined" ? value : stateValue;
+  const initial = typeof value !== "undefined" ? value : initialValue
+  const [stateValue, setStateValue] = useState(initial)
+  const effectiveValue = typeof value !== "undefined" ? value : stateValue
 
   return [
     effectiveValue,
     (newValue) => {
-      setStateValue(newValue);
+      setStateValue(newValue)
     },
-  ];
-};
+  ]
+}
 
 function MessageInputInner(
   {
@@ -86,121 +79,96 @@ function MessageInputInner(
   },
   ref
 ) {
-  const scrollRef = useRef();
-  const msgRef = useRef();
-  const [stateValue, setStateValue] = useControllableState(value, "");
-  const [stateSendDisabled, setStateSendDisabled] = useControllableState(
-    sendDisabled,
-    true
-  );
+  const scrollRef = useRef()
+  const msgRef = useRef()
+  const [stateValue, setStateValue] = useControllableState(value, "")
+  const [stateSendDisabled, setStateSendDisabled] = useControllableState(sendDisabled, true)
 
   // Public API
   const focus = () => {
     if (typeof msgRef.current !== "undefined") {
-      msgRef.current.focus();
+      msgRef.current.focus()
     }
-  };
+  }
 
   // Return object with public Api
   useImperativeHandle(ref, () => ({
     focus,
-  }));
+  }))
 
   // Set focus
   useEffect(() => {
     if (autoFocus === true) {
-      focus();
+      focus()
     }
-  }, []);
+  }, [])
 
   // Update scroll
   useEffect(() => {
     if (typeof scrollRef.current.updateScroll === "function") {
-      scrollRef.current.updateScroll();
+      scrollRef.current.updateScroll()
     }
-  });
+  })
 
   const getContent = () => {
     // Direct reference to contenteditable div
-    const contentEditableRef = msgRef.current.msgRef.current;
-    return [
-      contentEditableRef.textContent,
-      contentEditableRef.innerText,
-      contentEditableRef.cloneNode(true).childNodes,
-    ];
-  };
+    const contentEditableRef = msgRef.current.msgRef.current
+    return [contentEditableRef.textContent, contentEditableRef.innerText, contentEditableRef.cloneNode(true).childNodes]
+  }
 
   const send = () => {
     if (stateValue.length > 0) {
       // Clear input only when it's uncontrolled mode
       if (value === undefined) {
-        setStateValue("");
+        setStateValue("")
       }
 
       // Disable send button only when it's uncontrolled mode
       if (typeof sendDisabled === "undefined") {
-        setStateSendDisabled(true);
+        setStateSendDisabled(true)
       }
 
-      const content = getContent();
+      const content = getContent()
 
-      onSend(stateValue, content[0], content[1], content[2]);
+      onSend(stateValue, content[0], content[1], content[2])
     }
-  };
+  }
 
   const handleKeyPress = (evt) => {
-    if (
-      evt.key === "Enter" &&
-      evt.shiftKey === false &&
-      sendOnReturnDisabled === false
-    ) {
-      evt.preventDefault();
-      send();
+    if (evt.key === "Enter" && evt.shiftKey === false && sendOnReturnDisabled === false) {
+      evt.preventDefault()
+      send()
     }
-  };
+  }
 
   const handleChange = (innerHTML, textContent, innerText) => {
-    setStateValue(innerHTML);
+    setStateValue(innerHTML)
     if (typeof sendDisabled === "undefined") {
-      setStateSendDisabled(textContent.length === 0);
+      setStateSendDisabled(textContent.length === 0)
     }
 
     if (typeof scrollRef.current.updateScroll === "function") {
-      scrollRef.current.updateScroll();
+      scrollRef.current.updateScroll()
     }
 
-    const content = getContent();
+    const content = getContent()
 
-    onChange(innerHTML, textContent, innerText, content[2]);
-  };
+    onChange(innerHTML, textContent, innerText, content[2])
+  }
 
   const cName = `${prefix}-message-input`,
-    ph = typeof placeholder === "string" ? placeholder : "";
+    ph = typeof placeholder === "string" ? placeholder : ""
 
   return (
-    <div
-      {...rest}
-      className={classNames(
-        cName,
-        { [`${cName}--disabled`]: disabled },
-        className
-      )}
-    >
+    <div {...rest} className={classNames(cName, { [`${cName}--disabled`]: disabled }, className)}>
       {attachButton === true && (
         <div className={`${cName}__tools`}>
-          <AttachmentButton
-            onClick={onAttachClick}
-            disabled={disabled === true || attachDisabled === true}
-          />
+          <AttachmentButton onClick={onAttachClick} disabled={disabled === true || attachDisabled === true} />
         </div>
       )}
 
       <div className={`${cName}__content-editor-wrapper`}>
-        <EditorContainer
-          fancyScroll={fancyScroll}
-          ref={scrollRef}
-          className={`${cName}__content-editor-container`}
-        >
+        <EditorContainer fancyScroll={fancyScroll} ref={scrollRef} className={`${cName}__content-editor-container`}>
           <ContentEditable
             ref={msgRef}
             className={`${cName}__content-editor`}
@@ -222,11 +190,11 @@ function MessageInputInner(
         </div>
       )} */}
     </div>
-  );
+  )
 }
 
-const MessageInput = forwardRef(MessageInputInner);
-MessageInput.displayName = "MessageInput";
+const MessageInput = forwardRef(MessageInputInner)
+MessageInput.displayName = "MessageInput"
 
 MessageInput.propTypes = {
   /** Value. */
@@ -294,10 +262,10 @@ MessageInput.propTypes = {
    * onAttachClick handler
    */
   onAttachClick: PropTypes.func,
-};
+}
 
-MessageInputInner.propTypes = MessageInput.propTypes;
+MessageInputInner.propTypes = MessageInput.propTypes
 
-export { MessageInput };
+export { MessageInput }
 
-export default MessageInput;
+export default MessageInput

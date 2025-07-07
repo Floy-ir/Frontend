@@ -1,10 +1,10 @@
-import type {ReactElement} from "react";
-import type {ChatComponentPropsChildren} from "../../types";
+import type { ReactElement } from "react"
+import type { ChatComponentPropsChildren } from "../../types"
 
 export interface MainContainerProps {
-    responsive?:boolean;
+  responsive?: boolean
 }
 
-export declare const MainContainer: (props:ChatComponentPropsChildren<MainContainerProps, "div">) => ReactElement;
+export declare const MainContainer: (props: ChatComponentPropsChildren<MainContainerProps, "div">) => ReactElement
 
-export default MainContainer;
+export default MainContainer

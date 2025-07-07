@@ -1,3 +1,3 @@
-const prefix = "cs";
+const prefix = "cs"
 
-export { prefix };
+export { prefix }

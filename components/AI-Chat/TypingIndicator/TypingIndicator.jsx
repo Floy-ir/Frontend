@@ -1,10 +1,10 @@
-import React from "react";
-import PropTypes from "prop-types";
-import classNames from "classnames";
-import { prefix } from "../settings";
+import React from "react"
+import PropTypes from "prop-types"
+import classNames from "classnames"
+import { prefix } from "../settings"
 
 export const TypingIndicator = ({ content = "", className, ...rest }) => {
-  const cName = `${prefix}-typing-indicator`;
+  const cName = `${prefix}-typing-indicator`
 
   return (
     <div {...rest} className={classNames(cName, className)}>
@@ -15,8 +15,8 @@ export const TypingIndicator = ({ content = "", className, ...rest }) => {
       </div>
       <div className={`${cName}__text`}>{content}</div>
     </div>
-  );
-};
+  )
+}
 
 TypingIndicator.propTypes = {
   /** Indicator content. */
@@ -24,6 +24,6 @@ TypingIndicator.propTypes = {
 
   /** Additional classes. */
   className: PropTypes.string,
-};
+}
 
-export default TypingIndicator;
+export default TypingIndicator

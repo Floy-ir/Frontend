@@ -1,7 +1,7 @@
 // https://github.com/goldenyz/react-perfect-scrollbar/
-import React, { Component } from "react";
-import { PropTypes } from "prop-types";
-import PerfectScrollbar from "./perfect-scrollbar.esm.js";
+import React, { Component } from "react"
+import { PropTypes } from "prop-types"
+import PerfectScrollbar from "./perfect-scrollbar.esm.js"
 
 const handlerNameByEvent = {
   "ps-scroll-y": "onScrollY",
@@ -14,104 +14,99 @@ const handlerNameByEvent = {
   "ps-y-reach-end": "onYReachEnd",
   "ps-x-reach-start": "onXReachStart",
   "ps-x-reach-end": "onXReachEnd",
-};
-Object.freeze(handlerNameByEvent);
+}
+Object.freeze(handlerNameByEvent)
 
 export default class ScrollBar extends Component {
   constructor(props) {
-    super(props);
-    this.handleRef = this.handleRef.bind(this);
-    this._handlerByEvent = {};
+    super(props)
+    this.handleRef = this.handleRef.bind(this)
+    this._handlerByEvent = {}
   }
 
   componentDidMount() {
     if (this.props.option) {
       /* eslint-disable-next-line no-console */
-      console.warn(
-        'react-perfect-scrollbar: the "option" prop has been deprecated in favor of "options"'
-      );
+      console.warn('react-perfect-scrollbar: the "option" prop has been deprecated in favor of "options"')
     }
 
-    this._ps = new PerfectScrollbar(
-      this._container,
-      this.props.options || this.props.option
-    );
+    this._ps = new PerfectScrollbar(this._container, this.props.options || this.props.option)
     // hook up events
-    this._updateEventHook();
-    this._updateClassName();
+    this._updateEventHook()
+    this._updateClassName()
   }
 
   componentDidUpdate(prevProps) {
-    this._updateEventHook(prevProps);
+    this._updateEventHook(prevProps)
 
-    this.updateScroll();
+    this.updateScroll()
 
     if (prevProps.className !== this.props.className) {
-      this._updateClassName();
+      this._updateClassName()
     }
   }
 
   componentWillUnmount() {
     // unhook up evens
     Object.keys(this._handlerByEvent).forEach((key) => {
-      const value = this._handlerByEvent[key];
+      const value = this._handlerByEvent[key]
 
       if (value) {
-        this._container.removeEventListener(key, value, false);
+        this._container.removeEventListener(key, value, false)
       }
-    });
-    this._handlerByEvent = {};
-    this._ps.destroy();
-    this._ps = null;
+    })
+    this._handlerByEvent = {}
+    this._ps.destroy()
+    this._ps = null
   }
 
   _updateEventHook(prevProps = {}) {
     // hook up events
     Object.keys(handlerNameByEvent).forEach((key) => {
-      const callback = this.props[handlerNameByEvent[key]];
-      const prevCallback = prevProps[handlerNameByEvent[key]];
+      const callback = this.props[handlerNameByEvent[key]]
+      const prevCallback = prevProps[handlerNameByEvent[key]]
       if (callback !== prevCallback) {
         if (prevCallback) {
-          const prevHandler = this._handlerByEvent[key];
-          this._container.removeEventListener(key, prevHandler, false);
-          this._handlerByEvent[key] = null;
+          const prevHandler = this._handlerByEvent[key]
+          this._container.removeEventListener(key, prevHandler, false)
+          this._handlerByEvent[key] = null
         }
         if (callback) {
-          const handler = () => callback(this._container);
-          this._container.addEventListener(key, handler, false);
-          this._handlerByEvent[key] = handler;
+          const handler = () => callback(this._container)
+          this._container.addEventListener(key, handler, false)
+          this._handlerByEvent[key] = handler
         }
       }
-    });
+    })
   }
 
   _updateClassName() {
-    const { className } = this.props;
+    const { className } = this.props
 
     const psClassNames = this._container.className
       .split(" ")
       .filter((name) => name.match(/^ps([-_].+|)$/))
-      .join(" ");
+      .join(" ")
 
     if (this._container) {
-      this._container.className = `scrollbar-container${
-        className ? ` ${className}` : ""
-      }${psClassNames ? ` ${psClassNames}` : ""}`;
+      this._container.className = `scrollbar-container${className ? ` ${className}` : ""}${
+        psClassNames ? ` ${psClassNames}` : ""
+      }`
     }
   }
 
   updateScroll() {
-    const onSync = this.props.onSync;
+    const onSync = this.props.onSync
     if (typeof onSync === "function") {
-      onSync(this._ps);
+      onSync(this._ps)
     } else {
-      this._ps.update();
+      this._ps.update()
     }
   }
 
   handleRef(ref) {
-    this._container = ref;
-    this.props.containerRef?.(ref);
+    this._container = ref
+    this.props.containerRef?.(ref)
   }
 
   render() {
@@ -135,15 +130,15 @@ export default class ScrollBar extends Component {
       onSync,
       children,
       ...remainProps
-    } = this.props;
+    } = this.props
 
-    const Comp = typeof component === "undefined" ? "div" : component;
+    const Comp = typeof component === "undefined" ? "div" : component
 
     return (
       <Comp style={style} ref={this.handleRef} {...remainProps}>
         {children}
       </Comp>
-    );
+    )
   }
 }
 
@@ -166,4 +161,4 @@ ScrollBar.propTypes = {
   onXReachEnd: PropTypes.func,
   onSync: PropTypes.func,
   component: PropTypes.string,
-};
+}

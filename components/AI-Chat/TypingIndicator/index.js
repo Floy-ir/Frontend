@@ -1,3 +1,3 @@
-import TypingIndicator from "./TypingIndicator";
-export * from "./TypingIndicator";
-export default TypingIndicator;
+import TypingIndicator from "./TypingIndicator"
+export * from "./TypingIndicator"
+export default TypingIndicator

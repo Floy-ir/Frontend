@@ -1,16 +1,10 @@
-import React from "react";
-import PropTypes from "prop-types";
-import classNames from "classnames";
-import { prefix } from "../settings";
+import React from "react"
+import PropTypes from "prop-types"
+import classNames from "classnames"
+import { prefix } from "../settings"
 
-export const MessageHeader = ({
-  sender = "",
-  sentTime = "",
-  children = undefined,
-  className,
-  ...rest
-}) => {
-  const cName = `${prefix}-message__header`;
+export const MessageHeader = ({ sender = "", sentTime = "", children = undefined, className, ...rest }) => {
+  const cName = `${prefix}-message__header`
 
   return (
     <div {...rest} className={classNames(cName, className)}>
@@ -23,10 +17,10 @@ export const MessageHeader = ({
         </>
       )}
     </div>
-  );
-};
+  )
+}
 
-MessageHeader.displayName = "Message.Header";
+MessageHeader.displayName = "Message.Header"
 
 MessageHeader.propTypes = {
   sender: PropTypes.string,
@@ -37,6 +31,6 @@ MessageHeader.propTypes = {
 
   /** Additional classes. */
   className: PropTypes.string,
-};
+}
 
-export default MessageHeader;
+export default MessageHeader

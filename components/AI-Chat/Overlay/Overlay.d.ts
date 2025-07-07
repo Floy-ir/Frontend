@@ -1,11 +1,11 @@
-import type {ReactElement} from "react";
-import type {ChatComponentPropsChildren} from "../../types";
+import type { ReactElement } from "react"
+import type { ChatComponentPropsChildren } from "../../types"
 
 export interface OverlayProps {
-  blur?:boolean;
-  grayscale?:boolean;
+  blur?: boolean
+  grayscale?: boolean
 }
 
-export declare const Overlay: (props:ChatComponentPropsChildren<OverlayProps, "div">) => ReactElement;
+export declare const Overlay: (props: ChatComponentPropsChildren<OverlayProps, "div">) => ReactElement
 
-export default Overlay;
+export default Overlay

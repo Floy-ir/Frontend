@@ -1,7 +1,7 @@
-import '../../styles/ai-chat.css';
+import "../../styles/ai-chat.css"
 
-import React from 'react';
+import React from "react"
 
 export default function ChatLayout({ children }: { children: React.ReactNode }) {
-  return <>{children}</>;
+  return <>{children}</>
 }

@@ -1,3 +1,3 @@
-import Conversation from "./Conversation";
-export * from "./Conversation";
-export default Conversation;
+import Conversation from "./Conversation"
+export * from "./Conversation"
+export default Conversation

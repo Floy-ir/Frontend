@@ -1,3 +1,3 @@
-import ConversationHeader from "./ConversationHeader";
-export * from "./ConversationHeader";
-export default ConversationHeader;
+import ConversationHeader from "./ConversationHeader"
+export * from "./ConversationHeader"
+export default ConversationHeader

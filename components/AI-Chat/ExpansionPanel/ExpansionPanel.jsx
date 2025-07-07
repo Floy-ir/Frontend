@@ -1,10 +1,10 @@
-import React, { useState, useCallback, useMemo } from "react";
-import PropTypes from "prop-types";
-import { prefix } from "../settings";
-import classNames from "classnames";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faChevronLeft } from "@fortawesome/free-solid-svg-icons/faChevronLeft";
-import { faChevronDown } from "@fortawesome/free-solid-svg-icons/faChevronDown";
+import React, { useState, useCallback, useMemo } from "react"
+import PropTypes from "prop-types"
+import { prefix } from "../settings"
+import classNames from "classnames"
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import { faChevronLeft } from "@fortawesome/free-solid-svg-icons/faChevronLeft"
+import { faChevronDown } from "@fortawesome/free-solid-svg-icons/faChevronDown"
 
 export const ExpansionPanel = ({
   children = undefined,
@@ -15,31 +15,28 @@ export const ExpansionPanel = ({
   className,
   ...rest
 }) => {
-  const cName = `${prefix}-expansion-panel`;
+  const cName = `${prefix}-expansion-panel`
 
-  const defaultOpenFlag = defaultOpen === true ? defaultOpen : false;
+  const defaultOpenFlag = defaultOpen === true ? defaultOpen : false
 
-  const [open, setOpen] = useState(defaultOpenFlag);
+  const [open, setOpen] = useState(defaultOpenFlag)
 
-  const opened = useMemo(
-    () => (typeof isOpened === "boolean" ? isOpened : open),
-    [isOpened, open]
-  );
+  const opened = useMemo(() => (typeof isOpened === "boolean" ? isOpened : open), [isOpened, open])
 
-  const openModifier = opened === true ? `${cName}--open` : "";
-  const icon = opened === true ? faChevronDown : faChevronLeft;
+  const openModifier = opened === true ? `${cName}--open` : ""
+  const icon = opened === true ? faChevronDown : faChevronLeft
 
   const handleOpen = useCallback(
     (e) => {
       if (typeof isOpened === "boolean") {
-        onChange?.(e);
+        onChange?.(e)
       } else {
-        setOpen(!opened);
-        onChange?.(!opened, e);
+        setOpen(!opened)
+        onChange?.(!opened, e)
       }
     },
     [onChange, open, opened, isOpened]
-  );
+  )
 
   return (
     <div {...rest} className={classNames(cName, openModifier, className)}>
@@ -51,10 +48,10 @@ export const ExpansionPanel = ({
       </div>
       <div className={`${cName}__content`}>{children}</div>
     </div>
-  );
-};
+  )
+}
 
-ExpansionPanel.displayName = "ExpansionPanel";
+ExpansionPanel.displayName = "ExpansionPanel"
 
 ExpansionPanel.propTypes = {
   /** Primary content. */
@@ -74,8 +71,6 @@ ExpansionPanel.propTypes = {
 
   /** Called when the opening state changes. */
   onChange: PropTypes.func,
-};
+}
 
-
-
-export default ExpansionPanel;
+export default ExpansionPanel

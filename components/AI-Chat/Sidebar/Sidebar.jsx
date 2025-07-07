@@ -1,10 +1,10 @@
-import React, { useMemo } from "react";
-import PropTypes from "prop-types";
-import { prefix } from "../settings";
-import PerfectScrollbar from "../Scroll";
-import classNames from "classnames";
-import Overlay from "../Overlay";
-import Loader from "../Loader";
+import React, { useMemo } from "react"
+import PropTypes from "prop-types"
+import { prefix } from "../settings"
+import PerfectScrollbar from "../Scroll"
+import classNames from "classnames"
+import Overlay from "../Overlay"
+import Loader from "../Loader"
 
 export const Sidebar = ({
   children = undefined,
@@ -14,47 +14,48 @@ export const Sidebar = ({
   className = "",
   ...props
 }) => {
-  const cName = `${prefix}-sidebar`;
+  const cName = `${prefix}-sidebar`
 
   const sideClass = (() => {
     if (position === "left") {
-      return `${cName}--left`;
+      return `${cName}--left`
     } else if (position === "right") {
-      return `${cName}--right`;
+      return `${cName}--right`
     } else {
-      return ``;
+      return ``
     }
-  })();
+  })()
 
   /* eslint-disable react/display-name*/
   const Tag = useMemo(
-    () => ({ children, ...rest }) => {
-      // PerfectScrollbar for now can't be disabled, so render div instead of disabling it
-      // https://github.com/goldenyz/react-perfect-scrollbar/issues/107
-      if (scrollable === false || (scrollable === true && loading === true)) {
-        return (
-          <div {...rest}>
-            {loading && (
-              <Overlay>
-                <Loader />
-              </Overlay>
-            )}
-            {children}
-          </div>
-        );
-      } else {
-        return <PerfectScrollbar {...rest}>{children}</PerfectScrollbar>;
-      }
-    },
+    () =>
+      ({ children, ...rest }) => {
+        // PerfectScrollbar for now can't be disabled, so render div instead of disabling it
+        // https://github.com/goldenyz/react-perfect-scrollbar/issues/107
+        if (scrollable === false || (scrollable === true && loading === true)) {
+          return (
+            <div {...rest}>
+              {loading && (
+                <Overlay>
+                  <Loader />
+                </Overlay>
+              )}
+              {children}
+            </div>
+          )
+        } else {
+          return <PerfectScrollbar {...rest}>{children}</PerfectScrollbar>
+        }
+      },
     [scrollable, loading]
-  );
+  )
 
   return (
     <Tag {...props} className={classNames(cName, sideClass, className)}>
       {children}
     </Tag>
-  );
-};
+  )
+}
 
 Sidebar.propTypes = {
   /** Primary content. */
@@ -71,6 +72,6 @@ Sidebar.propTypes = {
 
   /** Additional classes. */
   className: PropTypes.string,
-};
+}
 
-export default Sidebar;
+export default Sidebar

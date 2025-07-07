@@ -1,32 +1,21 @@
-import React from "react";
-import PropTypes from "prop-types";
-import classNames from "classnames";
-import { prefix } from "../settings";
+import React from "react"
+import PropTypes from "prop-types"
+import classNames from "classnames"
+import { prefix } from "../settings"
 
-export const Loader = ({
-  className = undefined,
-  variant = "default",
-  children,
-  ...rest
-}) => {
-  const cName = `${prefix}-loader`;
-  const textClass =
-    React.Children.count(children) > 0 ? `${cName}--content` : "";
+export const Loader = ({ className = undefined, variant = "default", children, ...rest }) => {
+  const cName = `${prefix}-loader`
+  const textClass = React.Children.count(children) > 0 ? `${cName}--content` : ""
   return (
     <div
       {...rest}
-      className={classNames(
-        cName,
-        textClass,
-        { [`${cName}--variant-${variant}`]: variant !== "default" },
-        className
-      )}
+      className={classNames(cName, textClass, { [`${cName}--variant-${variant}`]: variant !== "default" }, className)}
       role="status"
     >
       {children}
     </div>
-  );
-};
+  )
+}
 
 Loader.propTypes = {
   /** Primary content. */
@@ -37,6 +26,6 @@ Loader.propTypes = {
 
   /** Loader variant */
   variant: PropTypes.oneOf(["default"]),
-};
+}
 
-export default Loader;
+export default Loader

@@ -1,12 +1,12 @@
-import React from "react";
-import PropTypes from "prop-types";
-import classNames from "classnames";
-import { allowedChildren, getChildren } from "../utils";
-import { prefix } from "../settings";
-import MessageGroupHeader from "./MessageGroupHeader";
-import MessageGroupFooter from "./MessageGroupFooter";
-import MessageGroupMessages from "./MessageGroupMessages";
-import Avatar from "../Avatar";
+import React from "react"
+import PropTypes from "prop-types"
+import classNames from "classnames"
+import { allowedChildren, getChildren } from "../utils"
+import { prefix } from "../settings"
+import MessageGroupHeader from "./MessageGroupHeader"
+import MessageGroupFooter from "./MessageGroupFooter"
+import MessageGroupMessages from "./MessageGroupMessages"
+import Avatar from "../Avatar"
 
 export const MessageGroup = ({
   direction = "incoming",
@@ -17,18 +17,18 @@ export const MessageGroup = ({
   className,
   ...rest
 }) => {
-  const cName = `${prefix}-message-group`;
+  const cName = `${prefix}-message-group`
 
   const directionClass = (() => {
     if (direction === 0 || direction === "incoming") {
-      return `${cName}--incoming`;
+      return `${cName}--incoming`
     } else if (direction === 1 || direction === "outgoing") {
-      return `${cName}--outgoing`;
+      return `${cName}--outgoing`
     }
-  })();
+  })()
 
   const avatarPositionClass = (() => {
-    const prefix = `${cName}--avatar-`;
+    const prefix = `${cName}--avatar-`
     if (typeof avatarPosition === "string") {
       if (
         avatarPosition === "tl" ||
@@ -44,51 +44,44 @@ export const MessageGroup = ({
         avatarPosition === "cr" ||
         avatarPosition === "center-right"
       ) {
-        return `${prefix}${avatarPosition}`;
+        return `${prefix}${avatarPosition}`
       }
     }
-  })();
+  })()
 
   const [avatar, header, footer, messages] = getChildren(children, [
     Avatar,
     MessageGroupHeader,
     MessageGroupFooter,
     MessageGroupMessages,
-  ]);
+  ])
 
   const ariaLabel = (() => {
     if (sender.length > 0 && sentTime.length > 0) {
-      return `${sender}: ${sentTime}`;
+      return `${sender}: ${sentTime}`
     } else if (sender.length > 0 && sentTime.length === 0) {
-      return sender;
+      return sender
     } else {
-      return null;
+      return null
     }
-  })();
+  })()
 
   return (
     <section
       aria-label={ariaLabel}
       {...rest}
-      className={classNames(
-        cName,
-        directionClass,
-        avatarPositionClass,
-        className
-      )}
+      className={classNames(cName, directionClass, avatarPositionClass, className)}
       {...{ [`data-${prefix}-message-group`]: "" }}
     >
-      {typeof avatar !== "undefined" && (
-        <div className={`${cName}__avatar`}>{avatar}</div>
-      )}
+      {typeof avatar !== "undefined" && <div className={`${cName}__avatar`}>{avatar}</div>}
       <div className={`${cName}__content`}>
         {header}
         {messages}
         {footer}
       </div>
     </section>
-  );
-};
+  )
+}
 
 MessageGroup.propTypes = {
   /** Direction. */
@@ -108,19 +101,14 @@ MessageGroup.propTypes = {
    * * &lt;MessageGroup.Messages /&gt;
    * </ul>
    */
-  children: allowedChildren([
-    Avatar,
-    MessageGroupHeader,
-    MessageGroupFooter,
-    MessageGroupMessages,
-  ]),
+  children: allowedChildren([Avatar, MessageGroupHeader, MessageGroupFooter, MessageGroupMessages]),
 
   /** Additional classes. */
   className: PropTypes.string,
-};
+}
 
-MessageGroup.Header = MessageGroupHeader;
-MessageGroup.Footer = MessageGroupFooter;
-MessageGroup.Messages = MessageGroupMessages;
+MessageGroup.Header = MessageGroupHeader
+MessageGroup.Footer = MessageGroupFooter
+MessageGroup.Messages = MessageGroupMessages
 
-export default MessageGroup;
+export default MessageGroup

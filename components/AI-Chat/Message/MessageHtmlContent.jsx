@@ -1,22 +1,17 @@
-import React from "react";
-import PropTypes from "prop-types";
-import classNames from "classnames";
-import { prefix } from "../settings";
+import React from "react"
+import PropTypes from "prop-types"
+import classNames from "classnames"
+import { prefix } from "../settings"
 
 export const MessageHtmlContent = ({ html, className }) => {
-  const cName = `${prefix}-message__html-content`;
+  const cName = `${prefix}-message__html-content`
 
-  const createMarkup = () => ({ __html: html });
+  const createMarkup = () => ({ __html: html })
 
-  return (
-    <div
-      className={classNames(cName, className)}
-      dangerouslySetInnerHTML={createMarkup()}
-    />
-  );
-};
+  return <div className={classNames(cName, className)} dangerouslySetInnerHTML={createMarkup()} />
+}
 
-MessageHtmlContent.displayName = "Message.HtmlContent";
+MessageHtmlContent.displayName = "Message.HtmlContent"
 
 MessageHtmlContent.propTypes = {
   /**
@@ -26,6 +21,6 @@ MessageHtmlContent.propTypes = {
 
   /** Additional classes. */
   className: PropTypes.string,
-};
+}
 
-export default MessageHtmlContent;
+export default MessageHtmlContent

@@ -1,12 +1,12 @@
-import React, { useMemo } from "react";
-import PropTypes from "prop-types";
-import { allowedChildren } from "../utils";
-import { prefix } from "../settings";
-import PerfectScrollbar from "../Scroll";
-import classNames from "classnames";
-import Overlay from "../Overlay";
-import Loader from "../Loader";
-import Conversation from "../Conversation";
+import React, { useMemo } from "react"
+import PropTypes from "prop-types"
+import { allowedChildren } from "../utils"
+import { prefix } from "../settings"
+import PerfectScrollbar from "../Scroll"
+import classNames from "classnames"
+import Overlay from "../Overlay"
+import Loader from "../Loader"
+import Conversation from "../Conversation"
 
 export const ConversationList = ({
   children = [],
@@ -17,37 +17,35 @@ export const ConversationList = ({
   className = "",
   ...props
 }) => {
-  const cName = `${prefix}-conversation-list`;
+  const cName = `${prefix}-conversation-list`
 
   // Memoize, to avoid re-render each time when props (children) changed
   const Tag = useMemo(
-    () => ({ children }) => {
-      // PerfectScrollbar for now cant be disabled, so render div instead of disabling it
-      // https://github.com/goldenyz/react-perfect-scrollbar/issues/107
-      if (scrollable === false || (scrollable === true && loading === true)) {
-        return (
-          <div>
-            {loading && (
-              <Overlay>
-                <Loader />
-              </Overlay>
-            )}
-            {children}
-          </div>
-        );
-      } else {
-        return (
-          <PerfectScrollbar
-            onYReachEnd={onYReachEnd}
-            options={{ suppressScrollX: true }}
-          >
-            {children}
-          </PerfectScrollbar>
-        );
-      }
-    },
+    () =>
+      ({ children }) => {
+        // PerfectScrollbar for now cant be disabled, so render div instead of disabling it
+        // https://github.com/goldenyz/react-perfect-scrollbar/issues/107
+        if (scrollable === false || (scrollable === true && loading === true)) {
+          return (
+            <div>
+              {loading && (
+                <Overlay>
+                  <Loader />
+                </Overlay>
+              )}
+              {children}
+            </div>
+          )
+        } else {
+          return (
+            <PerfectScrollbar onYReachEnd={onYReachEnd} options={{ suppressScrollX: true }}>
+              {children}
+            </PerfectScrollbar>
+          )
+        }
+      },
     [scrollable, loading]
-  );
+  )
 
   return (
     <div className={classNames(cName, className)} {...props}>
@@ -66,8 +64,8 @@ export const ConversationList = ({
         </div>
       )}
     </div>
-  );
-};
+  )
+}
 
 ConversationList.propTypes = {
   /**
@@ -96,6 +94,6 @@ ConversationList.propTypes = {
 
   /** Additional classes. */
   className: PropTypes.string,
-};
+}
 
-export default ConversationList;
+export default ConversationList

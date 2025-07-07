@@ -1,3 +1,3 @@
-import Status from "./Status";
-export * from "./Status";
-export default Status;
+import Status from "./Status"
+export * from "./Status"
+export default Status

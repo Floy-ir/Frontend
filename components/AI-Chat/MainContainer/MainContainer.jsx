@@ -1,24 +1,17 @@
-import React from "react";
-import PropTypes from "prop-types";
-import classNames from "classnames";
-import { prefix } from "../settings";
+import React from "react"
+import PropTypes from "prop-types"
+import classNames from "classnames"
+import { prefix } from "../settings"
 
 export const MainContainer = ({ responsive = false, children = undefined, className, ...rest }) => {
-  const cName = `${prefix}-main-container`;
+  const cName = `${prefix}-main-container`
 
   return (
-    <div
-      {...rest}
-      className={classNames(
-        cName,
-        { [`${cName}--responsive`]: responsive },
-        className
-      )}
-    >
+    <div {...rest} className={classNames(cName, { [`${cName}--responsive`]: responsive }, className)}>
       {children}
     </div>
-  );
-};
+  )
+}
 
 MainContainer.propTypes = {
   /** Primary content. */
@@ -29,6 +22,6 @@ MainContainer.propTypes = {
 
   /** Additional classes. */
   className: PropTypes.string,
-};
+}
 
-export default MainContainer;
+export default MainContainer

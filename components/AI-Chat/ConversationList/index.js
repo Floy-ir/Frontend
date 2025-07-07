@@ -1,3 +1,3 @@
-import ConversationList from "./ConversationList";
-export * from "./ConversationList";
-export default ConversationList;
+import ConversationList from "./ConversationList"
+export * from "./ConversationList"
+export default ConversationList

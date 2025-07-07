@@ -1,10 +1,10 @@
-import type {ReactElement, ReactNode} from "react";
-import type {ChatComponentProps} from "../../types";
+import type { ReactElement, ReactNode } from "react"
+import type { ChatComponentProps } from "../../types"
 
 export interface TypingIndicatorProps {
-  content?:ReactNode;
+  content?: ReactNode
 }
 
-export declare const TypingIndicator: (props:ChatComponentProps<TypingIndicatorProps, "div">) => ReactElement;
+export declare const TypingIndicator: (props: ChatComponentProps<TypingIndicatorProps, "div">) => ReactElement
 
-export default TypingIndicator;
+export default TypingIndicator

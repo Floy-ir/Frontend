@@ -1,16 +1,16 @@
-import React from "react";
-import { prefix } from "../settings";
-import { allowedChildren, getChildren } from "../utils";
-import classNames from "classnames";
-import Avatar from "../Avatar";
-import AvatarGroup from "../AvatarGroup";
-import ConversationHeaderBack from "./ConversationHeaderBack";
-import ConversationHeaderActions from "./ConversationHeaderActions";
-import ConversationHeaderContent from "./ConversationHeaderContent";
-import PropTypes from "prop-types";
+import React from "react"
+import { prefix } from "../settings"
+import { allowedChildren, getChildren } from "../utils"
+import classNames from "classnames"
+import Avatar from "../Avatar"
+import AvatarGroup from "../AvatarGroup"
+import ConversationHeaderBack from "./ConversationHeaderBack"
+import ConversationHeaderActions from "./ConversationHeaderActions"
+import ConversationHeaderContent from "./ConversationHeaderContent"
+import PropTypes from "prop-types"
 
 export const ConversationHeader = ({ children = undefined, className, ...rest }) => {
-  const cName = `${prefix}-conversation-header`;
+  const cName = `${prefix}-conversation-header`
 
   const [back, avatar, avatarGroup, content, actions] = getChildren(children, [
     ConversationHeaderBack,
@@ -18,22 +18,20 @@ export const ConversationHeader = ({ children = undefined, className, ...rest })
     AvatarGroup,
     ConversationHeaderContent,
     ConversationHeaderActions,
-  ]);
+  ])
 
   return (
     <div {...rest} className={classNames(cName, className)}>
       {back}
       {avatar && <div className={`${cName}__avatar`}>{avatar}</div>}
-      {!avatar && avatarGroup && (
-        <div className={`${cName}__avatar`}>{avatarGroup}</div>
-      )}
+      {!avatar && avatarGroup && <div className={`${cName}__avatar`}>{avatarGroup}</div>}
       {content}
       {actions}
     </div>
-  );
-};
+  )
+}
 
-ConversationHeader.displayName = "ConversationHeader";
+ConversationHeader.displayName = "ConversationHeader"
 
 ConversationHeader.propTypes = {
   /**
@@ -56,9 +54,9 @@ ConversationHeader.propTypes = {
 
   /** Additional classes. */
   className: PropTypes.string,
-};
+}
 
-ConversationHeader.Back = ConversationHeaderBack;
-ConversationHeader.Actions = ConversationHeaderActions;
-ConversationHeader.Content = ConversationHeaderContent;
-export default ConversationHeader;
+ConversationHeader.Back = ConversationHeaderBack
+ConversationHeader.Actions = ConversationHeaderActions
+ConversationHeader.Content = ConversationHeaderContent
+export default ConversationHeader

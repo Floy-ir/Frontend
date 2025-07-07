@@ -1,17 +1,17 @@
-import React from "react";
-import PropTypes from "prop-types";
-import classNames from "classnames";
-import { prefix } from "../settings";
+import React from "react"
+import PropTypes from "prop-types"
+import classNames from "classnames"
+import { prefix } from "../settings"
 
 export const MessageTextContent = ({ text, className, children }) => {
-  const cName = `${prefix}-message__text-content`;
+  const cName = `${prefix}-message__text-content`
 
-  const content = children ?? text;
+  const content = children ?? text
 
-  return <div className={classNames(cName, className)}>{content}</div>;
-};
+  return <div className={classNames(cName, className)}>{content}</div>
+}
 
-MessageTextContent.displayName = "Message.TextContent";
+MessageTextContent.displayName = "Message.TextContent"
 
 MessageTextContent.propTypes = {
   /** Primary content - message text */
@@ -22,6 +22,6 @@ MessageTextContent.propTypes = {
 
   /** Additional classes. */
   className: PropTypes.string,
-};
+}
 
-export default MessageTextContent;
+export default MessageTextContent

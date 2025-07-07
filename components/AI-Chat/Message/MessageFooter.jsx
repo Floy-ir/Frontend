@@ -1,17 +1,11 @@
-import React from "react";
-import PropTypes from "prop-types";
-import classNames from "classnames";
+import React from "react"
+import PropTypes from "prop-types"
+import classNames from "classnames"
 
-import { prefix } from "../settings";
+import { prefix } from "../settings"
 
-export const MessageFooter = ({
-  sender = "",
-  sentTime = "",
-  children = undefined,
-  className,
-  ...rest
-}) => {
-  const cName = `${prefix}-message__footer`;
+export const MessageFooter = ({ sender = "", sentTime = "", children = undefined, className, ...rest }) => {
+  const cName = `${prefix}-message__footer`
 
   return (
     <div {...rest} className={classNames(cName, className)}>
@@ -24,10 +18,10 @@ export const MessageFooter = ({
         </>
       )}
     </div>
-  );
-};
+  )
+}
 
-MessageFooter.displayName = "Message.Footer";
+MessageFooter.displayName = "Message.Footer"
 
 MessageFooter.propTypes = {
   sender: PropTypes.string,
@@ -38,6 +32,6 @@ MessageFooter.propTypes = {
 
   /** Additional classes. */
   className: PropTypes.string,
-};
+}
 
-export default MessageFooter;
+export default MessageFooter

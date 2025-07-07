@@ -1,29 +1,21 @@
-import React from "react";
-import PropTypes from "prop-types";
-import classNames from "classnames";
-import { allowedChildren, getChildren, getComponentName } from "../utils";
-import { prefix } from "../settings";
-import Avatar from "../Avatar";
-import MessageHeader from "./MessageHeader";
-import MessageFooter from "./MessageFooter";
-import MessageCustomContent from "./MessageCustomContent";
-import MessageImageContent from "./MessageImageContent";
-import MessageHtmlContent from "./MessageHtmlContent";
-import MessageTextContent from "./MessageTextContent";
+import React from "react"
+import PropTypes from "prop-types"
+import classNames from "classnames"
+import { allowedChildren, getChildren, getComponentName } from "../utils"
+import { prefix } from "../settings"
+import Avatar from "../Avatar"
+import MessageHeader from "./MessageHeader"
+import MessageFooter from "./MessageFooter"
+import MessageCustomContent from "./MessageCustomContent"
+import MessageImageContent from "./MessageImageContent"
+import MessageHtmlContent from "./MessageHtmlContent"
+import MessageTextContent from "./MessageTextContent"
 
 /**
  * Chat message
  */
 export const Message = ({
-  model: {
-    message = "",
-    sentTime = "",
-    sender = "",
-    direction = 1,
-    position,
-    type: modelType,
-    payload: modelPayload,
-  },
+  model: { message = "", sentTime = "", sender = "", direction = 1, position, type: modelType, payload: modelPayload },
   avatarSpacer = false,
   avatarPosition = undefined,
   type = "html",
@@ -32,17 +24,9 @@ export const Message = ({
   className,
   ...rest
 }) => {
-  const cName = `${prefix}-message`;
+  const cName = `${prefix}-message`
 
-  const [
-    avatar,
-    header,
-    footer,
-    htmlContent,
-    textContent,
-    imageContent,
-    customContent,
-  ] = getChildren(children, [
+  const [avatar, header, footer, htmlContent, textContent, imageContent, customContent] = getChildren(children, [
     Avatar,
     MessageHeader,
     MessageFooter,
@@ -50,106 +34,78 @@ export const Message = ({
     MessageTextContent,
     MessageImageContent,
     MessageCustomContent,
-  ]);
+  ])
 
   const directionClass = (() => {
     if (direction === 0 || direction === "incoming") {
-      return `${cName}--incoming`;
+      return `${cName}--incoming`
     } else if (direction === 1 || direction === "outgoing") {
-      return `${cName}--outgoing`;
+      return `${cName}--outgoing`
     }
-  })();
+  })()
 
   const avatarPositionClass = ((position) => {
-    const classPrefix = `${cName}--avatar-`;
+    const classPrefix = `${cName}--avatar-`
     if (position === 0 || position === "top-left" || position === "tl") {
-      return `${classPrefix}tl`;
-    } else if (
-      position === 1 ||
-      position === "top-right" ||
-      position === "tr"
-    ) {
-      return `${classPrefix}tr`;
-    } else if (
-      position === 2 ||
-      position === "bottom-right" ||
-      position === "br"
-    ) {
-      return `${classPrefix}br`;
-    } else if (
-      position === 3 ||
-      position === "bottom-left" ||
-      position === "bl"
-    ) {
-      return `${classPrefix}bl`;
-    } else if (
-      position === 4 ||
-      position === "center-left" ||
-      position === "cl"
-    ) {
-      return `${classPrefix}cl`;
-    } else if (
-      position === 5 ||
-      position === "center-right" ||
-      position === "cr"
-    ) {
-      return `${classPrefix}cr`;
+      return `${classPrefix}tl`
+    } else if (position === 1 || position === "top-right" || position === "tr") {
+      return `${classPrefix}tr`
+    } else if (position === 2 || position === "bottom-right" || position === "br") {
+      return `${classPrefix}br`
+    } else if (position === 3 || position === "bottom-left" || position === "bl") {
+      return `${classPrefix}bl`
+    } else if (position === 4 || position === "center-left" || position === "cl") {
+      return `${classPrefix}cl`
+    } else if (position === 5 || position === "center-right" || position === "cr") {
+      return `${classPrefix}cr`
     }
-  })(avatarPosition);
+  })(avatarPosition)
 
   const positionClass = ((position) => {
-    const classPrefix = `${prefix}-message--`;
+    const classPrefix = `${prefix}-message--`
     if (position === "single" || position === 0) {
-      return `${classPrefix}single`;
+      return `${classPrefix}single`
     } else if (position === "first" || position === 1) {
-      return `${classPrefix}first`;
+      return `${classPrefix}first`
     } else if (position === "normal" || position === 2) {
-      return "";
+      return ""
     } else if (position === "last" || position === 3) {
-      return `${classPrefix}last`;
+      return `${classPrefix}last`
     }
-  })(position);
+  })(position)
 
   const ariaLabel = (() => {
     if (sender?.length > 0 && sentTime?.length > 0) {
-      return `${sender}: ${sentTime}`;
-    } else if (
-      sender?.length > 0 &&
-      (typeof sentTime === "undefined" || sentTime?.length === 0)
-    ) {
-      return sender;
+      return `${sender}: ${sentTime}`
+    } else if (sender?.length > 0 && (typeof sentTime === "undefined" || sentTime?.length === 0)) {
+      return sender
     } else {
-      return null;
+      return null
     }
-  })();
+  })()
 
-  const childContent =
-    htmlContent ?? textContent ?? imageContent ?? customContent;
+  const childContent = htmlContent ?? textContent ?? imageContent ?? customContent
 
   const messageContent =
     childContent ??
     (() => {
-      const messageType = modelType ?? type;
+      const messageType = modelType ?? type
 
-      const payloadFromModel = modelPayload ?? message;
-      const payload = payloadFromModel ?? argPayload;
+      const payloadFromModel = modelPayload ?? message
+      const payload = payloadFromModel ?? argPayload
 
-      const payloadName =
-        typeof payload === "object" ? getComponentName(payload) : "";
+      const payloadName = typeof payload === "object" ? getComponentName(payload) : ""
 
       if (messageType === "html" && payloadName !== "Message.CustomContent") {
-        return <MessageHtmlContent html={payload} />;
+        return <MessageHtmlContent html={payload} />
       } else if (messageType === "text") {
-        return <MessageTextContent text={payload} />;
+        return <MessageTextContent text={payload} />
       } else if (messageType === "image") {
-        return <MessageImageContent {...payload} />;
-      } else if (
-        messageType === "custom" ||
-        payloadName === "Message.CustomContent"
-      ) {
-        return payload;
+        return <MessageImageContent {...payload} />
+      } else if (messageType === "custom" || payloadName === "Message.CustomContent") {
+        return payload
       }
-    })();
+    })()
 
   return (
     <section
@@ -165,17 +121,15 @@ export const Message = ({
       )}
       {...{ [`data-${prefix}-message`]: "" }}
     >
-      {typeof avatar !== "undefined" && (
-        <div className={`${cName}__avatar`}>{avatar}</div>
-      )}
+      {typeof avatar !== "undefined" && <div className={`${cName}__avatar`}>{avatar}</div>}
       <div className={`${cName}__content-wrapper`}>
         {header}
         <div className={`${cName}__content`}>{messageContent}</div>
         {footer}
       </div>
     </section>
-  );
-};
+  )
+}
 
 Message.propTypes = {
   /**
@@ -195,16 +149,7 @@ Message.propTypes = {
     direction: PropTypes.oneOf(["incoming", "outgoing", 0, 1]),
 
     /** Position. */
-    position: PropTypes.oneOf([
-      "single",
-      "first",
-      "normal",
-      "last",
-      0,
-      1,
-      2,
-      3,
-    ]),
+    position: PropTypes.oneOf(["single", "first", "normal", "last", 0, 1, 2, 3]),
 
     /**
      * Message type
@@ -223,11 +168,7 @@ Message.propTypes = {
      * image: Object - for object properties please see **&lt;Message.ImageContent /&gt** properties,
      * custom: **Message.CustomContent** - Component
      */
-    payload: PropTypes.oneOfType([
-      PropTypes.string,
-      PropTypes.object,
-      allowedChildren([MessageCustomContent]),
-    ]),
+    payload: PropTypes.oneOfType([PropTypes.string, PropTypes.object, allowedChildren([MessageCustomContent])]),
   }),
   avatarSpacer: PropTypes.bool,
   avatarPosition: PropTypes.oneOf([
@@ -287,19 +228,14 @@ Message.propTypes = {
    * image: Object - for object properties please see **&lt;Message.ImageContent &gt/>** properties,
    * custom: **Message.CustomContent** - Component
    */
-  payload: PropTypes.oneOfType([
-    PropTypes.string,
-    allowedChildren([MessageCustomContent]),
-  ]),
-};
+  payload: PropTypes.oneOfType([PropTypes.string, allowedChildren([MessageCustomContent])]),
+}
 
+Message.Header = MessageHeader
+Message.HtmlContent = MessageHtmlContent
+Message.TextContent = MessageTextContent
+Message.ImageContent = MessageImageContent
+Message.CustomContent = MessageCustomContent
+Message.Footer = MessageFooter
 
-
-Message.Header = MessageHeader;
-Message.HtmlContent = MessageHtmlContent;
-Message.TextContent = MessageTextContent;
-Message.ImageContent = MessageImageContent;
-Message.CustomContent = MessageCustomContent;
-Message.Footer = MessageFooter;
-
-export default Message;
+export default Message
