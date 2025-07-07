@@ -56,10 +56,11 @@ export default function FullChatDemo() {
     setInput("")
     setTyping(false)
   }
-  const [width, setWidth] = useState(window.innerWidth)
+  const [width, setWidth] = useState<number>(0)
 
   useEffect(() => {
     const handleResize = () => setWidth(window.innerWidth)
+    handleResize() // set initial width
     window.addEventListener("resize", handleResize)
     return () => window.removeEventListener("resize", handleResize)
   }, [])
