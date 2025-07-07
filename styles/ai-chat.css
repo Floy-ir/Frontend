@@ -1,48 +1,41 @@
 /* incomping messages*/
 .cs-message.cs-message--incoming.cs-message--single .cs-message__content {
-  /* background-color: #f2f2f2 !important; */
   background-color: transparent !important;
-  /* margin-top: 3px !important;
-  margin-bottom: 3px !important; */
+}
+
+.cs-message__html-content {
+  font-family:
+    var(--font-anjoman-max),
+    Anjoman Max,
+    sans-serif !important;
 }
 
 /* outgoing messages*/
 .cs-message.cs-message--outgoing.cs-message--single .cs-message__content {
   background-color: #ececec !important;
-  /* margin-top: 3px !important;
-  margin-bottom: 3px !important; */
+  /* margin-top: 1px !important; */
 }
 
 /* send button */
-.cs-button{
+.cs-button {
   color: rgba(90, 40, 238, 1) !important;
-  margin-bottom: 5px !important;
 }
 
 /* chat header */
-.cs-conversation-header{
-    background-color: transparent !important;
+.cs-conversation-header {
+  background-color: transparent !important;
 }
 
-.cs-conversation-header__user-name{
-    background-color: transparent !important;
+.cs-conversation-header__user-name {
+  background-color: transparent !important;
 }
 
 /* message input */
+.cs-message-input__content-editor-container {
+  background-color: rgb(255, 255, 255) !important;
+}
+
 .cs-message-input__content-editor {
-  background-color: rgb(255, 255, 255) !important;
-  margin-top: 5px !important;
-  font-size: medium;
-}
-.cs-message-input__content-editor-container{
-  background-color: rgb(255, 255, 255) !important;
-}
-
-.cs-message-input{
-  margin-top: 3px !important;
-}
-
-.cs-message-input__content-editor{
   text-align: right !important;
 }
 
@@ -50,16 +43,13 @@
   background-color: rgb(255, 255, 255) !important;
   border: 1px solid #e5e5e5;
   border-radius: 0.9rem !important;
-  position: relative !important;
-  
+  margin-top: 4.5px !important;
+  height: 50px !important;
 }
-.cs-chat-container .cs-message-input {
-  /* border: none !important; */
-  margin-top: 15px !important;
-  /* padding-top : 15px !important; */
 
-  margin-bottom: 15px !important;
+.cs-chat-container .cs-message-input {
   height: 60px !important;
+  margin-bottom: 10px !important;
 }
 
 .cs-message-input__send-inside {
@@ -68,15 +58,25 @@
   bottom: 0.5rem !important;
 }
 
+/* message input placeholder */
+.cs-message-input__content-editor {
+  background-color: rgb(255, 255, 255) !important;
+  margin-top: 4px !important;
+  font-size: medium;
+  font-family:
+    var(--font-anjoman-max),
+    Anjoman Max,
+    sans-serif !important;
+}
+
 /* scrollbar */
-.ps__thumb-y{
-    background-color: #878787 !important;
+.ps__thumb-y {
+  background-color: #878787 !important;
 }
 
 /* chat main container */
 .cs-main-container {
   position: fixed !important;
-
   border-top: none !important;
   border-bottom: none !important;
   border-top: right !important;

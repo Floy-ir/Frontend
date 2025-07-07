@@ -22,6 +22,22 @@ import React, { useEffect, useState } from "react"
 
 export default function FullChatDemo() {
   const [messages, setMessages] = useState<MessageModel[]>([])
+  // const [messages, setMessages] = useState<MessageModel[]>([
+  //   {
+  //     message: "سلام! به فلوی خوش اومدی 🌟",
+  //     sentTime: "10:00",
+  //     sender: "Floy",
+  //     direction: "incoming",
+  //     position: "single",
+  //   },
+  //   {
+  //     message: "سلام، ممنونم! می‌خوام یه سفر برنامه‌ریزی کنم ✈️",
+  //     sentTime: "10:01",
+  //     sender: "You",
+  //     direction: "outgoing",
+  //     position: "single",
+  //   },
+  // ])
 
   const [input, setInput] = useState("")
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -68,10 +84,13 @@ export default function FullChatDemo() {
           >
             {messages.length === 0 ? (
               <div className="flex h-full flex-col items-center justify-center text-center">
-                <div className="text-primary-500 font-semibold xs:text-2xl sm-md2:text-3xl text-3xl md:text-2xl lg:text-3xl">
+                <div className="text-primary-500 xs:text-2xl sm-md2:text-3xl text-3xl font-semibold md:text-2xl lg:text-3xl">
                   !برنامه سفرت رو با فولی بچین
                 </div>
-                <div className="text-Gray-N700 mt-5 max-w-xs font-normal sm-md2:text-md text-md md:text-sm lg:text-md" dir="rtl">
+                <div
+                  className="text-Gray-N700 sm-md2:text-md text-md lg:text-md mt-5 max-w-xs font-normal md:text-sm"
+                  dir="rtl"
+                >
                   تاریخ، مبدا و مقصدت رو بگو تا بهترین پرواز و برنامه سفر رو برات پیدا کنیم.
                 </div>
               </div>
