@@ -56,7 +56,7 @@ export default function FullChatDemo() {
     setInput("")
     setTyping(false)
   }
-  const [width, setWidth] = useState(window.innerWidth)
+  const [width, setWidth] = useState<number>(typeof window !== "undefined" ? window.innerWidth : 0)
 
   useEffect(() => {
     const handleResize = () => setWidth(window.innerWidth)
