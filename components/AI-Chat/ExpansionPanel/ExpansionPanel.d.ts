@@ -1,4 +1,4 @@
-import type { ReactElement, MouseEvent } from "react"
+import type { MouseEvent, ReactElement } from "react"
 import type { ChatComponentPropsChildren } from "../../types"
 
 export type ExpansionPanelOnChangeHandler<IsOpened extends boolean | undefined> = IsOpened extends boolean

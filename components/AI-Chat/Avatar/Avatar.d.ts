@@ -1,5 +1,5 @@
-import type { Size, UserStatus, ChatComponentPropsChildrenRef } from "../../types"
 import type { ReactElement } from "react"
+import type { ChatComponentPropsChildrenRef, Size, UserStatus } from "../../types"
 
 export interface AvatarProps {
   name?: string

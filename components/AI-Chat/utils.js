@@ -1,6 +1,6 @@
 import React from "react"
 
-/* eslint-disable  @typescript-eslint/no-empty-function */
+ 
 export const noop = () => {}
 
 /**

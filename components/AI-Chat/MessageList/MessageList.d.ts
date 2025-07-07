@@ -1,5 +1,5 @@
 import type { ReactElement, ReactNode } from "react"
-import type { ChatComponentPropsChildrenRef, ChatComponentPropsChildren, EmptyProps } from "../../types"
+import type { ChatComponentPropsChildren, ChatComponentPropsChildrenRef, EmptyProps } from "../../types"
 
 export type MessageListContentProps = EmptyProps
 

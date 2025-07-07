@@ -129,6 +129,7 @@ EventElement.prototype.bind = function bind(eventName, handler) {
 }
 
 EventElement.prototype.unbind = function unbind(eventName, target) {
+  /* eslint-disable @typescript-eslint/no-this-alias */
   var this$1 = this
 
   this.handlers[eventName] = this.handlers[eventName].filter(function (handler) {
@@ -147,6 +148,7 @@ EventElement.prototype.unbindAll = function unbindAll() {
 }
 
 prototypeAccessors.isEmpty.get = function () {
+  /* eslint-disable @typescript-eslint/no-this-alias */
   var this$1 = this
 
   return Object.keys(this.handlers).every(function (key) {
@@ -449,6 +451,7 @@ function updateCss(element, i) {
 }
 
 function clickRail(i) {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   var element = i.element
 
   i.event.bind(i.scrollbarY, "mousedown", function (e) {
@@ -1237,6 +1240,7 @@ PerfectScrollbar.prototype.update = function update(disableOnYReachWhenNoScroll)
   set(this.scrollbarYRail, { display: "" })
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 PerfectScrollbar.prototype.onScroll = function onScroll(e) {
   if (!this.isAlive) {
     return

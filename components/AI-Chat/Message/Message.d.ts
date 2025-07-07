@@ -1,5 +1,5 @@
 import type { ReactElement, ReactNode } from "react"
-import type { ChatComponentPropsChildren, ChatComponentProps, EmptyProps, MessageType } from "../../types"
+import type { ChatComponentProps, ChatComponentPropsChildren, EmptyProps, MessageType } from "../../types"
 import type { AvatarPosition, MessageDirection } from "../../types/unions"
 
 export type MessageCustomContentProps = EmptyProps

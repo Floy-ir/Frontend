@@ -1,5 +1,5 @@
-import type { ChatComponentPropsChildren, EmptyProps } from "../../types"
 import { ReactElement } from "react"
+import type { ChatComponentPropsChildren, EmptyProps } from "../../types"
 
 export type InputToolboxOwnProps = EmptyProps
 export type InputToolboxProps = ChatComponentPropsChildren<InputToolboxOwnProps, "div">

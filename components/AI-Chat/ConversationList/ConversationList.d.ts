@@ -1,4 +1,4 @@
-import { ChatComponentPropsChildren } from "../../types"
+import { ChatComponentPropsChildren } from "@chatscope/chat-ui-kit-react"
 import type { ReactElement } from "react"
 
 export interface ConversationListOwnProps {
