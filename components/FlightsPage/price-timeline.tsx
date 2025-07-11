@@ -20,6 +20,52 @@ import { apiFetch } from "@/services/api"
 import { formatToJalali } from "@/utils/dateUtils"
 import { createFlightSearchUrl } from "@/utils/navigation"
 import { englishToFarsiNumber } from "@/utils/numbers"
+
+export const fetchprices = async (
+  referenceDate: string,
+  originCityCode: string,
+  destinationCityCode: string,
+  setData: React.Dispatch<React.SetStateAction<FlightData[]>>,
+  setIsLoading: React.Dispatch<React.SetStateAction<boolean>>
+) => {
+  setIsLoading(true)
+  // Dynamically adjust backward_day to avoid including days before today
+  const today = new Date()
+  today.setHours(0, 0, 0, 0)
+  const refDate = new Date(referenceDate)
+  refDate.setHours(0, 0, 0, 0)
+
+  const finalReferenceDate = refDate < today ? today : refDate
+  const finalReferenceDateStr = finalReferenceDate.toISOString().split("T")[0]
+
+  const timeDiff = refDate.getTime() - today.getTime()
+  const daysDiff = Math.floor(timeDiff / (1000 * 60 * 60 * 24))
+  const safeBackwardDay = Math.max(-1, daysDiff - 1)
+  const forward = safeBackwardDay > 7 ? 11 : 15 - safeBackwardDay
+
+  const query = new URLSearchParams({
+    origin: originCityCode,
+    destination: destinationCityCode,
+    reference_date: finalReferenceDateStr || "",
+    forward_day: forward.toString(),
+    backward_day: safeBackwardDay > 10 ? 10 : safeBackwardDay.toString(),
+  } as Record<string, string>).toString()
+  try {
+    console.log(query)
+    const response: FlightResponse | undefined = await apiFetch(`/flights/cheapest?${query}`)
+    // console.log("Cheapest flight data:", response)
+    if (response) {
+      setData(response.results || [])
+    } else {
+      console.error("No flight data returned")
+      setData([])
+    }
+  } catch (err) {
+    console.error("Error fetching cheapest flights", err)
+  }
+  setIsLoading(false)
+}
+
 const Timeline = ({
   originCityCode,
   destinationCityCode,
@@ -27,6 +73,10 @@ const Timeline = ({
   adult,
   child,
   infant,
+  isLoading,
+  setIsLoading,
+  data,
+  setData,
 }: {
   originCityCode: string
   destinationCityCode: string
@@ -34,6 +84,10 @@ const Timeline = ({
   adult: string
   child: string
   infant: string
+  isLoading: boolean
+  setIsLoading: React.Dispatch<React.SetStateAction<boolean>>
+  data: FlightData[]
+  setData: React.Dispatch<React.SetStateAction<FlightData[]>>
 }) => {
   const router = useRouter()
 
@@ -41,8 +95,6 @@ const Timeline = ({
   const searchParams = useSearchParams()
   const departingParam = searchParams.get("departing") || selectedDate
   const [selectedDay, setSelectedDay] = useState<string>(departingParam)
-  const [data, setData] = useState<FlightData[]>([])
-  const [isLoading, setIsLoading] = useState<boolean>(true)
 
   // Calculate the min and max price
   const minPrice = Math.min(...data.filter((item) => item.price).map((item) => item.price || Infinity))
@@ -60,48 +112,9 @@ const Timeline = ({
     setSelectedDay(selectedDate)
   }, [selectedDate])
 
-  const fetchCheapestFlights = async (referenceDate: string) => {
-    setIsLoading(true)
-    // Dynamically adjust backward_day to avoid including days before today
-    const today = new Date()
-    today.setHours(0, 0, 0, 0)
-    const refDate = new Date(referenceDate)
-    refDate.setHours(0, 0, 0, 0)
-
-    const finalReferenceDate = refDate < today ? today : refDate
-    const finalReferenceDateStr = finalReferenceDate.toISOString().split("T")[0]
-
-    const timeDiff = refDate.getTime() - today.getTime()
-    const daysDiff = Math.floor(timeDiff / (1000 * 60 * 60 * 24))
-    const safeBackwardDay = Math.max(-1, daysDiff - 1)
-    const forward = safeBackwardDay > 7 ? 11 : 15 - safeBackwardDay
-
-    const query = new URLSearchParams({
-      origin: originCityCode,
-      destination: destinationCityCode,
-      reference_date: finalReferenceDateStr || "",
-      forward_day: forward.toString(),
-      backward_day: safeBackwardDay > 10 ? 10 : safeBackwardDay.toString(),
-    } as Record<string, string>).toString()
-    try {
-      console.log(query)
-      const response: FlightResponse | undefined = await apiFetch(`/flights/cheapest?${query}`)
-      // console.log("Cheapest flight data:", response)
-      if (response) {
-        setData(response.results || [])
-      } else {
-        console.error("No flight data returned")
-        setData([])
-      }
-    } catch (err) {
-      console.error("Error fetching cheapest flights", err)
-    }
-    setIsLoading(false)
-  }
-
   // Fetch cheapest flights for timeline
   useEffect(() => {
-    fetchCheapestFlights(selectedDate)
+    fetchprices(selectedDate, originCityCode, destinationCityCode, setData, setIsLoading)
   }, []) // runs once on mount
 
   //scroll with mouse option
@@ -130,7 +143,7 @@ const Timeline = ({
     const isEdge = newDate === dates[0] || newDate === dates[dates.length - 1]
 
     if (isEdge) {
-      fetchCheapestFlights(newDate)
+      fetchprices(newDate, originCityCode, destinationCityCode, setData, setIsLoading)
     }
 
     const url = createFlightSearchUrl(originCityCode, destinationCityCode, new Date(newDate), passengers)
@@ -138,6 +151,11 @@ const Timeline = ({
 
     setSelectedDay(newDate)
   }
+
+  // const onRefresh = () => {
+  //   fetchprices(selectedDay, originCityCode, destinationCityCode, setData, setIsLoading)
+  // }
+
   // Auto-scroll the selected date into view after data is fetched and DOM is updated
   useEffect(() => {
     if (!scrollRef.current) return
@@ -190,7 +208,7 @@ const Timeline = ({
       >
         <div className="flex snap-end gap-3 px-3">
           {isLoading
-            ? Array.from({ length: 7 }).map((_, index) => (
+            ? Array.from({ length: 8 }).map((_, index) => (
                 <div
                   key={index}
                   className="bg-Gray-N100 inline-flex h-[50px] w-[87px] shrink-0 animate-pulse flex-col items-center justify-center rounded-sm md:h-[57px] md:w-[113px]"
