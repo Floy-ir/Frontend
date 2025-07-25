@@ -5,7 +5,7 @@ import React from "react"
 import { Button } from "@/components/elements/Button/Button"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import img from "@/public/images/Frame 1000002391.svg"
-export default function ExpirationModal({
+export default function ({
   open,
   onOpenChange,
   onRefresh,
