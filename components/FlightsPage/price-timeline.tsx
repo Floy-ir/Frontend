@@ -1,5 +1,11 @@
 "use client"
 
+import Image from "next/image"
+import { useRouter, useSearchParams } from "next/navigation"
+import React, { useEffect , useRef, useState } from "react";
+
+// import { ArrowLeft2, ArrowRight2 } from "iconsax-react"
+
 interface FlightData {
   price: number
   date: string
@@ -11,10 +17,6 @@ interface FlightResponse {
   results: FlightData[]
 }
 
-// import { ArrowLeft2, ArrowRight2 } from "iconsax-react"
-import Image from "next/image"
-import { useRouter, useSearchParams } from "next/navigation"
-import React, { useEffect, useRef, useState } from "react"
 import img from "@/public/images/arrow-right.svg"
 import { apiFetch } from "@/services/api"
 import { formatToJalali } from "@/utils/dateUtils"
@@ -117,26 +119,68 @@ const Timeline = ({
     fetchprices(selectedDate, originCityCode, destinationCityCode, setData, setIsLoading)
   }, []) // runs once on mount
 
-  //scroll with mouse option
-  // useEffect(() => {
-  //   const container = scrollRef.current
-  //   if (!container) return
+  const scrollRef = useRef<HTMLDivElement>(null!);
 
-  //   const onWheel = (e: WheelEvent) => {
-  //     if (e.deltaY !== 0) {
-  //       e.preventDefault()
-  //       container.scrollBy({ left: e.deltaY, behavior: "smooth" })
-  //     }
-  //   }
+  useEffect(() => {
+  const slider = scrollRef.current;
+  if (!slider) return;
 
-  //   container.addEventListener("wheel", onWheel, { passive: false })
+  let isDown = false;
+  let startX = 0;
+  let scrollLeft = 0;
+  let currentX = 0;
+  let ticking = false;
 
-  //   return () => {
-  //     container.removeEventListener("wheel", onWheel)
-  //   }
-  // }, [])
+  const updateScroll = () => {
+    const walk = currentX - startX;
+    slider.scrollLeft = scrollLeft - walk;
+    ticking = false;
+  };
 
-  const scrollRef = useRef<HTMLDivElement>(null)
+  const onMouseDown = (e: MouseEvent) => {
+    isDown = true;
+    startX = e.pageX - slider.offsetLeft;
+    scrollLeft = slider.scrollLeft;
+    slider.style.cursor = 'grabbing';
+    slider.style.userSelect = 'none';
+  };
+
+  const onMouseLeave = () => {
+    isDown = false;
+    slider.style.cursor = 'grab';
+    slider.style.removeProperty('user-select');
+  };
+
+  const onMouseUp = () => {
+    isDown = false;
+    slider.style.cursor = 'grab';
+    slider.style.removeProperty('user-select');
+  };
+
+  const onMouseMove = (e: MouseEvent) => {
+    if (!isDown) return;
+    e.preventDefault();
+    currentX = e.pageX - slider.offsetLeft;
+
+    if (!ticking) {
+      window.requestAnimationFrame(updateScroll);
+      ticking = true;
+    }
+  };
+
+  slider.style.cursor = 'grab';
+  slider.addEventListener('mousedown', onMouseDown);
+  slider.addEventListener('mouseleave', onMouseLeave);
+  slider.addEventListener('mouseup', onMouseUp);
+  slider.addEventListener('mousemove', onMouseMove);
+
+  return () => {
+    slider.removeEventListener('mousedown', onMouseDown);
+    slider.removeEventListener('mouseleave', onMouseLeave);
+    slider.removeEventListener('mouseup', onMouseUp);
+    slider.removeEventListener('mousemove', onMouseMove);
+  };
+}, []);
 
   const handleDateSelection = (newDate: string) => {
     const dates = data.map((item) => item.date)
@@ -167,7 +211,7 @@ const Timeline = ({
     }
   }, [selectedDay, data])
   return (
-    <div className="relative max-w-screen items-center justify-center">
+    <div id="scroll-container" className="relative max-w-screen items-center justify-center">
       {/* Gradient */}
       <div className="pointer-events-none absolute inset-0 z-9 flex w-full justify-between">
         <div className="h-full w-[73px] bg-gradient-to-l from-white to-transparent lg:rounded-2xl"></div>
@@ -203,7 +247,7 @@ const Timeline = ({
       {/* Timeline scroll area */}
       <div
         ref={scrollRef}
-        className="bg-Shade-White relative inline-flex h-[74px] w-full snap-x snap-mandatory flex-nowrap items-center gap-3 overflow-x-auto scroll-smooth py-3 md:h-[85px] lg:rounded-2xl"
+        className="bg-Shade-White relative inline-flex h-[74px] w-full snap-x snap-mandatory flex-nowrap items-center gap-3 overflow-x-auto scroll-smooth py-3 md:h-[85px] lg:rounded-2xl cursor-grab active:cursor-grabbing"
         style={{ scrollbarWidth: "none" }}
       >
         <div className="flex snap-end gap-3 px-3">
@@ -241,24 +285,24 @@ const Timeline = ({
                     } `}
                   >
                     <div
-                      className={`justify-center text-center ${
+                      className={`select-none [user-select:none] justify-center text-center ${
                         isSelected ? "text-Primary-P500main" : "text-Gray-N500"
                       } text-[11px] leading-none font-medium`}
                     >
-                      <span className="inline md:hidden">
+                      <span className="select-none inline md:hidden">
                         {`${formatToJalali(new Date(item.date))?.split(" ")[0]?.[0]}- ${formatToJalali(
                           new Date(item.date)
                         )?.split(" ")[1]} ${formatToJalali(new Date(item.date))?.split(" ")[2]}`}
                       </span>
 
-                      <span className="hidden md:inline">
+                      <span className="select-none hidden md:inline">
                         {jalaliDate
                           ? `${jalaliDate.split(" ")[0]} - ${jalaliDate.split(" ")[1]} ${jalaliDate.split(" ")[2]}`
                           : "-"}
                       </span>
                     </div>
                     <div
-                      className={`mt-1 justify-center text-center ${
+                      className={`select-none [user-select:none] mt-1 justify-center text-center ${
                         isSelected ? "text-Primary-P500main" : `${priceColor}`
                       } text-[13px] leading-normal font-medium`}
                     >
