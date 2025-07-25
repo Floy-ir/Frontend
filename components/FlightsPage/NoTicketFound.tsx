@@ -43,9 +43,7 @@ export default function NoTicketFound({ type = "noFlights", onClearFilters, onCh
           <h3 className="text-Gray-N800 mb-2 text-lg font-semibold" aria-live="assertive" role="status">
             برای این تاریخ پروازی پیدا نکردیم!
           </h3>
-          <p className="text-Gray-N600 mb-4 max-w-md text-sm">
-            لطفا تاریخ دیگری را انتخاب کنید.
-          </p>
+          <p className="text-Gray-N600 mb-4 max-w-md text-sm">لطفا تاریخ دیگری را انتخاب کنید.</p>
           {onChangeSearch && (
             <button
               onClick={onChangeSearch}
@@ -53,7 +51,7 @@ export default function NoTicketFound({ type = "noFlights", onClearFilters, onCh
               aria-label="تغییر تاریخ یا مقصد"
               aria-haspopup="dialog"
             >
-              <span> تغییر تاریخ  </span>
+              <span> تغییر تاریخ </span>
             </button>
           )}
         </>
