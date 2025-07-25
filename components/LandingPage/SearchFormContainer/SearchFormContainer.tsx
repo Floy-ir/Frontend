@@ -30,7 +30,7 @@ export function SearchFormContainer() {
               <Button
                 intent="secondary"
                 size="small"
-                className="absolute -top-3 -left-8 cursor-not-allowed rounded-full px-1 py-0.5 text-[8px] font-normal sm:text-[10px]"
+                className="absolute -top-5 -left-5 cursor-not-allowed rounded-full px-1.5 py-1 text-[8px] font-normal sm:text-[10px]"
               >
                 به‌زودی
               </Button>
@@ -46,7 +46,7 @@ export function SearchFormContainer() {
               <Button
                 intent="secondary"
                 size="small"
-                className="absolute -top-3 -left-9 cursor-not-allowed rounded-full px-1.5 py-1 text-[8px] font-normal sm:text-[10px]"
+                className="absolute -top-5 -left-5 cursor-not-allowed rounded-full px-1.5 py-1 text-[8px] font-normal sm:text-[10px]"
               >
                 به‌زودی
               </Button>

@@ -21,6 +21,7 @@ export const metadata: Metadata = {
     other: [
       { url: "/favicon/android-chrome-192x192.png", sizes: "192x192", type: "image/png" },
       { url: "/favicon/android-chrome-512x512.png", sizes: "512x512", type: "image/png" },
+      { url: "/favicon/dark-favicon.png", media: "(prefers-color-scheme: dark)", type: "image/x-icon" },
     ],
   },
 }

@@ -68,6 +68,12 @@ function JalaliCalendar({
           ) : (
             <ChevronLeft {...props} className="h-4 w-4" />
           ),
+        Day: ({ date, children, ...rest }: any) => (
+          <button {...rest} className={`${rest.className} flex flex-col items-center justify-center`}>
+             {children} 
+            {/* <span className="mb-2 text-[10px] text-red-500">تست</span>  */}
+          </button>
+        ),
       }}
       formatters={{
         // Custom formatter for weekday names - using single Persian letters
