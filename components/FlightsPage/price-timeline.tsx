@@ -2,7 +2,7 @@
 
 import Image from "next/image"
 import { useRouter, useSearchParams } from "next/navigation"
-import React, { useEffect , useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react"
 
 // import { ArrowLeft2, ArrowRight2 } from "iconsax-react"
 
@@ -119,68 +119,68 @@ const Timeline = ({
     fetchprices(selectedDate, originCityCode, destinationCityCode, setData, setIsLoading)
   }, []) // runs once on mount
 
-  const scrollRef = useRef<HTMLDivElement>(null!);
+  const scrollRef = useRef<HTMLDivElement>(null!)
 
   useEffect(() => {
-  const slider = scrollRef.current;
-  if (!slider) return;
+    const slider = scrollRef.current
+    if (!slider) return
 
-  let isDown = false;
-  let startX = 0;
-  let scrollLeft = 0;
-  let currentX = 0;
-  let ticking = false;
+    let isDown = false
+    let startX = 0
+    let scrollLeft = 0
+    let currentX = 0
+    let ticking = false
 
-  const updateScroll = () => {
-    const walk = currentX - startX;
-    slider.scrollLeft = scrollLeft - walk;
-    ticking = false;
-  };
-
-  const onMouseDown = (e: MouseEvent) => {
-    isDown = true;
-    startX = e.pageX - slider.offsetLeft;
-    scrollLeft = slider.scrollLeft;
-    slider.style.cursor = 'grabbing';
-    slider.style.userSelect = 'none';
-  };
-
-  const onMouseLeave = () => {
-    isDown = false;
-    slider.style.cursor = 'grab';
-    slider.style.removeProperty('user-select');
-  };
-
-  const onMouseUp = () => {
-    isDown = false;
-    slider.style.cursor = 'grab';
-    slider.style.removeProperty('user-select');
-  };
-
-  const onMouseMove = (e: MouseEvent) => {
-    if (!isDown) return;
-    e.preventDefault();
-    currentX = e.pageX - slider.offsetLeft;
-
-    if (!ticking) {
-      window.requestAnimationFrame(updateScroll);
-      ticking = true;
+    const updateScroll = () => {
+      const walk = currentX - startX
+      slider.scrollLeft = scrollLeft - walk
+      ticking = false
     }
-  };
 
-  slider.style.cursor = 'grab';
-  slider.addEventListener('mousedown', onMouseDown);
-  slider.addEventListener('mouseleave', onMouseLeave);
-  slider.addEventListener('mouseup', onMouseUp);
-  slider.addEventListener('mousemove', onMouseMove);
+    const onMouseDown = (e: MouseEvent) => {
+      isDown = true
+      startX = e.pageX - slider.offsetLeft
+      scrollLeft = slider.scrollLeft
+      slider.style.cursor = "grabbing"
+      slider.style.userSelect = "none"
+    }
 
-  return () => {
-    slider.removeEventListener('mousedown', onMouseDown);
-    slider.removeEventListener('mouseleave', onMouseLeave);
-    slider.removeEventListener('mouseup', onMouseUp);
-    slider.removeEventListener('mousemove', onMouseMove);
-  };
-}, []);
+    const onMouseLeave = () => {
+      isDown = false
+      slider.style.cursor = "grab"
+      slider.style.removeProperty("user-select")
+    }
+
+    const onMouseUp = () => {
+      isDown = false
+      slider.style.cursor = "grab"
+      slider.style.removeProperty("user-select")
+    }
+
+    const onMouseMove = (e: MouseEvent) => {
+      if (!isDown) return
+      e.preventDefault()
+      currentX = e.pageX - slider.offsetLeft
+
+      if (!ticking) {
+        window.requestAnimationFrame(updateScroll)
+        ticking = true
+      }
+    }
+
+    slider.style.cursor = "grab"
+    slider.addEventListener("mousedown", onMouseDown)
+    slider.addEventListener("mouseleave", onMouseLeave)
+    slider.addEventListener("mouseup", onMouseUp)
+    slider.addEventListener("mousemove", onMouseMove)
+
+    return () => {
+      slider.removeEventListener("mousedown", onMouseDown)
+      slider.removeEventListener("mouseleave", onMouseLeave)
+      slider.removeEventListener("mouseup", onMouseUp)
+      slider.removeEventListener("mousemove", onMouseMove)
+    }
+  }, [])
 
   const handleDateSelection = (newDate: string) => {
     const dates = data.map((item) => item.date)
@@ -247,7 +247,7 @@ const Timeline = ({
       {/* Timeline scroll area */}
       <div
         ref={scrollRef}
-        className="bg-Shade-White relative inline-flex h-[74px] w-full snap-x snap-mandatory flex-nowrap items-center gap-3 overflow-x-auto scroll-smooth py-3 md:h-[85px] lg:rounded-2xl cursor-grab active:cursor-grabbing"
+        className="bg-Shade-White relative inline-flex h-[74px] w-full cursor-grab snap-x snap-mandatory flex-nowrap items-center gap-3 overflow-x-auto scroll-smooth py-3 active:cursor-grabbing md:h-[85px] lg:rounded-2xl"
         style={{ scrollbarWidth: "none" }}
       >
         <div className="flex snap-end gap-3 px-3">
@@ -285,24 +285,24 @@ const Timeline = ({
                     } `}
                   >
                     <div
-                      className={`select-none [user-select:none] justify-center text-center ${
+                      className={`justify-center text-center [user-select:none] select-none ${
                         isSelected ? "text-Primary-P500main" : "text-Gray-N500"
                       } text-[11px] leading-none font-medium`}
                     >
-                      <span className="select-none inline md:hidden">
+                      <span className="inline select-none md:hidden">
                         {`${formatToJalali(new Date(item.date))?.split(" ")[0]?.[0]}- ${formatToJalali(
                           new Date(item.date)
                         )?.split(" ")[1]} ${formatToJalali(new Date(item.date))?.split(" ")[2]}`}
                       </span>
 
-                      <span className="select-none hidden md:inline">
+                      <span className="hidden select-none md:inline">
                         {jalaliDate
                           ? `${jalaliDate.split(" ")[0]} - ${jalaliDate.split(" ")[1]} ${jalaliDate.split(" ")[2]}`
                           : "-"}
                       </span>
                     </div>
                     <div
-                      className={`select-none [user-select:none] mt-1 justify-center text-center ${
+                      className={`mt-1 justify-center text-center [user-select:none] select-none ${
                         isSelected ? "text-Primary-P500main" : `${priceColor}`
                       } text-[13px] leading-normal font-medium`}
                     >
