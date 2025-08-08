@@ -17,10 +17,10 @@ import {
   TransformedFlight,
   Website,
 } from "@/app/types"
-import { FlightFilters } from "@/components/FlightFilters"
-import { FlightSearchHeader } from "@/components/FlightSearchHeader/FlightSearchHeader"
+import { FlightFilters } from "@/components/FlightsPage/FlightFilters"
+import { FlightSearchHeader } from "@/components/FlightsPage/FlightSearchHeader/FlightSearchHeader"
 import NoTicketFound from "@/components/FlightsPage/NoTicketFound"
-import Timeline from "@/components/FlightsPage/price-timeline"
+import Timeline, { fetchprices } from "@/components/FlightsPage/price-timeline"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Drawer, DrawerClose, DrawerContent, DrawerTrigger } from "@/components/ui/drawer"
 import { FancySlider } from "@/components/ui/fancy-slider"
@@ -30,7 +30,6 @@ import { apiFetch } from "@/services/api/index"
 import { formatDate } from "@/utils/dateUtils"
 import { englishToFarsiNumber } from "@/utils/numbers"
 import { FlightResultsList } from "./FlightResultsList"
-
 // Extend the FilterDrawerContentProps to include priceRangeBounds
 interface FilterDrawerContentProps {
   title: string
@@ -48,10 +47,17 @@ interface FilterDrawerContentProps {
   availableWebsites: Website[]
   availableAirlines: Airline[]
 }
-
+interface PriceData {
+  price: number
+  date: string
+  origin: string
+  destination: string
+}
 export default function FlightResults({ params, searchParams }: RouteParams) {
   const router = useRouter()
   const urlSearchParams = useSearchParams()
+  const [isPriceLoading, seteIsPriceLoading] = useState<boolean>(true)
+  const [priceData, setPriceData] = useState<PriceData[]>([])
 
   // Unwrap params Promise using React.use()
   const unwrappedParams = use(params)
@@ -836,6 +842,10 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
             adult={String(adult)}
             child={String(child)}
             infant={String(infant)}
+            isLoading={isPriceLoading}
+            setIsLoading={seteIsPriceLoading}
+            setData={setPriceData}
+            data={priceData}
           />
         </div>
 
@@ -1394,7 +1404,15 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
 
               {/* Flight results list */}
               <div className="flex-1">
-                <FlightResultsList flights={filteredFlights} onRefresh={() => getFlights(departureDate)} />
+                <FlightResultsList
+                  flights={filteredFlights}
+                  onRefresh={() => {
+                    getFlights(departureDate)
+                    if (originCode && destinationCode) {
+                      fetchprices(departureDate, originCode, destinationCode, setPriceData, seteIsPriceLoading)
+                    }
+                  }}
+                />
               </div>
             </div>
           </>

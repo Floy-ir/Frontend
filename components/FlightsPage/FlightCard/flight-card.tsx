@@ -6,7 +6,7 @@ import Image from "next/image"
 import React, { useState } from "react"
 import { PiSuitcaseRollingLight } from "react-icons/pi"
 import { twMerge } from "tailwind-merge"
-import { Button } from "@/components/Button/Button"
+import { Button } from "@/components/elements/Button/Button"
 import ComparisonDialog from "@/components/FlightsPage/comparisonPage/page"
 import { englishToFarsiNumber } from "@/utils/numbers"
 

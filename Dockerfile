@@ -20,6 +20,7 @@ FROM docker.arvancloud.ir/node:20-alpine as production
 WORKDIR /app
 ENV NODE_ENV=production
 ENV PORT=80
+RUN npm config set registry https://registry.npmmirror.com
 RUN npm install -g pnpm
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/.next ./.next

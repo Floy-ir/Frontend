@@ -1,7 +1,7 @@
 import { ArrowDown2 } from "iconsax-react"
 import Image from "next/image"
 import { useEffect, useRef, useState } from "react"
-import { Button } from "@/components/Button/Button"
+import { Button } from "@/components/elements/Button/Button"
 import { englishToFarsiNumber } from "@/utils/numbers"
 
 export default function TicketCard({
