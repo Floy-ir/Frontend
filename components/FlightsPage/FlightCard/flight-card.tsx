@@ -490,7 +490,7 @@ export function FlightCard({
 
               <div data-layer="Frame 1000002404" className="flex flex-col items-start justify-start gap-2 self-stretch">
                 <Button intent="primary" size="small" className="self-stretch px-5 py-3.5" onClick={onBuy}>
-                  خرید
+                  رفتن به ارزان ترین
                 </Button>
 
                 <Button
@@ -499,7 +499,9 @@ export function FlightCard({
                   className="self-stretch px-5 py-3.5"
                   onClick={() => setShowComparison(true)}
                 >
-                  مشاهده {englishToFarsiNumber(otherSellersCount)} فروشنده
+                  {otherSellersCount > 1
+                    ? `مشاهده ${englishToFarsiNumber(otherSellersCount - 1)} فروشنده دیگر`
+                    : "مشاهده جزئیات "}
                 </Button>
               </div>
             </div>
