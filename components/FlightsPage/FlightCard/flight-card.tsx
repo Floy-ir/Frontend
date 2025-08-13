@@ -337,7 +337,7 @@ export function FlightCard({
 
             <div className="flex flex-col items-start justify-start gap-2 self-stretch">
               <Button intent="primary" size="small" className="self-stretch" onClick={onBuy}>
-                رفتن به ارزان ترین
+                رفتن به {price.agency}
               </Button>
 
               <Button intent="text" size="small" className="self-stretch" onClick={() => setShowComparison(true)}>
@@ -358,7 +358,7 @@ export function FlightCard({
 
           <div className="flex flex-col items-start justify-start gap-1 self-stretch">
             <Button intent="primary" size="small" className="self-stretch" onClick={onBuy}>
-              رفتن به ارزان ترین
+              رفتن به {price.agency}
             </Button>
 
             <Button intent="text" size="small" className="self-stretch" onClick={() => setShowComparison(true)}>
@@ -490,7 +490,7 @@ export function FlightCard({
 
               <div data-layer="Frame 1000002404" className="flex flex-col items-start justify-start gap-2 self-stretch">
                 <Button intent="primary" size="small" className="self-stretch px-5 py-3.5" onClick={onBuy}>
-                  رفتن به ارزان ترین
+                  رفتن به {price.agency}
                 </Button>
 
                 <Button
