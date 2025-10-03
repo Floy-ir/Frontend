@@ -77,7 +77,7 @@ export default function FullChatDemo() {
       <MainContainer style={{ width: containerWidth }}>
         <ChatContainer>
           <ConversationHeader>
-            <Avatar src="../apple-icon.png" name="Floy" />
+            <Avatar src="/favicon/android-chrome-192x192.png" name="Floy" />
             <ConversationHeader.Content userName="فلوی" className="font-anjoman-max" />
           </ConversationHeader>
           <MessageList
