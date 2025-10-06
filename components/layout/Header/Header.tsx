@@ -7,6 +7,8 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import React, { useEffect, useState } from "react"
 import { twMerge } from "tailwind-merge"
+import { Button } from "@/components/ui/button"
+import AuthModal from "./AuthModal"
 import { Drawer, DrawerContent, DrawerTitle, DrawerTrigger } from "../../ui/drawer"
 
 interface MenuItem {
@@ -57,6 +59,14 @@ export function Header({ menuItems, className, forceScrolledStyle = false }: Hea
   const [visible, setVisible] = useState(true)
   const [isScrolled, setIsScrolled] = useState(forceScrolledStyle)
   const [isSmallScreen, setIsSmallScreen] = useState(false)
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  // Toast state (moved here so toast stays visible after modal closes)
+  const [toast, setToast] = useState<{ id: number; message: string } | null>(null)
+  const showToast = (message: string) => {
+    const id = Date.now()
+    setToast({ id, message })
+    setTimeout(() => setToast(curr => (curr && curr.id === id ? null : curr)), 3000)
+  }
 
   // This effect updates isScrolled when forceScrolledStyle changes
   useEffect(() => {
@@ -173,22 +183,20 @@ export function Header({ menuItems, className, forceScrolledStyle = false }: Hea
               </NavigationMenu.List>
             </NavigationMenu.Root>
             {/* Login Button - Left Side in RTL */}
-            {/* <div>
+            <div>
               <Button
-                href="/login"
-                intent="secondary"
-                size="small"
-                disabled
+                size="default"
+                onClick={() => setIsModalOpen(true)}
                 className={twMerge(
-                  "rounded-xl px-6 py-4",
+                  "rounded-xl px-6 py-4 transition-colors",
                   isScrolled
-                    ? "bg-Gray-N100 text-Primary-P500main" // Scrolled state styling
-                    : "bg-Gray-N100 text-indigo-600"      // Default styling
+                    ? "bg-Gray-N100 text-Primary-P500main hover:bg-Gray-N100" // Scrolled state styling
+                    : "bg-Gray-N100 text-indigo-600 hover:bg-Gray-N100" // Default styling
                 )}
               >
                 ورود | ثبت‌نام
               </Button>
-            </div> */}
+            </div>
           </div>
 
           {/* Mobile view */}
@@ -223,25 +231,20 @@ export function Header({ menuItems, className, forceScrolledStyle = false }: Hea
                 </div>
               </DrawerContent>
             </Drawer>
-
-            {/* Login Button */}
-            {/* <Button
-              href="/login"
-              intent="secondary"
-              size="small"
-              disabled
-              className={twMerge(
-                "rounded-xl px-4 py-3 text-sm",
-                isScrolled
-                  ? "bg-Gray-N100 text-Primary-P500main" // Scrolled state styling
-                  : "bg-Gray-N100 text-indigo-600" // Default styling
-              )}
-            >
-              ورود | ثبت‌نام
-            </Button> */}
           </div>
         </div>
       </header>
+
+      {/* toast (top-center) */}
+      {toast && (
+        <div className="fixed top-6 left-1/2 z-[100] -translate-x-1/2">
+          <div className="rounded-lg bg-Gray-N900 text-white px-4 py-2 shadow-lg">
+            {toast.message}
+          </div>
+        </div>
+      )}
+
+      <AuthModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} showToast={showToast} />
 
       {/* Spacer div to prevent layout shifts - matches header height */}
       <div className="h-16 w-full lg:h-22"></div>
