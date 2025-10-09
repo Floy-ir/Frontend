@@ -8,6 +8,7 @@ import OTPInput from "./OTPInput"
 import { LoadingDots } from "./SharedInputs"
 import SignupDetailsForm from "./SignupDetailsForm"
 import SignupForm from "./SignupForm"
+import { Drawer, DrawerContent } from "../../ui/drawer"
 
 function cleanPersianToEnglishDigits(input: string) {
   return input.replace(/[\u06F0-\u06F9]/g, d => String(d.charCodeAt(0) - 1776))
@@ -40,6 +41,17 @@ export default function AuthModal({
       const dir = document.documentElement?.getAttribute("dir") || document.body?.getAttribute("dir") || "ltr"
       setIsRtl(dir === "rtl")
     }
+  }, [])
+
+  // detect small screen to switch to Drawer on mobile
+  const [isMobile, setIsMobile] = React.useState(false)
+  React.useEffect(() => {
+    if (typeof window === "undefined") return
+    const mq = window.matchMedia("(max-width: 640px)")
+    const update = () => setIsMobile(mq.matches)
+    update()
+    mq.addEventListener?.("change", update)
+    return () => mq.removeEventListener?.("change", update)
   }, [])
 
   const handleLoginSubmit = async (data: { phone: string; password: string }) => {
@@ -185,80 +197,88 @@ export default function AuthModal({
 
   if (!isOpen) return null
 
-  return (
-  <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-      <div className="bg-white p-8 rounded-2xl shadow-xl w-[400px] h-[370px] relative border border-Gray-N100 overflow-hidden">
-        {step > 0 ? (
-          <button
-            onClick={() => {
-              setStep(0)
-              setOtpValue("")
-              setOtpError("")
-            }}
-            className="absolute top-3 right-3 flex items-center gap-1 text-sm text-Gray-N700 hover:underline px-3 py-2 rounded-lg"
-            // style={{ position: "absolute", right: 24, top: 24 }}
-            type="button"
-          >
-            <span className="text-lg">&#8592;</span>
-            بازگشت
-          </button>
-        ) : (
+  const Inner = (
+    <div className="bg-white rounded-t-2xl w-full h-full flex flex-col">
+      {step > 0 ? (
+        <button
+          onClick={() => {
+            setStep(0)
+            setOtpValue("")
+            setOtpError("")
+            setFormError("")
+            setEmptyFields([])
+          }}
+          className="flex items-center gap-1 text-sm text-Gray-N700 md:px-3 py-2 rounded-lg"
+          type="button"
+        >
+          <span className="text-xl rotate-180 inline-block">&#8592;</span>
+        </button>
+      ) : (
+        <div className="flex justify-end">
           <button
             onClick={() => {
               onClose()
               setFormError("")
               setEmptyFields([])
             }}
-            className="absolute top-5 right-5 text-gray-500 hover:text-gray-700"
+            className="text-gray-500 hover:text-gray-700 px-2 py-1 md:px-3 md:py-2"
+            aria-label="close"
           >
             ✕
           </button>
-        )}
-
-        {/* Top section: show login/signup buttons or back button depending on showOtp */}
-        <div className="">
-          {!showOtp && (
-            <div className="flex justify-center mb-6 min-h-[48px]">
-              <div className="inline-flex rounded-full bg-Gray-N100 p-1 " role="tablist" aria-label="auth tabs">
-                <button
-                  role="tab"
-                  aria-selected={activeTab === "login"}
-                  onClick={() => { setActiveTab("login"); setFormError(""); setEmptyFields([]) }}
-                  className={twMerge(
-                    "px-6 py-2 rounded-full text-sm font-medium transition-all duration-200",
-                    activeTab === "login"
-                      ? "bg-Primary-P500main text-white shadow"
-                      : "text-Primary-P500main bg-transparent hover:bg-Gray-N50"
-                  )}
-                >
-                  ورود
-                </button>
-                <button
-                  role="tab"
-                  aria-selected={activeTab === "signup"}
-                  onClick={() => { setActiveTab("signup"); setFormError(""); setEmptyFields([]) }}
-                  className={twMerge(
-                    "px-6 py-2 rounded-full text-sm font-medium transition-all duration-200",
-                    activeTab === "signup"
-                      ? "bg-Primary-P500main text-white shadow"
-                      : "text-Primary-P500main bg-transparent hover:bg-Gray-N50"
-                  )}
-                >
-                  ثبت‌نام
-                </button>
-              </div>
-            </div>
-          )}
         </div>
+      )}
 
-        <div className={twMerge("relative h-[360px]") }>
-          {/* sliding container: translateX for switching between form and OTP pane */}
-          <div className="w-[400px] overflow-hidden h-full">
-            <div
-              className="flex w-[1140px] transition-transform duration-300 ease-in-out items-start"
-              style={{ transform: step === 0 ? "translateX(0)" : step === 1 ? `translateX(${isRtl ? 33.333 : -33.333}%)` : `translateX(${isRtl ? 66.666 : -66.666}%)` }}
+      {!showOtp && (
+        <div className="flex justify-center mb-4 md:mb-6 min-h-[48px]">
+          <div className="inline-flex rounded-full bg-transparent ring-1 ring-Gray-N100 p-1 " role="tablist" aria-label="auth tabs">
+            <button
+              role="tab"
+              aria-selected={activeTab === "login"}
+              onClick={() => { setActiveTab("login"); setFormError(""); setEmptyFields([]) }}
+              className={twMerge(
+                "px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 md:px-6 md:py-2",
+                activeTab === "login"
+                  ? "bg-Primary-P500main text-white shadow"
+                  : "text-Gray-N700 bg-transparent hover:bg-Gray-N50"
+              )}
             >
-              <div className="w-[385px] h-full flex flex-col m-1">
+              ورود
+            </button>
+            <button
+              role="tab"
+              aria-selected={activeTab === "signup"}
+              onClick={() => { setActiveTab("signup"); setFormError(""); setEmptyFields([]) }}
+              className={twMerge(
+                "px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 md:px-6 md:py-2",
+                activeTab === "signup"
+                  ? "bg-Primary-P500main text-white shadow"
+                  : "text-Gray-N700 bg-transparent hover:bg-Gray-N50"
+              )}
+            >
+              ثبت‌نام
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* sliding content */}
+      <div className="relative flex-1">
+        <div className="w-full overflow-hidden h-full">
+          <div
+            className="flex transition-transform duration-300 ease-in-out items-start"
+            style={{
+              width: "300%",
+              transform:
+                step === 0
+                  ? "translateX(0)"
+                  : step === 1
+                  ? `translateX(${isRtl ? "33.333%" : "-33.333%"})`
+                  : `translateX(${isRtl ? "66.666%" : "-66.666%"})`,
+            }}
+          >
+            <div className="w-1/3 flex flex-col items-strech h-full">
+              <div className="w-full h-full flex flex-col items-center justify-center">
                 {activeTab === "login" ? (
                   <LoginForm
                     handleLoginSubmit={handleLoginSubmit}
@@ -275,20 +295,23 @@ export default function AuthModal({
                   />
                 )}
               </div>
-              <div className="w-[26%] px-2 flex flex-col items-stretch h-full m-1">
-                <div className="text-center w-full flex flex-col items-center">
-                  <h3 className="text-lg font-medium mb-2 mt-14">وارد کردن کد تایید</h3>
-                  <p className="text-sm text-gray-600 mb-4">کد ارسال شده به شماره {phoneForOtp || "-"} را وارد کنید.</p>
-                  <div className="flex items-center justify-center mt-2 mb-2">
-                    <OTPInput
-                      length={6}
-                      value={otpValue}
-                      onChange={val => setOtpValue(val)}
-                      onComplete={val => void handleVerifyOtp(val)}
-                      disabled={isVerifying}
-                    />
-                  </div>
-                  {otpError && <p className="text-red-600 text-sm text-right mt-2">{otpError}</p>}
+            </div>
+
+            <div className="w-1/3 px-2 flex flex-col items-stretch h-full">
+              <div className="text-center w-full flex flex-col items-center">
+                <h3 className="text-lg font-medium mb-2 mt-8">وارد کردن کد تایید</h3>
+                <p className="text-sm text-gray-600 mb-4">کد ارسال شده به شماره {phoneForOtp || "-"} را وارد کنید.</p>
+                <div className="flex items-center justify-center mt-2 mb-2">
+                  <OTPInput
+                    length={6}
+                    value={otpValue}
+                    onChange={val => setOtpValue(val)}
+                    onComplete={val => void handleVerifyOtp(val)}
+                    disabled={isVerifying}
+                  />
+                </div>
+                {otpError && <p className="text-red-600 text-sm text-right mt-2">{otpError}</p>}
+                <div className="mt-auto">
                   <Button
                     type="button"
                     className="w-full mt-4 bg-Primary-P500main text-white rounded-lg py-2.5 text-base font-medium hover:bg-Primary-P600 transition"
@@ -296,22 +319,43 @@ export default function AuthModal({
                     disabled={isVerifying || otpValue.length !== 6}
                     onClick={() => handleVerifyOtp(otpValue)}
                   >
-                    {isVerifying ? <LoadingDots /> : "ورود"}
+                    {isVerifying ? <LoadingDots /> : "بررسی کد"}
                   </Button>
                 </div>
               </div>
+            </div>
 
-              <div className="w-[380px] px-2 flex flex-col items-stretch h-full">
-                <div className="w-full mt-2">
-                  {/* details form will be rendered here when step === 2 */}
-                  {step === 2 && (
-                    <SignupDetailsForm onSubmit={handleFinalSignup} emptyFields={emptyFields} formError={formError} isLoading={isLoading} />
-                  )}
-                </div>
+            <div className="w-1/3 px-2 flex flex-col items-stretch h-full">
+              <div className="w-full mt-2">
+                {step === 2 && (
+                  <SignupDetailsForm onSubmit={handleFinalSignup} emptyFields={emptyFields} formError={formError} isLoading={isLoading} />
+                )}
               </div>
             </div>
           </div>
         </div>
+      </div>
+    </div>
+  )
+
+  // Mobile: render Drawer bottom sheet, Desktop: centered modal
+  if (isMobile) {
+    return (
+      <Drawer open={isOpen} onOpenChange={open => { if (!open) onClose() }}>
+        {/* no vertical scrolling on Drawer itself */}
+        <DrawerContent className="z-50 fixed bottom-0 left-0 -right-0 rounded-t-2xl bg-white p-0 overflow-hidden">
+          <div className="h-full mb-3">
+            {Inner}
+          </div>
+        </DrawerContent>
+      </Drawer>
+    )
+  }
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+      <div className="bg-white p-2 rounded-2xl shadow-xl w-full md:w-[420px] h-[300px] md:h-[340px] relative border border-Gray-N100 overflow-hidden">
+        {Inner}
       </div>
     </div>
   )

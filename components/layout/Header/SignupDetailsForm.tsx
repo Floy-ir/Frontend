@@ -24,7 +24,7 @@ export default function SignupDetailsForm({ onSubmit, emptyFields, formError, is
 
   return (
       <form
-      className="space-y-3 w-[85%] mr-16.5 mt-4"
+      className="space-y-3 px-5"
       onSubmit={e => {
         e.preventDefault()
         void onSubmit({ name, password, confirm })
@@ -40,6 +40,7 @@ export default function SignupDetailsForm({ onSubmit, emptyFields, formError, is
         value={name}
         onChange={e => setName(e.target.value)}
         autoComplete="name"
+        className="outline-none"
       />
       <FloatingInput
         name="password"
@@ -49,6 +50,7 @@ export default function SignupDetailsForm({ onSubmit, emptyFields, formError, is
         value={password}
         onChange={e => setPassword(e.target.value)}
         autoComplete="new-password"
+        className="outline-none"
       />
       <FloatingInput
         name="confirm"
@@ -58,6 +60,7 @@ export default function SignupDetailsForm({ onSubmit, emptyFields, formError, is
         value={confirm}
         onChange={e => setConfirm(e.target.value)}
         autoComplete="new-password"
+        className="outline-none"
       />
       {formError && <p className="text-red-600 text-sm text-right">{formError}</p>}
       <Button

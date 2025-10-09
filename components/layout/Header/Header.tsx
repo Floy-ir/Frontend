@@ -200,7 +200,7 @@ export function Header({ menuItems, className, forceScrolledStyle = false }: Hea
           </div>
 
           {/* Mobile view */}
-          <div className="flex items-center justify-between lg:hidden">
+          <div className="flex w-full items-center justify-between lg:hidden">
             {/* Drawer for mobile menu */}
             <Drawer open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
               <DrawerTrigger asChild>
@@ -231,6 +231,19 @@ export function Header({ menuItems, className, forceScrolledStyle = false }: Hea
                 </div>
               </DrawerContent>
             </Drawer>
+            {/* Login Button - Left Side in RTL */}
+              <Button
+                size="sm"
+                onClick={() => setIsModalOpen(true)}
+                className={twMerge(
+                  "rounded-lg px-3 py-2 transition-colors",
+                  isScrolled
+                    ? "bg-Gray-N100 text-Primary-P500main hover:bg-Gray-N100" // Scrolled state styling
+                    : "bg-Gray-N100 text-indigo-600 hover:bg-Gray-N100" // Default styling
+                )}
+              >
+                ورود | ثبت‌نام
+              </Button>
           </div>
         </div>
       </header>
