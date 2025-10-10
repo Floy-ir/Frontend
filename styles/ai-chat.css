@@ -76,7 +76,7 @@
 
 /* chat main container */
 .cs-main-container {
-  position: fixed !important;
+  position: relative !important;
   border-top: none !important;
   border-bottom: none !important;
   border-top: right !important;
