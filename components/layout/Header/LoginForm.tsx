@@ -4,35 +4,47 @@ import React from "react"
 import { Button } from "@/components/ui/button"
 import { FloatingInput, LoadingDots } from "./SharedInputs"
 
-export default function LoginForm({ handleLoginSubmit, emptyFields, formError, isLoading }: {
+export default function LoginForm({
+  handleLoginSubmit,
+  emptyFields,
+  formError,
+  isLoading,
+  onForgot,
+  phone,
+  password,
+  onPhoneChange,
+  onPasswordChange,
+}: {
   handleLoginSubmit: (data: { phone: string; password: string }) => void | Promise<void>
   emptyFields: string[]
   formError: string
   isLoading: boolean
+  onForgot?: (phone?: string) => void | Promise<void>
+  phone?: string
+  password?: string
+  onPhoneChange?: (v: string) => void
+  onPasswordChange?: (v: string) => void
 }) {
-  const [phone, setPhone] = React.useState("")
-  const [password, setPassword] = React.useState("")
-  React.useEffect(() => {
-    if (!formError) {
-      setPhone("")
-      setPassword("")
-    }
-  }, [formError])
+  // inputs are controlled by parent `AuthModal` when provided
+  const p = phone ?? ""
+  const pass = password ?? ""
   return (
     <form
-      className="space-y-3.5 w-[85%]"
-      onSubmit={e => {
+      className="w-[85%] space-y-3.5"
+      onSubmit={(e) => {
         e.preventDefault()
-        void handleLoginSubmit({ phone, password })
+        void handleLoginSubmit({ phone: p, password: pass })
       }}
     >
-      <FloatingInput
+      <p className="mb-4 text-sm text-gray-500">برای ورود شماره تلفن و رمز عبود خود را وارد کنید.</p>
+
+        <FloatingInput
         name="phone"
         type="tel"
         label="شماره تلفن"
         error={emptyFields.includes("phone")}
-        value={phone}
-        onChange={e => setPhone(e.target.value)}
+        value={p}
+        onChange={(e) => onPhoneChange?.(e.target.value)}
         autoComplete="tel"
       />
       <FloatingInput
@@ -40,21 +52,28 @@ export default function LoginForm({ handleLoginSubmit, emptyFields, formError, i
         type="password"
         label="رمز عبور"
         error={emptyFields.includes("password")}
-        value={password}
-        onChange={e => setPassword(e.target.value)}
+        value={pass}
+        onChange={(e) => onPasswordChange?.(e.target.value)}
         autoComplete="current-password"
       />
-      {formError && <p className="text-red-600 text-sm text-right">{formError}</p>}
+      {formError && <p className="text-right text-sm text-red-600">{formError}</p>}
       <Button
         type="submit"
-        className="w-full bg-Primary-P500main text-white rounded-lg py-2.5 text-base font-medium hover:bg-Primary-P600 transition"
+        className="bg-Primary-P500main hover:bg-Primary-P600 w-full rounded-lg py-2.5 text-base font-medium text-white transition"
         style={{ minHeight: 40 }}
       >
         {isLoading ? <LoadingDots /> : "ورود"}
       </Button>
       <div className="text-center">
-        // todo: o=implement forgot password
-        <button type="button" className="text-Primary-P500main hover:underline text-sm">
+        <button
+          type="button"
+          className="text-Primary-P500main text-sm hover:underline"
+            onClick={() => {
+            if (!onForgot) return
+            // pass current phone value from parent if available
+            onForgot(p || undefined)
+          }}
+        >
           فراموشی رمز عبور
         </button>
       </div>

@@ -3,12 +3,14 @@
 import React from "react"
 import { twMerge } from "tailwind-merge"
 import { Button } from "@/components/ui/button"
+import { apiFetch } from "@/services/api/index"
 import LoginForm from "./LoginForm"
 import OTPInput from "./OTPInput"
+import ResetPasswordForm from "./ResetPasswordForm"
 import { LoadingDots } from "./SharedInputs"
 import SignupDetailsForm from "./SignupDetailsForm"
 import SignupForm from "./SignupForm"
-import { Drawer, DrawerContent } from "../../ui/drawer"
+import { Drawer, DrawerContent, DrawerTitle } from "../../ui/drawer"
 
 function cleanPersianToEnglishDigits(input: string) {
   return input.replace(/[\u06F0-\u06F9]/g, d => String(d.charCodeAt(0) - 1776))
@@ -33,6 +35,38 @@ export default function AuthModal({
   const [phoneForOtp, setPhoneForOtp] = React.useState("")
   const [isRtl, setIsRtl] = React.useState(false)
   const [step, setStep] = React.useState<0 | 1 | 2>(0) // 0=form,1=otp,2=details
+  const [resetMode, setResetMode] = React.useState(false)
+  const [otpUuid, setOtpUuid] = React.useState<string | null>(null)
+
+  // controlled inputs owned by AuthModal
+  const [loginPhone, setLoginPhone] = React.useState("")
+  const [loginPassword, setLoginPassword] = React.useState("")
+  const [signupPhone, setSignupPhone] = React.useState("")
+
+  // reset inputs when modal opens
+  React.useEffect(() => {
+    if (isOpen) {
+      setLoginPhone("")
+      setLoginPassword("")
+      setSignupPhone("")
+    }
+  }, [isOpen])
+
+  // resend cooldown
+  const [resendCooldown, setResendCooldown] = React.useState<number>(0)
+  React.useEffect(() => {
+    if (resendCooldown <= 0) return
+    const id = setInterval(() => setResendCooldown(c => c - 1), 1000)
+    return () => clearInterval(id)
+  }, [resendCooldown])
+
+  function extractServerMessage(err: unknown) {
+    // apiFetch throws an Error with .response possibly containing { detail } or messages
+    type ErrResp = { response?: { detail?: string; message?: string }; message?: string }
+    const e = err as ErrResp
+    const msg = e?.response?.detail || e?.response?.message || e?.message
+    return String(msg ?? "خطایی رخ داد")
+  }
 
   const showOtp = step > 0
 
@@ -81,9 +115,28 @@ export default function AuthModal({
     setFormError("")
     setIsLoading(true)
     try {
-      await new Promise(resolve => setTimeout(resolve, 1500))
+      // call login endpoint
+      const mobile = formatMobile(phone)
+      const res = await apiFetch<{ token?: string; detail?: string }>("/accounts/login/", {
+        method: "POST",
+        data: { mobile, password },
+      })
+      if (!res) {
+        setFormError("خطا در ورود. دوباره تلاش کنید.")
+        return
+      }
+      // persist token if provided
+      type LoginRes = { token?: string }
+      const lr = res as unknown as LoginRes
+      if (lr?.token) {
+        try { localStorage.setItem("auth_token", lr.token) } catch {}
+      }
+      // success - backend may return token or session cookie
       showToast("با موفقیت وارد شدید!")
       setTimeout(() => onClose(), 200)
+    } catch (err) {
+      console.error(err)
+      setFormError(extractServerMessage(err))
     } finally {
       setIsLoading(false)
     }
@@ -110,12 +163,62 @@ export default function AuthModal({
     setFormError("")
     setIsLoading(true)
     try {
-      // TODO: call real signup API here and send the verification code
-      await new Promise(resolve => setTimeout(resolve, 1200))
+      // call send-otp for signup
+      const mobile = formatMobile(phone)
+      const res = await apiFetch<{ otp_uuid?: string }>("/accounts/send-otp/", {
+        method: "POST",
+        data: { mobile },
+      })
+      const uuid = res?.otp_uuid ?? null
+      setOtpUuid(uuid)
       // show the OTP pane and carry phone
       setPhoneForOtp(phone)
       setOtpValue("")
       setStep(1)
+      setResetMode(false)
+      setOtpError("")
+    } catch (err) {
+      console.error(err)
+      setFormError(extractServerMessage(err))
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  // when user clicks "forgot password" from login form, this is called
+  const handleForgotPassword = async (phone?: string) => {
+    const cleaned = phone ? cleanPersianToEnglishDigits(phone.trim()) : ""
+    const empty: string[] = []
+    if (!cleaned) empty.push("phone")
+    setEmptyFields(empty)
+    if (empty.length > 0) {
+      setFormError("فیلدهای مشخص شده را پر کنید.")
+      return
+    }
+
+    const phonePattern = /^(09\d{9}|98\d{10})$/
+    if (!phonePattern.test(cleaned)) {
+      setFormError("شماره تلفن را به درستی وارد کنید.")
+      setEmptyFields(["phone"])
+      return
+    }
+
+    // trigger otp for reset flow
+    setFormError("")
+    setIsLoading(true)
+    try {
+      // request a reset OTP for this phone from API
+      const mobile = formatMobile(cleaned)
+      const res = await apiFetch<{ otp_uuid?: string }>("/accounts/forgot-password/", {
+        method: "POST",
+        data: { mobile },
+      })
+      const uuid = res?.otp_uuid ?? null
+      setOtpUuid(uuid)
+      setPhoneForOtp(cleaned)
+      setOtpValue("")
+      setStep(1)
+      setResetMode(true)
       setOtpError("")
     } finally {
       setIsLoading(false)
@@ -131,8 +234,18 @@ export default function AuthModal({
         setOtpError("کد وارد شده معتبر نیست.")
         return
       }
-      // TODO: call verify endpoint with phoneForOtp and code
-      await new Promise(resolve => setTimeout(resolve, 1100))
+      // call verify endpoint with phoneForOtp and code + otp uuid
+      if (!phoneForOtp) {
+        setOtpError("شماره تلفن یافت نشد.")
+        return
+      }
+      const mobile = formatMobile(phoneForOtp)
+      const res = await apiFetch<{ otp_uuid?: string }>("/accounts/verify-otp/", {
+        method: "POST",
+        data: { mobile, code, otp_uuid: otpUuid },
+      })
+      // server may return/refresh otp_uuid
+      if (res?.otp_uuid) setOtpUuid(res.otp_uuid)
       // On success move to details step (don't close yet)
       setOtpError("")
       setStep(2)
@@ -178,8 +291,12 @@ export default function AuthModal({
     setFormError("")
     setIsLoading(true)
     try {
-      // TODO: call final signup API with phoneForOtp, name, password
-      await new Promise(resolve => setTimeout(resolve, 1200))
+      // call final signup API with phoneForOtp, name, password and otp_uuid
+      const mobile = formatMobile(phoneForOtp)
+      await apiFetch("/accounts/signup/", {
+        method: "POST",
+        data: { mobile, password, full_name: name, otp_uuid: otpUuid },
+      })
       showToast("ثبت‌نام با موفقیت انجام شد!")
       setTimeout(() => {
         // reset all state and close
@@ -195,11 +312,72 @@ export default function AuthModal({
     }
   }
 
+  const handleResetPassword = async (data: { password: string; confirm: string }) => {
+    const password = data.password.trim()
+    const confirm = data.confirm.trim()
+    const empty: string[] = []
+    const passwordPattern = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/
+
+    if (!password) empty.push("password")
+    if (!confirm) empty.push("confirm")
+
+    if (empty.length > 0) {
+      setFormError("فیلدهای مشخص شده را پر کنید.")
+      setEmptyFields(empty)
+      return
+    }
+
+    if (!passwordPattern.test(password)) {
+      setFormError("رمز عبور باید ۸ کاراکتر و ترکیبی از اعداد و حروف باشد.")
+      setEmptyFields(["password"])
+      return
+    }
+
+    if (password !== confirm) {
+      setFormError("رمز عبور و تکرار آن باید برابر باشند.")
+      setEmptyFields(["password", "confirm"])
+      return
+    }
+
+    setFormError("")
+    setIsLoading(true)
+    try {
+      // call reset API with phoneForOtp and password and otp_uuid
+      const mobile = formatMobile(phoneForOtp)
+      await apiFetch("/accounts/reset-password/", {
+        method: "POST",
+        data: { mobile, new_password: password, otp_uuid: otpUuid },
+      })
+      showToast("رمز عبور با موفقیت تغییر کرد!")
+      setTimeout(() => {
+        // reset all state and close
+        setStep(0)
+        setPhoneForOtp("")
+        setOtpValue("")
+        setFormError("")
+        setEmptyFields([])
+        setResetMode(false)
+        onClose()
+      }, 200)
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  function formatMobile(raw: string) {
+    // raw is already cleaned digits: could be 09..., 98..., or +...
+    if (!raw) return raw
+    if (raw.startsWith("+")) return raw
+    if (raw.startsWith("09")) return "+98" + raw.slice(1)
+    if (raw.startsWith("98")) return "+" + raw
+    return raw
+  }
+
   if (!isOpen) return null
 
   const Inner = (
     <div className="bg-white rounded-t-2xl w-full h-full flex flex-col">
-      {step > 0 ? (
+      {step > 0 && (
         <button
           onClick={() => {
             setStep(0)
@@ -208,29 +386,28 @@ export default function AuthModal({
             setFormError("")
             setEmptyFields([])
           }}
-          className="flex items-center gap-1 text-sm text-Gray-N700 md:px-3 py-2 rounded-lg"
+          className="flex items-center gap-1 text-sm text-Gray-N700 py-2 rounded-lg mr-7 md:mr-5"
           type="button"
         >
           <span className="text-xl rotate-180 inline-block">&#8592;</span>
         </button>
-      ) : (
-        <div className="flex justify-end">
-          <button
-            onClick={() => {
-              onClose()
-              setFormError("")
-              setEmptyFields([])
-            }}
-            className="text-gray-500 hover:text-gray-700 px-2 py-1 md:px-3 md:py-2"
-            aria-label="close"
-          >
-            ✕
-          </button>
-        </div>
       )}
 
       {!showOtp && (
-        <div className="flex justify-center mb-4 md:mb-6 min-h-[48px]">
+        <div className="flex justify-center items-center my-4 ">
+          <div className="absolute top-3 right-5">
+            <button
+              onClick={() => {
+                onClose()
+                setFormError("")
+                setEmptyFields([])
+              }}
+              className="text-gray-500 hover:text-gray-700"
+              aria-label="close"
+            >
+              ✕
+            </button>
+          </div>
           <div className="inline-flex rounded-full bg-transparent ring-1 ring-Gray-N100 p-1 " role="tablist" aria-label="auth tabs">
             <button
               role="tab"
@@ -266,7 +443,7 @@ export default function AuthModal({
       <div className="relative flex-1">
         <div className="w-full overflow-hidden h-full">
           <div
-            className="flex transition-transform duration-300 ease-in-out items-start"
+            className="flex transition-transform duration-300 ease-in-out items-start mb-0"
             style={{
               width: "300%",
               transform:
@@ -280,28 +457,40 @@ export default function AuthModal({
             <div className="w-1/3 flex flex-col items-strech h-full">
               <div className="w-full h-full flex flex-col items-center justify-center">
                 {activeTab === "login" ? (
+                  <div className="w-full h-full flex flex-col items-center justify-center mb-3">
                   <LoginForm
                     handleLoginSubmit={handleLoginSubmit}
                     emptyFields={emptyFields}
                     formError={formError}
                     isLoading={isLoading}
-                  />
+                    onForgot={handleForgotPassword}
+                    phone={loginPhone}
+                    password={loginPassword}
+                    onPhoneChange={v => setLoginPhone(v)}
+                    onPasswordChange={v => setLoginPassword(v)}
+                  /> 
+                  </div>
                 ) : (
+                  <div className="w-full h-full flex flex-col items-center justify-center mt-4">
+
                   <SignupForm
                     handleSignupSubmit={handleSignupSubmit}
                     emptyFields={emptyFields}
                     formError={formError}
                     isLoading={isLoading}
+                    phone={signupPhone}
+                    onPhoneChange={v => setSignupPhone(v)}
                   />
+                  </div>
                 )}
               </div>
             </div>
 
             <div className="w-1/3 px-2 flex flex-col items-stretch h-full">
-              <div className="text-center w-full flex flex-col items-center">
-                <h3 className="text-lg font-medium mb-2 mt-8">وارد کردن کد تایید</h3>
-                <p className="text-sm text-gray-600 mb-4">کد ارسال شده به شماره {phoneForOtp || "-"} را وارد کنید.</p>
-                <div className="flex items-center justify-center mt-2 mb-2">
+              <div className="text-center w-full flex flex-col items-center space-y-4">
+                <h3 className="text-lg font-medium">وارد کردن کد تایید</h3>
+                <p className="text-sm text-gray-600">کد ارسال شده به شماره {phoneForOtp || "-"} را وارد کنید.</p>
+                <div className="flex items-center justify-center">
                   <OTPInput
                     length={6}
                     value={otpValue}
@@ -311,11 +500,11 @@ export default function AuthModal({
                   />
                 </div>
                 {otpError && <p className="text-red-600 text-sm text-right mt-2">{otpError}</p>}
-                <div className="mt-auto">
+                <div className="mb-4">
                   <Button
                     type="button"
-                    className="w-full mt-4 bg-Primary-P500main text-white rounded-lg py-2.5 text-base font-medium hover:bg-Primary-P600 transition"
-                    style={{ minHeight: 45 }}
+                    className="w-full bg-Primary-P500main text-white rounded-lg text-base font-medium hover:bg-Primary-P600 transition"
+                    style={{ minHeight: 40 }}
                     disabled={isVerifying || otpValue.length !== 6}
                     onClick={() => handleVerifyOtp(otpValue)}
                   >
@@ -328,7 +517,11 @@ export default function AuthModal({
             <div className="w-1/3 px-2 flex flex-col items-stretch h-full">
               <div className="w-full mt-2">
                 {step === 2 && (
-                  <SignupDetailsForm onSubmit={handleFinalSignup} emptyFields={emptyFields} formError={formError} isLoading={isLoading} />
+                  resetMode ? (
+                    <ResetPasswordForm onSubmit={handleResetPassword} emptyFields={emptyFields} formError={formError} isLoading={isLoading} />
+                  ) : (
+                    <SignupDetailsForm onSubmit={handleFinalSignup} emptyFields={emptyFields} formError={formError} isLoading={isLoading} />
+                  )
                 )}
               </div>
             </div>
@@ -343,8 +536,11 @@ export default function AuthModal({
     return (
       <Drawer open={isOpen} onOpenChange={open => { if (!open) onClose() }}>
         {/* no vertical scrolling on Drawer itself */}
-        <DrawerContent className="z-50 fixed bottom-0 left-0 -right-0 rounded-t-2xl bg-white p-0 overflow-hidden">
-          <div className="h-full mb-3">
+        <DrawerContent className="z-50 fixed bottom-0 left-0 -right-0 rounded-t-2xl bg-white p-0 overflow-hidden border-none shadow-none focus:outline-none focus-visible:ring-0 focus-visible:ring-transparent">
+          <span className="sr-only">
+            <DrawerTitle>Authentication</DrawerTitle>
+          </span>
+          <div className="h-full ">
             {Inner}
           </div>
         </DrawerContent>
@@ -354,7 +550,7 @@ export default function AuthModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-      <div className="bg-white p-2 rounded-2xl shadow-xl w-full md:w-[420px] h-[300px] md:h-[340px] relative border border-Gray-N100 overflow-hidden">
+      <div className="bg-white p-2 rounded-2xl shadow-xl w-full sm-md:w-[350px] md:w-[350px] relative border border-Gray-N100 overflow-hidden">
         {Inner}
       </div>
     </div>
