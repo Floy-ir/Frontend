@@ -9,13 +9,14 @@ import { TransportationCard } from "./ActivityCards/TransportationCard"
 
 type ItineraryTimelineProps = {
   days: TripDay[]
+  onFlightClick?: (transportation: Transportation) => void
 }
 
-export function ItineraryTimeline({ days }: ItineraryTimelineProps) {
+export function ItineraryTimeline({ days, onFlightClick }: ItineraryTimelineProps) {
   const renderActivity = (activity: Activity) => {
     switch (activity.type) {
       case "transportation":
-        return <TransportationCard key={activity.id} activity={activity} />
+        return <TransportationCard key={activity.id} activity={activity} onFlightClick={onFlightClick} />
       case "destination":
         return <DestinationCard key={activity.id} activity={activity} />
       case "accommodation":

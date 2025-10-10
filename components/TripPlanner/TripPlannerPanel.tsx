@@ -1,11 +1,14 @@
 "use client"
 
 import dynamic from "next/dynamic"
-import { ShoppingCart } from "lucide-react"
+import { ArrowRight, ShoppingCart } from "lucide-react"
+import { useState } from "react"
 
-import type { TripPlan } from "@/app/types/trip"
+import type { Transportation, TripPlan } from "@/app/types/trip"
 
 import { ItineraryTimeline } from "./ItineraryTimeline"
+import { FlightList } from "./FlightList"
+import { Breadcrumb } from "./Breadcrumb"
 
 // Dynamically import TripMap with no SSR to avoid "window is not defined" error
 const TripMap = dynamic(() => import("./TripMap").then((mod) => ({ default: mod.TripMap })), {
@@ -19,11 +22,25 @@ const TripMap = dynamic(() => import("./TripMap").then((mod) => ({ default: mod.
   ),
 })
 
+type ViewMode = "overview" | "flight-list"
+
 type TripPlannerPanelProps = {
   tripPlan: TripPlan | null
 }
 
 export function TripPlannerPanel({ tripPlan }: TripPlannerPanelProps) {
+  const [currentView, setCurrentView] = useState<ViewMode>("overview")
+  const [selectedTransportation, setSelectedTransportation] = useState<Transportation | null>(null)
+
+  const handleFlightClick = (transportation: Transportation) => {
+    setSelectedTransportation(transportation)
+    setCurrentView("flight-list")
+  }
+
+  const handleBackToOverview = () => {
+    setCurrentView("overview")
+    setSelectedTransportation(null)
+  }
   if (!tripPlan) {
     return (
       <div className="flex h-full items-center justify-center bg-gray-50 p-8">
@@ -31,6 +48,47 @@ export function TripPlannerPanel({ tripPlan }: TripPlannerPanelProps) {
           <p className="font-anjoman-max text-lg text-Gray-N600" dir="rtl">
             هنوز برنامه سفری ایجاد نشده است
           </p>
+        </div>
+      </div>
+    )
+  }
+
+  if (currentView === "flight-list" && selectedTransportation) {
+    return (
+      <div className="flex h-screen flex-col bg-white">
+        {/* Header with Back Navigation */}
+        <div className="border-b border-gray-200 bg-white px-6 py-4" dir="rtl">
+          <div className="flex items-center gap-4">
+            <button
+              onClick={handleBackToOverview}
+              className="flex items-center gap-2 rounded-lg bg-gray-100 px-3 py-2 font-anjoman-max text-sm font-medium text-Gray-N700 transition-colors hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-Primary-P500main focus:ring-offset-2"
+              aria-label="بازگشت به برنامه سفر"
+            >
+              <ArrowRight className="h-4 w-4" aria-hidden="true" />
+              <span>بازگشت</span>
+            </button>
+            
+            <Breadcrumb 
+              items={[
+                { 
+                  label: "برنامه سفر", 
+                  onClick: handleBackToOverview 
+                },
+                { 
+                  label: `پرواز ${selectedTransportation.origin} به ${selectedTransportation.destination}` 
+                }
+              ]} 
+            />
+          </div>
+        </div>
+
+        {/* Flight List Content */}
+        <div className="flex-1 overflow-y-auto">
+          <FlightList
+            origin={selectedTransportation.origin}
+            destination={selectedTransportation.destination}
+            departureDate={selectedTransportation.departureTime}
+          />
         </div>
       </div>
     )
@@ -74,7 +132,7 @@ export function TripPlannerPanel({ tripPlan }: TripPlannerPanelProps) {
             <h2 className="mb-4 px-4 font-anjoman-max text-lg font-bold text-Gray-N800" dir="rtl">
               نمای کلی
             </h2>
-            <ItineraryTimeline days={tripPlan.days} />
+            <ItineraryTimeline days={tripPlan.days} onFlightClick={handleFlightClick} />
           </div>
         </div>
       </div>
