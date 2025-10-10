@@ -51,16 +51,13 @@ export function TransportationCard({ activity, onFlightClick }: TransportationCa
               پیشنهادی
             </span>
           </div>
-          <button
-            className="shrink-0 rounded-full p-1 text-Gray-N500 transition-colors hover:bg-gray-100 hover:text-Gray-N700 focus:outline-none focus:ring-2 focus:ring-Primary-P500main focus:ring-offset-2"
-            aria-label="گزینه‌های بیشتر"
-          >
-            <MoreVertical className="h-5 w-5" aria-hidden="true" />
-          </button>
+          <div className="font-anjoman-max text-sm font-semibold text-Gray-N800 whitespace-nowrap">
+              {englishToFarsiNumber(activity.recommendedFlight.price.formattedAmount)} تومان
+          </div>
         </div>
 
-        {/* Compact flight info */}
-        <div className="mb-3 flex items-center justify-between">
+        {/* Compact flight info with price and buttons */}
+        <div className="flex items-center justify-between gap-4">
           <div className="flex items-center gap-2 text-sm text-Gray-N600">
             <span className="font-medium">{activity.recommendedFlight.airline}</span>
             <span>•</span>
@@ -68,34 +65,27 @@ export function TransportationCard({ activity, onFlightClick }: TransportationCa
             <span>•</span>
             <span>{activity.duration}</span>
           </div>
-          <div className="text-left">
-            <div className="font-anjoman-max text-sm font-semibold text-Gray-N800">
-              {englishToFarsiNumber(activity.recommendedFlight.price.formattedAmount)} تومان
-            </div>
-            <div className="font-anjoman-max text-xs text-Gray-N500">
-              {activity.recommendedFlight.price.agency}
+          
+          <div className="flex items-center gap-3">
+            <div className="flex gap-2">
+            <Button
+                intent="primary"
+                size="small"
+                className="text-xs px-3"
+                onClick={handleBookingRedirect}
+              >
+                رزرو از {activity.recommendedFlight.price.agency}
+              </Button>
+              <Button
+                intent="secondary"
+                size="small"
+                className="text-xs px-3"
+                onClick={handleViewAllFlights}
+              >
+                مشاهده همه
+              </Button>
             </div>
           </div>
-        </div>
-
-        {/* Compact action buttons */}
-        <div className="flex gap-2">
-          <Button
-            intent="primary"
-            size="small"
-            className="flex-1 text-xs"
-            onClick={handleBookingRedirect}
-          >
-            رزرو با {activity.recommendedFlight.price.agency}
-          </Button>
-          <Button
-            intent="secondary"
-            size="small"
-            className="flex-1 text-xs"
-            onClick={handleViewAllFlights}
-          >
-            مشاهده همه
-          </Button>
         </div>
       </div>
     )
