@@ -24,6 +24,16 @@ export const mockMashhadTrip: TripPlan = {
           destination: "مشهد",
           duration: "۱ ساعت و ۱۵ دقیقه",
           departureTime: "۸:۳۰ صبح",
+          recommendedFlight: {
+            airline: "ایران ایر",
+            price: {
+              amount: 2800000,
+              formattedAmount: "2,800,000",
+              agency: "علی‌بابا"
+            },
+            departureTime: "۸:۳۰",
+            arrivalTime: "۹:۴۵"
+          }
         },
         {
           id: "activity-2",
@@ -139,6 +149,16 @@ export const mockMashhadTrip: TripPlan = {
           destination: "تهران",
           duration: "۱ ساعت و ۲۰ دقیقه",
           departureTime: "۸:۰۰ شب",
+          recommendedFlight: {
+            airline: "کیش ایر",
+            price: {
+              amount: 2650000,
+              formattedAmount: "2,650,000",
+              agency: "فلای تودی"
+            },
+            departureTime: "۲۰:۰۰",
+            arrivalTime: "۲۱:۲۰"
+          }
         },
       ],
     },

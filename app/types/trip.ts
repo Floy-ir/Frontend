@@ -20,6 +20,16 @@ export interface Transportation extends BaseActivity {
   duration: string
   departureTime?: string
   arrivalTime?: string
+  recommendedFlight?: {
+    airline: string
+    price: {
+      amount: number
+      formattedAmount: string
+      agency: string
+    }
+    departureTime: string
+    arrivalTime: string
+  }
 }
 
 export interface Destination extends BaseActivity {
