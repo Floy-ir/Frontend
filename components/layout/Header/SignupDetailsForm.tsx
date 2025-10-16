@@ -2,6 +2,7 @@
 
 import React from "react"
 import { Button } from "@/components/ui/button"
+import PasswordInput from "./PasswordInput"
 import { FloatingInput, LoadingDots } from "./SharedInputs"
 
 export default function SignupDetailsForm({
@@ -47,23 +48,21 @@ export default function SignupDetailsForm({
         autoComplete="name"
         className="outline-none"
       />
-      <FloatingInput
+      <PasswordInput
         name="password"
-        type="password"
         label="رمز عبور"
         error={emptyFields.includes("password")}
         value={password}
-        onChange={(e) => setPassword(e.target.value)}
+        onChange={(v) => setPassword(v)}
         autoComplete="new-password"
         className="outline-none"
       />
-      <FloatingInput
+      <PasswordInput
         name="confirm"
-        type="password"
         label="تکرار رمز عبور"
         error={emptyFields.includes("confirm")}
         value={confirm}
-        onChange={(e) => setConfirm(e.target.value)}
+        onChange={(v) => setConfirm(v)}
         autoComplete="new-password"
         className="outline-none"
       />

@@ -2,6 +2,7 @@
 
 import React from "react"
 import { Button } from "@/components/ui/button"
+import PasswordInput from "./PasswordInput"
 import { FloatingInput, LoadingDots } from "./SharedInputs"
 
 export default function LoginForm({
@@ -38,7 +39,7 @@ export default function LoginForm({
     >
       <p className="mb-4 text-sm text-gray-500">برای ورود شماره تلفن و رمز عبود خود را وارد کنید.</p>
 
-        <FloatingInput
+      <FloatingInput
         name="phone"
         type="tel"
         label="شماره تلفن"
@@ -47,13 +48,12 @@ export default function LoginForm({
         onChange={(e) => onPhoneChange?.(e.target.value)}
         autoComplete="tel"
       />
-      <FloatingInput
+      <PasswordInput
         name="password"
-        type="password"
         label="رمز عبور"
         error={emptyFields.includes("password")}
         value={pass}
-        onChange={(e) => onPasswordChange?.(e.target.value)}
+        onChange={(v) => onPasswordChange?.(v)}
         autoComplete="current-password"
       />
       {formError && <p className="text-right text-sm text-red-600">{formError}</p>}
@@ -68,7 +68,7 @@ export default function LoginForm({
         <button
           type="button"
           className="text-Primary-P500main text-sm hover:underline"
-            onClick={() => {
+          onClick={() => {
             if (!onForgot) return
             // pass current phone value from parent if available
             onForgot(p || undefined)

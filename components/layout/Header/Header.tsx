@@ -65,7 +65,7 @@ export function Header({ menuItems, className, forceScrolledStyle = false }: Hea
   const showToast = (message: string) => {
     const id = Date.now()
     setToast({ id, message })
-    setTimeout(() => setToast(curr => (curr && curr.id === id ? null : curr)), 3000)
+    setTimeout(() => setToast((curr) => (curr && curr.id === id ? null : curr)), 3000)
   }
 
   // This effect updates isScrolled when forceScrolledStyle changes

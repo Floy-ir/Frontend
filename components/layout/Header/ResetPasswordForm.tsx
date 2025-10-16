@@ -2,7 +2,8 @@
 
 import React from "react"
 import { Button } from "@/components/ui/button"
-import { FloatingInput, LoadingDots } from "./SharedInputs"
+import PasswordInput from "./PasswordInput"
+import { LoadingDots } from "./SharedInputs"
 
 export default function ResetPasswordForm({
   onSubmit,
@@ -35,22 +36,20 @@ export default function ResetPasswordForm({
     >
       <p className="mb-2 text-sm text-gray-500">رمز عبور جدید خود را وارد کنید.</p>
 
-      <FloatingInput
+      <PasswordInput
         name="password"
-        type="password"
         label="رمز عبور جدید"
         error={emptyFields.includes("password")}
         value={password}
-        onChange={(e) => setPassword(e.target.value)}
+        onChange={(v) => setPassword(v)}
         autoComplete="new-password"
       />
-      <FloatingInput
+      <PasswordInput
         name="confirm"
-        type="password"
         label="تکرار رمز عبور"
         error={emptyFields.includes("confirm")}
         value={confirm}
-        onChange={(e) => setConfirm(e.target.value)}
+        onChange={(v) => setConfirm(v)}
         autoComplete="new-password"
       />
       {formError && <p className="text-right text-sm text-red-600">{formError}</p>}

@@ -17,8 +17,13 @@ export default function OTPInput({
 }) {
   const inputsRef = React.useRef<Array<HTMLInputElement | null>>([])
 
+  // Only call onComplete when value transitions from <length to === length
+  const prevValueRef = React.useRef("")
   React.useEffect(() => {
-    if (value && value.length === length && onComplete) onComplete(value)
+    if (onComplete && value.length === length && prevValueRef.current.length !== length) {
+      onComplete(value)
+    }
+    prevValueRef.current = value
   }, [value, length, onComplete])
 
   const handleInput = (index: number, e: React.ChangeEvent<HTMLInputElement>) => {
