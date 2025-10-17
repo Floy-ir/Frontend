@@ -21,6 +21,7 @@ interface HeaderProps {
   menuItems: MenuItem[]
   className?: string
   forceScrolledStyle?: boolean
+  compact?: boolean
 }
 
 const navItem = cva(["flex", "flex-col", "items-center", "gap-1"], {
@@ -52,8 +53,7 @@ const navItem = cva(["flex", "flex-col", "items-center", "gap-1"], {
   ],
 })
 
-export function Header({ menuItems, className, forceScrolledStyle = false }: HeaderProps) {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+export function Header({ menuItems, className, forceScrolledStyle = false, compact = false }: HeaderProps) {
   const pathname = usePathname()
   const [mobileMenuOpen, setMobileMenuOpen] = useState<boolean>(false)
   const [prevScrollPos, setPrevScrollPos] = useState<number>(0)
@@ -129,24 +129,61 @@ export function Header({ menuItems, className, forceScrolledStyle = false }: Hea
   useEffect(() => {
     document.documentElement.style.scrollBehavior = "smooth"
   }, [])
+  // For very small flight pages we hide header to maximize space; show header on chat page
+  if (pathname?.startsWith("/flights") && isSmallScreen) {
+    return <></>
+  }
+
+  // size classes for compact mode
+  const desktopHeight = compact ? "h-12" : "h-22"
+  const spacerLg = compact ? "lg:h-12" : "lg:h-22"
+  const logoTextClass = compact ? "text-sm" : "text-lg"
+  const navGap = compact ? "gap-6" : "gap-12"
 
   return (
     <>
       <header className={headerClasses}>
-        <div className={`lg-xl:px-6 mx-auto w-full max-w-[1136px] px-4 md:px-4 lg:px-6 ${isScrolled ? "w-full" : ""}`}>
+        {/* Content container - only constrain width for content, not background */}
+        <div
+          className={`lg-xl:px-6 mx-auto w-full max-w-[1136px] px-4 md:px-4 ${
+            compact ? "px-3 lg:px-4" : "px-4 lg:px-6"
+          } ${isScrolled ? "w-full" : ""}`}
+        >
           {/* Desktop view */}
-          <div className="hidden h-22 items-center justify-between lg:flex">
+          <div className={`hidden ${desktopHeight} items-center justify-between lg:flex`}>
+            {/* Logo - Right Side in RTL */}
             <div className="flex items-center gap-2">
-              <span className={`text-lg font-semibold ${isScrolled ? "text-Gray-N700" : "text-white"}`}>فلوی</span>
-              <Airplane size={20} variant="Bold" className={isScrolled ? "text-Gray-N700" : "text-white"} />
+              <span className={`${logoTextClass} font-semibold ${isScrolled ? "text-Gray-N700" : "text-white"}`}>
+                فلوی
+              </span>
+              <Airplane
+                size={compact ? 16 : 20}
+                variant="Bold"
+                className={isScrolled ? "text-Gray-N700" : "text-white"}
+              />
             </div>
             <NavigationMenu.Root className="flex flex-1 justify-center">
-              <NavigationMenu.List className="flex flex-row-reverse gap-12">
-                {menuItems.map((item: MenuItem, index: number) => (
+              <NavigationMenu.List className={`flex flex-row-reverse ${navGap}`}>
+                {menuItems.map((item, index) => (
                   <NavigationMenu.Item key={index}>
                     <NavigationMenu.Link asChild>
-                      <Link href={item.href} className={navItem({ isScrolled })}>
-                        <span className="text-lg">{item.label}</span>
+                      <Link
+                        href={item.href}
+                        className={navItem({
+                          // isActive: item.isActive,
+                          isScrolled: isScrolled,
+                        })}
+                      >
+                        <span className={compact ? "text-sm" : "text-lg"}>{item.label}</span>
+                        {/* {item.isActive && (
+                          <div className="relative h-1 w-1">
+                            <div
+                              className={`absolute h-1.5 w-1.5 rounded-sm ${
+                                isScrolled ? "bg-Primary-P300" : "bg-white"
+                              }`}
+                            ></div>
+                          </div>
+                        )} */}
                       </Link>
                     </NavigationMenu.Link>
                   </NavigationMenu.Item>
@@ -202,11 +239,16 @@ export function Header({ menuItems, className, forceScrolledStyle = false }: Hea
             </div>
           </div>
           {/* Mobile view */}
-          <div className="flex w-full items-center justify-between lg:hidden">
+          <div className={`flex items-center justify-between lg:hidden ${compact ? "py-1" : "py-2"}`}>
+            {/* Drawer for mobile menu */}
             <Drawer open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
               <DrawerTrigger asChild>
-                <button className="p-2">
-                  <HambergerMenu size={48} className="p-2" color={isScrolled ? "#334155" : "white"} />
+                <button className={compact ? "p-1" : "p-2"}>
+                  <HambergerMenu
+                    size={compact ? 32 : 48}
+                    className={compact ? "p-1" : "p-2"}
+                    color={isScrolled ? "#334155" : "white"}
+                  />
                   <span className="sr-only">Toggle Menu</span>
                 </button>
               </DrawerTrigger>
@@ -286,7 +328,9 @@ export function Header({ menuItems, className, forceScrolledStyle = false }: Hea
         </div>
       )}
       <AuthModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} showToast={showToast} />
-      <div className="h-16 w-full lg:h-22"></div>
+
+      {/* Spacer div to prevent layout shifts - matches header height */}
+      <div className={`h-12 w-full ${spacerLg}`}></div>
     </>
   )
 }
