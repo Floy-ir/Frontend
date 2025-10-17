@@ -1,12 +1,13 @@
-"use client"
+ 
+ "use client"
 
 import "@chatscope/chat-ui-kit-styles/dist/default/styles.min.css"
 import {
-  Avatar,
+  // Avatar,
   // Button,
   ChatContainer,
   //   ChatHeader,
-  ConversationHeader,
+  // ConversationHeader,
   MainContainer,
   Message,
   MessageInput,
@@ -76,10 +77,10 @@ export default function FullChatDemo() {
   const chatComponent = (
     <MainContainer style={{ width: "100%" }}>
       <ChatContainer>
-        <ConversationHeader>
+        {/* <ConversationHeader>
           <Avatar src="/favicon/android-chrome-192x192.png" name="Floy" />
           <ConversationHeader.Content userName="فلوی" className="font-anjoman-max" />
-        </ConversationHeader>
+        </ConversationHeader> */}
         <MessageList
         // typingIndicator={typing ? <TypingIndicator content="Alice is typing" /> : null}
         >
@@ -128,9 +129,13 @@ export default function FullChatDemo() {
     return (
       <div className="flex h-screen" dir="ltr">
         {/* Chat Section - 40% width */}
-        <div className="w-[40%] shrink-0">{chatComponent}</div>
+        <div className="w-[40%] shrink-0">
+          {chatComponent}
+        </div>
         {/* Trip Planner Section - 60% width */}
         <div className="w-[60%] shrink-0 border-l border-gray-200">{tripComponent}</div>
+        {/* Chat Section - 40% width */}
+        <div className="w-[40%] shrink-0">{chatComponent}</div>
       </div>
     )
   }
