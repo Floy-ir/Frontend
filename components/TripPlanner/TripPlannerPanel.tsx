@@ -2,9 +2,10 @@
 
 import dynamic from "next/dynamic"
 import { ArrowRight, ShoppingCart } from "lucide-react"
-import { useState } from "react"
+import { useCallback, useState } from "react"
 
 import type { Transportation, TripPlan } from "@/app/types/trip"
+import { englishToFarsiNumber } from "@/utils/numbers"
 
 import { ItineraryTimeline } from "./ItineraryTimeline"
 import { FlightList } from "./FlightList"
@@ -32,15 +33,15 @@ export function TripPlannerPanel({ tripPlan }: TripPlannerPanelProps) {
   const [currentView, setCurrentView] = useState<ViewMode>("overview")
   const [selectedTransportation, setSelectedTransportation] = useState<Transportation | null>(null)
 
-  const handleFlightClick = (transportation: Transportation) => {
+  const handleFlightClick = useCallback((transportation: Transportation) => {
     setSelectedTransportation(transportation)
     setCurrentView("flight-list")
-  }
+  }, [])
 
-  const handleBackToOverview = () => {
+  const handleBackToOverview = useCallback(() => {
     setCurrentView("overview")
     setSelectedTransportation(null)
-  }
+  }, [])
   if (!tripPlan) {
     return (
       <div className="flex h-full items-center justify-center bg-gray-50 p-8">
@@ -106,7 +107,7 @@ export function TripPlannerPanel({ tripPlan }: TripPlannerPanelProps) {
                 {tripPlan.startDate} - {tripPlan.endDate}
               </span>
               <span>•</span>
-              <span>{tripPlan.travelerCount} مسافر</span>
+              <span>{englishToFarsiNumber(tripPlan.travelerCount)} مسافر</span>
             </div>
           </div>
           <button
@@ -121,19 +122,17 @@ export function TripPlannerPanel({ tripPlan }: TripPlannerPanelProps) {
 
       {/* Scrollable Content */}
       <div className="flex-1 overflow-y-auto">
-        {/* Map Section */}
-        <div className="p-6">
-          <TripMap tripPlan={tripPlan} />
+        {/* Timeline Section */}
+        <div className="px-2 py-4">
+          <h2 className="mb-4 px-4 font-anjoman-max text-lg font-bold text-Gray-N800" dir="rtl">
+            نمای کلی
+          </h2>
+          <ItineraryTimeline days={tripPlan.days} onFlightClick={handleFlightClick} />
         </div>
 
-        {/* Timeline Section */}
-        <div className="border-t border-gray-200">
-          <div className="px-2 py-4">
-            <h2 className="mb-4 px-4 font-anjoman-max text-lg font-bold text-Gray-N800" dir="rtl">
-              نمای کلی
-            </h2>
-            <ItineraryTimeline days={tripPlan.days} onFlightClick={handleFlightClick} />
-          </div>
+        {/* Map Section */}
+        <div className="border-t border-gray-200 p-6">
+          <TripMap tripPlan={tripPlan} />
         </div>
       </div>
     </div>

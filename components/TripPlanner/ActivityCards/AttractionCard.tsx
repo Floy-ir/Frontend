@@ -1,4 +1,5 @@
 import { Landmark, MoreVertical } from "lucide-react"
+import React from "react"
 
 import type { Attraction } from "@/app/types/trip"
 
@@ -6,7 +7,7 @@ type AttractionCardProps = {
   activity: Attraction
 }
 
-export function AttractionCard({ activity }: AttractionCardProps) {
+export const AttractionCard = React.memo(function AttractionCard({ activity }: AttractionCardProps) {
   return (
     <div className="flex items-center gap-3 overflow-hidden rounded-lg border border-gray-200 bg-white p-3" dir="rtl">
       {/* Image */}
@@ -35,5 +36,5 @@ export function AttractionCard({ activity }: AttractionCardProps) {
       </button>
     </div>
   )
-}
+})
 

@@ -1,6 +1,10 @@
+"use client"
+
 import { Bus, Car, Hotel, Landmark, MapPin, Plane, Plus, Train } from "lucide-react"
+import React, { useCallback, useMemo } from "react"
 
 import type { Activity, Transportation, TripDay } from "@/app/types/trip"
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 
 import { AccommodationCard } from "./ActivityCards/AccommodationCard"
 import { AttractionCard } from "./ActivityCards/AttractionCard"
@@ -12,8 +16,11 @@ type ItineraryTimelineProps = {
   onFlightClick?: (transportation: Transportation) => void
 }
 
-export function ItineraryTimeline({ days, onFlightClick }: ItineraryTimelineProps) {
-  const renderActivity = (activity: Activity) => {
+export const ItineraryTimeline = React.memo(function ItineraryTimeline({ 
+  days, 
+  onFlightClick 
+}: ItineraryTimelineProps) {
+  const renderActivity = useCallback((activity: Activity) => {
     switch (activity.type) {
       case "transportation":
         return <TransportationCard key={activity.id} activity={activity} onFlightClick={onFlightClick} />
@@ -26,9 +33,9 @@ export function ItineraryTimeline({ days, onFlightClick }: ItineraryTimelineProp
       default:
         return null
     }
-  }
+  }, [onFlightClick])
 
-  const renderActivityIcon = (activity: Activity) => {
+  const renderActivityIcon = useCallback((activity: Activity) => {
     switch (activity.type) {
       case "transportation": {
         const transport = activity as Transportation
@@ -80,60 +87,73 @@ export function ItineraryTimeline({ days, onFlightClick }: ItineraryTimelineProp
           <div className="h-2 w-2 rounded-full bg-Primary-P500main" aria-hidden="true" />
         )
     }
-  }
+  }, [])
+
+  // Memoize the default open values to prevent recreation on every render
+  const defaultOpenDays = useMemo(
+    () => days.map((_, index) => `day-${index}`),
+    [days.length]
+  )
 
   return (
-    <div className="space-y-8 px-4 py-6" dir="rtl">
-      {days.map((day, index) => (
-        <div key={index} className="relative">
-          {/* Day Header */}
-          <div className="mb-4">
-            <h2 className="font-anjoman-max text-lg font-bold text-Gray-N800">
-              {day.dayName} {day.date}
-            </h2>
-          </div>
+    <div className="px-4 py-6" dir="rtl">
+      <Accordion 
+        type="multiple" 
+        defaultValue={defaultOpenDays}
+        className="space-y-4"
+      >
+        {days.map((day, index) => (
+          <AccordionItem key={index} value={`day-${index}`} className="rounded-lg border border-gray-200 bg-white">
+            <AccordionTrigger className="px-4 hover:no-underline">
+              <h2 className="font-anjoman-max text-lg font-bold text-Gray-N800">
+                {day.dayName} {day.date}
+              </h2>
+            </AccordionTrigger>
 
-          {/* Timeline with Activities */}
-          <div className="relative">
-            {/* Vertical Line - centered through icons, always show to connect to add button */}
-            <div
-              className="absolute right-4 w-0.5 bg-gray-200"
-              style={{
-                top: "1rem",
-                height: "calc(100% - 2.5rem)",
-              }}
-              aria-hidden="true"
-            />
+            <AccordionContent className="px-4">
+              {/* Timeline with Activities */}
+              <div className="relative">
+                {/* Vertical Line - centered through icons, always show to connect to add button */}
+                <div
+                  className="absolute right-4 w-0.5 bg-gray-200"
+                  style={{
+                    top: "1rem",
+                    height: "calc(100% - 2.5rem)",
+                  }}
+                  aria-hidden="true"
+                />
 
-            {/* Activities */}
-            <div className="space-y-4">
-              {day.activities.map((activity) => (
-                <div key={activity.id} className="relative flex gap-4">
-                  {/* Timeline Icon */}
-                  <div className="relative z-10 shrink-0">{renderActivityIcon(activity)}</div>
+                {/* Activities */}
+                <div className="space-y-4">
+                  {day.activities.map((activity) => (
+                    <div key={activity.id} className="relative flex gap-4">
+                      {/* Timeline Icon */}
+                      <div className="relative z-10 shrink-0">{renderActivityIcon(activity)}</div>
 
-                  {/* Activity Card */}
-                  <div className="flex-1">{renderActivity(activity)}</div>
+                      {/* Activity Card */}
+                      <div className="flex-1">{renderActivity(activity)}</div>
+                    </div>
+                  ))}
                 </div>
-              ))}
-            </div>
 
-            {/* Add Button positioned below timeline */}
-            <div className="relative mt-4 flex gap-4">
-              <div className="shrink-0">
-                <button
-                  className="flex items-center gap-2 rounded-lg border border-dashed border-gray-300 bg-white px-3 py-2 text-sm font-medium text-Gray-N600 transition-colors hover:border-Primary-P500main hover:bg-Primary-P50 hover:text-Primary-P500main focus:outline-none focus:ring-2 focus:ring-Primary-P500main focus:ring-offset-2"
-                  aria-label={`افزودن فعالیت به ${day.dayName}`}
-                >
-                  <Plus className="h-4 w-4" aria-hidden="true" />
-                  <span>افزودن</span>
-                </button>
+                {/* Add Button positioned below timeline */}
+                <div className="relative mt-4 flex gap-4">
+                  <div className="shrink-0">
+                    <button
+                      className="flex items-center gap-2 rounded-lg border border-dashed border-gray-300 bg-white px-3 py-2 text-sm font-medium text-Gray-N600 transition-colors hover:border-Primary-P500main hover:bg-Primary-P50 hover:text-Primary-P500main focus:outline-none focus:ring-2 focus:ring-Primary-P500main focus:ring-offset-2"
+                      aria-label={`افزودن فعالیت به ${day.dayName}`}
+                    >
+                      <Plus className="h-4 w-4" aria-hidden="true" />
+                      <span>افزودن</span>
+                    </button>
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>
-        </div>
-      ))}
+            </AccordionContent>
+          </AccordionItem>
+        ))}
+      </Accordion>
     </div>
   )
-}
+})
 

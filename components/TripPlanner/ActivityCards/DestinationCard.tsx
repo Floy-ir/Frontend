@@ -1,4 +1,5 @@
 import { MapPin, MoreVertical } from "lucide-react"
+import React from "react"
 
 import type { Destination } from "@/app/types/trip"
 
@@ -6,7 +7,7 @@ type DestinationCardProps = {
   activity: Destination
 }
 
-export function DestinationCard({ activity }: DestinationCardProps) {
+export const DestinationCard = React.memo(function DestinationCard({ activity }: DestinationCardProps) {
   return (
     <div className="flex items-center gap-3 overflow-hidden rounded-lg border border-gray-200 bg-white p-3" dir="rtl">
       {/* Image */}
@@ -35,5 +36,5 @@ export function DestinationCard({ activity }: DestinationCardProps) {
       </button>
     </div>
   )
-}
+})
 
