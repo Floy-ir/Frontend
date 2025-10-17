@@ -1,4 +1,6 @@
 import { Landmark, MoreVertical } from "lucide-react"
+import Image from "next/image"
+import React from "react"
 
 import type { Attraction } from "@/app/types/trip"
 
@@ -6,13 +8,13 @@ type AttractionCardProps = {
   activity: Attraction
 }
 
-export function AttractionCard({ activity }: AttractionCardProps) {
+export const AttractionCard = React.memo(function AttractionCard({ activity }: AttractionCardProps) {
   return (
     <div className="flex items-center gap-3 overflow-hidden rounded-lg border border-gray-200 bg-white p-3" dir="rtl">
       {/* Image */}
       <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-lg bg-gray-100">
         {activity.image ? (
-          <img src={activity.image} alt={activity.name} className="h-full w-full object-cover" />
+          <Image src={activity.image} alt={activity.name} fill className="object-cover" />
         ) : (
           <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-purple-100 to-purple-200">
             <Landmark className="h-10 w-10 text-purple-400" aria-hidden="true" />
@@ -22,18 +24,17 @@ export function AttractionCard({ activity }: AttractionCardProps) {
 
       {/* Content */}
       <div className="flex min-w-0 flex-1 flex-col">
-        <h3 className="truncate font-anjoman-max text-base font-semibold text-Gray-N800">{activity.name}</h3>
-        <p className="text-sm text-Gray-N600">جاذبه</p>
+        <h3 className="font-anjoman-max text-Gray-N800 truncate text-base font-semibold">{activity.name}</h3>
+        <p className="text-Gray-N600 text-sm">جاذبه</p>
       </div>
 
       {/* Menu Button */}
       <button
-        className="shrink-0 rounded-full p-1 text-Gray-N500 transition-colors hover:bg-gray-100 hover:text-Gray-N700 focus:outline-none focus:ring-2 focus:ring-Primary-P500main focus:ring-offset-2"
+        className="text-Gray-N500 hover:text-Gray-N700 focus:ring-Primary-P500main shrink-0 rounded-full p-1 transition-colors hover:bg-gray-100 focus:ring-2 focus:ring-offset-2 focus:outline-none"
         aria-label="گزینه‌های بیشتر"
       >
         <MoreVertical className="h-5 w-5" aria-hidden="true" />
       </button>
     </div>
   )
-}
-
+})

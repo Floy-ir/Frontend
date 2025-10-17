@@ -8,4 +8,3 @@ export { TransportationCard } from "./ActivityCards/TransportationCard"
 export { DestinationCard } from "./ActivityCards/DestinationCard"
 export { AccommodationCard } from "./ActivityCards/AccommodationCard"
 export { AttractionCard } from "./ActivityCards/AttractionCard"
-

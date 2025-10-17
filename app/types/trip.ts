@@ -22,13 +22,24 @@ export interface Transportation extends BaseActivity {
   arrivalTime?: string
   recommendedFlight?: {
     airline: string
+    airlineLogo?: string
+    departureTime: string
+    arrivalTime: string
+    duration?: {
+      hours: number
+      minutes: number
+    }
+    flightInfo?: {
+      baggage: string
+      cabinClass: string
+    }
     price: {
       amount: number
       formattedAmount: string
       agency: string
+      agencyLogo?: string
+      label?: string
     }
-    departureTime: string
-    arrivalTime: string
   }
 }
 
@@ -78,4 +89,3 @@ export interface TripPlan {
   days: TripDay[]
   mainLocation: Location
 }
-

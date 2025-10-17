@@ -68,12 +68,11 @@ function JalaliCalendar({
           ) : (
             <ChevronLeft {...props} className="h-4 w-4" />
           ),
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        Day: ({ _date, children, ...rest }: any) => (
-          <button {...rest} className={`${rest.className} flex flex-col items-center justify-center`}>
+        Day: ({ children, ...rest }) => (
+          <div {...rest} className={`${rest.className} flex flex-col items-center justify-center`}>
             {children}
             {/* <span className="mb-2 text-[10px] text-red-500">تست</span>  */}
-          </button>
+          </div>
         ),
       }}
       formatters={{
