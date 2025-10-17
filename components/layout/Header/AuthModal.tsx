@@ -204,7 +204,7 @@ export default function AuthModal({
       setTimeout(() => onClose(), 200)
     } catch (err) {
       console.error(err)
-      setFormError(extractServerMessage(err))
+      setFormError(extractServerMessage(err) || "خطایی رخ داد")
     } finally {
       setIsLoading(false)
     }
@@ -247,7 +247,7 @@ export default function AuthModal({
       setOtpError("")
     } catch (err) {
       console.error(err)
-      setFormError(extractServerMessage(err))
+      setFormError(extractServerMessage(err) || "خطایی رخ داد")
     } finally {
       setIsLoading(false)
     }
@@ -305,7 +305,7 @@ export default function AuthModal({
       setOtpError("")
     } catch (err) {
       console.error(err)
-      setFormError(extractServerMessage(err))
+      setFormError(extractServerMessage(err) || "خطایی رخ داد")
     } finally {
       setIsLoading(false)
     }
@@ -429,7 +429,7 @@ export default function AuthModal({
       }, 200)
     } catch (err) {
       console.error(err)
-      setFormError(extractServerMessage(err))
+      setFormError(extractServerMessage(err) || "خطایی رخ داد")
     } finally {
       setIsLoading(false)
     }
@@ -484,7 +484,7 @@ export default function AuthModal({
       }, 200)
     } catch (err) {
       console.error(err)
-      setFormError(extractServerMessage(err))
+      setFormError(extractServerMessage(err) || "خطایی رخ داد")
     } finally {
       setIsLoading(false)
     }
