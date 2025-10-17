@@ -1,0 +1,33 @@
+/* Custom Leaflet styles */
+.leaflet-container {
+  font-family: var(--font-anjoman-max), sans-serif;
+}
+
+.leaflet-popup-content-wrapper {
+  border-radius: 8px;
+}
+
+.leaflet-popup-content {
+  margin: 12px;
+}
+
+/* Fix z-index issues with Leaflet and other UI elements */
+.leaflet-pane {
+  z-index: 400;
+}
+
+.leaflet-top,
+.leaflet-bottom {
+  z-index: 500;
+}
+
+.leaflet-control {
+  z-index: 600;
+}
+
+/* Make sure map fits properly in container */
+.leaflet-container {
+  height: 100%;
+  width: 100%;
+}
+
