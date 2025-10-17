@@ -8,13 +8,11 @@ export default function ForgotPasswordPhoneForm({
   onSubmit,
   isLoading,
   formError,
-  emptyFields,
   initialPhone = "",
 }: {
   onSubmit: (phone: string) => void | Promise<void>
   isLoading: boolean
   formError: string
-  emptyFields: string[]
   initialPhone?: string
 }) {
   const [phone, setPhone] = useState(initialPhone)
@@ -34,7 +32,7 @@ export default function ForgotPasswordPhoneForm({
         name="phone"
         type="tel"
         label="شماره تلفن"
-        error={emptyFields.includes("phone")}
+        // do not force visual "required" error here; AuthModal will validate and show formError when needed
         value={phone}
         onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPhone(e.target.value)}
         autoComplete="tel"

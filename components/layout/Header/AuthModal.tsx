@@ -14,7 +14,7 @@ import SignupForm from "./SignupForm"
 import { Drawer, DrawerContent, DrawerTitle } from "../../ui/drawer"
 
 function cleanPersianToEnglishDigits(input: string) {
-  return input.replace(/[\u06F0-\u06F9]/g, (d) => String(d.charCodeAt(0) - 1776))
+  return input.replace(/[\u06F0-\u06F9]/g, d => String(d.charCodeAt(0) - 1776))
 }
 
 export default function AuthModal({
@@ -35,8 +35,7 @@ export default function AuthModal({
   const [otpValue, setOtpValue] = React.useState("")
   const [phoneForOtp, setPhoneForOtp] = React.useState("")
   const [isRtl, setIsRtl] = React.useState(false)
-  // step: 0=form, 1=otp, 2=details, 'forgot-phone' = phone input for forgot
-  const [step, setStep] = React.useState<0 | 1 | 2 | "forgot-phone">(0)
+  const [step, setStep] = React.useState<0 | 1 | 2 | "forgot-phone">(0) // 0=form,1=otp,2=details, 'forgot-phone' = phone input for forgot
   const [resetMode, setResetMode] = React.useState(false)
   const [otpUuid, setOtpUuid] = React.useState<string | null>(null)
 
@@ -58,7 +57,7 @@ export default function AuthModal({
   const [resendCooldown, setResendCooldown] = React.useState<number>(0)
   React.useEffect(() => {
     if (resendCooldown <= 0) return
-    const id = setInterval(() => setResendCooldown((c) => c - 1), 1000)
+    const id = setInterval(() => setResendCooldown(c => c - 1), 1000)
     return () => clearInterval(id)
   }, [resendCooldown])
 
@@ -67,7 +66,58 @@ export default function AuthModal({
     type ErrResp = { response?: { detail?: string; message?: string }; message?: string }
     const e = err as ErrResp
     const msg = e?.response?.detail || e?.response?.message || e?.message
-    return String(msg ?? "خطایی رخ داد")
+
+    // Prefer mapping by response.type when backend provides it
+    // Some backends return: { type: 'SomeException', detail: '...' }
+    // We'll try to map `response.type` first, then fall back to exact-detail text matching.
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const anyE = e as any
+    const respType: string | undefined = anyE?.response?.type
+
+    const typeTranslations: Record<string, string> = {
+      UsedUidException: "این شناسه کاربر قبلاً استفاده شده است.",
+      UsedPhoneNumberException: "این شماره موبایل قبلاً استفاده شده است.",
+      UsedUsernameException: "این نام کاربری قبلاً استفاده شده است.",
+      UserNotFound: "کاربر پیدا نشد.",
+      SessionNotFound: "نشست کاربر یافت نشد.",
+      InvalidTokenException: "توکن احراز هویت نامعتبر است.",
+      SessionTimeout: "زمان نشست به پایان رسیده است.",
+      TerminatedSessionException: "شما از حساب خود خارج شده‌اید.",
+      WrongPasswordException: "رمز عبور اشتباه است.",
+      InvalidOTPException: "کد تأیید اشتباه یا منقضی شده است.",
+      OTPExpiredException: "کد تأیید منقضی شده است.",
+      OTPAlreadyUsedException: "کد تأیید قبلاً استفاده شده است.",
+      OTPVerificationRequiredException: "برای ادامه نیاز به تأیید کد OTP دارید.",
+      SMSServiceFailedException: "ارسال پیامک ناموفق بود.",
+    }
+
+    if (respType && typeTranslations[respType]) {
+      return typeTranslations[respType]
+    }
+
+    // Map older/other backends by exact detail/message text
+    const errorTranslations: Record<string, string> = {
+      "uid has been used before.": "شناسه کاربر قبلاً استفاده شده است.",
+      "mobile number has been used before.": "شماره موبایل قبلاً استفاده شده است.",
+      "username has been used before.": "نام کاربری قبلاً استفاده شده است.",
+      "user not exist": "کاربر پیدا نشد.",
+      "no session found corresponding to this session_uid": "نشست مربوطه پیدا نشد.",
+      "the authentication token is invalid": "توکن احراز هویت نامعتبر است.",
+      "too much time has passed from last activity": "زمان نشست به پایان رسیده است.",
+      "already logged out": "کاربر از قبل خارج شده است.",
+      "wrong password entered": "رمز عبور اشتباه وارد شده است.",
+      "invalid or expired OTP code": "کد تأیید اشتباه یا منقضی شده است.",
+      "OTP code has expired": "کد تأیید منقضی شده است.",
+      "OTP code has already been used": "کد تأیید قبلاً استفاده شده است.",
+      "OTP verification required before proceeding": "نیاز به تأیید کد OTP است.",
+      "Failed to send SMS": "ارسال پیامک با خطا مواجه شد.",
+    }
+
+    if (msg && typeof msg === "string") {
+      return errorTranslations[msg] || msg
+    }
+
+    return "خطایی رخ داد"
   }
 
   const showOtp = step === 1 || step === 2
@@ -91,7 +141,7 @@ export default function AuthModal({
   }, [])
 
   const handleLoginSubmit = async (data: { phone: string; password: string }) => {
-    const phone = cleanPersianToEnglishDigits(data.phone.trim())
+  const phone = cleanPersianToEnglishDigits(data.phone.trim())
     const password = data.password.trim()
     const empty: string[] = []
 
@@ -204,29 +254,39 @@ export default function AuthModal({
   }
 
   // when user clicks "forgot password" from login form, this is called
-  // Show phone input form for forgot password
-  const handleForgotPassword = () => {
-    setStep("forgot-phone")
-    setFormError("")
-    setEmptyFields([])
-  }
+  const handleForgotPassword = async (phone?: string) => {
+    // If no phone was passed (user clicked "forgot" without filling phone),
+    // show the dedicated phone input form so they can enter it.
+    if (!phone) {
+      // If we're already on the forgot-phone form and the user submitted empty,
+      // show an error asking them to fill the phone.
+      if (step === "forgot-phone") {
+        setFormError("شماره تلفن را وارد کنید.")
+        setEmptyFields(["phone"])
+        return
+      }
 
-  // After phone is entered in forgot password flow
-  const handleForgotPhoneSubmit = async (phone: string) => {
-    const cleaned = cleanPersianToEnglishDigits(phone.trim())
-    const empty: string[] = []
-    if (!cleaned) empty.push("phone")
-    setEmptyFields(empty)
-    if (empty.length > 0) {
-      setFormError("فیلدهای مشخص شده را پر کنید.")
+      setStep("forgot-phone")
+      setFormError("")
+      setEmptyFields([])
       return
     }
+
+    // otherwise proceed with the existing flow using provided phone
+    // allow submitting the forgot flow without forcing the red "empty" highlight
+    // if the submitted phone is empty, try to fall back to the phone currently typed in the login form
+    let cleaned = cleanPersianToEnglishDigits(phone.trim())
+    if (!cleaned && loginPhone) cleaned = cleanPersianToEnglishDigits(loginPhone.trim())
+
     const phonePattern = /^(09\d{9}|98\d{10})$/
     if (!phonePattern.test(cleaned)) {
+      // don't mark the field red here; just show a friendly error message
       setFormError("شماره تلفن را به درستی وارد کنید.")
-      setEmptyFields(["phone"])
+      setEmptyFields([])
       return
     }
+
+    // trigger otp for reset flow
     setFormError("")
     setIsLoading(true)
     try {
@@ -243,15 +303,15 @@ export default function AuthModal({
       setStep(1)
       setResetMode(true)
       setOtpError("")
+    } catch (err) {
+      console.error(err)
+      setFormError(extractServerMessage(err))
     } finally {
       setIsLoading(false)
     }
   }
 
-  const [lastOtpAttempt, setLastOtpAttempt] = React.useState("")
   const handleVerifyOtp = async (code: string) => {
-    if (isVerifying || code === lastOtpAttempt) return
-    setLastOtpAttempt(code)
     setOtpError("")
     setIsVerifying(true)
     try {
@@ -279,9 +339,43 @@ export default function AuthModal({
       setOtpValue("")
     } catch (err) {
       console.error(err)
-      setOtpError("کد وارد شده معتبر نیست.")
+      // prefer server-provided message translated to Persian when available
+      setOtpError(extractServerMessage(err))
     } finally {
       setIsVerifying(false)
+    }
+  }
+
+  const formatSeconds = (s: number) => {
+    const m = Math.floor(s / 60)
+    const sec = s % 60
+    return `${String(m).padStart(2, "0")}:${String(sec).padStart(2, "0")}`
+  }
+
+  const handleResendOtp = async () => {
+    if (resendCooldown > 0) return
+    setOtpError("")
+    if (!phoneForOtp) {
+      setOtpError("شماره تلفن یافت نشد.")
+      return
+    }
+    setIsLoading(true)
+    try {
+      const mobile = formatMobile(phoneForOtp)
+      const endpoint = resetMode ? "/accounts/forgot-password/" : "/accounts/send-otp/"
+      const res = await apiFetch<{ otp_uuid?: string }>(endpoint, {
+        method: "POST",
+        data: { mobile },
+      })
+      if (res?.otp_uuid) setOtpUuid(res.otp_uuid)
+      // start 2 minute cooldown
+      setResendCooldown(120)
+      setOtpError("")
+    } catch (err) {
+      console.error(err)
+      setOtpError(extractServerMessage(err))
+    } finally {
+      setIsLoading(false)
     }
   }
 
@@ -333,6 +427,9 @@ export default function AuthModal({
         setEmptyFields([])
         onClose()
       }, 200)
+    } catch (err) {
+      console.error(err)
+      setFormError(extractServerMessage(err))
     } finally {
       setIsLoading(false)
     }
@@ -385,6 +482,9 @@ export default function AuthModal({
         setResetMode(false)
         onClose()
       }, 200)
+    } catch (err) {
+      console.error(err)
+      setFormError(extractServerMessage(err))
     } finally {
       setIsLoading(false)
     }
@@ -402,8 +502,8 @@ export default function AuthModal({
   if (!isOpen) return null
 
   const Inner = (
-    <div className="flex h-full w-full flex-col rounded-t-2xl bg-white">
-      {((typeof step === "number" && step > 0) || step === "forgot-phone") && (
+    <div className="bg-white rounded-t-2xl w-full h-full flex flex-col">
+  {((typeof step === "number" && step > 0) || step === "forgot-phone") && (
         <button
           onClick={() => {
             setStep(0)
@@ -412,145 +512,130 @@ export default function AuthModal({
             setFormError("")
             setEmptyFields([])
           }}
-          className="text-Gray-N700 mr-7 flex items-center gap-1 rounded-lg py-2 text-sm md:mr-5"
+          className="flex items-center gap-1 text-sm text-Gray-N700 py-2 rounded-lg mr-7 md:mr-5"
           type="button"
         >
-          <span className="inline-block rotate-180 text-xl">&#8592;</span>
+          <span className="text-xl rotate-180 inline-block">&#8592;</span>
         </button>
       )}
 
-      {!showOtp &&
-        (step === "forgot-phone" ? (
-          <div className="e"></div>
-        ) : (
-          <div className="my-4 flex items-center justify-center">
-            <div className="absolute top-3 right-5">
-              <button
-                onClick={() => {
-                  onClose()
-                  setFormError("")
-                  setEmptyFields([])
-                }}
-                className="text-gray-500 hover:text-gray-700"
-                aria-label="close"
-              >
-                ✕
-              </button>
-            </div>
-            <div
-              className="ring-Gray-N100 inline-flex rounded-full bg-transparent p-1 ring-1"
-              role="tablist"
-              aria-label="auth tabs"
+      {!showOtp && step !== "forgot-phone" && (
+        <div className="flex justify-center items-center my-4 ">
+          <div className="absolute top-3 right-5">
+            <button
+              onClick={() => {
+                onClose()
+                setFormError("")
+                setEmptyFields([])
+              }}
+              className="text-gray-500 hover:text-gray-700"
+              aria-label="close"
             >
-              <button
-                role="tab"
-                aria-selected={activeTab === "login"}
-                onClick={() => {
-                  setActiveTab("login")
-                  setFormError("")
-                  setEmptyFields([])
-                }}
-                className={twMerge(
-                  "rounded-full px-4 py-2 text-sm font-medium transition-all duration-200 md:px-6 md:py-2",
-                  activeTab === "login"
-                    ? "bg-Primary-P500main text-white shadow"
-                    : "text-Gray-N700 hover:bg-Gray-N50 bg-transparent"
-                )}
-              >
-                ورود
-              </button>
-              <button
-                role="tab"
-                aria-selected={activeTab === "signup"}
-                onClick={() => {
-                  setActiveTab("signup")
-                  setFormError("")
-                  setEmptyFields([])
-                }}
-                className={twMerge(
-                  "rounded-full px-4 py-2 text-sm font-medium transition-all duration-200 md:px-6 md:py-2",
-                  activeTab === "signup"
-                    ? "bg-Primary-P500main text-white shadow"
-                    : "text-Gray-N700 hover:bg-Gray-N50 bg-transparent"
-                )}
-              >
-                ثبت‌نام
-              </button>
-            </div>
+              ✕
+            </button>
           </div>
-        ))}
+          <div className="inline-flex rounded-full bg-transparent ring-1 ring-Gray-N100 p-1 " role="tablist" aria-label="auth tabs">
+            <button
+              role="tab"
+              aria-selected={activeTab === "login"}
+              onClick={() => { setActiveTab("login"); setFormError(""); setEmptyFields([]) }}
+              className={twMerge(
+                "px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 md:px-6 md:py-2",
+                activeTab === "login"
+                  ? "bg-Primary-P500main text-white shadow"
+                  : "text-Gray-N700 bg-transparent hover:bg-Gray-N50"
+              )}
+            >
+              ورود
+            </button>
+            <button
+              role="tab"
+              aria-selected={activeTab === "signup"}
+              onClick={() => { setActiveTab("signup"); setFormError(""); setEmptyFields([]) }}
+              className={twMerge(
+                "px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 md:px-6 md:py-2",
+                activeTab === "signup"
+                  ? "bg-Primary-P500main text-white shadow"
+                  : "text-Gray-N700 bg-transparent hover:bg-Gray-N50"
+              )}
+            >
+              ثبت‌نام
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* sliding content */}
-      <div className="relative flex-1">
-        <div className="h-full w-full overflow-hidden">
+      <div className="relative ">
+        <div className="w-full overflow-hidden h-full">
           <div
-            className="mb-0 flex items-start transition-transform duration-300 ease-in-out"
+            className="flex transition-transform duration-300 ease-in-out items-center"
             style={{
               width: "300%",
               transform:
-                step === 0 || step === "forgot-phone"
+                (step === 0 || step === "forgot-phone")
                   ? "translateX(0)"
                   : step === 1
                   ? `translateX(${isRtl ? "33.333%" : "-33.333%"})`
                   : `translateX(${isRtl ? "66.666%" : "-66.666%"})`,
             }}
           >
-            <div className="items-strech flex h-full w-1/3 flex-col">
-              <div className="flex h-full w-full flex-col items-center justify-center">
+            <div className={`w-1/3 flex flex-col items-strech px-2`}>
+              <div className="w-full flex flex-col items-center justify-center">
                 {step === "forgot-phone" ? (
                   <ForgotPasswordPhoneForm
-                    onSubmit={handleForgotPhoneSubmit}
+                    onSubmit={handleForgotPassword}
                     isLoading={isLoading}
                     formError={formError}
-                    emptyFields={emptyFields}
                   />
                 ) : activeTab === "login" ? (
-                  <div className="mb-3 flex h-full w-full flex-col items-center justify-center">
-                    <LoginForm
-                      handleLoginSubmit={handleLoginSubmit}
-                      emptyFields={emptyFields}
-                      formError={formError}
-                      isLoading={isLoading}
-                      onForgot={handleForgotPassword}
-                      phone={loginPhone}
-                      password={loginPassword}
-                      onPhoneChange={(v) => setLoginPhone(v)}
-                      onPasswordChange={(v) => setLoginPassword(v)}
-                    />
+                  <div className="w-full h-full flex flex-col items-center justify-center mb-3">
+                  <LoginForm
+                    handleLoginSubmit={handleLoginSubmit}
+                    emptyFields={emptyFields}
+                    formError={formError}
+                    isLoading={isLoading}
+                    onForgot={handleForgotPassword}
+                    phone={loginPhone}
+                    password={loginPassword}
+                    onPhoneChange={v => setLoginPhone(v)}
+                    onPasswordChange={v => setLoginPassword(v)}
+                  /> 
                   </div>
                 ) : (
-                  <div className="mt-4 flex h-full w-full flex-col items-center justify-center">
-                    <SignupForm
-                      handleSignupSubmit={handleSignupSubmit}
-                      emptyFields={emptyFields}
-                      formError={formError}
-                      isLoading={isLoading}
-                      phone={signupPhone}
-                      onPhoneChange={(v) => setSignupPhone(v)}
-                    />
+                  <div className="w-full flex flex-col items-center justify-center my-auto">
+
+                  <SignupForm
+                    handleSignupSubmit={handleSignupSubmit}
+                    emptyFields={emptyFields}
+                    formError={formError}
+                    isLoading={isLoading}
+                    phone={signupPhone}
+                    onPhoneChange={v => setSignupPhone(v)}
+                  />
                   </div>
                 )}
               </div>
             </div>
 
-            <div className="flex h-full w-1/3 flex-col items-stretch px-2">
-              <div className="flex w-full flex-col items-center space-y-4 text-center">
-                <h3 className="text-lg font-medium">وارد کردن کد تایید</h3>
+            <div className="w-1/3 px-2 flex flex-col items-stretch h-full mb-4">
+              <div className="text-center w-full flex flex-col items-center space-y-4">
+                <h3 className="text-lg font-medium mt-3">وارد کردن کد تایید</h3>
                 <p className="text-sm text-gray-600">کد ارسال شده به شماره {phoneForOtp || "-"} را وارد کنید.</p>
                 <div className="flex items-center justify-center">
                   <OTPInput
                     length={6}
                     value={otpValue}
-                    onChange={(val) => setOtpValue(val)}
-                    onComplete={(val) => void handleVerifyOtp(val)}
+                    onChange={val => setOtpValue(val)}
+                    onComplete={val => void handleVerifyOtp(val)}
                     disabled={isVerifying}
                   />
                 </div>
-                {otpError && <p className="mt-2 text-right text-sm text-red-600">{otpError}</p>}
+                {otpError && <p className="text-red-600 text-sm text-right mt-2">{otpError}</p>}
                 <div className="mb-4">
                   <Button
                     type="button"
-                    className="bg-Primary-P500main hover:bg-Primary-P600 w-full rounded-lg text-base font-medium text-white transition"
+                    className="w-full bg-Primary-P500main text-white rounded-lg text-base font-medium hover:bg-Primary-P600 transition"
                     style={{ minHeight: 40 }}
                     disabled={isVerifying || otpValue.length !== 6}
                     onClick={() => handleVerifyOtp(otpValue)}
@@ -558,27 +643,31 @@ export default function AuthModal({
                     {isVerifying ? <LoadingDots /> : "بررسی کد"}
                   </Button>
                 </div>
+                <div className="text-center">
+                  {resendCooldown > 0 ? (
+                    <p className="text-sm text-gray-500">ارسال مجدد در {formatSeconds(resendCooldown)}</p>
+                  ) : (
+                    <button
+                      type="button"
+                      className="text-sm text-Primary-P500main hover:underline"
+                      onClick={handleResendOtp}
+                    >
+                      ارسال مجدد
+                    </button>
+                  )}
+                </div>
               </div>
             </div>
 
-            <div className="flex h-full w-1/3 flex-col items-stretch px-2">
-              <div className="mt-2 w-full">
-                {step === 2 &&
-                  (resetMode ? (
-                    <ResetPasswordForm
-                      onSubmit={handleResetPassword}
-                      emptyFields={emptyFields}
-                      formError={formError}
-                      isLoading={isLoading}
-                    />
+            <div className="w-1/3 px-2 flex flex-col items-stretch h-full">
+              <div className="w-full mt-2">
+                {step === 2 && (
+                  resetMode ? (
+                    <ResetPasswordForm onSubmit={handleResetPassword} emptyFields={emptyFields} formError={formError} isLoading={isLoading} />
                   ) : (
-                    <SignupDetailsForm
-                      onSubmit={handleFinalSignup}
-                      emptyFields={emptyFields}
-                      formError={formError}
-                      isLoading={isLoading}
-                    />
-                  ))}
+                    <SignupDetailsForm onSubmit={handleFinalSignup} emptyFields={emptyFields} formError={formError} isLoading={isLoading} />
+                  )
+                )}
               </div>
             </div>
           </div>
@@ -590,18 +679,15 @@ export default function AuthModal({
   // Mobile: render Drawer bottom sheet, Desktop: centered modal
   if (isMobile) {
     return (
-      <Drawer
-        open={isOpen}
-        onOpenChange={(open) => {
-          if (!open) onClose()
-        }}
-      >
+      <Drawer open={isOpen} onOpenChange={open => { if (!open) onClose() }}>
         {/* no vertical scrolling on Drawer itself */}
-        <DrawerContent className="fixed -right-0 bottom-0 left-0 z-50 overflow-hidden rounded-t-2xl border-none bg-white p-0 shadow-none focus:outline-none focus-visible:ring-0 focus-visible:ring-transparent">
+        <DrawerContent className="z-50 fixed bottom-0 left-0 -right-0 rounded-t-2xl bg-white p-0 overflow-hidden border-none shadow-none focus:outline-none focus-visible:ring-0 focus-visible:ring-transparent">
           <span className="sr-only">
             <DrawerTitle>Authentication</DrawerTitle>
           </span>
-          <div className="h-full">{Inner}</div>
+          <div className="h-full ">
+            {Inner}
+          </div>
         </DrawerContent>
       </Drawer>
     )
@@ -609,9 +695,10 @@ export default function AuthModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-      <div className="sm-md:w-[350px] border-Gray-N100 relative w-full overflow-hidden rounded-2xl border bg-white p-2 shadow-xl md:w-[350px]">
+      <div className="bg-white p-2 rounded-2xl shadow-xl w-full sm-md:w-[350px] md:w-[350px]  relative border border-Gray-N100 overflow-hidden">
         {Inner}
       </div>
     </div>
   )
 }
+        
