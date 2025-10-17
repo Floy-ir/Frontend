@@ -569,7 +569,7 @@ export default function AuthModal({
       <div className="relative ">
         <div className="w-full overflow-hidden h-full">
           <div
-            className="flex transition-transform duration-300 ease-in-out items-center"
+            className="flex transition-transform duration-300 ease-in-out items-start"
             style={{
               width: "300%",
               transform:
@@ -580,7 +580,7 @@ export default function AuthModal({
                   : `translateX(${isRtl ? "66.666%" : "-66.666%"})`,
             }}
           >
-            <div className={`w-1/3 flex flex-col items-strech px-2`}>
+            <div className="w-1/3 flex flex-col items-strech px-2">
               <div className="w-full flex flex-col items-center justify-center">
                 {step === "forgot-phone" ? (
                   <ForgotPasswordPhoneForm
@@ -603,7 +603,7 @@ export default function AuthModal({
                   /> 
                   </div>
                 ) : (
-                  <div className="w-full flex flex-col items-center justify-center my-auto">
+                  <div className="w-full flex flex-col items-center justify-center py-6">
 
                   <SignupForm
                     handleSignupSubmit={handleSignupSubmit}
@@ -618,7 +618,7 @@ export default function AuthModal({
               </div>
             </div>
 
-            <div className="w-1/3 px-2 flex flex-col items-stretch h-full mb-4">
+            <div className="w-1/3 px-2 flex flex-col items-stretch mb-4">
               <div className="text-center w-full flex flex-col items-center space-y-4">
                 <h3 className="text-lg font-medium mt-3">وارد کردن کد تایید</h3>
                 <p className="text-sm text-gray-600">کد ارسال شده به شماره {phoneForOtp || "-"} را وارد کنید.</p>
@@ -659,7 +659,7 @@ export default function AuthModal({
               </div>
             </div>
 
-            <div className="w-1/3 px-2 flex flex-col items-stretch h-full">
+            <div className="w-1/3 px-2 flex flex-col items-stretch">
               <div className="w-full mt-2">
                 {step === 2 && (
                   resetMode ? (
