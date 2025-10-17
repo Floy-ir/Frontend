@@ -21,21 +21,16 @@ export function Breadcrumb({ items, className = "" }: BreadcrumbProps) {
             {item.onClick ? (
               <button
                 onClick={item.onClick}
-                className="font-anjoman-max text-sm text-Primary-P500main hover:text-primary-600 focus:outline-none focus:ring-2 focus:ring-Primary-P500main focus:ring-offset-2 rounded transition-colors"
+                className="font-anjoman-max text-Primary-P500main hover:text-primary-600 focus:ring-Primary-P500main rounded text-sm transition-colors focus:ring-2 focus:ring-offset-2 focus:outline-none"
               >
                 {item.label}
               </button>
             ) : (
-              <span className="font-anjoman-max text-sm text-Gray-N600">
-                {item.label}
-              </span>
+              <span className="font-anjoman-max text-Gray-N600 text-sm">{item.label}</span>
             )}
-            
+
             {index < items.length - 1 && (
-              <ChevronLeft 
-                className="h-4 w-4 text-Gray-N400 rotate-180" 
-                aria-hidden="true" 
-              />
+              <ChevronLeft className="text-Gray-N400 h-4 w-4 rotate-180" aria-hidden="true" />
             )}
           </li>
         ))}
@@ -43,4 +38,3 @@ export function Breadcrumb({ items, className = "" }: BreadcrumbProps) {
     </nav>
   )
 }
-

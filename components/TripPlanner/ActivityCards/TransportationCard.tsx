@@ -3,12 +3,12 @@
 import { cva, type VariantProps } from "class-variance-authority"
 import { Airplane } from "iconsax-react"
 import Image from "next/image"
-import React, { useState } from "react"
+import React from "react"
 import { PiSuitcaseRollingLight } from "react-icons/pi"
 import { twMerge } from "tailwind-merge"
 
-import { Button } from "@/components/elements/Button/Button"
 import type { Transportation } from "@/app/types/trip"
+import { Button } from "@/components/elements/Button/Button"
 import { englishToFarsiNumber } from "@/utils/numbers"
 
 // Card wrapper styles with variants
@@ -170,9 +170,12 @@ const PriceInfo = ({
   </div>
 )
 
-export function TransportationCard({ activity, onFlightClick, className, intent = "default" }: TransportationCardProps) {
-  const [showComparison, setShowComparison] = useState(false)
-
+export function TransportationCard({
+  activity,
+  onFlightClick,
+  className,
+  intent = "default",
+}: TransportationCardProps) {
   const handleViewAllFlights = () => {
     if (onFlightClick) {
       onFlightClick(activity)
@@ -195,17 +198,19 @@ export function TransportationCard({ activity, onFlightClick, className, intent 
   const flight = activity.recommendedFlight
   const departureTime = englishToFarsiNumber(flight.departureTime)
   const arrivalTime = englishToFarsiNumber(flight.arrivalTime)
-  
+
   // Parse duration - use flight.duration if available, otherwise parse activity.duration string
-  const duration = flight.duration || (() => {
-    const match = activity.duration.match(/(\d+)[^\d]*(\d+)?/)
-    const hours = match?.[1] ? parseInt(match[1], 10) : 0
-    const minutes = match?.[2] ? parseInt(match[2], 10) : 0
-    return { hours, minutes }
-  })()
-  
+  const duration =
+    flight.duration ||
+    (() => {
+      const match = activity.duration.match(/(\d+)[^\d]*(\d+)?/)
+      const hours = match?.[1] ? parseInt(match[1], 10) : 0
+      const minutes = match?.[2] ? parseInt(match[2], 10) : 0
+      return { hours, minutes }
+    })()
+
   const flightInfo = flight.flightInfo || { baggage: "20", cabinClass: "اقتصادی" }
-  
+
   // Add default label if not provided
   const priceWithLabel = {
     ...flight.price,
@@ -300,7 +305,9 @@ export function TransportationCard({ activity, onFlightClick, className, intent 
                   className="mt-1 mb-0.5 inline-flex flex-row-reverse items-center justify-between self-stretch"
                 >
                   <div data-layer="Frame 1000002342" className="flex flex-row-reverse items-center justify-end gap-1">
-                    <div className="text-Gray-N500 justify-start text-right text-[11px] leading-none font-normal">تومان</div>
+                    <div className="text-Gray-N500 justify-start text-right text-[11px] leading-none font-normal">
+                      تومان
+                    </div>
                     <div className="text-Gray-N700 justify-start text-right text-base leading-7 font-semibold">
                       {englishToFarsiNumber(priceWithLabel.formattedAmount)}
                     </div>
@@ -331,16 +338,16 @@ export function TransportationCard({ activity, onFlightClick, className, intent 
               </div>
 
               <div data-layer="Frame 1000002404" className="flex flex-col items-start justify-start gap-2 self-stretch">
-                <Button intent="primary" size="small" className="self-stretch px-5 py-3.5" onClick={handleBookingRedirect}>
+                <Button
+                  intent="primary"
+                  size="small"
+                  className="self-stretch px-5 py-3.5"
+                  onClick={handleBookingRedirect}
+                >
                   رفتن به {priceWithLabel.agency}
                 </Button>
 
-                <Button
-                  intent="text"
-                  size="small"
-                  className="self-stretch px-5 py-3.5"
-                  onClick={handleViewAllFlights}
-                >
+                <Button intent="text" size="small" className="self-stretch px-5 py-3.5" onClick={handleViewAllFlights}>
                   مشاهده همه پروازها
                 </Button>
               </div>
@@ -376,11 +383,15 @@ export function TransportationCard({ activity, onFlightClick, className, intent 
             </div>
             <div className="inline-flex flex-1 flex-col items-start justify-center">
               <div className="inline-flex items-center justify-start self-stretch">
-                <time className={`text-Gray-N800 flex-1 justify-start text-center ${textStyles.xl} ${textStyles.semibold}`}>
+                <time
+                  className={`text-Gray-N800 flex-1 justify-start text-center ${textStyles.xl} ${textStyles.semibold}`}
+                >
                   {departureTime}
                 </time>
                 <FlightRouteVisualization isMobile={false} />
-                <time className={`text-Gray-N800 flex-1 justify-start text-center ${textStyles.xl} ${textStyles.semibold}`}>
+                <time
+                  className={`text-Gray-N800 flex-1 justify-start text-center ${textStyles.xl} ${textStyles.semibold}`}
+                >
                   {arrivalTime}
                 </time>
               </div>
@@ -422,4 +433,3 @@ export function TransportationCard({ activity, onFlightClick, className, intent 
     </article>
   )
 }
-

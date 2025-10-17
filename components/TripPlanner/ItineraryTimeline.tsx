@@ -16,24 +16,27 @@ type ItineraryTimelineProps = {
   onFlightClick?: (transportation: Transportation) => void
 }
 
-export const ItineraryTimeline = React.memo(function ItineraryTimeline({ 
-  days, 
-  onFlightClick 
+export const ItineraryTimeline = React.memo(function ItineraryTimeline({
+  days,
+  onFlightClick,
 }: ItineraryTimelineProps) {
-  const renderActivity = useCallback((activity: Activity) => {
-    switch (activity.type) {
-      case "transportation":
-        return <TransportationCard key={activity.id} activity={activity} onFlightClick={onFlightClick} />
-      case "destination":
-        return <DestinationCard key={activity.id} activity={activity} />
-      case "accommodation":
-        return <AccommodationCard key={activity.id} activity={activity} />
-      case "attraction":
-        return <AttractionCard key={activity.id} activity={activity} />
-      default:
-        return null
-    }
-  }, [onFlightClick])
+  const renderActivity = useCallback(
+    (activity: Activity) => {
+      switch (activity.type) {
+        case "transportation":
+          return <TransportationCard key={activity.id} activity={activity} onFlightClick={onFlightClick} />
+        case "destination":
+          return <DestinationCard key={activity.id} activity={activity} />
+        case "accommodation":
+          return <AccommodationCard key={activity.id} activity={activity} />
+        case "attraction":
+          return <AttractionCard key={activity.id} activity={activity} />
+        default:
+          return null
+      }
+    },
+    [onFlightClick]
+  )
 
   const renderActivityIcon = useCallback((activity: Activity) => {
     switch (activity.type) {
@@ -66,8 +69,8 @@ export const ItineraryTimeline = React.memo(function ItineraryTimeline({
       }
       case "destination":
         return (
-          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-Primary-P100" aria-hidden="true">
-            <MapPin className="h-4 w-4 text-Primary-P500main" />
+          <div className="bg-Primary-P100 flex h-8 w-8 items-center justify-center rounded-full" aria-hidden="true">
+            <MapPin className="text-Primary-P500main h-4 w-4" />
           </div>
         )
       case "accommodation":
@@ -83,29 +86,20 @@ export const ItineraryTimeline = React.memo(function ItineraryTimeline({
           </div>
         )
       default:
-        return (
-          <div className="h-2 w-2 rounded-full bg-Primary-P500main" aria-hidden="true" />
-        )
+        return <div className="bg-Primary-P500main h-2 w-2 rounded-full" aria-hidden="true" />
     }
   }, [])
 
   // Memoize the default open values to prevent recreation on every render
-  const defaultOpenDays = useMemo(
-    () => days.map((_, index) => `day-${index}`),
-    [days.length]
-  )
+  const defaultOpenDays = useMemo(() => days.map((_, index) => `day-${index}`), [days.length])
 
   return (
     <div className="px-4 py-6" dir="rtl">
-      <Accordion 
-        type="multiple" 
-        defaultValue={defaultOpenDays}
-        className="space-y-4"
-      >
+      <Accordion type="multiple" defaultValue={defaultOpenDays} className="space-y-4">
         {days.map((day, index) => (
           <AccordionItem key={index} value={`day-${index}`} className="rounded-lg border border-gray-200 bg-white">
             <AccordionTrigger className="px-4 hover:no-underline">
-              <h2 className="font-anjoman-max text-lg font-bold text-Gray-N800">
+              <h2 className="font-anjoman-max text-Gray-N800 text-lg font-bold">
                 {day.dayName} {day.date}
               </h2>
             </AccordionTrigger>
@@ -140,7 +134,7 @@ export const ItineraryTimeline = React.memo(function ItineraryTimeline({
                 <div className="relative mt-4 flex gap-4">
                   <div className="shrink-0">
                     <button
-                      className="flex items-center gap-2 rounded-lg border border-dashed border-gray-300 bg-white px-3 py-2 text-sm font-medium text-Gray-N600 transition-colors hover:border-Primary-P500main hover:bg-Primary-P50 hover:text-Primary-P500main focus:outline-none focus:ring-2 focus:ring-Primary-P500main focus:ring-offset-2"
+                      className="text-Gray-N600 hover:border-Primary-P500main hover:bg-Primary-P50 hover:text-Primary-P500main focus:ring-Primary-P500main flex items-center gap-2 rounded-lg border border-dashed border-gray-300 bg-white px-3 py-2 text-sm font-medium transition-colors focus:ring-2 focus:ring-offset-2 focus:outline-none"
                       aria-label={`افزودن فعالیت به ${day.dayName}`}
                     >
                       <Plus className="h-4 w-4" aria-hidden="true" />
@@ -156,4 +150,3 @@ export const ItineraryTimeline = React.memo(function ItineraryTimeline({
     </div>
   )
 })
-

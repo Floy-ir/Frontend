@@ -29,11 +29,11 @@ export const mockMashhadTrip: TripPlan = {
             price: {
               amount: 2800000,
               formattedAmount: "2,800,000",
-              agency: "علی‌بابا"
+              agency: "علی‌بابا",
             },
             departureTime: "۸:۳۰",
-            arrivalTime: "۹:۴۵"
-          }
+            arrivalTime: "۹:۴۵",
+          },
         },
         {
           id: "activity-2",
@@ -88,7 +88,8 @@ export const mockMashhadTrip: TripPlan = {
           type: "attraction",
           name: "موزه آستان قدس رضوی",
           description: "موزه‌ای غنی با مجموعه‌ای ارزشمند از فرش، قرآن‌های خطی، و آثار تاریخی",
-          image: "https://commons.wikimedia.org/wiki/Special:FilePath/Mehrab%2C_Collections_of_Astan_Quds_Razavi_Museum_%282%29.jpg",
+          image:
+            "https://commons.wikimedia.org/wiki/Special:FilePath/Mehrab%2C_Collections_of_Astan_Quds_Razavi_Museum_%282%29.jpg",
           location: {
             lat: 36.2915,
             lng: 59.6165,
@@ -154,11 +155,11 @@ export const mockMashhadTrip: TripPlan = {
             price: {
               amount: 2650000,
               formattedAmount: "2,650,000",
-              agency: "فلای تودی"
+              agency: "فلای تودی",
             },
             departureTime: "۲۰:۰۰",
-            arrivalTime: "۲۱:۲۰"
-          }
+            arrivalTime: "۲۱:۲۰",
+          },
         },
       ],
     },

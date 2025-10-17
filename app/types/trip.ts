@@ -89,4 +89,3 @@ export interface TripPlan {
   days: TripDay[]
   mainLocation: Location
 }
-

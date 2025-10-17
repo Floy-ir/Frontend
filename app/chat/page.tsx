@@ -128,13 +128,9 @@ export default function FullChatDemo() {
     return (
       <div className="flex h-screen" dir="ltr">
         {/* Chat Section - 40% width */}
-        <div className="w-[40%] shrink-0">
-          {chatComponent}
-        </div>
+        <div className="w-[40%] shrink-0">{chatComponent}</div>
         {/* Trip Planner Section - 60% width */}
-        <div className="w-[60%] shrink-0 border-l border-gray-200">
-          {tripComponent}
-        </div>
+        <div className="w-[60%] shrink-0 border-l border-gray-200">{tripComponent}</div>
       </div>
     )
   }
