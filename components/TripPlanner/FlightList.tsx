@@ -33,17 +33,11 @@ export function FlightList({ origin, destination, departureDate, onFlightSelect 
     <div className="flex flex-col gap-6 p-6" dir="rtl">
       {/* Header */}
       <div className="flex flex-col gap-2">
-        <h1 className="font-anjoman-max text-xl font-bold text-Gray-N800">
+        <h1 className="font-anjoman-max text-Gray-N800 text-xl font-bold">
           پرواز {origin} به {destination}
         </h1>
-        {departureDate && (
-          <p className="font-anjoman-max text-sm text-Gray-N600">
-            تاریخ پرواز: {departureDate}
-          </p>
-        )}
-        <p className="font-anjoman-max text-sm text-Gray-N600">
-          {englishToFarsiNumber(flights.length)} پرواز موجود
-        </p>
+        {departureDate && <p className="font-anjoman-max text-Gray-N600 text-sm">تاریخ پرواز: {departureDate}</p>}
+        <p className="font-anjoman-max text-Gray-N600 text-sm">{englishToFarsiNumber(flights.length)} پرواز موجود</p>
       </div>
 
       {/* Flight Results */}
@@ -54,22 +48,17 @@ export function FlightList({ origin, destination, departureDate, onFlightSelect 
               <FlightCard
                 {...flight}
                 onBuy={() => handleFlightBuy(flight)}
-                className="transition-shadow hover:shadow-md cursor-default"
+                className="cursor-default transition-shadow hover:shadow-md"
               />
             </div>
           ))
         ) : (
           <div className="flex flex-col items-center justify-center py-12 text-center">
-            <p className="font-anjoman-max text-lg text-Gray-N600">
-              پروازی برای این مسیر یافت نشد
-            </p>
-            <p className="font-anjoman-max mt-2 text-sm text-Gray-N500">
-              لطفاً تاریخ یا مقصد دیگری را انتخاب کنید
-            </p>
+            <p className="font-anjoman-max text-Gray-N600 text-lg">پروازی برای این مسیر یافت نشد</p>
+            <p className="font-anjoman-max text-Gray-N500 mt-2 text-sm">لطفاً تاریخ یا مقصد دیگری را انتخاب کنید</p>
           </div>
         )}
       </div>
     </div>
   )
 }
-

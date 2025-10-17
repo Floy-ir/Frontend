@@ -142,13 +142,23 @@ export function Header({ menuItems, className, forceScrolledStyle = false, compa
     <>
       <header className={headerClasses}>
         {/* Content container - only constrain width for content, not background */}
-        <div className={`lg-xl:px-6 mx-auto w-full max-w-[1136px] px-4 md:px-4 ${compact ? "lg:px-4 px-3" : "lg:px-6 px-4"} ${isScrolled ? "w-full" : ""}`}>
+        <div
+          className={`lg-xl:px-6 mx-auto w-full max-w-[1136px] px-4 md:px-4 ${
+            compact ? "px-3 lg:px-4" : "px-4 lg:px-6"
+          } ${isScrolled ? "w-full" : ""}`}
+        >
           {/* Desktop view */}
-          <div className={`hidden ${desktopHeight} items-center justify-between lg:flex`}> 
+          <div className={`hidden ${desktopHeight} items-center justify-between lg:flex`}>
             {/* Logo - Right Side in RTL */}
             <div className="flex items-center gap-2">
-              <span className={`${logoTextClass} font-semibold ${isScrolled ? "text-Gray-N700" : "text-white"}`}>فلوی</span>
-              <Airplane size={compact ? 16 : 20} variant="Bold" className={isScrolled ? "text-Gray-N700" : "text-white"} />
+              <span className={`${logoTextClass} font-semibold ${isScrolled ? "text-Gray-N700" : "text-white"}`}>
+                فلوی
+              </span>
+              <Airplane
+                size={compact ? 16 : 20}
+                variant="Bold"
+                className={isScrolled ? "text-Gray-N700" : "text-white"}
+              />
             </div>
 
             {/* Navigation Menu - Middle */}
@@ -203,9 +213,13 @@ export function Header({ menuItems, className, forceScrolledStyle = false, compa
           <div className={`flex items-center justify-between lg:hidden ${compact ? "py-1" : "py-2"}`}>
             {/* Drawer for mobile menu */}
             <Drawer open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
-                <DrawerTrigger asChild>
+              <DrawerTrigger asChild>
                 <button className={compact ? "p-1" : "p-2"}>
-                  <HambergerMenu size={compact ? 32 : 48} className={compact ? "p-1" : "p-2"} color={isScrolled ? "#334155" : "white"} />
+                  <HambergerMenu
+                    size={compact ? 32 : 48}
+                    className={compact ? "p-1" : "p-2"}
+                    color={isScrolled ? "#334155" : "white"}
+                  />
                   <span className="sr-only">Toggle Menu</span>
                 </button>
               </DrawerTrigger>
