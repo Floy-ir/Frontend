@@ -340,7 +340,7 @@ export default function AuthModal({
     } catch (err) {
       console.error(err)
       // prefer server-provided message translated to Persian when available
-      setOtpError(extractServerMessage(err))
+      setOtpError(extractServerMessage(err) || "خطایی رخ داد")
     } finally {
       setIsVerifying(false)
     }
@@ -373,7 +373,7 @@ export default function AuthModal({
       setOtpError("")
     } catch (err) {
       console.error(err)
-      setOtpError(extractServerMessage(err))
+      setOtpError(extractServerMessage(err) || "خطایی رخ داد")
     } finally {
       setIsLoading(false)
     }
