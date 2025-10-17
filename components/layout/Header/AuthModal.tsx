@@ -136,9 +136,10 @@ export default function AuthModal({
           // persist a minimal user object so header can show a welcome label
           try {
             // Try to get full_name from response, fallback to phone
-            const userObj = { 
-              mobile, 
-              full_name: (res as any)?.full_name || (res as any)?.user?.full_name || "" 
+            const userObj = {
+              mobile,
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              full_name: (res as any)?.full_name || (res as any)?.user?.full_name || "",
             }
             localStorage.setItem("auth_user", JSON.stringify(userObj))
           } catch {}
