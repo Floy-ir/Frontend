@@ -7,6 +7,8 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import React, { useEffect, useState } from "react"
 import { twMerge } from "tailwind-merge"
+import { Button } from "@/components/ui/button"
+import AuthModal from "./AuthModal"
 import { Drawer, DrawerContent, DrawerTitle, DrawerTrigger } from "../../ui/drawer"
 
 interface MenuItem {
@@ -53,80 +55,80 @@ const navItem = cva(["flex", "flex-col", "items-center", "gap-1"], {
 
 export function Header({ menuItems, className, forceScrolledStyle = false, compact = false }: HeaderProps) {
   const pathname = usePathname()
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
-  const [prevScrollPos, setPrevScrollPos] = useState(0)
-  const [visible, setVisible] = useState(true)
-  const [isScrolled, setIsScrolled] = useState(forceScrolledStyle)
-  const [isSmallScreen, setIsSmallScreen] = useState(false)
+  const [mobileMenuOpen, setMobileMenuOpen] = useState<boolean>(false)
+  const [prevScrollPos, setPrevScrollPos] = useState<number>(0)
+  const [visible, setVisible] = useState<boolean>(true)
+  const [isScrolled, setIsScrolled] = useState<boolean>(forceScrolledStyle ?? false)
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [isSmallScreen, setIsSmallScreen] = useState<boolean>(false)
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
+  const [authUser, setAuthUser] = useState<{ mobile: string; full_name?: string } | null>(null)
+  const [userMenuOpen, setUserMenuOpen] = useState<boolean>(false)
+  const [toast, setToast] = useState<{ id: number; message: string } | null>(null)
+  const showToast = (message: string) => {
+    const id = Date.now()
+    setToast({ id, message })
+    setTimeout(() => setToast((curr) => (curr && curr.id === id ? null : curr)), 3000)
+  }
 
-  // This effect updates isScrolled when forceScrolledStyle changes
   useEffect(() => {
     setIsScrolled(forceScrolledStyle || window.scrollY > 50)
   }, [forceScrolledStyle])
 
   useEffect(() => {
-    // Function to handle scroll
     const handleScroll = () => {
       const currentScrollPos = window.scrollY
-
-      // Only set scrolled if we've passed a more significant threshold
-      // Always respect forceScrolledStyle if it's true
       const hasScrolledEnough = currentScrollPos > 50
-
-      // Visible if:
-      // 1. Scrolling up
-      // 2. At the top of the page
-      // 3. Mobile menu is open
       const isScrollingUp = prevScrollPos > currentScrollPos
       const isAtTop = currentScrollPos < 70
       const shouldBeVisible = isScrollingUp || isAtTop || mobileMenuOpen
-
-      // Update states
-      if (shouldBeVisible) {
-        setVisible(true)
-      } else {
-        setVisible(false)
-      }
-
-      // Update isScrolled state - always true if forceScrolledStyle is set
+      setVisible(shouldBeVisible)
       setIsScrolled(forceScrolledStyle || hasScrolledEnough)
-
       setPrevScrollPos(currentScrollPos)
     }
-
     window.addEventListener("scroll", handleScroll)
-
-    // Cleanup function
-    return () => {
-      window.removeEventListener("scroll", handleScroll)
-    }
+    return () => window.removeEventListener("scroll", handleScroll)
   }, [prevScrollPos, mobileMenuOpen, forceScrolledStyle])
 
-  // Header classes - apply rounded corners only when not scrolled
   const headerClasses = twMerge(
     "w-full fixed top-0 left-0 right-0 z-20 transition-all duration-300",
-    // Only rounded when at the top and not scrolled
     !visible ? "-translate-y-full" : "translate-y-0",
     visible && isScrolled ? "bg-white border-b border-Gray-N200" : "bg-transparent",
     className
   )
+
   useEffect(() => {
-    const checkScreen = () => {
-      setIsSmallScreen(window.innerWidth < 768)
-    }
+    const checkScreen = () => setIsSmallScreen(window.innerWidth < 768)
     checkScreen()
     window.addEventListener("resize", checkScreen)
     return () => window.removeEventListener("resize", checkScreen)
   }, [])
 
-  // Add smooth scrolling behavior
   useEffect(() => {
-    document.documentElement.style.scrollBehavior = "smooth"
-    return () => {
-      document.documentElement.style.scrollBehavior = "auto"
+    const readUser = () => {
+      try {
+        const raw = localStorage.getItem("auth_user")
+        if (raw) {
+          const parsed = JSON.parse(raw)
+          if (parsed && typeof parsed === "object" && typeof (parsed as { mobile?: unknown }).mobile === "string") {
+            setAuthUser(parsed as { mobile: string; full_name?: string })
+          } else {
+            setAuthUser(null)
+          }
+        } else setAuthUser(null)
+      } catch {
+        setAuthUser(null)
+      }
     }
+    readUser()
+    const onAuth = () => readUser()
+    window.addEventListener("auth-changed", onAuth)
+    return () => window.removeEventListener("auth-changed", onAuth)
   }, [])
 
+  useEffect(() => {
+    document.documentElement.style.scrollBehavior = "smooth"
+  }, [])
   // For very small flight pages we hide header to maximize space; show header on chat page
   if (pathname?.startsWith("/flights") && isSmallScreen) {
     return <></>
@@ -160,8 +162,6 @@ export function Header({ menuItems, className, forceScrolledStyle = false, compa
                 className={isScrolled ? "text-Gray-N700" : "text-white"}
               />
             </div>
-
-            {/* Navigation Menu - Middle */}
             <NavigationMenu.Root className="flex flex-1 justify-center">
               <NavigationMenu.List className={`flex flex-row-reverse ${navGap}`}>
                 {menuItems.map((item, index) => (
@@ -190,25 +190,54 @@ export function Header({ menuItems, className, forceScrolledStyle = false, compa
                 ))}
               </NavigationMenu.List>
             </NavigationMenu.Root>
-            {/* Login Button - Left Side in RTL */}
-            {/* <div>
-              <Button
-                href="/login"
-                intent="secondary"
-                size="small"
-                disabled
-                className={twMerge(
-                  "rounded-xl px-6 py-4",
-                  isScrolled
-                    ? "bg-Gray-N100 text-Primary-P500main" // Scrolled state styling
-                    : "bg-Gray-N100 text-indigo-600"      // Default styling
-                )}
-              >
-                ورود | ثبت‌نام
-              </Button>
-            </div> */}
+            <div className="relative">
+              {!authUser ? (
+                <Button
+                  size="default"
+                  onClick={() => setIsModalOpen(true)}
+                  className={twMerge(
+                    "rounded-xl px-6 py-4 transition-colors",
+                    isScrolled
+                      ? "bg-Gray-N100 text-Primary-P500main hover:bg-Gray-N100"
+                      : "bg-Gray-N100 hover:bg-Gray-N100 text-indigo-600"
+                  )}
+                >
+                  ورود | ثبت‌نام
+                </Button>
+              ) : (
+                <div className="relative">
+                  <button
+                    onClick={() => setUserMenuOpen((v) => !v)}
+                    className={twMerge(
+                      "rounded-xl px-4 py-2 text-sm font-medium transition-colors",
+                      isScrolled ? "text-Primary-P500main" : "bg-Gray-N50 text-Primary-P500main"
+                    )}
+                  >
+                    سلام {authUser.full_name ? authUser.full_name : authUser.mobile}!
+                  </button>
+                  {userMenuOpen && (
+                    <div className="absolute top-full left-0 mt-1 w-30 rounded-md bg-white shadow-lg">
+                      <button
+                        onClick={() => {
+                          try {
+                            localStorage.removeItem("auth_token")
+                            localStorage.removeItem("auth_user")
+                          } catch {}
+                          try {
+                            window.dispatchEvent(new Event("auth-changed"))
+                          } catch {}
+                          setUserMenuOpen(false)
+                        }}
+                        className="hover:bg-Gray-N50 w-full px-4 py-2 text-right text-sm hover:rounded-md"
+                      >
+                        خروج
+                      </button>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
           </div>
-
           {/* Mobile view */}
           <div className={`flex items-center justify-between lg:hidden ${compact ? "py-1" : "py-2"}`}>
             {/* Drawer for mobile menu */}
@@ -227,43 +256,78 @@ export function Header({ menuItems, className, forceScrolledStyle = false, compa
                 <DrawerTitle className="sr-only">Navigation Menu</DrawerTitle>
                 <div className="overflow-auto p-6">
                   <nav className="flex flex-col items-end space-y-3">
-                    {menuItems.map((item, index) => {
-                      return (
-                        <Link
-                          key={index}
-                          href={item.href}
-                          className={`w-full px-6 py-3 text-right text-[1.15rem] ${
-                            item.isActive ? "font-semibold text-slate-800" : "text-slate-500"
-                          }`}
-                          onClick={() => setMobileMenuOpen(false)}
-                        >
-                          {item.label}
-                        </Link>
-                      )
-                    })}
+                    {menuItems.map((item: MenuItem, index: number) => (
+                      <Link
+                        key={index}
+                        href={item.href}
+                        className={`w-full px-6 py-3 text-right text-[1.15rem] ${
+                          item.isActive ? "font-semibold text-slate-800" : "text-slate-500"
+                        }`}
+                        onClick={() => setMobileMenuOpen(false)}
+                      >
+                        {item.label}
+                      </Link>
+                    ))}
                   </nav>
                 </div>
               </DrawerContent>
             </Drawer>
-
-            {/* Login Button */}
-            {/* <Button
-              href="/login"
-              intent="secondary"
-              size="small"
-              disabled
-              className={twMerge(
-                "rounded-xl px-4 py-3 text-sm",
-                isScrolled
-                  ? "bg-Gray-N100 text-Primary-P500main" // Scrolled state styling
-                  : "bg-Gray-N100 text-indigo-600" // Default styling
-              )}
-            >
-              ورود | ثبت‌نام
-            </Button> */}
+            {!authUser ? (
+              <Button
+                size="sm"
+                onClick={() => setIsModalOpen(true)}
+                className={twMerge(
+                  "rounded-lg px-3 py-2 transition-colors",
+                  isScrolled
+                    ? "bg-Gray-N100 text-Primary-P500main hover:bg-Gray-N100"
+                    : "bg-Gray-N100 hover:bg-Gray-N100 text-indigo-600"
+                )}
+              >
+                ورود | ثبت‌نام
+              </Button>
+            ) : (
+              <div className="relative">
+                <button
+                  onClick={() => setUserMenuOpen((v) => !v)}
+                  className={twMerge(
+                    "rounded-lg px-3 py-2 text-sm font-medium transition-colors",
+                    isScrolled ? "text-Primary-P500main" : "bg-Gray-N50 text-Primary-P500main"
+                  )}
+                >
+                  سلام {authUser.full_name ? authUser.full_name : authUser.mobile}!
+                </button>
+                {userMenuOpen && (
+                  <div className="absolute top-full left-0 mt-1 w-30 rounded-md border bg-white shadow-lg">
+                    <button
+                      onClick={() => {
+                        try {
+                          localStorage.removeItem("auth_token")
+                          localStorage.removeItem("auth_user")
+                        } catch {}
+                        try {
+                          window.dispatchEvent(new Event("auth-changed"))
+                        } catch {}
+                        setUserMenuOpen(false)
+                      }}
+                      className="hover:bg-Gray-N50 w-full px-4 py-2 text-right text-sm hover:rounded-md"
+                    >
+                      خروج
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         </div>
       </header>
+      {toast && (
+        <div className="fixed top-6 left-1/2 z-[100] -translate-x-1/2">
+          <div className="bg-Gray-N900 fonr-small rounded-lg px-4 py-2 text-[12px] text-white shadow-lg md:text-[14px] md:font-normal">
+            {toast.message}
+          </div>
+        </div>
+      )}
+      <AuthModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} showToast={showToast} />
 
       {/* Spacer div to prevent layout shifts - matches header height */}
       <div className={`h-12 w-full ${spacerLg}`}></div>

@@ -19,11 +19,14 @@ export async function apiFetch<T>(endpoint: string, options: RequestOptions = {}
     //     ...(options.headers || {}),
     //   }
     // });
+    // attach token if present
+    const token = typeof window !== "undefined" ? localStorage.getItem("auth_token") : null
     const response = await axios<T>(url, {
       ...options,
       headers: {
         "Content-Type": "application/json",
         ...(options.headers || {}),
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
       },
     })
     // console.log(options)
@@ -32,11 +35,17 @@ export async function apiFetch<T>(endpoint: string, options: RequestOptions = {}
     return response.data
   } catch (error: unknown) {
     if (axios.isAxiosError(error)) {
-      //   const status = error.response?.status;
-      //   throw new Error(`API error: ${status || 'Unknown error'}`);
-      console.error("Axios error:", error.message, error.response?.data)
+      const respData = error.response?.data
+      const status = error.response?.status
+      type ErrorWithResponse = Error & { response?: unknown; status?: number }
+      const err: ErrorWithResponse = new Error(error.message)
+      err.response = respData
+      err.status = status
+      throw err
     }
-    // throw new Error('An unexpected error occurred');
-    console.error("Unexpected error:", error)
+    type ErrorWithResponse = Error & { response?: unknown }
+    const err: ErrorWithResponse = new Error("Unexpected error")
+    err.response = error
+    throw err
   }
 }
