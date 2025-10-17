@@ -14,7 +14,7 @@ import SignupForm from "./SignupForm"
 import { Drawer, DrawerContent, DrawerTitle } from "../../ui/drawer"
 
 function cleanPersianToEnglishDigits(input: string) {
-  return input.replace(/[\u06F0-\u06F9]/g, d => String(d.charCodeAt(0) - 1776))
+  return input.replace(/[\u06F0-\u06F9]/g, (d) => String(d.charCodeAt(0) - 1776))
 }
 
 export default function AuthModal({
@@ -57,7 +57,7 @@ export default function AuthModal({
   const [resendCooldown, setResendCooldown] = React.useState<number>(0)
   React.useEffect(() => {
     if (resendCooldown <= 0) return
-    const id = setInterval(() => setResendCooldown(c => c - 1), 1000)
+    const id = setInterval(() => setResendCooldown((c) => c - 1), 1000)
     return () => clearInterval(id)
   }, [resendCooldown])
 
@@ -141,7 +141,7 @@ export default function AuthModal({
   }, [])
 
   const handleLoginSubmit = async (data: { phone: string; password: string }) => {
-  const phone = cleanPersianToEnglishDigits(data.phone.trim())
+    const phone = cleanPersianToEnglishDigits(data.phone.trim())
     const password = data.password.trim()
     const empty: string[] = []
 
@@ -502,8 +502,8 @@ export default function AuthModal({
   if (!isOpen) return null
 
   const Inner = (
-    <div className="bg-white rounded-t-2xl w-full h-full flex flex-col">
-  {((typeof step === "number" && step > 0) || step === "forgot-phone") && (
+    <div className="flex h-full w-full flex-col rounded-t-2xl bg-white">
+      {((typeof step === "number" && step > 0) || step === "forgot-phone") && (
         <button
           onClick={() => {
             setStep(0)
@@ -512,15 +512,15 @@ export default function AuthModal({
             setFormError("")
             setEmptyFields([])
           }}
-          className="flex items-center gap-1 text-sm text-Gray-N700 py-2 rounded-lg mr-7 md:mr-5"
+          className="text-Gray-N700 mr-7 flex items-center gap-1 rounded-lg py-2 text-sm md:mr-5"
           type="button"
         >
-          <span className="text-xl rotate-180 inline-block">&#8592;</span>
+          <span className="inline-block rotate-180 text-xl">&#8592;</span>
         </button>
       )}
 
       {!showOtp && step !== "forgot-phone" && (
-        <div className="flex justify-center items-center my-4 ">
+        <div className="my-4 flex items-center justify-center">
           <div className="absolute top-3 right-5">
             <button
               onClick={() => {
@@ -534,16 +534,24 @@ export default function AuthModal({
               ✕
             </button>
           </div>
-          <div className="inline-flex rounded-full bg-transparent ring-1 ring-Gray-N100 p-1 " role="tablist" aria-label="auth tabs">
+          <div
+            className="ring-Gray-N100 inline-flex rounded-full bg-transparent p-1 ring-1"
+            role="tablist"
+            aria-label="auth tabs"
+          >
             <button
               role="tab"
               aria-selected={activeTab === "login"}
-              onClick={() => { setActiveTab("login"); setFormError(""); setEmptyFields([]) }}
+              onClick={() => {
+                setActiveTab("login")
+                setFormError("")
+                setEmptyFields([])
+              }}
               className={twMerge(
-                "px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 md:px-6 md:py-2",
+                "rounded-full px-4 py-2 text-sm font-medium transition-all duration-200 md:px-6 md:py-2",
                 activeTab === "login"
                   ? "bg-Primary-P500main text-white shadow"
-                  : "text-Gray-N700 bg-transparent hover:bg-Gray-N50"
+                  : "text-Gray-N700 hover:bg-Gray-N50 bg-transparent"
               )}
             >
               ورود
@@ -551,12 +559,16 @@ export default function AuthModal({
             <button
               role="tab"
               aria-selected={activeTab === "signup"}
-              onClick={() => { setActiveTab("signup"); setFormError(""); setEmptyFields([]) }}
+              onClick={() => {
+                setActiveTab("signup")
+                setFormError("")
+                setEmptyFields([])
+              }}
               className={twMerge(
-                "px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 md:px-6 md:py-2",
+                "rounded-full px-4 py-2 text-sm font-medium transition-all duration-200 md:px-6 md:py-2",
                 activeTab === "signup"
                   ? "bg-Primary-P500main text-white shadow"
-                  : "text-Gray-N700 bg-transparent hover:bg-Gray-N50"
+                  : "text-Gray-N700 hover:bg-Gray-N50 bg-transparent"
               )}
             >
               ثبت‌نام
@@ -566,22 +578,22 @@ export default function AuthModal({
       )}
 
       {/* sliding content */}
-      <div className="relative ">
-        <div className="w-full overflow-hidden h-full">
+      <div className="relative">
+        <div className="h-full w-full overflow-hidden">
           <div
-            className="flex transition-transform duration-300 ease-in-out items-start"
+            className="flex items-start transition-transform duration-300 ease-in-out"
             style={{
               width: "300%",
               transform:
-                (step === 0 || step === "forgot-phone")
+                step === 0 || step === "forgot-phone"
                   ? "translateX(0)"
                   : step === 1
                   ? `translateX(${isRtl ? "33.333%" : "-33.333%"})`
                   : `translateX(${isRtl ? "66.666%" : "-66.666%"})`,
             }}
           >
-            <div className="w-1/3 flex flex-col items-strech px-2">
-              <div className="w-full flex flex-col items-center justify-center">
+            <div className="items-strech flex w-1/3 flex-col px-2">
+              <div className="flex w-full flex-col items-center justify-center">
                 {step === "forgot-phone" ? (
                   <ForgotPasswordPhoneForm
                     onSubmit={handleForgotPassword}
@@ -589,53 +601,52 @@ export default function AuthModal({
                     formError={formError}
                   />
                 ) : activeTab === "login" ? (
-                  <div className="w-full h-full flex flex-col items-center justify-center mb-3">
-                  <LoginForm
-                    handleLoginSubmit={handleLoginSubmit}
-                    emptyFields={emptyFields}
-                    formError={formError}
-                    isLoading={isLoading}
-                    onForgot={handleForgotPassword}
-                    phone={loginPhone}
-                    password={loginPassword}
-                    onPhoneChange={v => setLoginPhone(v)}
-                    onPasswordChange={v => setLoginPassword(v)}
-                  /> 
+                  <div className="mb-3 flex h-full w-full flex-col items-center justify-center">
+                    <LoginForm
+                      handleLoginSubmit={handleLoginSubmit}
+                      emptyFields={emptyFields}
+                      formError={formError}
+                      isLoading={isLoading}
+                      onForgot={handleForgotPassword}
+                      phone={loginPhone}
+                      password={loginPassword}
+                      onPhoneChange={(v) => setLoginPhone(v)}
+                      onPasswordChange={(v) => setLoginPassword(v)}
+                    />
                   </div>
                 ) : (
-                  <div className="w-full flex flex-col items-center justify-center py-6">
-
-                  <SignupForm
-                    handleSignupSubmit={handleSignupSubmit}
-                    emptyFields={emptyFields}
-                    formError={formError}
-                    isLoading={isLoading}
-                    phone={signupPhone}
-                    onPhoneChange={v => setSignupPhone(v)}
-                  />
+                  <div className="flex w-full flex-col items-center justify-center py-6">
+                    <SignupForm
+                      handleSignupSubmit={handleSignupSubmit}
+                      emptyFields={emptyFields}
+                      formError={formError}
+                      isLoading={isLoading}
+                      phone={signupPhone}
+                      onPhoneChange={(v) => setSignupPhone(v)}
+                    />
                   </div>
                 )}
               </div>
             </div>
 
-            <div className="w-1/3 px-2 flex flex-col items-stretch mb-4">
-              <div className="text-center w-full flex flex-col items-center space-y-4">
-                <h3 className="text-lg font-medium mt-3">وارد کردن کد تایید</h3>
+            <div className="mb-4 flex w-1/3 flex-col items-stretch px-2">
+              <div className="flex w-full flex-col items-center space-y-4 text-center">
+                <h3 className="mt-3 text-lg font-medium">وارد کردن کد تایید</h3>
                 <p className="text-sm text-gray-600">کد ارسال شده به شماره {phoneForOtp || "-"} را وارد کنید.</p>
                 <div className="flex items-center justify-center">
                   <OTPInput
                     length={6}
                     value={otpValue}
-                    onChange={val => setOtpValue(val)}
-                    onComplete={val => void handleVerifyOtp(val)}
+                    onChange={(val) => setOtpValue(val)}
+                    onComplete={(val) => void handleVerifyOtp(val)}
                     disabled={isVerifying}
                   />
                 </div>
-                {otpError && <p className="text-red-600 text-sm text-right mt-2">{otpError}</p>}
+                {otpError && <p className="mt-2 text-right text-sm text-red-600">{otpError}</p>}
                 <div className="mb-4">
                   <Button
                     type="button"
-                    className="w-full bg-Primary-P500main text-white rounded-lg text-base font-medium hover:bg-Primary-P600 transition"
+                    className="bg-Primary-P500main hover:bg-Primary-P600 w-full rounded-lg text-base font-medium text-white transition"
                     style={{ minHeight: 40 }}
                     disabled={isVerifying || otpValue.length !== 6}
                     onClick={() => handleVerifyOtp(otpValue)}
@@ -649,7 +660,7 @@ export default function AuthModal({
                   ) : (
                     <button
                       type="button"
-                      className="text-sm text-Primary-P500main hover:underline"
+                      className="text-Primary-P500main text-sm hover:underline"
                       onClick={handleResendOtp}
                     >
                       ارسال مجدد
@@ -659,15 +670,24 @@ export default function AuthModal({
               </div>
             </div>
 
-            <div className="w-1/3 px-2 flex flex-col items-stretch">
-              <div className="w-full mt-2">
-                {step === 2 && (
-                  resetMode ? (
-                    <ResetPasswordForm onSubmit={handleResetPassword} emptyFields={emptyFields} formError={formError} isLoading={isLoading} />
+            <div className="flex w-1/3 flex-col items-stretch px-2">
+              <div className="mt-2 w-full">
+                {step === 2 &&
+                  (resetMode ? (
+                    <ResetPasswordForm
+                      onSubmit={handleResetPassword}
+                      emptyFields={emptyFields}
+                      formError={formError}
+                      isLoading={isLoading}
+                    />
                   ) : (
-                    <SignupDetailsForm onSubmit={handleFinalSignup} emptyFields={emptyFields} formError={formError} isLoading={isLoading} />
-                  )
-                )}
+                    <SignupDetailsForm
+                      onSubmit={handleFinalSignup}
+                      emptyFields={emptyFields}
+                      formError={formError}
+                      isLoading={isLoading}
+                    />
+                  ))}
               </div>
             </div>
           </div>
@@ -679,15 +699,18 @@ export default function AuthModal({
   // Mobile: render Drawer bottom sheet, Desktop: centered modal
   if (isMobile) {
     return (
-      <Drawer open={isOpen} onOpenChange={open => { if (!open) onClose() }}>
+      <Drawer
+        open={isOpen}
+        onOpenChange={(open) => {
+          if (!open) onClose()
+        }}
+      >
         {/* no vertical scrolling on Drawer itself */}
-        <DrawerContent className="z-50 fixed bottom-0 left-0 -right-0 rounded-t-2xl bg-white p-0 overflow-hidden border-none shadow-none focus:outline-none focus-visible:ring-0 focus-visible:ring-transparent">
+        <DrawerContent className="fixed -right-0 bottom-0 left-0 z-50 overflow-hidden rounded-t-2xl border-none bg-white p-0 shadow-none focus:outline-none focus-visible:ring-0 focus-visible:ring-transparent">
           <span className="sr-only">
             <DrawerTitle>Authentication</DrawerTitle>
           </span>
-          <div className="h-full ">
-            {Inner}
-          </div>
+          <div className="h-full">{Inner}</div>
         </DrawerContent>
       </Drawer>
     )
@@ -695,10 +718,9 @@ export default function AuthModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-      <div className="bg-white p-2 rounded-2xl shadow-xl w-full sm-md:w-[350px] md:w-[350px]  relative border border-Gray-N100 overflow-hidden">
+      <div className="sm-md:w-[350px] border-Gray-N100 relative w-full overflow-hidden rounded-2xl border bg-white p-2 shadow-xl md:w-[350px]">
         {Inner}
       </div>
     </div>
   )
 }
-        
