@@ -15,6 +15,11 @@ const config = {
         hostname: "cdn.floy.ir",
         pathname: "/**", // Allow all paths
       },
+      {
+        protocol: "https",
+        hostname: "commons.wikimedia.org",
+        pathname: "/**", // Allow all paths
+      },
     ],
   },
   rewrites: async () => [
