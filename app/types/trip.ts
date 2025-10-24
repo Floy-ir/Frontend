@@ -40,6 +40,7 @@ export interface Transportation extends BaseActivity {
       agencyLogo?: string
       label?: string
     }
+    base_redirect_url?: string
   }
 }
 

@@ -26,13 +26,25 @@ export const mockMashhadTrip: TripPlan = {
           departureTime: "۸:۳۰ صبح",
           recommendedFlight: {
             airline: "ایران ایر",
+            airlineLogo: "https://cdn.alibaba.ir/h2/desktop/assets/images/airlines/W5-3f6c6303.svg",
             price: {
               amount: 2800000,
               formattedAmount: "2,800,000",
               agency: "علی‌بابا",
+              agencyLogo: "https://cdn.alibaba.ir/h2/desktop/assets/images/safarmarket/alibaba-01e161d1.svg",
+              label: "ارزان‌ترین",
             },
             departureTime: "۸:۳۰",
             arrivalTime: "۹:۴۵",
+            duration: {
+              hours: 1,
+              minutes: 15,
+            },
+            flightInfo: {
+              baggage: "20",
+              cabinClass: "اکونومی",
+            },
+            base_redirect_url: "https://www.alibaba.ir/flights",
           },
         },
         {
@@ -152,13 +164,25 @@ export const mockMashhadTrip: TripPlan = {
           departureTime: "۸:۰۰ شب",
           recommendedFlight: {
             airline: "کیش ایر",
+            airlineLogo: "https://cdn.alibaba.ir/h2/desktop/assets/images/airlines/Y9-11a2fb8a.svg",
             price: {
               amount: 2650000,
               formattedAmount: "2,650,000",
               agency: "فلای تودی",
+              agencyLogo: "https://www.flytoday.ir/images/logo.svg",
+              label: "ارزان‌ترین",
             },
             departureTime: "۲۰:۰۰",
             arrivalTime: "۲۱:۲۰",
+            duration: {
+              hours: 1,
+              minutes: 20,
+            },
+            flightInfo: {
+              baggage: "20",
+              cabinClass: "اکونومی",
+            },
+            base_redirect_url: "https://www.flytoday.ir/",
           },
         },
       ],

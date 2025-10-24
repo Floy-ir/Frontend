@@ -2,3 +2,4 @@
 export * from "./flight"
 export * from "./filter"
 export * from "./trip"
+export * from "./basket"

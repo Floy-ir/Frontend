@@ -22,6 +22,16 @@ const config: NextConfig = {
         hostname: "commons.wikimedia.org",
         pathname: "/**", // Allow all paths
       },
+      {
+        protocol: "https",
+        hostname: "cdn.alibaba.ir",
+        pathname: "/**", // Allow all paths
+      },
+      {
+        protocol: "https",
+        hostname: "www.flytoday.ir",
+        pathname: "/**", // Allow all paths
+      },
     ],
   },
   rewrites: async () => [

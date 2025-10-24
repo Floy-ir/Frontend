@@ -2,14 +2,16 @@
 
 import { ArrowRight, ShoppingCart } from "lucide-react"
 import dynamic from "next/dynamic"
-import { useCallback, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 
+import type { BasketFlightItem } from "@/app/types/basket"
 import type { Transportation, TripPlan } from "@/app/types/trip"
 import { englishToFarsiNumber } from "@/utils/numbers"
 
 import { Breadcrumb } from "./Breadcrumb"
 import { FlightList } from "./FlightList"
 import { ItineraryTimeline } from "./ItineraryTimeline"
+import { TravelBasket } from "./TravelBasket"
 
 // Dynamically import TripMap with no SSR to avoid "window is not defined" error
 const TripMap = dynamic(() => import("./TripMap").then((mod) => ({ default: mod.TripMap })), {
@@ -32,6 +34,55 @@ type TripPlannerPanelProps = {
 export function TripPlannerPanel({ tripPlan }: TripPlannerPanelProps) {
   const [currentView, setCurrentView] = useState<ViewMode>("overview")
   const [selectedTransportation, setSelectedTransportation] = useState<Transportation | null>(null)
+  const [isBasketOpen, setIsBasketOpen] = useState(false)
+  const [basketItems, setBasketItems] = useState<BasketFlightItem[]>([])
+
+  // Extract recommended flights from trip plan and add to basket
+  useEffect(() => {
+    if (!tripPlan) return
+
+    const recommendedFlights: BasketFlightItem[] = []
+
+    tripPlan.days.forEach((day) => {
+      day.activities.forEach((activity) => {
+        if (activity.type === "transportation" && activity.mode === "flight" && activity.recommendedFlight) {
+          const flight = activity.recommendedFlight
+          const transportation = activity
+
+          // Only add if it has all required data
+          if (
+            flight.airlineLogo &&
+            flight.duration &&
+            flight.flightInfo &&
+            flight.price.agencyLogo
+          ) {
+            recommendedFlights.push({
+              id: activity.id,
+              departureTime: flight.departureTime,
+              arrivalTime: flight.arrivalTime,
+              origin: transportation.origin,
+              destination: transportation.destination,
+              duration: flight.duration,
+              airline: {
+                name: flight.airline,
+                logo: flight.airlineLogo,
+              },
+              flightInfo: flight.flightInfo,
+              price: {
+                amount: flight.price.amount,
+                formattedAmount: flight.price.formattedAmount,
+                agency: flight.price.agency,
+                agencyLogo: flight.price.agencyLogo,
+                base_redirect_url: flight.base_redirect_url || "#",
+              },
+            })
+          }
+        }
+      })
+    })
+
+    setBasketItems(recommendedFlights)
+  }, [tripPlan])
 
   const handleFlightClick = useCallback((transportation: Transportation) => {
     setSelectedTransportation(transportation)
@@ -41,6 +92,26 @@ export function TripPlannerPanel({ tripPlan }: TripPlannerPanelProps) {
   const handleBackToOverview = useCallback(() => {
     setCurrentView("overview")
     setSelectedTransportation(null)
+  }, [])
+
+  // Handler for future use when adding flights from FlightList
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const handleAddToBasket = useCallback((item: BasketFlightItem) => {
+    setBasketItems((prev) => {
+      // Check if item already exists
+      if (prev.some((existing) => existing.id === item.id)) {
+        return prev
+      }
+      return [...prev, item]
+    })
+  }, [])
+
+  const handleRemoveFromBasket = useCallback((id: string) => {
+    setBasketItems((prev) => prev.filter((item) => item.id !== id))
+  }, [])
+
+  const handleRedirect = useCallback((url: string) => {
+    window.open(url, "_blank", "noopener,noreferrer")
   }, [])
   if (!tripPlan) {
     return (
@@ -111,11 +182,17 @@ export function TripPlannerPanel({ tripPlan }: TripPlannerPanelProps) {
             </div>
           </div>
           <button
+            onClick={() => setIsBasketOpen(true)}
             className="bg-Primary-P500main font-anjoman-max hover:bg-primary-600 focus:ring-Primary-P500main flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium text-white transition-colors focus:ring-2 focus:ring-offset-2 focus:outline-none"
             aria-label="سبد سفر"
           >
             <ShoppingCart className="h-4 w-4" aria-hidden="true" />
             <span>سبد سفر</span>
+            {basketItems.length > 0 && (
+              <span className="bg-white text-Primary-P500main flex size-5 items-center justify-center rounded-full text-xs font-bold">
+                {englishToFarsiNumber(basketItems.length)}
+              </span>
+            )}
           </button>
         </div>
       </div>
@@ -135,6 +212,15 @@ export function TripPlannerPanel({ tripPlan }: TripPlannerPanelProps) {
           <TripMap tripPlan={tripPlan} />
         </div>
       </div>
+
+      {/* Travel Basket */}
+      <TravelBasket
+        isOpen={isBasketOpen}
+        onOpenChange={setIsBasketOpen}
+        items={basketItems}
+        onRemoveItem={handleRemoveFromBasket}
+        onRedirect={handleRedirect}
+      />
     </div>
   )
 }
