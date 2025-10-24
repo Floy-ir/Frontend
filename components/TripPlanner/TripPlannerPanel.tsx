@@ -12,6 +12,7 @@ import { Breadcrumb } from "./Breadcrumb"
 import { FlightList } from "./FlightList"
 import { ItineraryTimeline } from "./ItineraryTimeline"
 import { TravelBasket } from "./TravelBasket"
+import { TripOverviewCard } from "./TripOverviewCard"
 
 // Dynamically import TripMap with no SSR to avoid "window is not defined" error
 const TripMap = dynamic(() => import("./TripMap").then((mod) => ({ default: mod.TripMap })), {
@@ -199,6 +200,7 @@ export function TripPlannerPanel({ tripPlan }: TripPlannerPanelProps) {
           <h2 className="font-anjoman-max text-Gray-N800 mb-4 px-4 text-lg font-bold" dir="rtl">
             نمای کلی
           </h2>
+          <TripOverviewCard tripPlan={tripPlan} />
           <ItineraryTimeline days={tripPlan.days} onFlightClick={handleFlightClick} />
         </div>
 
