@@ -26,4 +26,3 @@ export interface BasketFlightItem {
     base_redirect_url: string
   }
 }
-

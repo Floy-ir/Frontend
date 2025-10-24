@@ -43,9 +43,9 @@ function SheetContent({ className, children, ...props }: React.ComponentProps<ty
         className={cn(
           "bg-background data-[state=open]:animate-in data-[state=closed]:animate-out fixed z-50 flex flex-col gap-4 border shadow-lg duration-300",
           // Desktop - slide from left (RTL)
-          "lg:inset-y-0 lg:left-0 lg:h-full lg:w-full lg:max-w-[500px] lg:border-r lg:data-[state=closed]:slide-out-to-left lg:data-[state=open]:slide-in-from-left",
+          "lg:data-[state=closed]:slide-out-to-left lg:data-[state=open]:slide-in-from-left lg:inset-y-0 lg:left-0 lg:h-full lg:w-full lg:max-w-[500px] lg:border-r",
           // Mobile - slide from bottom
-          "max-lg:inset-x-0 max-lg:bottom-0 max-lg:max-h-[80vh] max-lg:rounded-t-2xl max-lg:border-t max-lg:data-[state=closed]:slide-out-to-bottom max-lg:data-[state=open]:slide-in-from-bottom",
+          "max-lg:data-[state=closed]:slide-out-to-bottom max-lg:data-[state=open]:slide-in-from-bottom max-lg:inset-x-0 max-lg:bottom-0 max-lg:max-h-[80vh] max-lg:rounded-t-2xl max-lg:border-t",
           className
         )}
         {...props}
@@ -96,5 +96,15 @@ function SheetDescription({ className, ...props }: React.ComponentProps<typeof D
   )
 }
 
-export { Sheet, SheetClose, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetOverlay, SheetPortal, SheetTitle, SheetTrigger }
-
+export {
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetDescription,
+  SheetFooter,
+  SheetHeader,
+  SheetOverlay,
+  SheetPortal,
+  SheetTitle,
+  SheetTrigger,
+}

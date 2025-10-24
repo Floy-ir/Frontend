@@ -50,12 +50,7 @@ export function TripPlannerPanel({ tripPlan }: TripPlannerPanelProps) {
           const transportation = activity
 
           // Only add if it has all required data
-          if (
-            flight.airlineLogo &&
-            flight.duration &&
-            flight.flightInfo &&
-            flight.price.agencyLogo
-          ) {
+          if (flight.airlineLogo && flight.duration && flight.flightInfo && flight.price.agencyLogo) {
             recommendedFlights.push({
               id: activity.id,
               departureTime: flight.departureTime,
@@ -189,7 +184,7 @@ export function TripPlannerPanel({ tripPlan }: TripPlannerPanelProps) {
             <ShoppingCart className="h-4 w-4" aria-hidden="true" />
             <span>سبد سفر</span>
             {basketItems.length > 0 && (
-              <span className="bg-white text-Primary-P500main flex size-5 items-center justify-center rounded-full text-xs font-bold">
+              <span className="text-Primary-P500main flex size-5 items-center justify-center rounded-full bg-white text-xs font-bold">
                 {englishToFarsiNumber(basketItems.length)}
               </span>
             )}

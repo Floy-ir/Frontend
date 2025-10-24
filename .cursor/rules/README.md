@@ -5,10 +5,12 @@ This directory contains comprehensive Cursor Rules to guide AI assistance throug
 ## 📋 Available Rules
 
 ### 1. **project-structure.mdc** (Always Applied)
+
 **Scope**: Entire project  
 **Purpose**: Core project architecture and conventions
 
 Covers:
+
 - Technology stack overview
 - Directory structure and organization
 - File naming conventions
@@ -22,10 +24,12 @@ Covers:
 ---
 
 ### 2. **typescript-react.mdc**
+
 **Scope**: `*.ts`, `*.tsx` files  
 **Purpose**: TypeScript and React coding standards
 
 Covers:
+
 - TypeScript best practices (strict mode, type safety)
 - React component patterns
 - Hooks guidelines
@@ -40,10 +44,12 @@ Covers:
 ---
 
 ### 3. **component-standards.mdc**
+
 **Scope**: `components/**/*.tsx`, `components/**/*.jsx`  
 **Purpose**: Component architecture and development patterns
 
 Covers:
+
 - Component categories (UI, Elements, Features, Layout)
 - Props patterns and naming
 - Component composition
@@ -60,10 +66,12 @@ Covers:
 ---
 
 ### 4. **styling.mdc**
+
 **Scope**: `*.css`, `*.tsx`, `*.jsx` files  
 **Purpose**: Tailwind CSS and styling guidelines
 
 Covers:
+
 - Custom theme (colors, fonts, breakpoints)
 - Utility-first approach
 - Class organization and ordering
@@ -80,10 +88,12 @@ Covers:
 ---
 
 ### 5. **api-services.mdc**
+
 **Scope**: `app/api/**/*`, `services/**/*`  
 **Purpose**: API routes and service layer patterns
 
 Covers:
+
 - Next.js App Router API route handlers
 - Request/response patterns
 - Input validation with Zod
@@ -101,10 +111,12 @@ Covers:
 ---
 
 ### 6. **testing.mdc**
+
 **Scope**: `**/*.test.ts`, `**/*.spec.ts`, `e2e/**/*`  
 **Purpose**: Testing standards and patterns
 
 Covers:
+
 - Jest setup and configuration
 - React Testing Library patterns
 - Testing components and hooks
@@ -121,10 +133,12 @@ Covers:
 ---
 
 ### 7. **performance.mdc**
+
 **Scope**: Manual activation  
 **Purpose**: Performance optimization guidelines
 
 Covers:
+
 - Image and font optimization
 - Code splitting and dynamic imports
 - Bundle analysis
@@ -141,10 +155,12 @@ Covers:
 ---
 
 ### 8. **accessibility.mdc**
+
 **Scope**: `components/**/*.tsx`, `app/**/*.tsx`  
 **Purpose**: WCAG 2.1 Level AA accessibility compliance
 
 Covers:
+
 - Semantic HTML
 - ARIA attributes
 - Keyboard navigation
@@ -162,10 +178,12 @@ Covers:
 ---
 
 ### 9. **git-workflow.mdc**
+
 **Scope**: Manual activation  
 **Purpose**: Git conventions and workflow
 
 Covers:
+
 - Conventional Commits format
 - Branch naming conventions
 - PR workflow
@@ -278,25 +296,27 @@ description: When to use this rule
 # Rule Title
 
 ## Section 1
+
 Content...
 
 ## Section 2
+
 More content...
 ```
 
 ## 🚀 Quick Reference
 
-| Task | Relevant Rules |
-|------|---------------|
-| Creating a component | component-standards, typescript-react, accessibility |
-| Styling a component | styling, component-standards |
-| Creating API route | api-services |
-| Writing tests | testing |
-| Fetching data | api-services, performance |
-| Improving performance | performance |
-| Ensuring accessibility | accessibility |
-| Making commits | git-workflow |
-| Understanding project | project-structure |
+| Task                   | Relevant Rules                                       |
+| ---------------------- | ---------------------------------------------------- |
+| Creating a component   | component-standards, typescript-react, accessibility |
+| Styling a component    | styling, component-standards                         |
+| Creating API route     | api-services                                         |
+| Writing tests          | testing                                              |
+| Fetching data          | api-services, performance                            |
+| Improving performance  | performance                                          |
+| Ensuring accessibility | accessibility                                        |
+| Making commits         | git-workflow                                         |
+| Understanding project  | project-structure                                    |
 
 ## 📚 Additional Resources
 
@@ -309,4 +329,3 @@ More content...
 **Last Updated**: October 10, 2025  
 **Cursor Version**: Compatible with latest Cursor  
 **Project**: Next.js 15 Flight Booking Application
-

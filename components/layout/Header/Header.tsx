@@ -59,7 +59,6 @@ export function Header({ menuItems, className, forceScrolledStyle = false, compa
   const [prevScrollPos, setPrevScrollPos] = useState<number>(0)
   const [visible, setVisible] = useState<boolean>(true)
   const [isScrolled, setIsScrolled] = useState<boolean>(forceScrolledStyle ?? false)
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [isSmallScreen, setIsSmallScreen] = useState<boolean>(false)
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
   const [authUser, setAuthUser] = useState<{ mobile: string; full_name?: string } | null>(null)

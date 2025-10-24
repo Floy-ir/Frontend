@@ -16,7 +16,7 @@ type BasketFlightCardProps = {
 }
 
 const FormatDuration = ({ hours, minutes }: { hours: number; minutes: number }) => (
-  <span className="text-Gray-N500 font-anjoman-max text-[12px] font-normal leading-3">
+  <span className="text-Gray-N500 font-anjoman-max text-[12px] leading-3 font-normal">
     {englishToFarsiNumber(hours)} ساعت {englishToFarsiNumber(minutes)} دقیقه
   </span>
 )
@@ -43,11 +43,11 @@ export function BasketFlightCard({ item, onRemove, onRedirect }: BasketFlightCar
         <div className="flex flex-1 flex-col gap-2">
           {/* Time and Route */}
           <div className="flex items-center justify-start">
-            <time className="text-Gray-N800 font-anjoman-max flex-1 text-center text-lg font-semibold leading-loose">
+            <time className="text-Gray-N800 font-anjoman-max flex-1 text-center text-lg leading-loose font-semibold">
               {englishToFarsiNumber(item.departureTime)}
             </time>
             <FlightRouteVisualization />
-            <time className="text-Gray-N800 font-anjoman-max flex-1 text-center text-lg font-semibold leading-loose">
+            <time className="text-Gray-N800 font-anjoman-max flex-1 text-center text-lg leading-loose font-semibold">
               {englishToFarsiNumber(item.arrivalTime)}
             </time>
           </div>
@@ -63,7 +63,7 @@ export function BasketFlightCard({ item, onRemove, onRedirect }: BasketFlightCar
           <div className="border-Gray-N200 relative size-9 overflow-hidden rounded-full border">
             <Image src={item.airline.logo} alt={`${item.airline.name} logo`} fill className="object-contain" />
           </div>
-          <div className="text-Gray-N600 font-anjoman-max text-[11px] font-semibold leading-none">
+          <div className="text-Gray-N600 font-anjoman-max text-[11px] leading-none font-semibold">
             {item.airline.name}
           </div>
         </div>
@@ -73,14 +73,14 @@ export function BasketFlightCard({ item, onRemove, onRedirect }: BasketFlightCar
       <div className="flex flex-wrap items-start justify-start gap-2">
         {item.flightInfo.cabinClass && (
           <div className="bg-Gray-N50 outline-Gray-N100 flex items-center justify-center gap-1.5 overflow-hidden rounded-sm px-1.5 py-1 outline-[1.18px] outline-offset-[-1.18px]">
-            <span className="text-Gray-N600 font-anjoman-max text-[12px] font-normal leading-3">
+            <span className="text-Gray-N600 font-anjoman-max text-[12px] leading-3 font-normal">
               {item.flightInfo.cabinClass}
             </span>
           </div>
         )}
         {item.flightInfo.baggage && (
           <div className="bg-Gray-N50 outline-Gray-N100 flex items-center justify-center gap-1.5 overflow-hidden rounded-sm px-1.5 py-1 outline-[1.18px] outline-offset-[-1.18px]">
-            <span className="text-Gray-N600 font-anjoman-max text-[12px] font-normal leading-3">
+            <span className="text-Gray-N600 font-anjoman-max text-[12px] leading-3 font-normal">
               {englishToFarsiNumber(item.flightInfo.baggage)} کیلوگرم
             </span>
           </div>
@@ -106,16 +106,14 @@ export function BasketFlightCard({ item, onRemove, onRedirect }: BasketFlightCar
                 />
               )}
             </div>
-            <span className="text-Gray-N600 font-anjoman-max text-[15px] font-normal">
-              {item.price.agency}
-            </span>
+            <span className="text-Gray-N600 font-anjoman-max text-[15px] font-normal">{item.price.agency}</span>
           </div>
 
           <div className="flex items-center gap-1">
-            <span className="text-Gray-N700 font-anjoman-max text-base font-semibold leading-7">
+            <span className="text-Gray-N700 font-anjoman-max text-base leading-7 font-semibold">
               {englishToFarsiNumber(item.price.formattedAmount)}
             </span>
-            <span className="text-Gray-N500 font-anjoman-max text-[11px] font-normal leading-none">تومان</span>
+            <span className="text-Gray-N500 font-anjoman-max text-[11px] leading-none font-normal">تومان</span>
           </div>
         </div>
 
@@ -142,4 +140,3 @@ export function BasketFlightCard({ item, onRemove, onRedirect }: BasketFlightCar
     </article>
   )
 }
-

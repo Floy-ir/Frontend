@@ -104,4 +104,3 @@ export function TravelBasket({ isOpen, onOpenChange, items, onRemoveItem, onRedi
     </Drawer>
   )
 }
-
