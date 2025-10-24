@@ -29,7 +29,7 @@ const flightCardVariants = cva(
 
 // Badge styles
 const badgeStyles = cva(
-  "px-1.5 py-1 bg-Gray-N50 rounded-sm outline-[1.18px] outline-offset-[-1.18px] outline-Gray-N100 flex justify-center items-center gap-1.5 overflow-hidden",
+  "px-1 py-0.5 bg-Gray-N50 rounded-sm outline-[1.18px] outline-offset-[-1.18px] outline-Gray-N100 flex justify-center items-center gap-1 overflow-hidden lg:px-1.5 lg:py-1 lg:gap-1.5 2xl:px-1.5 2xl:py-1",
   {
     variants: {
       intent: {
@@ -64,16 +64,16 @@ type TransportationCardProps = {
 // Format duration for display
 const FormatDuration = ({ hours, minutes }: { hours: number; minutes: number }) => (
   <span>
-    <span className={`text-Gray-N500 text-[12px] leading-3 font-normal ${textStyles.small} ${textStyles.normal}`}>
+    <span className="text-Gray-N500 text-[10px] font-normal leading-3 lg:text-[11px] xl:text-[11px] 2xl:text-[12px]">
       {englishToFarsiNumber(hours)}{" "}
     </span>
-    <span className={`text-Gray-N500 text-[12px] font-normal leading-3${textStyles.small} ${textStyles.normal}`}>
+    <span className="text-Gray-N500 text-[10px] font-normal leading-3 lg:text-[11px] xl:text-[11px] 2xl:text-[12px]">
       ساعت{" "}
     </span>
-    <span className={`text-Gray-N500 text-[12px] leading-3 font-normal ${textStyles.small} ${textStyles.normal}`}>
+    <span className="text-Gray-N500 text-[10px] font-normal leading-3 lg:text-[11px] xl:text-[11px] 2xl:text-[12px]">
       {englishToFarsiNumber(minutes)}
     </span>
-    <span className={`text-Gray-N500 text-[12px] leading-3 font-normal ${textStyles.small} ${textStyles.normal}`}>
+    <span className="text-Gray-N500 text-[10px] font-normal leading-3 lg:text-[11px] xl:text-[11px] 2xl:text-[12px]">
       {" "}
       دقیقه
     </span>
@@ -83,14 +83,14 @@ const FormatDuration = ({ hours, minutes }: { hours: number; minutes: number }) 
 // Render flight route visualization component
 const FlightRouteVisualization = ({ isMobile = true }: { isMobile?: boolean }) => (
   <div className="relative mx-0 flex flex-1 items-center justify-center">
-    <div className="border-Gray-N300 size-1.5 rounded-[33px] border" />
+    <div className="border-Gray-N300 size-1 rounded-[33px] border lg:size-1.5 2xl:size-1.5" />
     <div className="bg-Gray-N200 relative h-px w-23 flex-1" />
-    <div className="bg-Gray-N300 size-1.5 rounded-[2px]" />
+    <div className="bg-Gray-N300 size-1 rounded-[2px] lg:size-1.5 2xl:size-1.5" />
     <div
-      className="absolute size-3 origin-top-left -rotate-90"
-      style={{ left: isMobile ? "33px" : "55px", top: "7px" }}
+      className="absolute size-2.5 origin-top-left -rotate-90 lg:size-3 2xl:size-3"
+      style={{ left: isMobile ? "33px" : "40px", top: "7px" }}
     >
-      <Airplane size="16" color="#748297" variant="Bold" />
+      <Airplane size="12" color="#748297" variant="Bold" className="lg:size-4 2xl:size-4" />
     </div>
   </div>
 )
@@ -98,9 +98,7 @@ const FlightRouteVisualization = ({ isMobile = true }: { isMobile?: boolean }) =
 // Badge component for flight info items
 const InfoBadge = ({ text }: { text: string }) => (
   <div className={badgeStyles()}>
-    <div
-      className={`text-Gray-N600 justify-center text-right text-[12px] leading-3 font-normal ${textStyles.small} ${textStyles.normal}`}
-    >
+    <div className="text-Gray-N600 justify-center text-right text-[10px] font-normal leading-3 lg:text-[11px] xl:text-[11px] 2xl:text-[12px]">
       {text}
     </div>
   </div>
@@ -109,10 +107,8 @@ const InfoBadge = ({ text }: { text: string }) => (
 // Badge with icon for baggage
 const BaggageBadge = ({ text }: { text: string }) => (
   <div className={badgeStyles()}>
-    <PiSuitcaseRollingLight className="text-Gray-N600 h-3 w-3" />
-    <div
-      className={`text-Gray-N600 inline-flex justify-center gap-1 text-right text-[12px] leading-3 font-normal ${textStyles.small} ${textStyles.normal}`}
-    >
+    <PiSuitcaseRollingLight className="text-Gray-N600 h-2.5 w-2.5 lg:h-3 lg:w-3 2xl:h-3 2xl:w-3" />
+    <div className="text-Gray-N600 inline-flex justify-center gap-0.5 text-right text-[10px] font-normal leading-3 lg:gap-1 lg:text-[11px] xl:text-[11px] 2xl:text-[12px]">
       {text} کیلوگرم
     </div>
   </div>
@@ -124,24 +120,21 @@ const PriceInfo = ({
 }: {
   price: { amount: number; formattedAmount: string; agency: string; agencyLogo?: string; label?: string }
 }) => (
-  <div className="bg-Gray-N50 outline-Gray-N200 relative flex flex-col items-end justify-center gap-3 self-stretch rounded-lg px-3 py-2 outline-1 outline-offset-[-1px]">
+  <div className="bg-Gray-N50 outline-Gray-N200 relative flex flex-col items-end justify-center gap-1.5 self-stretch rounded-lg px-2 py-1.5 outline-1 outline-offset-[-1px] lg:gap-2 xl:gap-2.5 2xl:gap-3 2xl:px-3 2xl:py-2">
     {price.label && (
-      <div className="flex w-full items-start gap-1">
-        <div
-          className={`text-Gray-N500 justify-center self-stretch text-right ${textStyles.good} ${textStyles.normal}`}
-        >
+      <div className="flex w-full items-start gap-0.5 lg:gap-1">
+        <div className="text-Gray-N500 justify-center self-stretch text-right text-[10px] font-normal lg:text-[11px] xl:text-[11px] 2xl:text-[12px]">
           {price.label}
         </div>
-        <div className={`text-Gray-N600 justify-start self-stretch text-right ${textStyles.good} ${textStyles.normal}`}>
+        <div className="text-Gray-N600 justify-start self-stretch text-right text-[10px] font-normal lg:text-[11px] xl:text-[11px] 2xl:text-[12px]">
           در
         </div>
       </div>
     )}
     <div className="inline-flex items-center justify-between self-stretch">
-      <div className="flex items-center justify-start gap-1">
-        <div className="inline-flex flex-col items-start justify-center gap-1"></div>
+      <div className="flex items-center justify-start gap-0.5 lg:gap-1">
         {price.agencyLogo && (
-          <div className="outline-Gray-N200 size-6 overflow-hidden rounded-[48px] bg-white outline-1 outline-offset-[-1px]">
+          <div className="outline-Gray-N200 size-4 overflow-hidden rounded-[48px] bg-white outline-1 outline-offset-[-1px] lg:size-5 xl:size-5 2xl:size-6">
             <Image
               src={price.agencyLogo}
               alt={`${price.agency} logo`}
@@ -152,19 +145,19 @@ const PriceInfo = ({
           </div>
         )}
 
-        <div className="inline-flex flex-col items-start justify-center gap-1">
-          <div
-            className={`text-Gray-N600 justify-start self-stretch text-right text-[15px] ${textStyles.normal} ${textStyles.normal}`}
-          >
+        <div className="inline-flex flex-col items-start justify-center">
+          <div className="text-Gray-N600 justify-start text-right text-[11px] font-normal lg:text-[12px] xl:text-[13px] 2xl:text-[15px]">
             {price.agency}
           </div>
         </div>
       </div>
-      <div className="flex items-center justify-end gap-1">
-        <div className="text-Gray-N700 justify-start text-right text-base text-[17px] leading-7 font-semibold">
+      <div className="flex items-center justify-end gap-0.5 lg:gap-1">
+        <div className="text-Gray-N700 justify-start text-right text-xs font-semibold leading-6 lg:text-sm lg:leading-6 xl:text-[15px] xl:leading-7 2xl:text-base 2xl:leading-7">
           {englishToFarsiNumber(price.formattedAmount)}
         </div>
-        <div className={`text-Gray-N500 justify-start text-right ${textStyles.medium} ${textStyles.normal}`}>تومان</div>
+        <div className="text-Gray-N500 justify-start text-right text-[9px] font-normal leading-none lg:text-[10px] xl:text-[10px] 2xl:text-[11px]">
+          تومان
+        </div>
       </div>
     </div>
   </div>
@@ -218,9 +211,9 @@ export function TransportationCard({
   }
 
   return (
-    <article className={twMerge(flightCardVariants({ intent, className }))}>
+    <article className={twMerge(flightCardVariants({ intent }), className)}>
       {/* Mobile/Tablet Layout */}
-      <div className="md-lg:hidden flex flex-col lg:hidden">
+      <div className="flex flex-col md-lg:hidden lg:hidden">
         <div
           data-layer="Frame 1000002364"
           className="bg-Shade-White outline-Gray-N200 inline-flex flex-col items-center justify-center gap-3 self-stretch overflow-hidden rounded-xl px-4 pt-4 pb-2 outline-1 outline-offset-[-1px]"
@@ -357,13 +350,13 @@ export function TransportationCard({
       </div>
 
       {/* Desktop Layout */}
-      <div className="md-lg:inline-flex hidden w-full items-start justify-between gap-8 self-stretch px-6 pt-4 pb-2 lg:inline-flex">
+      <div className="hidden md-lg:inline-flex lg:inline-flex w-full items-start justify-between gap-2 self-stretch px-3 pt-4 pb-2 lg:gap-4 xl:gap-6 2xl:gap-8 2xl:px-6">
         {/* Flight details - Right */}
-        <div className="inline-flex flex-1 flex-col items-center justify-between self-stretch px-4 py-4">
-          <div className="inline-flex items-center justify-end gap-2 self-stretch">
+        <div className="inline-flex flex-1 flex-col items-center justify-between self-stretch px-1 py-3 lg:px-2 xl:px-3 xl:py-4 2xl:px-4">
+          <div className="inline-flex items-center justify-end gap-0.5 self-stretch lg:gap-1 xl:gap-1.5 2xl:gap-2">
             {/* Airline logo and name */}
-            <div className="inline-flex flex-col items-center justify-center gap-2">
-              <div className="border-Gray-N200 relative size-11 overflow-hidden rounded-[48px] border">
+            <div className="inline-flex flex-col items-center justify-center gap-0.5 lg:gap-1 xl:gap-1.5 2xl:gap-2">
+              <div className="border-Gray-N200 relative size-8 overflow-hidden rounded-[48px] border lg:size-9 xl:size-10 2xl:size-11">
                 {flight.airlineLogo ? (
                   <Image
                     src={flight.airlineLogo}
@@ -372,30 +365,26 @@ export function TransportationCard({
                     className="rounded-[50px] object-contain"
                   />
                 ) : (
-                  <div className="flex h-full w-full items-center justify-center bg-gray-100 text-sm text-gray-400">
+                  <div className="flex h-full w-full items-center justify-center bg-gray-100 text-[10px] text-gray-400 lg:text-xs xl:text-sm">
                     {flight.airline.slice(0, 2)}
                   </div>
                 )}
               </div>
-              <div className={`text-Gray-N600 justify-start text-right text-[13px] ${textStyles.semibold}`}>
+              <div className="text-Gray-N600 justify-start text-right text-[10px] font-semibold lg:text-[11px] xl:text-[12px] 2xl:text-[13px]">
                 {flight.airline}
               </div>
             </div>
             <div className="inline-flex flex-1 flex-col items-start justify-center">
               <div className="inline-flex items-center justify-start self-stretch">
-                <time
-                  className={`text-Gray-N800 flex-1 justify-start text-center ${textStyles.xl} ${textStyles.semibold}`}
-                >
+                <time className="text-Gray-N800 flex-1 justify-start text-center text-sm font-semibold leading-relaxed lg:text-base lg:leading-loose xl:text-lg 2xl:text-xl">
                   {departureTime}
                 </time>
                 <FlightRouteVisualization isMobile={false} />
-                <time
-                  className={`text-Gray-N800 flex-1 justify-start text-center ${textStyles.xl} ${textStyles.semibold}`}
-                >
+                <time className="text-Gray-N800 flex-1 justify-start text-center text-sm font-semibold leading-relaxed lg:text-base lg:leading-loose xl:text-lg 2xl:text-xl">
                   {arrivalTime}
                 </time>
               </div>
-              <div className="flex flex-col items-center justify-end gap-2 self-stretch">
+              <div className="flex flex-col items-center justify-end gap-1 self-stretch lg:gap-2">
                 <div className="justify-start text-center">
                   <FormatDuration hours={duration.hours} minutes={duration.minutes} />
                 </div>
@@ -404,26 +393,26 @@ export function TransportationCard({
           </div>
 
           {/* Flight info badges */}
-          <div className="inline-flex flex-wrap content-start items-start justify-start gap-2 self-stretch">
+          <div className="inline-flex flex-wrap content-start items-start justify-start gap-0.5 self-stretch lg:gap-1 xl:gap-1.5 2xl:gap-2">
             {flightInfo.cabinClass && <InfoBadge text={flightInfo.cabinClass} />}
             {flightInfo.baggage && <BaggageBadge text={englishToFarsiNumber(flightInfo.baggage)} />}
           </div>
         </div>
 
         {/* Vertical divider */}
-        <div className="bg-Gray-N100 relative h-40 w-[1px]" />
+        <div className="bg-Gray-N100 relative h-32 w-[1px] self-stretch lg:h-36 xl:h-40" />
 
         {/* Price and action section - Left */}
-        <div className="-mx-3 inline-flex w-[290px] flex-col items-start justify-start gap-2 px-2 md:w-[300px]">
-          <div className="flex flex-col items-center justify-center gap-3 self-stretch">
+        <div className="inline-flex w-full max-w-[220px] flex-col items-start justify-start gap-2 px-1 lg:max-w-[240px] lg:px-2 xl:max-w-[260px] xl:px-2 2xl:max-w-[300px]">
+          <div className="flex flex-col items-center justify-center gap-2 self-stretch xl:gap-2.5 2xl:gap-3">
             <PriceInfo price={priceWithLabel} />
 
-            <div className="flex flex-col items-start justify-start gap-1 self-stretch">
-              <Button intent="primary" size="small" className="self-stretch" onClick={handleBookingRedirect}>
+            <div className="flex flex-col items-start justify-start gap-0.5 self-stretch lg:gap-1">
+              <Button intent="primary" size="small" className="w-full self-stretch py-2 text-xs lg:py-2.5 lg:text-sm xl:py-3 xl:text-base" onClick={handleBookingRedirect}>
                 رفتن به {priceWithLabel.agency}
               </Button>
 
-              <Button intent="text" size="small" className="self-stretch" onClick={handleViewAllFlights}>
+              <Button intent="text" size="small" className="w-full self-stretch py-2 text-xs lg:py-2.5 lg:text-sm xl:py-3 xl:text-base" onClick={handleViewAllFlights}>
                 مشاهده همه پروازها
               </Button>
             </div>
