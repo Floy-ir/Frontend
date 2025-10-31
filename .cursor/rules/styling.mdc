@@ -1,0 +1,321 @@
+---
+globs: *.css,*.tsx,*.jsx
+description: Tailwind CSS styling guidelines and design system
+---
+
+# Styling Guidelines
+
+## Tailwind CSS Configuration
+
+Reference: [tailwind.config.js](mdc:tailwind.config.js)
+
+### Custom Theme
+
+#### Colors
+Primary color palette:
+```javascript
+primary: {
+  50: "#eff6ff",
+  100: "#dbeafe",
+  // ... 
+  500: "#5a28ee", // Main primary color
+  // ...
+}
+```
+
+Use semantic color names in classes:
+- `bg-Primary-P500main` for primary background
+- `text-Gray-N600` for secondary text
+- `text-Error-E500main` for error states
+
+#### Typography
+- **Primary Font**: `font-anjoman-max` - Custom Persian/Farsi font
+- **Body Font**: Inter with system font fallback
+- Loaded via CSS variables: `var(--font-anjoman-max)`
+
+#### Breakpoints
+Standard + custom breakpoints:
+- `xs`: 0px - 400px
+- `sm`: 640px+ (default)
+- `sm-md`: 500px - 770px
+- `sm-md2`: 767px - 900px
+- `md`: 768px+ (default)
+- `md-lg`: 720px - 1023px
+- `lg`: 1024px+ (default)
+- `lg-xl`: 1050px - 1279px
+- `xl`: 1280px+ (default)
+
+#### Spacing & Sizing
+- Use Tailwind's default spacing scale (0, 1, 2, 3, 4, 5, 6, 8, 10, 12, 16, 20, 24, 32...)
+- Extended `minHeight` and `minWidth` to include all height/width values
+
+#### Border Radius
+Standard + custom:
+- `rounded-oval`: `100% 100% 70% 70% / 0% 0% 2% 2%`
+- `rounded-oval-mobile`: `100% 100% 60% 60% / 0% 0% 1.5% 1.5%`
+
+## Utility-First Approach
+
+### Inline Styles
+- **Prefer Tailwind utilities** over custom CSS
+- Only write custom CSS for truly unique styles
+- Keep specificity low
+
+### Class Organization
+Order classes for readability:
+1. **Layout**: `flex`, `grid`, `block`, `relative`, `absolute`
+2. **Positioning**: `top-0`, `left-0`, `z-10`
+3. **Display**: `hidden`, `block`, `flex`, `grid`
+4. **Sizing**: `w-full`, `h-12`, `max-w-lg`
+5. **Spacing**: `p-4`, `m-2`, `gap-4`
+6. **Typography**: `text-sm`, `font-bold`, `leading-normal`
+7. **Colors**: `text-gray-900`, `bg-white`
+8. **Borders**: `border`, `border-gray-300`, `rounded-lg`
+9. **Effects**: `shadow-md`, `opacity-50`
+10. **Interactions**: `hover:bg-gray-50`, `focus:ring-2`, `active:scale-95`
+
+Example:
+```tsx
+<div className="flex items-center justify-between w-full h-12 px-4 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-300 rounded-lg shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary-500">
+  Content
+</div>
+```
+
+## Responsive Design
+
+### Mobile-First Approach
+- Write mobile styles first (no prefix)
+- Add breakpoint prefixes for larger screens
+- Example:
+  ```tsx
+  <div className="flex-col md:flex-row lg:gap-6">
+    {/* Stacks on mobile, row on medium+, larger gap on large+ */}
+  </div>
+  ```
+
+### Common Responsive Patterns
+```tsx
+// Hide on mobile, show on desktop
+<div className="hidden lg:block" />
+
+// Show on mobile, hide on desktop  
+<div className="block lg:hidden" />
+
+// Responsive sizing
+<div className="w-full lg:w-1/2 xl:w-1/3" />
+
+// Responsive spacing
+<div className="px-4 lg:px-8 xl:px-16" />
+
+// Responsive typography
+<h1 className="text-2xl md:text-3xl lg:text-4xl" />
+```
+
+### Custom Breakpoint Usage
+For precise control:
+```tsx
+// For tablets in landscape mode
+<div className="md-lg:hidden" />
+
+// For small phones
+<div className="xs:text-xs" />
+```
+
+## Component Styling Patterns
+
+### Base + Variants Pattern
+```tsx
+const baseClasses = "px-4 py-2 rounded-lg font-medium transition-colors"
+
+const variants = {
+  primary: "bg-Primary-P500main text-white hover:bg-primary-600",
+  secondary: "bg-gray-200 text-gray-900 hover:bg-gray-300",
+  ghost: "bg-transparent hover:bg-gray-100"
+}
+
+<button className={cn(baseClasses, variants[intent])}>
+  Click me
+</button>
+```
+
+### Conditional Styling
+Use `clsx` or `cn` utility from [lib/utils.ts](mdc:lib/utils.ts):
+```tsx
+import { cn } from "@/lib/utils"
+
+<div className={cn(
+  "base-classes",
+  isActive && "active-classes",
+  isDisabled && "disabled-classes",
+  className // Allow override
+)} />
+```
+
+### State-Based Styling
+```tsx
+// Hover states
+<button className="bg-blue-500 hover:bg-blue-600" />
+
+// Focus states
+<input className="border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200" />
+
+// Disabled states
+<button className="disabled:opacity-50 disabled:cursor-not-allowed" />
+
+// Group hover
+<div className="group">
+  <span className="group-hover:text-blue-500">Hover parent</span>
+</div>
+```
+
+## Dark Mode Support
+
+Configuration: `darkMode: "class"` in Tailwind config
+
+Use dark mode variants:
+```tsx
+<div className="bg-white dark:bg-gray-900 text-gray-900 dark:text-white">
+  Content that adapts to dark mode
+</div>
+```
+
+## RTL (Right-to-Left) Support
+
+This project supports Persian/Farsi (RTL language):
+
+### RTL-Aware Spacing
+Use logical properties when possible:
+- `ps-4` (padding-inline-start) instead of `pl-4`
+- `me-2` (margin-inline-end) instead of `mr-2`
+
+### Direction Attributes
+Set `dir` attribute on containers:
+```tsx
+<div dir="rtl" className="text-right">
+  Persian content
+</div>
+```
+
+## Animation
+
+### Built-in Animations
+Reference: Custom keyframes in [tailwind.config.js](mdc:tailwind.config.js)
+```tsx
+// Accordion animations
+<div className="animate-accordion-down" />
+<div className="animate-accordion-up" />
+```
+
+### Transition Utilities
+```tsx
+// Basic transition
+<div className="transition-colors duration-200" />
+
+// Multiple properties
+<div className="transition-all duration-300 ease-in-out" />
+
+// Transform transitions
+<button className="transform hover:scale-105 transition-transform" />
+```
+
+### Framer Motion
+For complex animations, use Framer Motion:
+```tsx
+import { motion } from "framer-motion"
+
+<motion.div
+  initial={{ opacity: 0, y: 20 }}
+  animate={{ opacity: 1, y: 0 }}
+  transition={{ duration: 0.3 }}
+>
+  Content
+</motion.div>
+```
+
+## Accessibility Styling
+
+### Focus States
+Always style focus states for keyboard navigation:
+```tsx
+<button className="focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2">
+  Accessible button
+</button>
+```
+
+### Screen Reader Only
+Use Tailwind's `sr-only` class:
+```tsx
+<span className="sr-only">Visible only to screen readers</span>
+```
+
+## Performance Best Practices
+
+### Avoid Dynamic Class Names
+**Bad:**
+```tsx
+<div className={`text-${color}-500`} /> // Won't be purged correctly
+```
+
+**Good:**
+```tsx
+const colorClasses = {
+  red: "text-red-500",
+  blue: "text-blue-500"
+}
+<div className={colorClasses[color]} />
+```
+
+### Purge Configuration
+Tailwind is configured to scan:
+- `./app/**/*.{js,ts,jsx,tsx,mdx}`
+- `./components/**/*.{js,ts,jsx,tsx,mdx}`
+
+All classes in these directories are included in production build.
+
+## Custom CSS
+
+### When to Write Custom CSS
+- Complex animations not achievable with utilities
+- Third-party component styling (e.g., [styles/ai-chat.css](mdc:styles/ai-chat.css))
+- Print styles
+- Global resets/base styles
+
+### Where to Place Custom CSS
+- Global styles: [styles/tailwind.css](mdc:styles/tailwind.css)
+- Component-specific: Co-locate with component using CSS Modules
+- Third-party: Separate file in `/styles`
+
+### @apply Directive
+Use sparingly in custom CSS:
+```css
+.custom-button {
+  @apply px-4 py-2 rounded-lg font-medium;
+  @apply bg-primary-500 text-white;
+  @apply hover:bg-primary-600 transition-colors;
+}
+```
+
+## Design System Consistency
+
+### Spacing Scale
+Use consistent spacing throughout:
+- **Tight**: `gap-1`, `gap-2` (4px, 8px)
+- **Normal**: `gap-4`, `gap-6` (16px, 24px)
+- **Loose**: `gap-8`, `gap-12` (32px, 48px)
+
+### Border Radius
+- **Small**: `rounded-sm` (2px)
+- **Medium**: `rounded-md` (6px)
+- **Large**: `rounded-lg` (8px)
+- **XL**: `rounded-xl` (12px)
+
+### Shadows
+- **Subtle**: `shadow-sm`
+- **Standard**: `shadow-md`
+- **Elevated**: `shadow-lg`
+
+### Typography Scale
+- **Small**: `text-xs` (12px), `text-sm` (14px)
+- **Base**: `text-base` (16px)
+- **Large**: `text-lg` (18px), `text-xl` (20px)
+- **Headings**: `text-2xl`, `text-3xl`, `text-4xl`

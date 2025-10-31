@@ -1,0 +1,222 @@
+---
+globs: *.ts,*.tsx
+---
+
+# TypeScript and React Coding Standards
+
+## TypeScript Configuration
+
+This project uses **strict TypeScript** with the following key settings:
+- `strict: true` - All strict type-checking options enabled
+- `noUncheckedIndexedAccess: true` - Array/object access returns `T | undefined`
+- `forceConsistentCasingInFileNames: true` - Enforce case sensitivity
+
+## Type Definitions
+
+### Type vs Interface
+- Prefer `interface` for object shapes that may be extended
+- Use `type` for unions, intersections, and primitives
+- Example from [app/types/flight.ts](mdc:app/types/flight.ts):
+  ```typescript
+  export interface FlightResult {
+    airline: Airline
+    origin: string
+    destination: string
+  }
+  ```
+
+### Type Safety
+- Always explicitly type function parameters and return values
+- Avoid `any` - use `unknown` if type is truly unknown, then narrow it
+- Use `NonNullable<T>` when you know a value exists
+- Leverage TypeScript utility types: `Partial`, `Pick`, `Omit`, `Record`
+
+### Generics
+- Use descriptive generic names, not just `T`
+- Example: `SelectOption<TValue>` instead of `T`
+
+## React Best Practices
+
+### Component Structure
+
+```typescript
+"use client" // Only when needed (client components)
+
+import { useState } from "react"
+import { ExternalLib } from "external-lib"
+
+import { InternalComponent } from "@/components/InternalComponent"
+import { useCustomHook } from "@/hooks/useCustomHook"
+import { helperFunction } from "@/utils/helpers"
+
+// Types defined close to component
+type ComponentProps = {
+  required: string
+  optional?: number
+  children?: React.ReactNode
+}
+
+export function ComponentName({ required, optional = 0, children }: ComponentProps) {
+  // State hooks first
+  const [state, setState] = useState<string>("")
+  
+  // Custom hooks
+  const { data } = useCustomHook()
+  
+  // Handlers
+  const handleClick = () => {
+    // handler logic
+  }
+  
+  // Render
+  return (
+    <div>{children}</div>
+  )
+}
+```
+
+### Component Types
+- **Server Components**: Default in App Router - no "use client"
+- **Client Components**: Use "use client" directive when you need:
+  - State (`useState`, `useReducer`)
+  - Effects (`useEffect`, `useLayoutEffect`)
+  - Browser APIs
+  - Event handlers
+  - Custom hooks that use client features
+
+### Props Patterns
+- Destructure props in function signature
+- Provide default values in destructuring when appropriate
+- Use TypeScript for prop validation, not PropTypes
+- Example:
+  ```typescript
+  type ButtonProps = {
+    intent?: "primary" | "secondary"
+    size?: "small" | "medium" | "large"
+    disabled?: boolean
+    onClick?: () => void
+    children: React.ReactNode
+  }
+  
+  export function Button({ 
+    intent = "primary", 
+    size = "medium",
+    disabled = false,
+    onClick,
+    children 
+  }: ButtonProps) {
+    // implementation
+  }
+  ```
+
+### Hooks Rules
+- Custom hooks must start with `use` prefix
+- Place custom hooks in `/hooks` directory
+- Example: `useFlightFormPersistence.ts`, `useStoredCities.tsx`
+- Always specify dependencies in `useEffect`, `useMemo`, `useCallback`
+
+### State Management
+- Use `useState` for local component state
+- Use React Hook Form for complex forms
+- Use TanStack Query for server state/caching
+- Lift state up only when necessary
+
+### Form Handling
+- Use React Hook Form with Zod validation
+- Example pattern from [components/FlightSearchForm/FlightSearchForm.tsx](mdc:components/FlightSearchForm/FlightSearchForm.tsx):
+  ```typescript
+  import { useForm, Controller } from "react-hook-form"
+  import { z } from "zod"
+  
+  const schema = z.object({
+    field: z.string().min(1, { message: "Required" })
+  })
+  
+  type FormValues = z.infer<typeof schema>
+  
+  const { control, handleSubmit } = useForm<FormValues>({
+    resolver: zodResolver(schema)
+  })
+  ```
+
+## Import Order
+
+Follow the ESLint import order configuration (enforced):
+1. External packages (React, third-party libs)
+2. Internal packages/aliases (`@/`)
+3. Relative imports (parent directories)
+4. Relative imports (sibling files)
+
+Example:
+```typescript
+import { useState } from "react"
+import { useRouter } from "next/navigation"
+import { z } from "zod"
+
+import { Button } from "@/components/elements/Button/Button"
+import { useCustomHook } from "@/hooks/useCustomHook"
+
+import { helperFunction } from "../utils/helpers"
+import { LocalComponent } from "./LocalComponent"
+```
+
+## Code Style
+
+### Formatting (Prettier)
+- **No semicolons** (`semi: false`)
+- **Print width**: 120 characters
+- **Tab width**: 2 spaces
+- **Trailing commas**: ES5 style
+
+### Naming Conventions
+- **Components**: PascalCase (`FlightSearchForm`)
+- **Functions/Variables**: camelCase (`handleSubmit`, `isLoading`)
+- **Constants**: UPPER_SNAKE_CASE for true constants
+- **Types/Interfaces**: PascalCase (`FlightResult`, `FilterOptions`)
+- **Enums**: PascalCase for enum name, UPPER_SNAKE_CASE for values
+
+### Conditional Rendering
+- Use ternary for simple conditionals: `{isLoading ? <Spinner /> : <Content />}`
+- Use `&&` for single condition: `{isVisible && <Component />}`
+- Extract complex conditionals to variables
+
+### Event Handlers
+- Prefix with `handle`: `handleClick`, `handleSubmit`, `handleChange`
+- Use arrow functions for inline handlers only when necessary
+- Extract handlers to named functions for better debugging
+
+## Performance Considerations
+
+- Use `useMemo` for expensive calculations
+- Use `useCallback` for functions passed to memoized children
+- Lazy load heavy components with `React.lazy()` and `Suspense`
+- Use Next.js `dynamic` for client-side only components
+
+## Error Handling
+
+- Always handle async errors with try/catch
+- Provide user-friendly error messages
+- Use Error Boundaries for component tree errors
+- Log errors appropriately (not with console.log in production)
+
+## TypeScript-Specific Patterns
+
+### Type Assertions
+- Avoid `as` assertions when possible
+- Use type guards for runtime type checking
+- Example:
+  ```typescript
+  function isFlightResult(obj: unknown): obj is FlightResult {
+    return typeof obj === "object" && obj !== null && "airline" in obj
+  }
+  ```
+
+### Null/Undefined Handling
+- Use optional chaining: `user?.profile?.email`
+- Use nullish coalescing: `value ?? defaultValue`
+- Be explicit about nullable types: `string | null` vs `string | undefined`
+
+### Async/Await
+- Always mark functions returning promises as `async`
+- Explicitly type Promise returns: `Promise<FlightResult[]>`
+- Handle errors in async functions
