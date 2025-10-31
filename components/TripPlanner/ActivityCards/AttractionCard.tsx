@@ -17,6 +17,10 @@ export const AttractionCard = React.memo(function AttractionCard({ activity }: A
   const [selectedImageIndex, setSelectedImageIndex] = useState<number | null>(null)
   const hasDescription = !!activity.description
   const hasImages = activity.descriptionImages && activity.descriptionImages.length > 0
+  const selectedImageUrl =
+    selectedImageIndex !== null && activity.descriptionImages
+      ? activity.descriptionImages[selectedImageIndex]
+      : undefined
 
   const handlePreviousImage = () => {
     if (selectedImageIndex !== null && activity.descriptionImages) {
@@ -141,27 +145,25 @@ export const AttractionCard = React.memo(function AttractionCard({ activity }: A
           </DialogClose>
 
           {/* Image Counter */}
-          {selectedImageIndex !== null &&
-            activity.descriptionImages &&
-            activity.descriptionImages[selectedImageIndex] && (
-              <>
-                <div className="absolute top-4 right-4 z-10 rounded-full bg-black/50 px-3 py-1.5 text-sm text-white">
-                  {englishToFarsiNumber(selectedImageIndex + 1)} /{" "}
-                  {englishToFarsiNumber(activity.descriptionImages.length)}
-                </div>
+          {selectedImageUrl && selectedImageIndex !== null && activity.descriptionImages && (
+            <>
+              <div className="absolute top-4 right-4 z-10 rounded-full bg-black/50 px-3 py-1.5 text-sm text-white">
+                {englishToFarsiNumber(selectedImageIndex + 1)} /{" "}
+                {englishToFarsiNumber(activity.descriptionImages.length)}
+              </div>
 
-                {/* Image Display */}
-                <div className="relative h-[80vh] w-full">
-                  <Image
-                    src={activity.descriptionImages[selectedImageIndex]}
-                    alt={`${activity.name} - تصویر ${selectedImageIndex + 1}`}
-                    fill
-                    className="object-contain"
-                  />
-                </div>
+              {/* Image Display */}
+              <div className="relative h-[80vh] w-full">
+                <Image
+                  src={selectedImageUrl}
+                  alt={`${activity.name} - تصویر ${selectedImageIndex + 1}`}
+                  fill
+                  className="object-contain"
+                />
+              </div>
 
-                {/* Navigation Buttons */}
-                {activity.descriptionImages.length > 1 && (
+              {/* Navigation Buttons */}
+              {activity.descriptionImages.length > 1 && (
                   <>
                     {/* Previous Button (Right side in RTL) */}
                     <button
