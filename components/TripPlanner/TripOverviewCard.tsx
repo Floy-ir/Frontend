@@ -49,14 +49,22 @@ function generateTripOverview(tripPlan: TripPlan): string {
   const destinationsList = Array.from(destinations)
 
   // Build summary text
-  let summary = `این برنامه سفر ${englishToFarsiNumber(dayCount)} روزه به ${destinationsList.join(" و ")} برای ${englishToFarsiNumber(tripPlan.travelerCount)} ${tripPlan.travelerCount === 1 ? "مسافر" : "مسافر"} طراحی شده است. `
+  let summary = `این برنامه سفر ${englishToFarsiNumber(dayCount)} روزه به ${destinationsList.join(
+    " و "
+  )} برای ${englishToFarsiNumber(tripPlan.travelerCount)} ${
+    tripPlan.travelerCount === 1 ? "مسافر" : "مسافر"
+  } طراحی شده است. `
 
   if (activityCounts.attractions > 0) {
-    summary += `در این سفر ${englishToFarsiNumber(activityCounts.attractions)} ${activityCounts.attractions === 1 ? "جاذبه گردشگری" : "جاذبه گردشگری"} را بازدید خواهید کرد. `
+    summary += `در این سفر ${englishToFarsiNumber(activityCounts.attractions)} ${
+      activityCounts.attractions === 1 ? "جاذبه گردشگری" : "جاذبه گردشگری"
+    } را بازدید خواهید کرد. `
   }
 
   if (activityCounts.accommodations > 0) {
-    summary += `محل اقامت شما برای ${englishToFarsiNumber(activityCounts.accommodations)} ${activityCounts.accommodations === 1 ? "شب" : "شب"} در هتل‌های منتخب رزرو شده است. `
+    summary += `محل اقامت شما برای ${englishToFarsiNumber(activityCounts.accommodations)} ${
+      activityCounts.accommodations === 1 ? "شب" : "شب"
+    } در هتل‌های منتخب رزرو شده است. `
   }
 
   if (activityCounts.transportations > 0) {
@@ -86,7 +94,7 @@ export function TripOverviewCard({ tripPlan }: TripOverviewCardProps) {
       {/* Header with preview text */}
       <button
         onClick={() => setIsExpanded(!isExpanded)}
-        className="text-Gray-N800 bg-gray-50 flex w-full flex-col items-start gap-2 px-4 py-3 text-right font-anjoman-max transition-colors"
+        className="text-Gray-N800 font-anjoman-max flex w-full flex-col items-start gap-2 bg-gray-50 px-4 py-3 text-right transition-colors"
         aria-expanded={isExpanded}
         aria-controls="trip-overview-content"
         type="button"
@@ -97,9 +105,7 @@ export function TripOverviewCard({ tripPlan }: TripOverviewCardProps) {
             {isExpanded ? <ChevronUp className="size-5" /> : <ChevronDown className="size-5" />}
           </span>
         </div>
-        {!isExpanded && (
-          <p className="text-Gray-N600 line-clamp-2 text-sm leading-relaxed">{overviewText}</p>
-        )}
+        {!isExpanded && <p className="text-Gray-N600 line-clamp-2 text-sm leading-relaxed">{overviewText}</p>}
       </button>
 
       {/* Expanded Content */}
@@ -112,11 +118,10 @@ export function TripOverviewCard({ tripPlan }: TripOverviewCardProps) {
           overflow: isExpanded ? "visible" : "hidden",
         }}
       >
-        <div className="border-t border-gray-100 px-4 py-3 bg-gray-50">
+        <div className="border-t border-gray-100 bg-gray-50 px-4 py-3">
           <p className="text-Gray-N600 font-anjoman-max text-sm leading-relaxed">{overviewText}</p>
         </div>
       </div>
     </div>
   )
 }
-

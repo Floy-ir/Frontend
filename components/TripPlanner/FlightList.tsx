@@ -51,15 +51,11 @@ export function FlightList({ origin, destination, departureDate, onFlightSelect 
             <div
               key={index}
               className={`relative rounded-lg transition-all ${
-                selectedFlightIndex === index ? "ring-2 ring-Primary-P500main ring-offset-2" : ""
+                selectedFlightIndex === index ? "ring-Primary-P500main ring-2 ring-offset-2" : ""
               }`}
               onClick={() => handleFlightSelection(flight, index)}
             >
-              <FlightCard
-                {...flight}
-                onBuy={() => handleFlightBuy(flight)}
-                className="cursor-pointer"
-              />
+              <FlightCard {...flight} onBuy={() => handleFlightBuy(flight)} className="cursor-pointer" />
 
               {/* Add to Basket Button - Floating in bottom-right corner */}
               <Button
@@ -73,7 +69,7 @@ export function FlightList({ origin, destination, departureDate, onFlightSelect 
                 aria-label="افزودن به سبد سفر"
                 title="افزودن به سبد سفر"
               >
-                <ShoppingCart size={18} className="shrink-0 text-Primary-P500main" />
+                <ShoppingCart size={18} className="text-Primary-P500main shrink-0" />
               </Button>
             </div>
           ))

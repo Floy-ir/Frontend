@@ -72,7 +72,7 @@ export const DestinationCard = React.memo(function DestinationCard({ activity }:
 
         {/* Menu Button */}
         <button
-          className="text-Gray-N500 hover:text-Gray-N700 focus:ring-Primary-P500main shrink-0 rounded-full p-1 transition-colors hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2"
+          className="text-Gray-N500 hover:text-Gray-N700 focus:ring-Primary-P500main shrink-0 rounded-full p-1 transition-colors hover:bg-gray-100 focus:ring-2 focus:ring-offset-2 focus:outline-none"
           aria-label="گزینه‌های بیشتر"
         >
           <MoreVertical className="h-5 w-5" aria-hidden="true" />
@@ -81,7 +81,7 @@ export const DestinationCard = React.memo(function DestinationCard({ activity }:
 
       {/* Expandable Description */}
       {hasDescription && (
-        <div className="border-t border-gray-100 px-3 pb-2 pt-2">
+        <div className="border-t border-gray-100 px-3 pt-2 pb-2">
           <div className="flex items-start gap-2">
             <div className="min-w-0 flex-1">
               <p
@@ -99,10 +99,15 @@ export const DestinationCard = React.memo(function DestinationCard({ activity }:
                     <button
                       key={index}
                       onClick={() => setSelectedImageIndex(index)}
-                      className="focus:ring-Primary-P500main relative h-32 w-full overflow-hidden rounded-lg bg-gray-100 transition-opacity hover:opacity-80 focus:outline-none focus:ring-2 focus:ring-offset-1"
+                      className="focus:ring-Primary-P500main relative h-32 w-full overflow-hidden rounded-lg bg-gray-100 transition-opacity hover:opacity-80 focus:ring-2 focus:ring-offset-1 focus:outline-none"
                       aria-label={`نمایش تصویر ${index + 1} از ${activity.name}`}
                     >
-                      <Image src={imageUrl} alt={`${activity.name} - تصویر ${index + 1}`} fill className="object-cover" />
+                      <Image
+                        src={imageUrl}
+                        alt={`${activity.name} - تصویر ${index + 1}`}
+                        fill
+                        className="object-cover"
+                      />
                     </button>
                   ))}
                 </div>
@@ -112,7 +117,7 @@ export const DestinationCard = React.memo(function DestinationCard({ activity }:
             {/* Chevron Button */}
             <button
               onClick={() => setIsExpanded(!isExpanded)}
-              className="text-Gray-N500 hover:text-Gray-N700 focus:ring-Primary-P500main shrink-0 rounded p-0.5 transition-colors hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-1"
+              className="text-Gray-N500 hover:text-Gray-N700 focus:ring-Primary-P500main shrink-0 rounded p-0.5 transition-colors hover:bg-gray-100 focus:ring-2 focus:ring-offset-1 focus:outline-none"
               aria-expanded={isExpanded}
               aria-label="نمایش/مخفی کردن جزئیات"
             >
@@ -130,7 +135,7 @@ export const DestinationCard = React.memo(function DestinationCard({ activity }:
       <Dialog open={selectedImageIndex !== null} onOpenChange={(open) => !open && setSelectedImageIndex(null)}>
         <DialogContent className="max-w-4xl p-0">
           <DialogTitle className="sr-only">نمایش تصاویر {activity.name}</DialogTitle>
-          <DialogClose className="absolute left-4 top-4 z-10 rounded-full bg-black/50 p-2 text-white transition-colors hover:bg-black/70 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-transparent">
+          <DialogClose className="absolute top-4 left-4 z-10 rounded-full bg-black/50 p-2 text-white transition-colors hover:bg-black/70 focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-transparent focus:outline-none">
             <X className="h-4 w-4" />
             <span className="sr-only">بستن</span>
           </DialogClose>
@@ -140,7 +145,7 @@ export const DestinationCard = React.memo(function DestinationCard({ activity }:
             activity.descriptionImages &&
             activity.descriptionImages[selectedImageIndex] && (
               <>
-                <div className="absolute right-4 top-4 z-10 rounded-full bg-black/50 px-3 py-1.5 text-sm text-white">
+                <div className="absolute top-4 right-4 z-10 rounded-full bg-black/50 px-3 py-1.5 text-sm text-white">
                   {englishToFarsiNumber(selectedImageIndex + 1)} /{" "}
                   {englishToFarsiNumber(activity.descriptionImages.length)}
                 </div>
@@ -161,7 +166,7 @@ export const DestinationCard = React.memo(function DestinationCard({ activity }:
                     {/* Previous Button (Right side in RTL) */}
                     <button
                       onClick={handlePreviousImage}
-                      className="absolute right-4 top-1/2 z-10 -translate-y-1/2 rounded-full bg-black/50 p-3 text-white transition-colors hover:bg-black/70 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-transparent"
+                      className="absolute top-1/2 right-4 z-10 -translate-y-1/2 rounded-full bg-black/50 p-3 text-white transition-colors hover:bg-black/70 focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-transparent focus:outline-none"
                       aria-label="تصویر قبلی"
                     >
                       <ChevronRight className="h-6 w-6" />
@@ -170,7 +175,7 @@ export const DestinationCard = React.memo(function DestinationCard({ activity }:
                     {/* Next Button (Left side in RTL) */}
                     <button
                       onClick={handleNextImage}
-                      className="absolute left-4 top-1/2 z-10 -translate-y-1/2 rounded-full bg-black/50 p-3 text-white transition-colors hover:bg-black/70 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-transparent"
+                      className="absolute top-1/2 left-4 z-10 -translate-y-1/2 rounded-full bg-black/50 p-3 text-white transition-colors hover:bg-black/70 focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-transparent focus:outline-none"
                       aria-label="تصویر بعدی"
                     >
                       <ChevronLeft className="h-6 w-6" />

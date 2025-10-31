@@ -57,19 +57,14 @@ type TransportationCardProps = {
 // Format duration for display
 const FormatDuration = ({ hours, minutes }: { hours: number; minutes: number }) => (
   <span>
-    <span className="text-Gray-N500 text-[10px] leading-3 font-normal md-lg:text-[12px] lg:text-[12px]">
+    <span className="text-Gray-N500 md-lg:text-[12px] text-[10px] leading-3 font-normal lg:text-[12px]">
       {englishToFarsiNumber(hours)}{" "}
     </span>
-    <span className="text-Gray-N500 text-[10px] leading-3 font-normal md-lg:text-[12px] lg:text-[12px]">
-      ساعت{" "}
-    </span>
-    <span className="text-Gray-N500 text-[10px] leading-3 font-normal md-lg:text-[12px] lg:text-[12px]">
+    <span className="text-Gray-N500 md-lg:text-[12px] text-[10px] leading-3 font-normal lg:text-[12px]">ساعت </span>
+    <span className="text-Gray-N500 md-lg:text-[12px] text-[10px] leading-3 font-normal lg:text-[12px]">
       {englishToFarsiNumber(minutes)}
     </span>
-    <span className="text-Gray-N500 text-[10px] leading-3 font-normal md-lg:text-[12px] lg:text-[12px]">
-      {" "}
-      دقیقه
-    </span>
+    <span className="text-Gray-N500 md-lg:text-[12px] text-[10px] leading-3 font-normal lg:text-[12px]"> دقیقه</span>
   </span>
 )
 
@@ -91,7 +86,7 @@ const FlightRouteVisualization = ({ isMobile = true }: { isMobile?: boolean }) =
 // Badge component for flight info items
 const InfoBadge = ({ text }: { text: string }) => (
   <div className={badgeStyles()}>
-    <div className="text-Gray-N600 justify-center text-right text-[10px] leading-3 font-normal md-lg:text-[12px] lg:text-[12px]">
+    <div className="text-Gray-N600 md-lg:text-[12px] justify-center text-right text-[10px] leading-3 font-normal lg:text-[12px]">
       {text}
     </div>
   </div>
@@ -100,8 +95,8 @@ const InfoBadge = ({ text }: { text: string }) => (
 // Badge with icon for baggage
 const BaggageBadge = ({ text }: { text: string }) => (
   <div className={badgeStyles()}>
-    <PiSuitcaseRollingLight className="text-Gray-N600 h-2.5 w-2.5 md-lg:h-3 md-lg:w-3 lg:h-3 lg:w-3" />
-    <div className="text-Gray-N600 inline-flex justify-center gap-0.5 text-right text-[10px] leading-3 font-normal md-lg:gap-1 md-lg:text-[12px] lg:gap-1 lg:text-[12px]">
+    <PiSuitcaseRollingLight className="text-Gray-N600 md-lg:h-3 md-lg:w-3 h-2.5 w-2.5 lg:h-3 lg:w-3" />
+    <div className="text-Gray-N600 md-lg:gap-1 md-lg:text-[12px] inline-flex justify-center gap-0.5 text-right text-[10px] leading-3 font-normal lg:gap-1 lg:text-[12px]">
       {text} کیلوگرم
     </div>
   </div>
@@ -113,21 +108,21 @@ const PriceInfo = ({
 }: {
   price: { amount: number; formattedAmount: string; agency: string; agencyLogo?: string; label?: string }
 }) => (
-  <div className="bg-Gray-N50 outline-Gray-N200 relative flex flex-col items-end justify-center gap-1.5 self-stretch rounded-lg px-2 py-1.5 outline-1 outline-offset-[-1px] md-lg:gap-3 md-lg:px-3 md-lg:py-2 lg:gap-3 lg:px-3 lg:py-2">
+  <div className="bg-Gray-N50 outline-Gray-N200 md-lg:gap-3 md-lg:px-3 md-lg:py-2 relative flex flex-col items-end justify-center gap-1.5 self-stretch rounded-lg px-2 py-1.5 outline-1 outline-offset-[-1px] lg:gap-3 lg:px-3 lg:py-2">
     {price.label && (
-      <div className="flex w-full items-start gap-0.5 md-lg:gap-1 lg:gap-1">
-        <div className="text-Gray-N500 justify-center self-stretch text-right text-[10px] font-normal md-lg:text-[12px] lg:text-[12px]">
+      <div className="md-lg:gap-1 flex w-full items-start gap-0.5 lg:gap-1">
+        <div className="text-Gray-N500 md-lg:text-[12px] justify-center self-stretch text-right text-[10px] font-normal lg:text-[12px]">
           {price.label}
         </div>
-        <div className="text-Gray-N600 justify-start self-stretch text-right text-[10px] font-normal md-lg:text-[12px] lg:text-[12px]">
+        <div className="text-Gray-N600 md-lg:text-[12px] justify-start self-stretch text-right text-[10px] font-normal lg:text-[12px]">
           در
         </div>
       </div>
     )}
     <div className="inline-flex items-center justify-between self-stretch">
-      <div className="flex items-center justify-start gap-0.5 md-lg:gap-1 lg:gap-1">
+      <div className="md-lg:gap-1 flex items-center justify-start gap-0.5 lg:gap-1">
         {price.agencyLogo && (
-          <div className="outline-Gray-N200 size-4 overflow-hidden rounded-[48px] bg-white outline-1 outline-offset-[-1px] md-lg:size-6 lg:size-6">
+          <div className="outline-Gray-N200 md-lg:size-6 size-4 overflow-hidden rounded-[48px] bg-white outline-1 outline-offset-[-1px] lg:size-6">
             <Image
               src={price.agencyLogo}
               alt={`${price.agency} logo`}
@@ -139,16 +134,16 @@ const PriceInfo = ({
         )}
 
         <div className="inline-flex flex-col items-start justify-center">
-          <div className="text-Gray-N600 justify-start text-right text-[11px] font-normal md-lg:text-[15px] lg:text-[15px]">
+          <div className="text-Gray-N600 md-lg:text-[15px] justify-start text-right text-[11px] font-normal lg:text-[15px]">
             {price.agency}
           </div>
         </div>
       </div>
-      <div className="flex items-center justify-end gap-0.5 md-lg:gap-1 lg:gap-1">
-        <div className="text-Gray-N700 justify-start text-right text-xs leading-6 font-semibold md-lg:text-base md-lg:leading-7 lg:text-base lg:leading-7">
+      <div className="md-lg:gap-1 flex items-center justify-end gap-0.5 lg:gap-1">
+        <div className="text-Gray-N700 md-lg:text-base md-lg:leading-7 justify-start text-right text-xs leading-6 font-semibold lg:text-base lg:leading-7">
           {englishToFarsiNumber(price.formattedAmount)}
         </div>
-        <div className="text-Gray-N500 justify-start text-right text-[9px] leading-none font-normal md-lg:text-[11px] lg:text-[11px]">
+        <div className="text-Gray-N500 md-lg:text-[11px] justify-start text-right text-[9px] leading-none font-normal lg:text-[11px]">
           تومان
         </div>
       </div>
@@ -340,15 +335,10 @@ export function TransportationCard({
 
               <div data-layer="Frame 1000002404" className="flex flex-col items-start justify-start gap-2 self-stretch">
                 <div className="flex w-full gap-2">
-                  <Button
-                    intent="primary"
-                    size="small"
-                    className="flex-1 px-5 py-3.5"
-                    onClick={handleBookingRedirect}
-                  >
+                  <Button intent="primary" size="small" className="flex-1 px-5 py-3.5" onClick={handleBookingRedirect}>
                     رفتن به {priceWithLabel.agency}
                   </Button>
-                  
+
                   {isInBasket ? (
                     <button
                       onClick={handleRemoveFromBasket}
@@ -368,7 +358,12 @@ export function TransportationCard({
                   )}
                 </div>
 
-                <Button intent="text" size="small" className="w-full self-stretch px-5 py-3.5" onClick={handleViewAllFlights}>
+                <Button
+                  intent="text"
+                  size="small"
+                  className="w-full self-stretch px-5 py-3.5"
+                  onClick={handleViewAllFlights}
+                >
                   مشاهده همه پروازها
                 </Button>
               </div>
@@ -398,9 +393,7 @@ export function TransportationCard({
                   </div>
                 )}
               </div>
-              <div className="text-Gray-N600 justify-start text-right text-[13px] font-semibold">
-                {flight.airline}
-              </div>
+              <div className="text-Gray-N600 justify-start text-right text-[13px] font-semibold">{flight.airline}</div>
             </div>
             <div className="inline-flex flex-1 flex-col items-start justify-center">
               <div className="inline-flex items-center justify-start self-stretch">
@@ -437,12 +430,7 @@ export function TransportationCard({
 
             <div className="flex flex-col items-start justify-start gap-0.5 self-stretch lg:gap-1">
               <div className="flex w-full gap-1">
-                <Button
-                  intent="primary"
-                  size="small"
-                  className="flex-1"
-                  onClick={handleBookingRedirect}
-                >
+                <Button intent="primary" size="small" className="flex-1" onClick={handleBookingRedirect}>
                   رفتن به {priceWithLabel.agency}
                 </Button>
 
@@ -465,12 +453,7 @@ export function TransportationCard({
                 )}
               </div>
 
-              <Button
-                intent="text"
-                size="small"
-                className="w-full"
-                onClick={handleViewAllFlights}
-              >
+              <Button intent="text" size="small" className="w-full" onClick={handleViewAllFlights}>
                 مشاهده همه پروازها
               </Button>
             </div>
