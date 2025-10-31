@@ -48,6 +48,7 @@ export interface Destination extends BaseActivity {
   type: "destination"
   name: string
   description: string
+  descriptionImages?: string[]
   image?: string
   location: Location
 }
@@ -60,6 +61,8 @@ export interface Accommodation extends BaseActivity {
   guestCount: number
   nightCount: number
   pricePerNight?: string
+  description?: string
+  descriptionImages?: string[]
   image?: string
   location: Location
 }
@@ -68,6 +71,7 @@ export interface Attraction extends BaseActivity {
   type: "attraction"
   name: string
   description?: string
+  descriptionImages?: string[]
   image?: string
   location: Location
   estimatedDuration?: string
