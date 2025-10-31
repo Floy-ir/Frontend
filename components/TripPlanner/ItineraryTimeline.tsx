@@ -14,17 +14,32 @@ import { TransportationCard } from "./ActivityCards/TransportationCard"
 type ItineraryTimelineProps = {
   days: TripDay[]
   onFlightClick?: (transportation: Transportation) => void
+  onAddToBasket?: (activity: Transportation) => void
+  onRemoveFromBasket?: (activityId: string) => void
+  basketItemIds?: string[]
 }
 
 export const ItineraryTimeline = React.memo(function ItineraryTimeline({
   days,
   onFlightClick,
+  onAddToBasket,
+  onRemoveFromBasket,
+  basketItemIds = [],
 }: ItineraryTimelineProps) {
   const renderActivity = useCallback(
     (activity: Activity) => {
       switch (activity.type) {
         case "transportation":
-          return <TransportationCard key={activity.id} activity={activity} onFlightClick={onFlightClick} />
+          return (
+            <TransportationCard
+              key={activity.id}
+              activity={activity}
+              onFlightClick={onFlightClick}
+              onAddToBasket={onAddToBasket}
+              onRemoveFromBasket={onRemoveFromBasket}
+              isInBasket={basketItemIds.includes(activity.id)}
+            />
+          )
         case "destination":
           return <DestinationCard key={activity.id} activity={activity} />
         case "accommodation":
@@ -35,7 +50,7 @@ export const ItineraryTimeline = React.memo(function ItineraryTimeline({
           return null
       }
     },
-    [onFlightClick]
+    [onFlightClick, onAddToBasket, onRemoveFromBasket, basketItemIds]
   )
 
   const renderActivityIcon = useCallback((activity: Activity) => {

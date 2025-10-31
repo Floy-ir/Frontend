@@ -102,6 +102,36 @@ export function TripPlannerPanel({ tripPlan }: TripPlannerPanelProps) {
     })
   }, [])
 
+  const handleAddTransportationToBasket = useCallback((transportation: Transportation) => {
+    if (transportation.mode !== "flight" || !transportation.recommendedFlight) {
+      return
+    }
+
+    const flight = transportation.recommendedFlight
+    const newItem: BasketFlightItem = {
+      id: transportation.id,
+      departureTime: flight.departureTime,
+      arrivalTime: flight.arrivalTime,
+      origin: transportation.origin,
+      destination: transportation.destination,
+      duration: flight.duration || { hours: 0, minutes: 0 },
+      airline: {
+        name: flight.airline,
+        logo: flight.airlineLogo || "",
+      },
+      flightInfo: flight.flightInfo || { baggage: "20", cabinClass: "اقتصادی" },
+      price: {
+        amount: flight.price.amount,
+        formattedAmount: flight.price.formattedAmount,
+        agency: flight.price.agency,
+        agencyLogo: flight.price.agencyLogo || "",
+        base_redirect_url: flight.base_redirect_url || "#",
+      },
+    }
+
+    handleAddToBasket(newItem)
+  }, [handleAddToBasket])
+
   const handleRemoveFromBasket = useCallback((id: string) => {
     setBasketItems((prev) => prev.filter((item) => item.id !== id))
   }, [])
@@ -201,7 +231,13 @@ export function TripPlannerPanel({ tripPlan }: TripPlannerPanelProps) {
             نمای کلی
           </h2>
           <TripOverviewCard tripPlan={tripPlan} />
-          <ItineraryTimeline days={tripPlan.days} onFlightClick={handleFlightClick} />
+          <ItineraryTimeline
+            days={tripPlan.days}
+            onFlightClick={handleFlightClick}
+            onAddToBasket={handleAddTransportationToBasket}
+            onRemoveFromBasket={handleRemoveFromBasket}
+            basketItemIds={basketItems.map((item) => item.id)}
+          />
         </div>
 
         {/* Map Section */}

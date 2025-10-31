@@ -10,6 +10,7 @@ import { twMerge } from "tailwind-merge"
 import type { Transportation } from "@/app/types/trip"
 import { Button } from "@/components/elements/Button/Button"
 import { englishToFarsiNumber } from "@/utils/numbers"
+import { Plus, Trash2 } from "lucide-react"
 
 // Card wrapper styles with variants
 const flightCardVariants = cva(
@@ -46,6 +47,9 @@ const badgeStyles = cva(
 type TransportationCardProps = {
   activity: Transportation
   onFlightClick?: (activity: Transportation) => void
+  onAddToBasket?: (activity: Transportation) => void
+  onRemoveFromBasket?: (activityId: string) => void
+  isInBasket?: boolean
   className?: string
   intent?: VariantProps<typeof flightCardVariants>["intent"]
 }
@@ -155,6 +159,9 @@ const PriceInfo = ({
 export function TransportationCard({
   activity,
   onFlightClick,
+  onAddToBasket,
+  onRemoveFromBasket,
+  isInBasket = false,
   className,
   intent = "default",
 }: TransportationCardProps) {
@@ -169,6 +176,18 @@ export function TransportationCard({
       // Placeholder URL - in real implementation, this would be the actual booking URL
       const bookingUrl = `https://example.com/booking?origin=${activity.origin}&destination=${activity.destination}`
       window.open(bookingUrl, "_blank")
+    }
+  }
+
+  const handleAddToBasket = () => {
+    if (onAddToBasket) {
+      onAddToBasket(activity)
+    }
+  }
+
+  const handleRemoveFromBasket = () => {
+    if (onRemoveFromBasket) {
+      onRemoveFromBasket(activity.id)
     }
   }
 
@@ -320,16 +339,36 @@ export function TransportationCard({
               </div>
 
               <div data-layer="Frame 1000002404" className="flex flex-col items-start justify-start gap-2 self-stretch">
-                <Button
-                  intent="primary"
-                  size="small"
-                  className="self-stretch px-5 py-3.5"
-                  onClick={handleBookingRedirect}
-                >
-                  رفتن به {priceWithLabel.agency}
-                </Button>
+                <div className="flex w-full gap-2">
+                  <Button
+                    intent="primary"
+                    size="small"
+                    className="flex-1 px-5 py-3.5"
+                    onClick={handleBookingRedirect}
+                  >
+                    رفتن به {priceWithLabel.agency}
+                  </Button>
+                  
+                  {isInBasket ? (
+                    <button
+                      onClick={handleRemoveFromBasket}
+                      className="bg-Error-E50 text-Error-E500main hover:bg-Error-E100 focus:ring-Error-E500main flex items-center justify-center rounded-lg px-3 py-2 transition-colors focus:ring-2 focus:ring-offset-2 focus:outline-none"
+                      aria-label="حذف از سبد"
+                    >
+                      <Trash2 size={20} className="shrink-0" />
+                    </button>
+                  ) : (
+                    <button
+                      onClick={handleAddToBasket}
+                      className="bg-Primary-P50 text-Primary-P500main hover:bg-Primary-P100 focus:ring-Primary-P500main flex items-center justify-center rounded-lg px-3 py-2 transition-colors focus:ring-2 focus:ring-offset-2 focus:outline-none"
+                      aria-label="افزودن به سبد"
+                    >
+                      <Plus size={20} className="shrink-0" />
+                    </button>
+                  )}
+                </div>
 
-                <Button intent="text" size="small" className="self-stretch px-5 py-3.5" onClick={handleViewAllFlights}>
+                <Button intent="text" size="small" className="w-full self-stretch px-5 py-3.5" onClick={handleViewAllFlights}>
                   مشاهده همه پروازها
                 </Button>
               </div>
@@ -397,19 +436,39 @@ export function TransportationCard({
             <PriceInfo price={priceWithLabel} />
 
             <div className="flex flex-col items-start justify-start gap-0.5 self-stretch lg:gap-1">
-              <Button
-                intent="primary"
-                size="small"
-                className="w-full self-stretch"
-                onClick={handleBookingRedirect}
-              >
-                رفتن به {priceWithLabel.agency}
-              </Button>
+              <div className="flex w-full gap-1">
+                <Button
+                  intent="primary"
+                  size="small"
+                  className="flex-1"
+                  onClick={handleBookingRedirect}
+                >
+                  رفتن به {priceWithLabel.agency}
+                </Button>
+
+                {isInBasket ? (
+                  <button
+                    onClick={handleRemoveFromBasket}
+                    className="bg-Error-E50 text-Error-E500main hover:bg-Error-E100 focus:ring-Error-E500main flex items-center justify-center rounded-lg px-2 py-1.5 transition-colors focus:ring-2 focus:ring-offset-2 focus:outline-none lg:px-2.5 xl:px-3"
+                    aria-label="حذف از سبد"
+                  >
+                    <Trash2 size={18} className="shrink-0" />
+                  </button>
+                ) : (
+                  <button
+                    onClick={handleAddToBasket}
+                    className="bg-Primary-P50 text-Primary-P500main hover:bg-Primary-P100 focus:ring-Primary-P500main flex items-center justify-center rounded-lg px-2 py-1.5 transition-colors focus:ring-2 focus:ring-offset-2 focus:outline-none lg:px-2.5 xl:px-3"
+                    aria-label="افزودن به سبد"
+                  >
+                    <Plus size={18} className="shrink-0" />
+                  </button>
+                )}
+              </div>
 
               <Button
                 intent="text"
                 size="small"
-                className="w-full self-stretch"
+                className="w-full"
                 onClick={handleViewAllFlights}
               >
                 مشاهده همه پروازها
