@@ -164,28 +164,28 @@ export const AttractionCard = React.memo(function AttractionCard({ activity }: A
 
               {/* Navigation Buttons */}
               {activity.descriptionImages.length > 1 && (
-                  <>
-                    {/* Previous Button (Right side in RTL) */}
-                    <button
-                      onClick={handlePreviousImage}
-                      className="absolute top-1/2 right-4 z-10 -translate-y-1/2 rounded-full bg-black/50 p-3 text-white transition-colors hover:bg-black/70 focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-transparent focus:outline-none"
-                      aria-label="تصویر قبلی"
-                    >
-                      <ChevronRight className="h-6 w-6" />
-                    </button>
+                <>
+                  {/* Previous Button (Right side in RTL) */}
+                  <button
+                    onClick={handlePreviousImage}
+                    className="absolute top-1/2 right-4 z-10 -translate-y-1/2 rounded-full bg-black/50 p-3 text-white transition-colors hover:bg-black/70 focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-transparent focus:outline-none"
+                    aria-label="تصویر قبلی"
+                  >
+                    <ChevronRight className="h-6 w-6" />
+                  </button>
 
-                    {/* Next Button (Left side in RTL) */}
-                    <button
-                      onClick={handleNextImage}
-                      className="absolute top-1/2 left-4 z-10 -translate-y-1/2 rounded-full bg-black/50 p-3 text-white transition-colors hover:bg-black/70 focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-transparent focus:outline-none"
-                      aria-label="تصویر بعدی"
-                    >
-                      <ChevronLeft className="h-6 w-6" />
-                    </button>
-                  </>
-                )}
-              </>
-            )}
+                  {/* Next Button (Left side in RTL) */}
+                  <button
+                    onClick={handleNextImage}
+                    className="absolute top-1/2 left-4 z-10 -translate-y-1/2 rounded-full bg-black/50 p-3 text-white transition-colors hover:bg-black/70 focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-transparent focus:outline-none"
+                    aria-label="تصویر بعدی"
+                  >
+                    <ChevronLeft className="h-6 w-6" />
+                  </button>
+                </>
+              )}
+            </>
+          )}
         </DialogContent>
       </Dialog>
     </div>
