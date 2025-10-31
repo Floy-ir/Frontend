@@ -1,12 +1,12 @@
 "use client"
 
-import { useState } from "react"
 import { ShoppingCart } from "lucide-react"
+import { useState } from "react"
 
+import { Button } from "@/components/elements/Button/Button"
 import { FlightCard } from "@/components/FlightsPage/FlightCard/flight-card"
 import { getMockFlights, type MockFlightData } from "@/services/mockFlightData"
 import { englishToFarsiNumber } from "@/utils/numbers"
-import { Button } from "@/components/elements/Button/Button"
 
 type FlightListProps = {
   origin: string

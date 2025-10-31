@@ -5,7 +5,7 @@ import Image from "next/image"
 import React, { useEffect, useState } from "react"
 
 import type { Accommodation } from "@/app/types/trip"
-import { Dialog, DialogContent, DialogClose, DialogTitle } from "@/components/ui/dialog"
+import { Dialog, DialogClose, DialogContent, DialogTitle } from "@/components/ui/dialog"
 import { englishToFarsiNumber } from "@/utils/numbers"
 
 type AccommodationCardProps = {

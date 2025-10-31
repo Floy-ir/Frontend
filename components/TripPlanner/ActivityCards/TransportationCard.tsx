@@ -2,6 +2,7 @@
 
 import { cva, type VariantProps } from "class-variance-authority"
 import { Airplane } from "iconsax-react"
+import { Plus, Trash2 } from "lucide-react"
 import Image from "next/image"
 import React from "react"
 import { PiSuitcaseRollingLight } from "react-icons/pi"
@@ -10,7 +11,6 @@ import { twMerge } from "tailwind-merge"
 import type { Transportation } from "@/app/types/trip"
 import { Button } from "@/components/elements/Button/Button"
 import { englishToFarsiNumber } from "@/utils/numbers"
-import { Plus, Trash2 } from "lucide-react"
 
 // Card wrapper styles with variants
 const flightCardVariants = cva(
