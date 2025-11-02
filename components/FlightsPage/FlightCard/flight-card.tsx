@@ -242,13 +242,13 @@ const FlightDetailsSection = ({
             <time
               className={`text-Gray-N800 flex-1 justify-start text-center ${textStyles.large} ${textStyles.semibold}`}
             >
-              {departureTime}
+              {englishToFarsiNumber(departureTime)}
             </time>
             <FlightRouteVisualization isMobile={true} />
             <time
               className={`text-Gray-N800 flex-1 justify-start text-center ${textStyles.large} ${textStyles.semibold}`}
             >
-              {arrivalTime}
+              {englishToFarsiNumber(arrivalTime)}
             </time>
           </div>
           <div className="flex flex-col items-center justify-end gap-2 self-stretch">
@@ -284,11 +284,11 @@ const FlightDetailsSection = ({
         <div className="inline-flex flex-1 flex-col items-start justify-center">
           <div className="inline-flex items-center justify-start self-stretch">
             <time className={`text-Gray-N800 flex-1 justify-start text-center ${textStyles.xl} ${textStyles.semibold}`}>
-              {departureTime}
+              {englishToFarsiNumber(departureTime)}
             </time>
             <FlightRouteVisualization isMobile={false} />
             <time className={`text-Gray-N800 flex-1 justify-start text-center ${textStyles.xl} ${textStyles.semibold}`}>
-              {arrivalTime}
+              {englishToFarsiNumber(arrivalTime)}
             </time>
           </div>
           <div className="flex flex-col items-center justify-end gap-2 self-stretch">

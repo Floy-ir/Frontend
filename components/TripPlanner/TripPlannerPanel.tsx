@@ -6,12 +6,14 @@ import { useCallback, useEffect, useState } from "react"
 
 import type { BasketFlightItem } from "@/app/types/basket"
 import type { Transportation, TripPlan } from "@/app/types/trip"
+import type { MockFlightData } from "@/services/mockFlightData"
 import { englishToFarsiNumber } from "@/utils/numbers"
 
 import { Breadcrumb } from "./Breadcrumb"
 import { FlightList } from "./FlightList"
 import { ItineraryTimeline } from "./ItineraryTimeline"
 import { TravelBasket } from "./TravelBasket"
+import { TripOverviewCard } from "./TripOverviewCard"
 
 // Dynamically import TripMap with no SSR to avoid "window is not defined" error
 const TripMap = dynamic(() => import("./TripMap").then((mod) => ({ default: mod.TripMap })), {
@@ -89,17 +91,88 @@ export function TripPlannerPanel({ tripPlan }: TripPlannerPanelProps) {
     setSelectedTransportation(null)
   }, [])
 
-  // Handler for future use when adding flights from FlightList
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  // Handler for adding items to basket
   const handleAddToBasket = useCallback((item: BasketFlightItem) => {
     setBasketItems((prev) => {
-      // Check if item already exists
-      if (prev.some((existing) => existing.id === item.id)) {
-        return prev
+      // Check if item already exists - if it does, replace it
+      const existingIndex = prev.findIndex((existing) => existing.id === item.id)
+      if (existingIndex >= 0) {
+        const updated = [...prev]
+        updated[existingIndex] = item
+        return updated
       }
       return [...prev, item]
     })
   }, [])
+
+  // Handler for when user selects a flight from the list
+  const handleFlightListSelection = useCallback(
+    (flight: MockFlightData) => {
+      if (!selectedTransportation) return
+
+      // Convert the selected flight from FlightList to a BasketFlightItem
+      const newItem: BasketFlightItem = {
+        id: selectedTransportation.id,
+        departureTime: flight.departureTime,
+        arrivalTime: flight.arrivalTime,
+        origin: selectedTransportation.origin,
+        destination: selectedTransportation.destination,
+        duration: flight.duration || { hours: 0, minutes: 0 },
+        airline: {
+          name: typeof flight.airline === "object" ? flight.airline?.name || "" : flight.airline || "",
+          logo: typeof flight.airline === "object" ? flight.airline?.logo || "" : "",
+        },
+        flightInfo: flight.flightInfo || { baggage: "20", cabinClass: "اقتصادی" },
+        price: {
+          amount: flight.price.amount,
+          formattedAmount: flight.price.formattedAmount,
+          agency: flight.price.agency,
+          agencyLogo: flight.price.agencyLogo || "",
+          base_redirect_url: flight.price.base_redirect_url || "#",
+        },
+      }
+
+      // Add to basket
+      handleAddToBasket(newItem)
+
+      // Return to overview after selection
+      handleBackToOverview()
+    },
+    [selectedTransportation, handleAddToBasket, handleBackToOverview]
+  )
+
+  const handleAddTransportationToBasket = useCallback(
+    (transportation: Transportation) => {
+      if (transportation.mode !== "flight" || !transportation.recommendedFlight) {
+        return
+      }
+
+      const flight = transportation.recommendedFlight
+      const newItem: BasketFlightItem = {
+        id: transportation.id,
+        departureTime: flight.departureTime,
+        arrivalTime: flight.arrivalTime,
+        origin: transportation.origin,
+        destination: transportation.destination,
+        duration: flight.duration || { hours: 0, minutes: 0 },
+        airline: {
+          name: flight.airline,
+          logo: flight.airlineLogo || "",
+        },
+        flightInfo: flight.flightInfo || { baggage: "20", cabinClass: "اقتصادی" },
+        price: {
+          amount: flight.price.amount,
+          formattedAmount: flight.price.formattedAmount,
+          agency: flight.price.agency,
+          agencyLogo: flight.price.agencyLogo || "",
+          base_redirect_url: flight.base_redirect_url || "#",
+        },
+      }
+
+      handleAddToBasket(newItem)
+    },
+    [handleAddToBasket]
+  )
 
   const handleRemoveFromBasket = useCallback((id: string) => {
     setBasketItems((prev) => prev.filter((item) => item.id !== id))
@@ -155,6 +228,7 @@ export function TripPlannerPanel({ tripPlan }: TripPlannerPanelProps) {
             origin={selectedTransportation.origin}
             destination={selectedTransportation.destination}
             departureDate={selectedTransportation.departureTime}
+            onFlightSelect={handleFlightListSelection}
           />
         </div>
       </div>
@@ -199,7 +273,14 @@ export function TripPlannerPanel({ tripPlan }: TripPlannerPanelProps) {
           <h2 className="font-anjoman-max text-Gray-N800 mb-4 px-4 text-lg font-bold" dir="rtl">
             نمای کلی
           </h2>
-          <ItineraryTimeline days={tripPlan.days} onFlightClick={handleFlightClick} />
+          <TripOverviewCard tripPlan={tripPlan} />
+          <ItineraryTimeline
+            days={tripPlan.days}
+            onFlightClick={handleFlightClick}
+            onAddToBasket={handleAddTransportationToBasket}
+            onRemoveFromBasket={handleRemoveFromBasket}
+            basketItemIds={basketItems.map((item) => item.id)}
+          />
         </div>
 
         {/* Map Section */}

@@ -1,7 +1,9 @@
 "use client"
 
+import { ShoppingCart } from "lucide-react"
 import { useState } from "react"
 
+import { Button } from "@/components/elements/Button/Button"
 import { FlightCard } from "@/components/FlightsPage/FlightCard/flight-card"
 import { getMockFlights, type MockFlightData } from "@/services/mockFlightData"
 import { englishToFarsiNumber } from "@/utils/numbers"
@@ -15,6 +17,7 @@ type FlightListProps = {
 
 export function FlightList({ origin, destination, departureDate, onFlightSelect }: FlightListProps) {
   const [flights] = useState<MockFlightData[]>(() => getMockFlights(origin, destination))
+  const [selectedFlightIndex, setSelectedFlightIndex] = useState<number | null>(null)
 
   const handleFlightBuy = (flight: MockFlightData) => {
     // Placeholder - could redirect to booking page
@@ -23,7 +26,8 @@ export function FlightList({ origin, destination, departureDate, onFlightSelect 
     window.open(flight.price.base_redirect_url, "_blank")
   }
 
-  const handleFlightSelection = (flight: MockFlightData) => {
+  const handleFlightSelection = (flight: MockFlightData, index: number) => {
+    setSelectedFlightIndex(index)
     if (onFlightSelect) {
       onFlightSelect(flight)
     }
@@ -44,12 +48,29 @@ export function FlightList({ origin, destination, departureDate, onFlightSelect 
       <div className="flex flex-col gap-4">
         {flights.length > 0 ? (
           flights.map((flight, index) => (
-            <div key={index} onClick={() => handleFlightSelection(flight)}>
-              <FlightCard
-                {...flight}
-                onBuy={() => handleFlightBuy(flight)}
-                className="cursor-default transition-shadow hover:shadow-md"
-              />
+            <div
+              key={index}
+              className={`relative rounded-lg transition-all ${
+                selectedFlightIndex === index ? "ring-Primary-P500main ring-2 ring-offset-2" : ""
+              }`}
+              onClick={() => handleFlightSelection(flight, index)}
+            >
+              <FlightCard {...flight} onBuy={() => handleFlightBuy(flight)} className="cursor-pointer" />
+
+              {/* Add to Basket Button - Floating in bottom-right corner */}
+              <Button
+                intent="ghost"
+                size="custom"
+                customSize="absolute bottom-3 left-3 z-10 size-10 rounded-full p-0 bg-white shadow-md hover:shadow-lg hover:bg-Primary-P50 border border-Gray-N200 hover:border-Primary-P300 transition-all"
+                onClick={(e) => {
+                  e.stopPropagation()
+                  handleFlightSelection(flight, index)
+                }}
+                aria-label="افزودن به سبد سفر"
+                title="افزودن به سبد سفر"
+              >
+                <ShoppingCart size={18} className="text-Primary-P500main shrink-0" />
+              </Button>
             </div>
           ))
         ) : (
