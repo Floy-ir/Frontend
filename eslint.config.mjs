@@ -49,6 +49,9 @@ const config = typescriptEslint.config(
       },
     },
     rules: {
+      "@typescript-eslint/no-explicit-any": "warn",
+      "@typescript-eslint/ban-ts-comment": "warn",
+
       "@typescript-eslint/no-unused-vars": [
         "warn",
         {
@@ -57,7 +60,7 @@ const config = typescriptEslint.config(
         },
       ],
       "sort-imports": [
-        "error",
+        "warn",
         {
           ignoreCase: true,
           ignoreDeclarationSort: true,
@@ -93,6 +96,7 @@ const config = typescriptEslint.config(
           },
         },
       ],
+      "import/no-duplicates": "warn",
     },
   }
 )

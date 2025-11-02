@@ -1,0 +1,415 @@
+---
+globs: **/*.test.ts,**/*.test.tsx,**/*.spec.ts,e2e/**/*
+description: Testing standards and patterns
+---
+
+# Testing Standards
+
+## Testing Framework Setup
+
+- **Unit/Integration Tests**: Jest with React Testing Library
+- **E2E Tests**: Playwright
+- **Configuration**: [jest.config.js](mdc:jest.config.js), [playwright.config.ts](mdc:playwright.config.ts)
+
+## Unit & Integration Testing
+
+### Test File Structure
+
+Test files should be co-located with the component or placed in `__tests__` directory:
+```
+Component.tsx
+Component.test.tsx
+```
+
+### Basic Test Pattern
+
+```typescript
+import { render, screen, fireEvent, waitFor } from "@testing-library/react"
+import { FlightSearchForm } from "./FlightSearchForm"
+
+describe("FlightSearchForm", () => {
+  it("renders form fields correctly", () => {
+    render(<FlightSearchForm />)
+    
+    expect(screen.getByLabelText("مبدا")).toBeInTheDocument()
+    expect(screen.getByLabelText("مقصد")).toBeInTheDocument()
+    expect(screen.getByLabelText("تاریخ رفت")).toBeInTheDocument()
+  })
+  
+  it("validates required fields on submit", async () => {
+    render(<FlightSearchForm />)
+    
+    const submitButton = screen.getByRole("button", { name: /جستجوی پرواز/i })
+    fireEvent.click(submitButton)
+    
+    await waitFor(() => {
+      expect(screen.getByText("مبدا را انتخاب کنید")).toBeInTheDocument()
+    })
+  })
+  
+  it("submits form with valid data", async () => {
+    const onSubmit = jest.fn()
+    render(<FlightSearchForm onSubmit={onSubmit} />)
+    
+    // Fill form
+    const originInput = screen.getByLabelText("مبدا")
+    fireEvent.change(originInput, { target: { value: "THR" } })
+    
+    // Submit
+    const submitButton = screen.getByRole("button", { name: /جستجوی پرواز/i })
+    fireEvent.click(submitButton)
+    
+    await waitFor(() => {
+      expect(onSubmit).toHaveBeenCalledWith(expect.objectContaining({
+        origin: "THR"
+      }))
+    })
+  })
+})
+```
+
+### Testing Hooks
+
+```typescript
+import { renderHook, act } from "@testing-library/react"
+import { useFlightFormPersistence } from "./useFlightFormPersistence"
+
+describe("useFlightFormPersistence", () => {
+  beforeEach(() => {
+    localStorage.clear()
+  })
+  
+  it("saves and loads form data", () => {
+    const { result } = renderHook(() => useFlightFormPersistence())
+    
+    act(() => {
+      result.current.saveFormData({
+        origin: "THR",
+        destination: "MHD"
+      })
+    })
+    
+    const loaded = result.current.loadFormData()
+    expect(loaded.origin).toBe("THR")
+    expect(loaded.destination).toBe("MHD")
+  })
+})
+```
+
+### Mocking
+
+#### Mocking Modules
+```typescript
+// Mock Next.js router
+jest.mock("next/navigation", () => ({
+  useRouter: () => ({
+    push: jest.fn(),
+    replace: jest.fn(),
+    prefetch: jest.fn()
+  }),
+  usePathname: () => "/flights"
+}))
+
+// Mock custom hook
+jest.mock("@/hooks/useStoredCities", () => ({
+  useStoredCities: () => ({
+    recentSelections: [],
+    addRecentSelection: jest.fn(),
+    saveSearch: jest.fn()
+  })
+}))
+```
+
+#### Mocking API Calls
+```typescript
+import { flightService } from "@/services/api"
+
+jest.mock("@/services/api")
+
+describe("FlightSearch", () => {
+  it("displays flights from API", async () => {
+    const mockFlights = [
+      { id: "1", origin: "THR", destination: "MHD" }
+    ]
+    
+    jest.spyOn(flightService, "searchFlights").mockResolvedValue(mockFlights)
+    
+    render(<FlightSearch />)
+    
+    await waitFor(() => {
+      expect(screen.getByText("THR")).toBeInTheDocument()
+    })
+  })
+})
+```
+
+### Testing Async Operations
+
+```typescript
+import { waitFor } from "@testing-library/react"
+
+it("handles loading and error states", async () => {
+  const mockFetch = jest.fn()
+    .mockRejectedValueOnce(new Error("Network error"))
+    .mockResolvedValueOnce({ data: [] })
+  
+  const { rerender } = render(<Component fetch={mockFetch} />)
+  
+  // Loading state
+  expect(screen.getByText("Loading...")).toBeInTheDocument()
+  
+  // Error state
+  await waitFor(() => {
+    expect(screen.getByText("Error")).toBeInTheDocument()
+  })
+  
+  // Success state
+  rerender(<Component fetch={mockFetch} />)
+  await waitFor(() => {
+    expect(screen.queryByText("Loading...")).not.toBeInTheDocument()
+  })
+})
+```
+
+### Testing User Interactions
+
+```typescript
+import userEvent from "@testing-library/user-event"
+
+it("handles user interactions", async () => {
+  const user = userEvent.setup()
+  render(<SearchForm />)
+  
+  // Type into input
+  const input = screen.getByRole("textbox", { name: /search/i })
+  await user.type(input, "Tehran")
+  
+  // Click button
+  const button = screen.getByRole("button", { name: /submit/i })
+  await user.click(button)
+  
+  // Select from dropdown
+  const select = screen.getByRole("combobox")
+  await user.selectOptions(select, "THR")
+})
+```
+
+## E2E Testing with Playwright
+
+Reference: [e2e/example.spec.ts](mdc:e2e/example.spec.ts)
+
+### Basic E2E Test Structure
+
+```typescript
+import { test, expect } from "@playwright/test"
+
+test.describe("Flight Search Flow", () => {
+  test.beforeEach(async ({ page }) => {
+    await page.goto("/")
+  })
+  
+  test("should search for flights", async ({ page }) => {
+    // Fill origin
+    await page.getByLabel("مبدا").fill("Tehran")
+    await page.getByRole("option", { name: "Tehran" }).click()
+    
+    // Fill destination
+    await page.getByLabel("مقصد").fill("Mashhad")
+    await page.getByRole("option", { name: "Mashhad" }).click()
+    
+    // Select date
+    await page.getByLabel("تاریخ رفت").click()
+    await page.getByRole("button", { name: "15" }).click()
+    
+    // Submit
+    await page.getByRole("button", { name: "جستجوی پرواز" }).click()
+    
+    // Assert results
+    await expect(page).toHaveURL(/\/flights/)
+    await expect(page.getByText("پرواز یافت شد")).toBeVisible()
+  })
+  
+  test("should handle validation errors", async ({ page }) => {
+    await page.getByRole("button", { name: "جستجوی پرواز" }).click()
+    
+    await expect(page.getByText("مبدا را انتخاب کنید")).toBeVisible()
+  })
+})
+```
+
+### Page Object Pattern
+
+```typescript
+// pages/FlightSearchPage.ts
+export class FlightSearchPage {
+  constructor(private page: Page) {}
+  
+  async goto() {
+    await this.page.goto("/")
+  }
+  
+  async fillOrigin(city: string) {
+    await this.page.getByLabel("مبدا").fill(city)
+    await this.page.getByRole("option", { name: city }).click()
+  }
+  
+  async fillDestination(city: string) {
+    await this.page.getByLabel("مقصد").fill(city)
+    await this.page.getByRole("option", { name: city }).click()
+  }
+  
+  async selectDate(day: string) {
+    await this.page.getByLabel("تاریخ رفت").click()
+    await this.page.getByRole("button", { name: day }).click()
+  }
+  
+  async submit() {
+    await this.page.getByRole("button", { name: "جستجوی پرواز" }).click()
+  }
+  
+  async expectResults() {
+    await expect(this.page).toHaveURL(/\/flights/)
+    await expect(this.page.getByText("پرواز یافت شد")).toBeVisible()
+  }
+}
+
+// Usage in test
+test("flight search with page object", async ({ page }) => {
+  const flightSearch = new FlightSearchPage(page)
+  
+  await flightSearch.goto()
+  await flightSearch.fillOrigin("Tehran")
+  await flightSearch.fillDestination("Mashhad")
+  await flightSearch.selectDate("15")
+  await flightSearch.submit()
+  await flightSearch.expectResults()
+})
+```
+
+### Testing API Responses
+
+```typescript
+test("should handle API errors gracefully", async ({ page }) => {
+  // Mock API response
+  await page.route("**/api/flights/search", async (route) => {
+    await route.fulfill({
+      status: 500,
+      body: JSON.stringify({ error: "Internal server error" })
+    })
+  })
+  
+  await page.goto("/flights?origin=THR&destination=MHD")
+  
+  await expect(page.getByText("خطا در دریافت اطلاعات")).toBeVisible()
+})
+```
+
+### Visual Regression Testing
+
+```typescript
+test("should match flight card screenshot", async ({ page }) => {
+  await page.goto("/flights?origin=THR&destination=MHD")
+  
+  const flightCard = page.locator("[data-testid='flight-card']").first()
+  await expect(flightCard).toHaveScreenshot()
+})
+```
+
+## Best Practices
+
+### Test Organization
+
+1. **Group related tests** with `describe` blocks
+2. **Use descriptive test names** that explain what is being tested
+3. **Follow AAA pattern**: Arrange, Act, Assert
+4. **Keep tests isolated** - each test should be independent
+
+### Writing Testable Code
+
+1. **Separate business logic** from UI components
+2. **Use dependency injection** for easier mocking
+3. **Avoid hardcoding** - use props/config
+4. **Export testable functions** from modules
+
+### Queries Priority
+
+Use queries in this order (React Testing Library):
+1. `getByRole` - Most accessible
+2. `getByLabelText` - Good for forms
+3. `getByPlaceholderText` - For inputs without labels
+4. `getByText` - For non-interactive elements
+5. `getByTestId` - Last resort
+
+### Avoiding Common Pitfalls
+
+**Bad:**
+```typescript
+// Using implementation details
+const button = container.querySelector(".submit-button")
+
+// Not waiting for async updates
+fireEvent.click(button)
+expect(screen.getByText("Success")).toBeInTheDocument()
+```
+
+**Good:**
+```typescript
+// Using accessible queries
+const button = screen.getByRole("button", { name: /submit/i })
+
+// Properly waiting for async updates
+await waitFor(() => {
+  expect(screen.getByText("Success")).toBeInTheDocument()
+})
+```
+
+## Coverage
+
+Run tests with coverage:
+```bash
+pnpm test -- --coverage
+```
+
+Aim for:
+- **80%+ code coverage** for critical paths
+- **100% coverage** for utility functions
+- **Focus on meaningful tests** over coverage numbers
+
+## Running Tests
+
+```bash
+# Unit tests
+pnpm test                    # Run all tests
+pnpm test -- --watch         # Watch mode
+pnpm test Component.test.tsx # Run specific test
+
+# E2E tests
+pnpm e2e:headless           # Run headless
+pnpm e2e:ui                 # Run with UI
+```
+
+## Debugging Tests
+
+### Jest
+```typescript
+// Add debug statements
+import { screen, render } from "@testing-library/react"
+import { debug } from "@testing-library/react"
+
+render(<Component />)
+screen.debug() // Prints DOM
+```
+
+### Playwright
+```typescript
+// Add pause for debugging
+test("debug test", async ({ page }) => {
+  await page.goto("/")
+  await page.pause() // Opens inspector
+})
+```
+
+Run with headed browser:
+```bash
+pnpm e2e:ui
+```

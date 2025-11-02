@@ -29,7 +29,7 @@ module.exports = {
         },
       },
       fontFamily: {
-        'anjoman-max': ['var(--font-anjoman-max)', 'Anjoman Max', 'sans-serif'],
+        "anjoman-max": ["var(--font-anjoman-max)", "Anjoman Max", "sans-serif"],
         body: [
           "Inter",
           "ui-sans-serif",
@@ -81,8 +81,8 @@ module.exports = {
         ...defaultTheme.width,
       },
       borderRadius: {
-        'oval': '100% 100% 70% 70% / 0% 0% 2% 2%',
-        'oval-mobile': '100% 100% 60% 60% / 0% 0% 1.5% 1.5%',
+        oval: "100% 100% 70% 70% / 0% 0% 2% 2%",
+        "oval-mobile": "100% 100% 60% 60% / 0% 0% 1.5% 1.5%",
       },
       keyframes: {
         "accordion-down": {
@@ -97,6 +97,13 @@ module.exports = {
       animation: {
         "accordion-down": "accordion-down 0.3s ease-out",
         "accordion-up": "accordion-up 0.3s ease-out",
+      },
+      screens: {
+        "lg-xl": { min: "1050px", max: "1279px" },
+        "sm-md": { min: "500px", max: "770px" },
+        "sm-md2": { min: "767px", max: "900px" },
+        "md-lg": { min: "720px", max: "1023px" },
+        xs: { min: "0px", max: "400px" },
       },
     },
   },

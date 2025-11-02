@@ -1,0 +1,686 @@
+---
+globs: components/**/*.tsx,app/**/*.tsx
+description: Accessibility (a11y) standards and WCAG compliance
+---
+
+# Accessibility Standards
+
+## WCAG Compliance
+
+Target: **WCAG 2.1 Level AA** compliance
+
+## Semantic HTML
+
+### Use Proper HTML Elements
+
+```tsx
+// ✅ Good - semantic HTML
+<nav>
+  <ul>
+    <li><a href="/flights">Flights</a></li>
+  </ul>
+</nav>
+
+<main>
+  <article>
+    <h1>Flight Search</h1>
+    <section>Content</section>
+  </article>
+</main>
+
+<footer>
+  <p>© 2025 Company</p>
+</footer>
+
+// ❌ Bad - divs for everything
+<div className="nav">
+  <div className="link">Flights</div>
+</div>
+```
+
+### Headings Hierarchy
+
+```tsx
+// ✅ Good - proper heading order
+<h1>Flight Search</h1>
+  <h2>Search Form</h2>
+    <h3>Origin and Destination</h3>
+  <h2>Results</h2>
+    <h3>Available Flights</h3>
+
+// ❌ Bad - skipping levels
+<h1>Title</h1>
+<h3>Subtitle</h3> // Should be h2
+```
+
+## ARIA Attributes
+
+### Labels and Descriptions
+
+```tsx
+// Button with aria-label
+<button aria-label="Close dialog">
+  <XIcon />
+</button>
+
+// Input with aria-describedby
+<input
+  id="email"
+  aria-describedby="email-error"
+  aria-invalid={hasError}
+/>
+{hasError && (
+  <span id="email-error" role="alert">
+    Invalid email address
+  </span>
+)}
+
+// Complex widget
+<div
+  role="combobox"
+  aria-expanded={isOpen}
+  aria-haspopup="listbox"
+  aria-owns="city-list"
+  aria-controls="city-list"
+>
+  <input
+    role="searchbox"
+    aria-autocomplete="list"
+    aria-activedescendant={activeOption}
+  />
+  <ul id="city-list" role="listbox">
+    {options.map(option => (
+      <li key={option.id} role="option" aria-selected={option.selected}>
+        {option.label}
+      </li>
+    ))}
+  </ul>
+</div>
+```
+
+### Live Regions
+
+```tsx
+// Announce dynamic content
+<div aria-live="polite" aria-atomic="true">
+  {flightCount} flights found
+</div>
+
+// For urgent messages
+<div aria-live="assertive" role="alert">
+  Error: Unable to process request
+</div>
+
+// Loading states
+<div aria-live="polite" aria-busy={isLoading}>
+  {isLoading ? "Loading flights..." : `${flights.length} flights loaded`}
+</div>
+```
+
+### Hidden Content
+
+```tsx
+// Visually hidden but available to screen readers
+<span className="sr-only">
+  Current page
+</span>
+
+// Hide from everyone including screen readers
+<div aria-hidden="true">
+  Decorative content
+</div>
+
+// Hide visually but keep accessible
+<style>
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+  }
+</style>
+```
+
+## Keyboard Navigation
+
+### Tab Order
+
+```tsx
+// Ensure logical tab order
+<form>
+  <input tabIndex={0} /> {/* Default, follows DOM order */}
+  <button tabIndex={0}>Submit</button>
+  <div tabIndex={-1}>Not in tab order</div> {/* Can be focused programmatically */}
+  {/* Never use tabIndex > 0 */}
+</form>
+```
+
+### Keyboard Handlers
+
+```tsx
+function AccessibleButton({ onClick, children }: Props) {
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    // Activate on Enter or Space
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault()
+      onClick()
+    }
+  }
+  
+  return (
+    <button
+      onClick={onClick}
+      onKeyDown={handleKeyDown}
+      type="button"
+    >
+      {children}
+    </button>
+  )
+}
+
+// Arrow key navigation for custom select
+function CustomSelect() {
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    switch (e.key) {
+      case "ArrowDown":
+        e.preventDefault()
+        moveToNext()
+        break
+      case "ArrowUp":
+        e.preventDefault()
+        moveToPrevious()
+        break
+      case "Enter":
+        e.preventDefault()
+        selectCurrent()
+        break
+      case "Escape":
+        e.preventDefault()
+        close()
+        break
+    }
+  }
+  
+  return <div onKeyDown={handleKeyDown}>...</div>
+}
+```
+
+### Focus Management
+
+```tsx
+import { useRef, useEffect } from "react"
+
+function Modal({ isOpen, onClose }: Props) {
+  const modalRef = useRef<HTMLDivElement>(null)
+  const previousFocusRef = useRef<HTMLElement | null>(null)
+  
+  useEffect(() => {
+    if (isOpen) {
+      // Save current focus
+      previousFocusRef.current = document.activeElement as HTMLElement
+      
+      // Focus modal
+      modalRef.current?.focus()
+      
+      // Trap focus within modal
+      const handleTab = (e: KeyboardEvent) => {
+        if (e.key === "Tab") {
+          const focusableElements = modalRef.current?.querySelectorAll(
+            'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+          )
+          const firstElement = focusableElements?.[0] as HTMLElement
+          const lastElement = focusableElements?.[focusableElements.length - 1] as HTMLElement
+          
+          if (e.shiftKey && document.activeElement === firstElement) {
+            e.preventDefault()
+            lastElement?.focus()
+          } else if (!e.shiftKey && document.activeElement === lastElement) {
+            e.preventDefault()
+            firstElement?.focus()
+          }
+        }
+      }
+      
+      document.addEventListener("keydown", handleTab)
+      return () => document.removeEventListener("keydown", handleTab)
+    } else {
+      // Restore focus
+      previousFocusRef.current?.focus()
+    }
+  }, [isOpen])
+  
+  return (
+    <div
+      ref={modalRef}
+      role="dialog"
+      aria-modal="true"
+      tabIndex={-1}
+    >
+      {/* Modal content */}
+    </div>
+  )
+}
+```
+
+### Skip Links
+
+```tsx
+// app/layout.tsx
+export default function RootLayout({ children }: Props) {
+  return (
+    <html>
+      <body>
+        <a href="#main-content" className="skip-link">
+          Skip to main content
+        </a>
+        <Header />
+        <main id="main-content" tabIndex={-1}>
+          {children}
+        </main>
+        <Footer />
+      </body>
+    </html>
+  )
+}
+
+// styles
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  background: #000;
+  color: #fff;
+  padding: 8px;
+  z-index: 100;
+}
+
+.skip-link:focus {
+  top: 0;
+}
+```
+
+## Forms Accessibility
+
+### Labels
+
+```tsx
+// ✅ Good - explicit label
+<label htmlFor="email">Email</label>
+<input id="email" type="email" />
+
+// ✅ Good - wrapped label
+<label>
+  Email
+  <input type="email" />
+</label>
+
+// ✅ Good - aria-label for icon buttons
+<button aria-label="Search">
+  <SearchIcon />
+</button>
+
+// ❌ Bad - no label
+<input type="email" placeholder="Email" />
+```
+
+### Required Fields
+
+```tsx
+<label htmlFor="email">
+  Email
+  <span aria-label="required">*</span>
+</label>
+<input
+  id="email"
+  type="email"
+  required
+  aria-required="true"
+/>
+
+// Or use aria-label
+<input
+  id="email"
+  type="email"
+  aria-label="Email (required)"
+  required
+/>
+```
+
+### Error Messages
+
+```tsx
+function FormField({ error }: Props) {
+  const errorId = "email-error"
+  
+  return (
+    <div>
+      <label htmlFor="email">Email</label>
+      <input
+        id="email"
+        type="email"
+        aria-invalid={!!error}
+        aria-describedby={error ? errorId : undefined}
+      />
+      {error && (
+        <span id={errorId} role="alert" className="error">
+          {error}
+        </span>
+      )}
+    </div>
+  )
+}
+```
+
+### Fieldsets and Legends
+
+```tsx
+<fieldset>
+  <legend>Passenger Information</legend>
+  
+  <label htmlFor="adult-count">Adults</label>
+  <input id="adult-count" type="number" min="1" />
+  
+  <label htmlFor="child-count">Children</label>
+  <input id="child-count" type="number" min="0" />
+</fieldset>
+```
+
+## Color and Contrast
+
+### Contrast Ratios
+
+- **Normal text**: 4.5:1 minimum
+- **Large text** (18pt+ or 14pt+ bold): 3:1 minimum
+- **UI components and graphics**: 3:1 minimum
+
+```tsx
+// ✅ Good - sufficient contrast
+<button className="bg-primary-500 text-white">
+  Submit
+</button>
+
+// ❌ Bad - insufficient contrast
+<button className="bg-gray-200 text-gray-300">
+  Submit
+</button>
+```
+
+### Don't Rely on Color Alone
+
+```tsx
+// ✅ Good - uses color + icon + text
+<div className="text-red-500">
+  <ErrorIcon />
+  <span>Error: Invalid input</span>
+</div>
+
+// ❌ Bad - color only
+<div className="text-red-500">
+  Invalid input
+</div>
+```
+
+## Images and Media
+
+### Alt Text
+
+```tsx
+// Informative images
+<Image
+  src="/airline-logo.png"
+  alt="Emirates Airlines logo"
+  width={100}
+  height={50}
+/>
+
+// Decorative images
+<Image
+  src="/decoration.png"
+  alt="" // Empty alt for decorative images
+  width={100}
+  height={50}
+  aria-hidden="true"
+/>
+
+// Complex images
+<figure>
+  <Image
+    src="/chart.png"
+    alt="Price trend chart showing decrease from July to August"
+    width={400}
+    height={300}
+  />
+  <figcaption>
+    Detailed description: Flight prices decreased 20% between July and August
+  </figcaption>
+</figure>
+```
+
+### Video and Audio
+
+```tsx
+<video controls>
+  <source src="intro.mp4" type="video/mp4" />
+  <track
+    kind="captions"
+    src="captions.vtt"
+    srcLang="fa"
+    label="Persian"
+    default
+  />
+  Your browser doesn't support video.
+</video>
+```
+
+## RTL (Right-to-Left) Support
+
+```tsx
+// Set document direction
+<html dir="rtl" lang="fa">
+
+// Component with RTL support
+function FlightCard() {
+  return (
+    <div dir="rtl" className="text-right">
+      {/* Use logical properties */}
+      <div className="ps-4 me-2">
+        {/* ps = padding-inline-start (right in RTL) */}
+        {/* me = margin-inline-end (left in RTL) */}
+      </div>
+    </div>
+  )
+}
+
+// Icons that should flip in RTL
+<ArrowIcon className="rtl:scale-x-[-1]" />
+```
+
+## Screen Reader Testing
+
+### Announce Loading States
+
+```tsx
+function FlightSearch() {
+  const [isLoading, setIsLoading] = useState(false)
+  const [results, setResults] = useState([])
+  
+  return (
+    <>
+      <div
+        role="status"
+        aria-live="polite"
+        aria-atomic="true"
+      >
+        {isLoading && "Searching for flights..."}
+        {!isLoading && results.length > 0 && `Found ${results.length} flights`}
+        {!isLoading && results.length === 0 && "No flights found"}
+      </div>
+      
+      <div aria-busy={isLoading}>
+        {results.map(result => <FlightCard key={result.id} {...result} />)}
+      </div>
+    </>
+  )
+}
+```
+
+### Accessible Names
+
+```tsx
+// Ensure all interactive elements have accessible names
+
+// Button with text
+<button>Submit</button>
+
+// Button with icon
+<button aria-label="Close">
+  <XIcon aria-hidden="true" />
+</button>
+
+// Link with icon
+<a href="/help" aria-label="Help and support">
+  <HelpIcon aria-hidden="true" />
+</a>
+```
+
+## Testing Accessibility
+
+### Automated Tools
+
+```bash
+# Install axe-core for testing
+pnpm add -D @axe-core/react
+```
+
+```tsx
+// jest.setup.js
+import { configureAxe } from "jest-axe"
+
+global.axe = configureAxe({
+  rules: {
+    // Customize rules
+  }
+})
+
+// Component.test.tsx
+import { axe } from "jest-axe"
+
+it("should have no accessibility violations", async () => {
+  const { container } = render(<Component />)
+  const results = await axe(container)
+  expect(results).toHaveNoViolations()
+})
+```
+
+### Manual Testing
+
+1. **Keyboard only navigation**:
+   - Tab through all interactive elements
+   - Use Enter/Space to activate
+   - Use arrow keys where appropriate
+   - Escape to close modals/menus
+
+2. **Screen reader testing**:
+   - NVDA (Windows) - Free
+   - JAWS (Windows) - Commercial
+   - VoiceOver (macOS/iOS) - Built-in
+   - TalkBack (Android) - Built-in
+
+3. **Zoom to 200%**:
+   - Ensure content remains usable
+   - No horizontal scrolling
+   - Text doesn't overlap
+
+4. **Color blindness simulation**:
+   - Use browser extensions
+   - Check contrast
+
+## Common Patterns
+
+### Accessible Modal
+
+```tsx
+import { Dialog } from "@radix-ui/react-dialog"
+
+function AccessibleModal({ isOpen, onClose, children }: Props) {
+  return (
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <Dialog.Portal>
+        <Dialog.Overlay className="fixed inset-0 bg-black/50" />
+        <Dialog.Content
+          className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
+          aria-describedby="modal-description"
+        >
+          <Dialog.Title>Modal Title</Dialog.Title>
+          <Dialog.Description id="modal-description">
+            Modal description
+          </Dialog.Description>
+          {children}
+          <Dialog.Close aria-label="Close">
+            <XIcon />
+          </Dialog.Close>
+        </Dialog.Content>
+      </Dialog.Portal>
+    </Dialog>
+  )
+}
+```
+
+### Accessible Dropdown
+
+Reference Radix UI components which are accessible by default.
+
+### Accessible Tabs
+
+```tsx
+<div role="tablist" aria-label="Flight information">
+  <button
+    role="tab"
+    aria-selected={activeTab === "details"}
+    aria-controls="details-panel"
+    id="details-tab"
+    onClick={() => setActiveTab("details")}
+  >
+    Details
+  </button>
+  
+  <div
+    role="tabpanel"
+    id="details-panel"
+    aria-labelledby="details-tab"
+    hidden={activeTab !== "details"}
+  >
+    Details content
+  </div>
+</div>
+```
+
+## Resources
+
+- [WCAG 2.1 Guidelines](https://www.w3.org/WAI/WCAG21/quickref/)
+- [ARIA Authoring Practices](https://www.w3.org/WAI/ARIA/apg/)
+- [Radix UI](https://www.radix-ui.com/) - Accessible component primitives
+- [axe DevTools](https://www.deque.com/axe/devtools/)
+- [WebAIM Contrast Checker](https://webaim.org/resources/contrastchecker/)
+
+## Checklist
+
+- [ ] All images have appropriate alt text
+- [ ] All form inputs have labels
+- [ ] Color is not the only means of conveying information
+- [ ] Content is keyboard accessible
+- [ ] Focus is visible and logical
+- [ ] ARIA attributes are used correctly
+- [ ] Headings are in logical order
+- [ ] Live regions announce dynamic content
+- [ ] Modals trap focus and restore it on close
+- [ ] Skip links are provided
+- [ ] Content works at 200% zoom
+- [ ] Automated accessibility tests pass
+- [ ] Manual keyboard testing completed
+- [ ] Screen reader testing completed

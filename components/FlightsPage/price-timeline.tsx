@@ -1,12 +1,72 @@
 "use client"
 
-// import { ArrowLeft2, ArrowRight2 } from "iconsax-react"
 import Image from "next/image"
-import { useRouter } from "next/navigation"
-import React, { useRef, useState } from "react"
+import { useRouter, useSearchParams } from "next/navigation"
+import React, { useEffect, useRef, useState } from "react"
+
+// import { ArrowLeft2, ArrowRight2 } from "iconsax-react"
+
+interface FlightData {
+  price: number
+  date: string
+  origin: string
+  destination: string
+}
+
+interface FlightResponse {
+  results: FlightData[]
+}
+
 import img from "@/public/images/arrow-right.svg"
+import { apiFetch } from "@/services/api"
 import { formatToJalali } from "@/utils/dateUtils"
 import { createFlightSearchUrl } from "@/utils/navigation"
+import { englishToFarsiNumber } from "@/utils/numbers"
+
+export const fetchprices = async (
+  referenceDate: string,
+  originCityCode: string,
+  destinationCityCode: string,
+  setData: React.Dispatch<React.SetStateAction<FlightData[]>>,
+  setIsLoading: React.Dispatch<React.SetStateAction<boolean>>
+) => {
+  setIsLoading(true)
+  // Dynamically adjust backward_day to avoid including days before today
+  const today = new Date()
+  today.setHours(0, 0, 0, 0)
+  const refDate = new Date(referenceDate)
+  refDate.setHours(0, 0, 0, 0)
+
+  const finalReferenceDate = refDate < today ? today : refDate
+  const finalReferenceDateStr = finalReferenceDate.toISOString().split("T")[0]
+
+  const timeDiff = refDate.getTime() - today.getTime()
+  const daysDiff = Math.floor(timeDiff / (1000 * 60 * 60 * 24))
+  const safeBackwardDay = Math.max(-1, daysDiff - 1)
+  const forward = safeBackwardDay > 7 ? 11 : 15 - safeBackwardDay
+
+  const query = new URLSearchParams({
+    origin: originCityCode,
+    destination: destinationCityCode,
+    reference_date: finalReferenceDateStr || "",
+    forward_day: forward.toString(),
+    backward_day: safeBackwardDay > 10 ? 10 : safeBackwardDay.toString(),
+  } as Record<string, string>).toString()
+  try {
+    console.log(query)
+    const response: FlightResponse | undefined = await apiFetch(`/flights/cheapest?${query}`)
+    // console.log("Cheapest flight data:", response)
+    if (response) {
+      setData(response.results || [])
+    } else {
+      console.error("No flight data returned")
+      setData([])
+    }
+  } catch (err) {
+    console.error("Error fetching cheapest flights", err)
+  }
+  setIsLoading(false)
+}
 
 const Timeline = ({
   originCityCode,
@@ -15,7 +75,10 @@ const Timeline = ({
   adult,
   child,
   infant,
-  autoScrollToSelected,
+  isLoading,
+  setIsLoading,
+  data,
+  setData,
 }: {
   originCityCode: string
   destinationCityCode: string
@@ -23,29 +86,21 @@ const Timeline = ({
   adult: string
   child: string
   infant: string
-  autoScrollToSelected?: boolean
+  isLoading: boolean
+  setIsLoading: React.Dispatch<React.SetStateAction<boolean>>
+  data: FlightData[]
+  setData: React.Dispatch<React.SetStateAction<FlightData[]>>
 }) => {
-  const scrollRef = useRef<HTMLDivElement>(null)
   const router = useRouter()
 
   // Initialize the selected date from the 'departing' query param
-  const [selectedDay, setSelectedDay] = useState<string>(selectedDate)
+  const searchParams = useSearchParams()
+  const departingParam = searchParams.get("departing") || selectedDate
+  const [selectedDay, setSelectedDay] = useState<string>(departingParam)
 
-  React.useEffect(() => {
-    setSelectedDay(selectedDate)
-  }, [selectedDate])
-
-  // Scroll to selected item if autoScrollToSelected is true
-  React.useEffect(() => {
-    if (autoScrollToSelected && scrollRef.current) {
-      const selectedEl = scrollRef.current.querySelector('[data-selected="true"]') as HTMLElement;
-      if (selectedEl) {
-        const container = scrollRef.current;
-        const offsetLeft = selectedEl.offsetLeft - container.offsetWidth / 2 + selectedEl.offsetWidth / 2;
-        container.scrollTo({ left: offsetLeft, behavior: 'smooth' });
-      }
-    }
-  }, [selectedDay, autoScrollToSelected]);
+  // Calculate the min and max price
+  const minPrice = Math.min(...data.filter((item) => item.price).map((item) => item.price || Infinity))
+  const maxPrice = Math.max(...data.filter((item) => item.price).map((item) => item.price || -Infinity))
 
   // Passengers count
   const passengers = {
@@ -54,60 +109,121 @@ const Timeline = ({
     infant: parseInt(infant, 10),
   }
 
-  const data = [
-    { day: "شنبه", departuring: "2025-04-14", price: 2389 },
-    { day: "یکشنبه", departuring: "2025-04-15", price: 2790 },
-    { day: "دوشنبه", departuring: "2025-04-16", price: 2792 },
-    { day: "سه‌شنبه", departuring: "2025-04-17", price: 2791 },
-    { day: "چهارشنبه", departuring: "2025-04-18", price: 2800 },
-    { day: "پنجشنبه", departuring: "2025-04-19", price: 2787 },
-    { day: "جمعه", departuring: "2025-04-20", price: 2395 },
-    { day: "شنبه", departuring: "2025-04-21", price: 2996 },
-    { day: "یکشنبه", departuring: "2025-04-22", price: 2794 },
-    { day: "دوشنبه", departuring: "2025-04-23", price: 2803 },
-    { day: "سه‌شنبه", departuring: "2025-04-24", price: 2799 },
-    { day: "چهارشنبه", departuring: "2025-04-25" },
-    { day: "پنجشنبه", departuring: "2025-04-26", price: 2801 },
-    { day: "جمعه", departuring: "2025-04-27", price: 3000 },
-  ]
+  // Update selectedDay whenever selectedDate (departingParam) changes
+  useEffect(() => {
+    setSelectedDay(selectedDate)
+  }, [selectedDate])
 
-  // Calculate the min and max price
-  const minPrice = Math.min(...data.filter((item) => item.price).map((item) => item.price || Infinity))
-  const maxPrice = Math.max(...data.filter((item) => item.price).map((item) => item.price || -Infinity))
+  // Fetch cheapest flights for timeline
+  useEffect(() => {
+    fetchprices(selectedDate, originCityCode, destinationCityCode, setData, setIsLoading)
+  }, []) // runs once on mount
 
-  // Convert digits to Persian numerals
-  const formatPrice = (price: number) => {
-    const persianDigits = ["۰", "۱", "۲", "۳", "۴", "۵", "۶", "۷", "۸", "۹"]
-    return price
-      .toLocaleString("en-US")
-      .split("")
-      .map((digit) => persianDigits[parseInt(digit)] || digit)
-      .join("")
-  }
+  const scrollRef = useRef<HTMLDivElement>(null!)
 
-  // Handle date selection and update the URL
+  useEffect(() => {
+    const slider = scrollRef.current
+    if (!slider) return
+
+    let isDown = false
+    let startX = 0
+    let scrollLeft = 0
+    let currentX = 0
+    let ticking = false
+
+    const updateScroll = () => {
+      const walk = currentX - startX
+      slider.scrollLeft = scrollLeft - walk
+      ticking = false
+    }
+
+    const onMouseDown = (e: MouseEvent) => {
+      isDown = true
+      startX = e.pageX - slider.offsetLeft
+      scrollLeft = slider.scrollLeft
+      slider.style.cursor = "grabbing"
+      slider.style.userSelect = "none"
+    }
+
+    const onMouseLeave = () => {
+      isDown = false
+      slider.style.cursor = "grab"
+      slider.style.removeProperty("user-select")
+    }
+
+    const onMouseUp = () => {
+      isDown = false
+      slider.style.cursor = "grab"
+      slider.style.removeProperty("user-select")
+    }
+
+    const onMouseMove = (e: MouseEvent) => {
+      if (!isDown) return
+      e.preventDefault()
+      currentX = e.pageX - slider.offsetLeft
+
+      if (!ticking) {
+        window.requestAnimationFrame(updateScroll)
+        ticking = true
+      }
+    }
+
+    slider.style.cursor = "grab"
+    slider.addEventListener("mousedown", onMouseDown)
+    slider.addEventListener("mouseleave", onMouseLeave)
+    slider.addEventListener("mouseup", onMouseUp)
+    slider.addEventListener("mousemove", onMouseMove)
+
+    return () => {
+      slider.removeEventListener("mousedown", onMouseDown)
+      slider.removeEventListener("mouseleave", onMouseLeave)
+      slider.removeEventListener("mouseup", onMouseUp)
+      slider.removeEventListener("mousemove", onMouseMove)
+    }
+  }, [])
+
   const handleDateSelection = (newDate: string) => {
-    setSelectedDay(newDate)
+    const dates = data.map((item) => item.date)
+    const isEdge = newDate === dates[0] || newDate === dates[dates.length - 1]
+
+    if (isEdge) {
+      fetchprices(newDate, originCityCode, destinationCityCode, setData, setIsLoading)
+    }
 
     const url = createFlightSearchUrl(originCityCode, destinationCityCode, new Date(newDate), passengers)
-
     router.push(url)
+
+    setSelectedDay(newDate)
   }
 
+  // const onRefresh = () => {
+  //   fetchprices(selectedDay, originCityCode, destinationCityCode, setData, setIsLoading)
+  // }
+
+  // Auto-scroll the selected date into view after data is fetched and DOM is updated
+  useEffect(() => {
+    if (!scrollRef.current) return
+    const selectedEl = scrollRef.current.querySelector('[data-selected="true"]') as HTMLElement
+    if (selectedEl) {
+      const scrollContainer = scrollRef.current
+      const offset = selectedEl.offsetLeft - scrollContainer.offsetWidth / 2 + selectedEl.offsetWidth / 2
+      scrollContainer.scrollTo({ left: offset, behavior: "smooth" })
+    }
+  }, [selectedDay, data])
   return (
-    <div className="relative max-w-screen items-center justify-center">
+    <div id="scroll-container" className="relative max-w-screen items-center justify-center">
       {/* Gradient */}
       <div className="pointer-events-none absolute inset-0 z-9 flex w-full justify-between">
-        <div className="h-full w-[69px] bg-gradient-to-l from-white to-transparent lg:rounded-2xl"></div>
-        <div className="h-full w-[69px] bg-gradient-to-r from-white to-transparent lg:rounded-2xl"></div>
+        <div className="h-full w-[73px] bg-gradient-to-l from-white to-transparent lg:rounded-2xl"></div>
+        <div className="h-full w-[73px] bg-gradient-to-r from-white to-transparent lg:rounded-2xl"></div>
       </div>
 
       {/* buttons */}
       <Image
         src={img}
         alt="scroll left"
-        width={24}
-        height={24}
+        width={28}
+        height={28}
         onClick={() => {
           if (scrollRef.current) {
             scrollRef.current.scrollBy({ left: -200, behavior: "smooth" })
@@ -118,8 +234,8 @@ const Timeline = ({
       <Image
         src={img}
         alt="scroll right"
-        width={24}
-        height={24}
+        width={28}
+        height={28}
         onClick={() => {
           if (scrollRef.current) {
             scrollRef.current.scrollBy({ left: 200, behavior: "smooth" })
@@ -131,54 +247,78 @@ const Timeline = ({
       {/* Timeline scroll area */}
       <div
         ref={scrollRef}
-        className="bg-Shade-White outline-Gray-N100 relative inline-flex h-[64px] w-full snap-x snap-mandatory flex-nowrap items-center gap-3 overflow-x-auto scroll-smooth py-3 outline outline-offset-[-1px] md:h-[80px] lg:w-[1036px] lg:rounded-2xl"
+        className="bg-Shade-White relative inline-flex h-[74px] w-full cursor-grab snap-x snap-mandatory flex-nowrap items-center gap-3 overflow-x-auto scroll-smooth py-3 active:cursor-grabbing md:h-[85px] lg:rounded-2xl"
+        style={{ scrollbarWidth: "none" }}
       >
         <div className="flex snap-end gap-3 px-3">
-          {data.map((item, index) => {
-            const isSelected = selectedDay === item.departuring
-            let priceColor = "text-gray-700" // Default color
-
-            if (item.price === minPrice) {
-              priceColor = "text-Success-s600" // Green for min price
-            } else if (item.price === maxPrice) {
-              priceColor = "text-Error-E600" // Red for max price
-            }
-            return (
-              <div
-                key={index}
-                data-selected={isSelected}
-                onClick={() => handleDateSelection(item.departuring)}
-                className={`inline-flex h-[50px] w-[87px] shrink-0 cursor-pointer snap-end flex-col items-center justify-center rounded-sm px-1 py-2 outline-offset-[-1px] md:h-[57] md:w-[113px] ${
-                  isSelected ? "bg-Primary-P50 border-Primary-P300 border-2" : "bg-Gray-N50 outline-Gray-N200 outline"
-                } `}
-              >
+          {isLoading
+            ? Array.from({ length: 8 }).map((_, index) => (
                 <div
-                  className={`justify-center text-center ${
-                    isSelected ? "text-Primary-P500main" : "text-Gray-N500"
-                  } text-[11px] leading-none font-medium`}
+                  key={index}
+                  className="bg-Gray-N100 inline-flex h-[50px] w-[87px] shrink-0 animate-pulse flex-col items-center justify-center rounded-sm md:h-[57px] md:w-[113px]"
                 >
-                  <span className="inline md:hidden">
-                    {`${formatToJalali(new Date(item.departuring))?.split(" ")[0]?.[0]}- ${formatToJalali(
-                      new Date(item.departuring)
-                    )?.split(" ")[1]} ${formatToJalali(new Date(item.departuring))?.split(" ")[2]}`}
-                  </span>
+                  <div className="mb-1 h-3 w-14 rounded bg-gray-300" />
+                  <div className="h-4 w-10 rounded bg-gray-300" />
+                </div>
+              ))
+            : data.map((item, index) => {
+                const isSelected = selectedDay === item.date
+                let priceColor = "text-gray-700" // Default color
 
-                  <span className="hidden md:inline">
-                    {`${formatToJalali(new Date(item.departuring)).split(" ")[0]}- ${
-                      formatToJalali(new Date(item.departuring)).split(" ")[1]
-                    } ${formatToJalali(new Date(item.departuring)).split(" ")[2]}`}
-                  </span>
-                </div>
-                <div
-                  className={`mt-1 justify-center text-center ${
-                    isSelected ? "text-Primary-P500main" : `${priceColor}`
-                  } text-[13px] leading-normal font-medium`}
-                >
-                  {item.price ? formatPrice(item.price) : "-"}
-                </div>
-              </div>
-            )
-          })}
+                if (item.price === minPrice) {
+                  priceColor = "text-Success-s600" // Green for min price
+                } else if (item.price === maxPrice) {
+                  priceColor = "text-Error-E600" // Red for max price
+                }
+
+                // Get the Jalali date and day of the week
+                const jalaliDate = formatToJalali(new Date(item.date))
+                return (
+                  <div
+                    key={index}
+                    data-selected={isSelected}
+                    onClick={() => handleDateSelection(item.date)}
+                    className={`inline-flex h-[50px] w-[87px] shrink-0 cursor-pointer snap-end flex-col items-center justify-center rounded-sm px-1 py-2 outline-offset-[-1px] md:h-[57] md:w-[113px] ${
+                      isSelected
+                        ? "bg-Primary-P50 border-Primary-P300 border-2"
+                        : "bg-Gray-N50 outline-Gray-N200 outline"
+                    } `}
+                  >
+                    <div
+                      className={`justify-center text-center [user-select:none] select-none ${
+                        isSelected ? "text-Primary-P500main" : "text-Gray-N500"
+                      } text-[11px] leading-none font-medium`}
+                    >
+                      <span className="inline select-none md:hidden">
+                        {`${formatToJalali(new Date(item.date))?.split(" ")[0]?.[0]}- ${formatToJalali(
+                          new Date(item.date)
+                        )?.split(" ")[1]} ${formatToJalali(new Date(item.date))?.split(" ")[2]}`}
+                      </span>
+
+                      <span className="hidden select-none md:inline">
+                        {jalaliDate
+                          ? `${jalaliDate.split(" ")[0]} - ${jalaliDate.split(" ")[1]} ${jalaliDate.split(" ")[2]}`
+                          : "-"}
+                      </span>
+                    </div>
+                    <div
+                      className={`mt-1 justify-center text-center [user-select:none] select-none ${
+                        isSelected ? "text-Primary-P500main" : `${priceColor}`
+                      } text-[13px] leading-normal font-medium`}
+                    >
+                      {item.price === 0
+                        ? "-"
+                        : item.price
+                        ? englishToFarsiNumber(
+                            Math.round(item.price / 1000)
+                              .toString()
+                              .replace(/\B(?=(\d{3})+(?!\d))/g, "،")
+                          )
+                        : "-"}
+                    </div>
+                  </div>
+                )
+              })}
         </div>
       </div>
     </div>

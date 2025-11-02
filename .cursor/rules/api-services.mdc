@@ -1,0 +1,476 @@
+---
+globs: app/api/**/*,services/**/*
+description: API routes and service layer patterns
+---
+
+# API Routes and Services
+
+## Next.js App Router API Routes
+
+### File Structure
+- API routes live in `/app/api`
+- Each route must export named functions: `GET`, `POST`, `PUT`, `DELETE`, etc.
+- File must be named `route.ts`
+
+Example structure:
+```
+/app/api
+  /health
+    route.ts
+  /flights
+    /search
+      route.ts
+```
+
+### Route Handler Pattern
+
+Reference: [app/api/health/route.ts](mdc:app/api/health/route.ts)
+
+```typescript
+import { NextRequest, NextResponse } from "next/server"
+
+// GET handler
+export async function GET(request: NextRequest) {
+  try {
+    // Extract query params
+    const searchParams = request.nextUrl.searchParams
+    const query = searchParams.get("query")
+    
+    // Business logic
+    const data = await fetchData(query)
+    
+    // Return successful response
+    return NextResponse.json(
+      { success: true, data },
+      { status: 200 }
+    )
+  } catch (error) {
+    // Error handling
+    console.error("API Error:", error)
+    return NextResponse.json(
+      { success: false, error: "Internal server error" },
+      { status: 500 }
+    )
+  }
+}
+
+// POST handler
+export async function POST(request: NextRequest) {
+  try {
+    // Parse request body
+    const body = await request.json()
+    
+    // Validate input (use Zod)
+    const validatedData = schema.parse(body)
+    
+    // Process request
+    const result = await processData(validatedData)
+    
+    return NextResponse.json(
+      { success: true, data: result },
+      { status: 201 }
+    )
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      return NextResponse.json(
+        { success: false, errors: error.errors },
+        { status: 400 }
+      )
+    }
+    
+    return NextResponse.json(
+      { success: false, error: "Internal server error" },
+      { status: 500 }
+    )
+  }
+}
+```
+
+### Dynamic Route Parameters
+```typescript
+// /app/api/flights/[id]/route.ts
+type Params = {
+  params: {
+    id: string
+  }
+}
+
+export async function GET(
+  request: NextRequest,
+  { params }: Params
+) {
+  const { id } = params
+  // Use id in logic
+}
+```
+
+### Request/Response Patterns
+
+#### Reading Request Data
+```typescript
+// Query parameters
+const searchParams = request.nextUrl.searchParams
+const page = searchParams.get("page") ?? "1"
+
+// Headers
+const authHeader = request.headers.get("authorization")
+
+// JSON body
+const body = await request.json()
+
+// FormData
+const formData = await request.formData()
+const file = formData.get("file")
+```
+
+#### Sending Responses
+```typescript
+// JSON response
+return NextResponse.json({ data })
+
+// With status code
+return NextResponse.json({ error: "Not found" }, { status: 404 })
+
+// With headers
+return NextResponse.json({ data }, {
+  status: 200,
+  headers: {
+    "Cache-Control": "public, s-maxage=60",
+    "Content-Type": "application/json"
+  }
+})
+
+// Redirect
+return NextResponse.redirect(new URL("/login", request.url))
+```
+
+### Error Handling
+
+Always handle errors gracefully:
+```typescript
+export async function GET(request: NextRequest) {
+  try {
+    const data = await fetchData()
+    return NextResponse.json({ data })
+  } catch (error) {
+    // Log error with context
+    console.error("Failed to fetch data:", {
+      error: error instanceof Error ? error.message : "Unknown error",
+      url: request.url,
+      timestamp: new Date().toISOString()
+    })
+    
+    // Return user-friendly error
+    return NextResponse.json(
+      { 
+        success: false, 
+        error: "Unable to fetch data. Please try again later." 
+      },
+      { status: 500 }
+    )
+  }
+}
+```
+
+### Input Validation
+
+Use Zod for input validation:
+```typescript
+import { z } from "zod"
+
+const flightSearchSchema = z.object({
+  origin: z.string().min(3).max(3),
+  destination: z.string().min(3).max(3),
+  departureDate: z.string().datetime(),
+  passengers: z.object({
+    adult: z.number().int().min(1).max(9),
+    child: z.number().int().min(0).max(9),
+    infant: z.number().int().min(0).max(9)
+  })
+})
+
+export async function POST(request: NextRequest) {
+  try {
+    const body = await request.json()
+    const validated = flightSearchSchema.parse(body)
+    
+    // Use validated data
+    const results = await searchFlights(validated)
+    return NextResponse.json({ results })
+    
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      return NextResponse.json(
+        { 
+          success: false, 
+          errors: error.errors.map(e => ({
+            field: e.path.join("."),
+            message: e.message
+          }))
+        },
+        { status: 400 }
+      )
+    }
+    
+    throw error
+  }
+}
+```
+
+## Service Layer
+
+Service files live in `/services` directory.
+
+### API Service Pattern
+
+Reference: [services/api/index.ts](mdc:services/api/index.ts)
+
+```typescript
+import axios, { AxiosInstance } from "axios"
+
+class FlightService {
+  private client: AxiosInstance
+  
+  constructor() {
+    this.client = axios.create({
+      baseURL: process.env.NEXT_PUBLIC_API_BASE_URL,
+      timeout: 10000,
+      headers: {
+        "Content-Type": "application/json"
+      }
+    })
+    
+    // Add interceptors
+    this.setupInterceptors()
+  }
+  
+  private setupInterceptors() {
+    // Request interceptor
+    this.client.interceptors.request.use(
+      (config) => {
+        // Add auth token if available
+        const token = getAuthToken()
+        if (token) {
+          config.headers.Authorization = `Bearer ${token}`
+        }
+        return config
+      },
+      (error) => Promise.reject(error)
+    )
+    
+    // Response interceptor
+    this.client.interceptors.response.use(
+      (response) => response,
+      (error) => {
+        // Handle common errors
+        if (error.response?.status === 401) {
+          // Handle unauthorized
+          handleUnauthorized()
+        }
+        return Promise.reject(error)
+      }
+    )
+  }
+  
+  async searchFlights(params: FlightSearchParams): Promise<FlightResult[]> {
+    try {
+      const response = await this.client.get("/flights/search", { params })
+      return response.data
+    } catch (error) {
+      console.error("Flight search failed:", error)
+      throw new Error("Unable to search flights")
+    }
+  }
+}
+
+// Export singleton instance
+export const flightService = new FlightService()
+```
+
+### Storage Service Pattern
+
+Reference: [services/storage/StorageService.ts](mdc:services/storage/StorageService.ts)
+
+```typescript
+class StorageService {
+  private prefix: string
+  
+  constructor(prefix = "app") {
+    this.prefix = prefix
+  }
+  
+  private getKey(key: string): string {
+    return `${this.prefix}:${key}`
+  }
+  
+  get<T>(key: string, defaultValue?: T): T | null {
+    if (typeof window === "undefined") return defaultValue ?? null
+    
+    try {
+      const item = localStorage.getItem(this.getKey(key))
+      return item ? JSON.parse(item) : defaultValue ?? null
+    } catch (error) {
+      console.error(`Storage get error for key "${key}":`, error)
+      return defaultValue ?? null
+    }
+  }
+  
+  set<T>(key: string, value: T): boolean {
+    if (typeof window === "undefined") return false
+    
+    try {
+      localStorage.setItem(this.getKey(key), JSON.stringify(value))
+      return true
+    } catch (error) {
+      console.error(`Storage set error for key "${key}":`, error)
+      return false
+    }
+  }
+  
+  remove(key: string): boolean {
+    if (typeof window === "undefined") return false
+    
+    try {
+      localStorage.removeItem(this.getKey(key))
+      return true
+    } catch (error) {
+      console.error(`Storage remove error for key "${key}":`, error)
+      return false
+    }
+  }
+  
+  clear(): boolean {
+    if (typeof window === "undefined") return false
+    
+    try {
+      localStorage.clear()
+      return true
+    } catch (error) {
+      console.error("Storage clear error:", error)
+      return false
+    }
+  }
+}
+
+export const storageService = new StorageService()
+```
+
+## Data Fetching in Components
+
+### Using TanStack Query
+
+```typescript
+import { useQuery, useMutation } from "@tanstack/react-query"
+import { flightService } from "@/services/api"
+
+// Query
+function useFlightSearch(params: FlightSearchParams) {
+  return useQuery({
+    queryKey: ["flights", "search", params],
+    queryFn: () => flightService.searchFlights(params),
+    enabled: !!params.origin && !!params.destination,
+    staleTime: 1000 * 60 * 5, // 5 minutes
+    retry: 2
+  })
+}
+
+// Mutation
+function useBookFlight() {
+  return useMutation({
+    mutationFn: (flightId: string) => flightService.bookFlight(flightId),
+    onSuccess: (data) => {
+      // Invalidate and refetch
+      queryClient.invalidateQueries({ queryKey: ["bookings"] })
+    },
+    onError: (error) => {
+      // Handle error
+      console.error("Booking failed:", error)
+    }
+  })
+}
+
+// Usage in component
+export function FlightSearch() {
+  const [params, setParams] = useState<FlightSearchParams>(defaultParams)
+  const { data, isLoading, error } = useFlightSearch(params)
+  
+  if (isLoading) return <Spinner />
+  if (error) return <ErrorMessage error={error} />
+  
+  return <FlightList flights={data} />
+}
+```
+
+### Server-Side Data Fetching
+
+```typescript
+// app/flights/page.tsx
+async function getFlights(searchParams: SearchParams) {
+  const response = await fetch(
+    `${process.env.API_BASE_URL}/flights?${new URLSearchParams(searchParams)}`,
+    {
+      next: { revalidate: 60 }, // Revalidate every 60 seconds
+      headers: {
+        "Content-Type": "application/json"
+      }
+    }
+  )
+  
+  if (!response.ok) {
+    throw new Error("Failed to fetch flights")
+  }
+  
+  return response.json()
+}
+
+export default async function FlightsPage({ 
+  searchParams 
+}: { 
+  searchParams: SearchParams 
+}) {
+  const flights = await getFlights(searchParams)
+  
+  return <FlightList flights={flights} />
+}
+```
+
+## Environment Variables
+
+Access via [env.mjs](mdc:env.mjs):
+```typescript
+import { env } from "./env.mjs"
+
+// Client-side (must be prefixed with NEXT_PUBLIC_)
+const apiUrl = env.NEXT_PUBLIC_API_BASE_URL
+
+// Server-side
+const secretKey = env.SECRET_KEY
+```
+
+## Best Practices
+
+1. **Always validate input** using Zod schemas
+2. **Handle errors gracefully** with try/catch
+3. **Use TypeScript** for type safety
+4. **Log errors** with context for debugging
+5. **Return consistent response formats**
+6. **Use proper HTTP status codes**
+7. **Implement rate limiting** for public APIs
+8. **Cache responses** when appropriate
+9. **Use environment variables** for configuration
+10. **Test API routes** with integration tests
+
+## Status Codes
+
+Use appropriate HTTP status codes:
+- `200` - OK (successful GET/PUT/PATCH)
+- `201` - Created (successful POST)
+- `204` - No Content (successful DELETE)
+- `400` - Bad Request (validation errors)
+- `401` - Unauthorized (authentication required)
+- `403` - Forbidden (insufficient permissions)
+- `404` - Not Found
+- `409` - Conflict (duplicate resource)
+- `422` - Unprocessable Entity (semantic errors)
+- `500` - Internal Server Error
+- `503` - Service Unavailable

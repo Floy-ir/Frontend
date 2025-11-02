@@ -1,14 +1,19 @@
 "use client"
 
+import { ArrowRight } from "lucide-react"
 import * as React from "react"
-import { twMerge } from "tailwind-merge"
+import { JalaliCalendar } from "@/components/DatePicker/JalaliCalendar/jalali-calendar"
+import {
+  TextField,
+  textFieldContainer,
+  textFieldHelperText,
+  textFieldLabel,
+  TextFieldProps,
+} from "@/components/elements/TextField/TextField"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
-import { TextField, TextFieldProps, textFieldContainer, textFieldHelperText, textFieldLabel } from "@/components/TextField/TextField"
-import { JalaliCalendar } from "@/components/JalaliCalendar/jalali-calendar"
 import { useMediaQuery } from "@/hooks/use-media-query"
+import { cn } from "@/lib/utils"
 import { englishToFarsiNumber } from "utils/numbers"
-import { Button } from "@/components/ui/button"
-import { X, ArrowRight } from "lucide-react"
 
 export interface DatePickerProps extends Omit<TextFieldProps, "onChange" | "value"> {
   value?: Date | string | null
@@ -17,84 +22,88 @@ export interface DatePickerProps extends Omit<TextFieldProps, "onChange" | "valu
   maxDate?: Date
   formatDate?: (date: Date) => string
   calendarProps?: Partial<React.ComponentProps<typeof JalaliCalendar>>
+  hasError?: boolean
 }
 
-export function DatePicker({
-  id,
-  label,
-  helperText,
-  value = null,
-  onChange,
-  placeholder = "انتخاب تاریخ",
-  disabled,
-  intent,
-  size = "md",
-  width,
-  filled = false,
-  containerClassName,
-  labelClassName,
-  inputClassName,
-  helperTextClassName,
-  customWidth,
-  customHeight,
-  dir = "rtl",
-  minDate,
-  maxDate,
-  formatDate,
-  calendarProps,
-  ...props
-}: DatePickerProps) {
+export const DatePicker = React.forwardRef<HTMLInputElement, DatePickerProps>(function DatePicker(
+  {
+    id,
+    label,
+    helperText,
+    value = null,
+    onChange,
+    placeholder = "انتخاب تاریخ",
+    disabled,
+    intent,
+    size = "md",
+    width,
+    filled = false,
+    containerClassName,
+    labelClassName,
+    inputClassName,
+    helperTextClassName,
+    customWidth,
+    customHeight,
+    dir = "rtl",
+    minDate,
+    maxDate,
+    formatDate,
+    calendarProps,
+    hasError,
+    ...props
+  },
+  ref
+) {
   const [open, setOpen] = React.useState(false)
   const isDesktop = useMediaQuery("(min-width: 768px)")
-  
+
   // Prevent scrolling and hide main page header when datepicker is open on mobile
   React.useEffect(() => {
     if (!isDesktop && open) {
       // Prevent scrolling on the body
-      document.body.style.overflow = 'hidden'
-      
+      document.body.style.overflow = "hidden"
+
       // Hide the main page header (site navigation)
-      document.body.classList.add('datepicker-fullscreen-open')
+      document.body.classList.add("datepicker-fullscreen-open")
     } else {
       // Restore scrolling when closed
-      document.body.style.overflow = ''
-      
+      document.body.style.overflow = ""
+
       // Restore the main page header
-      document.body.classList.remove('datepicker-fullscreen-open')
+      document.body.classList.remove("datepicker-fullscreen-open")
     }
-    
+
     // Cleanup on unmount
     return () => {
-      document.body.style.overflow = ''
-      document.body.classList.remove('datepicker-fullscreen-open')
+      document.body.style.overflow = ""
+      document.body.classList.remove("datepicker-fullscreen-open")
     }
   }, [open, isDesktop])
-  
+
   // Convert string dates to Date objects if needed
-  const selectedDate = value instanceof Date ? value : 
-                      (typeof value === 'string' && value ? new Date(value) : null)
-  
+  const selectedDate = value instanceof Date ? value : typeof value === "string" && value ? new Date(value) : null
+
   // Default date formatter - can be overridden via props
   const defaultFormatDate = (date: Date) => {
-    const options: Intl.DateTimeFormatOptions = { 
-      month: 'long', 
-      day: 'numeric' 
+    const options: Intl.DateTimeFormatOptions = {
+      month: "long",
+      day: "numeric",
     }
-    
+
     // Format the date based on locale
-    const formatter = new Intl.DateTimeFormat('fa-IR', options)
+    const formatter = new Intl.DateTimeFormat("fa-IR", options)
     return formatter.format(date)
   }
-  
+
   const formattedDate = selectedDate ? (formatDate ? formatDate(selectedDate) : defaultFormatDate(selectedDate)) : ""
-  
+
   const handleDateSelect = (day: Date | undefined) => {
     if (day) {
       onChange?.(day)
       setOpen(false)
     }
   }
-  
+
   // The trigger field component
   const triggerField = (
     <TextField
@@ -111,86 +120,102 @@ export function DatePicker({
       customHeight={customHeight}
       dir={dir}
       readOnly
+      hasError={hasError}
+      ref={ref}
       {...props}
     />
   )
-  
+
   // Main container wrapper
   const Container = ({ children }: { children: React.ReactNode }) => (
     <div
-      className={twMerge(
-        textFieldContainer({ intent, disabled, className: containerClassName }),
-        props.noBorder && "gap-0"
-      )}
+      className={cn(textFieldContainer({ intent, disabled, className: containerClassName }), props.noBorder && "gap-0")}
     >
-      {label && <div className={twMerge(textFieldLabel({ intent, className: labelClassName }))}>{label}</div>}
-      
+      {label && <div className={cn(textFieldLabel({ intent, className: labelClassName }))}>{label}</div>}
+
       {children}
-      
+
       {helperText && (
-        <div className={twMerge(textFieldHelperText({ intent, className: helperTextClassName }))}>{helperText}</div>
+        <div className={cn(textFieldHelperText({ intent, className: helperTextClassName }))}>{helperText}</div>
       )}
     </div>
   )
-  
-  // Desktop calendar component - unchanged from original
+
+  // Desktop calendar component
   const DesktopCalendarComponent = () => {
     // Create a single disabled object that handles both min and max dates
     const disabledDates = {
       before: minDate || new Date(),
-      ...(maxDate && { after: maxDate })
-    };
-    
+      ...(maxDate && { after: maxDate }),
+    }
+
+    // The JalaliCalendar has complex typing that is hard to match exactly
+    // Using type assertion to fix TypeScript errors while maintaining runtime behavior
+    const calendarProps1 = {
+      mode: "single",
+      selected: selectedDate,
+      onSelect: handleDateSelect,
+      disabled: disabledDates,
+      className: "origin-top scale-110",
+      classNames: {
+        day: "w-10 h-10 p-0 flex items-center justify-center text-base rounded-full mx-auto",
+        day_today: "bg-Primary-P50",
+        day_selected: "!bg-Primary-P300 !text-white !font-bold hover:!bg-Primary-P300",
+        caption: "p-2",
+        caption_label: "text-base font-semibold",
+      },
+      ...calendarProps,
+    }
+
     return (
-      <div className="p-4">
-        {/* @ts-ignore - Ignoring type issues to allow for the calendar to work properly */}
-        <JalaliCalendar
-          mode="single"
-          selected={selectedDate}
-          onSelect={handleDateSelect}
-          disabled={disabledDates}
-          {...calendarProps}
-        />
+      <div className="p-6">
+        {/* @ts-expect-error - Type errors are due to mismatch between "range" and "single" mode */}
+        <JalaliCalendar {...calendarProps1} />
       </div>
-    );
+    )
   }
-  
+
   // Mobile calendar component - with full-screen styling
   const MobileCalendarComponent = () => {
     // Create a single disabled object that handles both min and max dates
     const disabledDates = {
       before: minDate || new Date(),
-      ...(maxDate && { after: maxDate })
-    };
-    
+      ...(maxDate && { after: maxDate }),
+    }
+
+    // Using type assertion to fix TypeScript errors while maintaining runtime behavior
+    const calendarProps2 = {
+      mode: "single",
+      selected: selectedDate,
+      onSelect: (day: Date | undefined) => handleDateSelect(day),
+      disabled: disabledDates,
+      className: "mx-auto w-full",
+      classNames: {
+        months: "flex flex-col space-y-4 w-full",
+        month: "w-full",
+        month_grid: "w-full",
+        weekdays: "py-3 mb-1 mt-6 self-stretch bg-slate-50 inline-flex justify-start items-start w-full",
+        weekday: "flex-1 text-center justify-start text-slate-500 text-sm font-medium leading-normal",
+        table: "w-full border-collapse",
+        row: "flex w-full justify-between mb-2",
+        cell: "text-center flex-1 p-0 relative",
+        day: "w-12 h-12 p-0 flex items-center justify-center text-base rounded-full mx-auto",
+        day_today: "bg-Primary-P50",
+        day_selected: "!bg-Primary-P300 !text-white !font-bold hover:!bg-Primary-P300",
+        button_previous: "px-10 pt-1 z-10",
+        button_next: "px-10 pt-1 z-10",
+      },
+      ...calendarProps,
+    }
+
     return (
-      <div className="w-full h-full">
-        {/* @ts-ignore - Ignoring type issues to allow for the calendar to work properly */}
-        <JalaliCalendar
-          mode="single" 
-          selected={selectedDate}
-          onSelect={handleDateSelect}
-          disabled={disabledDates}
-          className="w-full mx-auto"
-          classNames={{
-            months: "flex flex-col space-y-4 w-full",
-            month: "w-full",
-            month_grid: "w-full",
-            weekdays: "self-stretch p-3 bg-slate-50 inline-flex justify-start items-start w-full",
-            weekday: "flex-1 text-center justify-start text-slate-500 text-sm font-medium leading-normal",
-            table: "w-full border-collapse",
-            row: "flex w-full justify-between mb-2",
-            cell: "text-center flex-1 p-0 relative",
-            day: "w-12 h-12 p-0 flex items-center justify-center text-base rounded-full mx-auto",
-            day_today: "bg-Primary-P50",
-            day_selected: "bg-Primary-P300 text-white font-bold"
-          }}
-          {...calendarProps}
-        />
+      <div className="h-full w-full">
+        {/* @ts-expect-error - Type errors are due to mismatch between "range" and "single" mode */}
+        <JalaliCalendar {...calendarProps2} />
       </div>
-    );
+    )
   }
-  
+
   // Desktop view uses Popover
   if (isDesktop) {
     return (
@@ -200,7 +225,7 @@ export function DatePicker({
             <div className="cursor-pointer">{triggerField}</div>
           </PopoverTrigger>
           <PopoverContent
-            className="overflow-hidden rounded-xl p-0 border border-Gray-N200 shadow-[0px_4px_20px_rgba(0,0,0,0.1)] bg-white transform translate-x-4"
+            className="border-Gray-N200 min-w-[320px] translate-x-4 transform overflow-hidden rounded-xl border bg-white p-0 shadow-[0px_4px_20px_rgba(0,0,0,0.1)]"
             align={dir === "rtl" ? "start" : "end"}
             sideOffset={4}
           >
@@ -210,38 +235,34 @@ export function DatePicker({
       </Container>
     )
   }
-  
+
   // Mobile view uses full screen modal
   return (
     <Container>
       <div className="cursor-pointer" onClick={() => !disabled && setOpen(true)}>
         {triggerField}
       </div>
-      
+
       {open && !disabled && (
-        <div className="fixed inset-0 bg-white z-[9999] flex flex-col">
-          <div className="self-stretch pt-4 inline-flex flex-col justify-center items-end gap-4">
-            <div className="self-stretch px-4 inline-flex justify-start items-center gap-4">
-            <div 
-                className="size-6 relative cursor-pointer" 
-                onClick={() => setOpen(false)}
-              >
-                <ArrowRight className="h-6 w-6 text-Gray-N500" />
+        <div className="fixed inset-0 z-[9999] flex flex-col bg-white">
+          <div className="inline-flex flex-col items-end justify-center gap-4 self-stretch pt-4">
+            <div className="inline-flex items-center justify-start gap-4 self-stretch px-4">
+              <div className="relative size-6 cursor-pointer" onClick={() => setOpen(false)}>
+                <ArrowRight className="text-Gray-N500 h-6 w-6" />
               </div>
-              <div className="text-right text-Gray-N600 text-sm font-semibold leading-normal">
+              <div className="text-Gray-N600 text-right text-sm leading-normal font-semibold">
                 {label || "انتخاب تاریخ"}
               </div>
-          
             </div>
-            <div className="self-stretch h-px relative bg-Gray-N200 mb-4"></div>
+            <div className="bg-Gray-N200 relative mb-4 h-px self-stretch"></div>
           </div>
-          <div className="flex-1 w-full px-0 py-0 overflow-auto">
+          <div className="w-full flex-1 overflow-auto px-0 py-0">
             <style jsx global>{`
               /* Hide the main page header when datepicker is open */
               body.datepicker-fullscreen-open > header {
                 display: none !important;
               }
-              
+
               /* Mobile calendar styles */
               .rdp {
                 width: 100% !important;
@@ -254,7 +275,7 @@ export function DatePicker({
               .rdp-month {
                 width: 100% !important;
               }
-              
+
               /* Fix caption and navigation alignment */
               .rdp-caption {
                 position: relative !important;
@@ -265,21 +286,21 @@ export function DatePicker({
                 width: 100% !important;
                 box-sizing: border-box !important;
               }
-              
+
               /* Add padding to the month container to fix spacing */
               .rdp-month {
                 width: 100% !important;
                 padding: 0 1.5rem !important;
                 box-sizing: border-box !important;
               }
-              
+
               .rdp-caption_label {
                 font-size: 1.125rem !important;
                 font-weight: 600 !important;
                 padding: 0.5rem 1rem !important;
                 z-index: 1 !important;
               }
-              
+
               .rdp-nav {
                 position: absolute !important;
                 left: 1.5rem !important;
@@ -288,21 +309,23 @@ export function DatePicker({
                 justify-content: space-between !important;
                 padding: 0 !important;
                 width: calc(100% - 3rem) !important;
+                z-index: 2 !important;
               }
-              
+
               /* Also add padding to the table */
-              .rdp-table, .rdp-months {
+              .rdp-table,
+              .rdp-months {
                 padding: 0 0.5rem !important;
                 box-sizing: border-box !important;
               }
-              
+
               .rdp-weekdays {
                 margin: 1.5rem 0.5rem 0 0.5rem !important;
                 width: calc(100% - 1rem) !important;
                 background-color: #f8fafc !important;
                 padding: 0.75rem !important;
               }
-              
+
               .rdp-button_previous,
               .rdp-button_next {
                 height: 2.5rem !important;
@@ -313,7 +336,7 @@ export function DatePicker({
                 background-color: transparent !important;
                 border-radius: 9999px !important;
               }
-              
+
               /* Table and day styles */
               .rdp-table {
                 width: 100% !important;
@@ -340,8 +363,17 @@ export function DatePicker({
                 align-items: center !important;
                 margin: 0 auto !important;
               }
-              .rdp-day_selected {
-                background-color: var(--Primary-P300) !important;
+              .rdp-day_selected,
+              .rdp-day_selected:hover,
+              .rdp-day_selected:focus {
+                background-color: var(--Primary-P300, #4472ff) !important;
+                color: white !important;
+                font-weight: bold !important;
+              }
+
+              /* Additional styling to force selected state */
+              [aria-selected="true"] {
+                background-color: #4472ff !important;
                 color: white !important;
                 font-weight: bold !important;
               }
@@ -352,4 +384,4 @@ export function DatePicker({
       )}
     </Container>
   )
-}
+})

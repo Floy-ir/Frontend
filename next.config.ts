@@ -10,6 +10,30 @@ const config: NextConfig = {
       fullUrl: true,
     },
   },
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "cdn.floy.ir",
+        pathname: "/**", // Allow all paths
+      },
+      {
+        protocol: "https",
+        hostname: "commons.wikimedia.org",
+        pathname: "/**", // Allow all paths
+      },
+      {
+        protocol: "https",
+        hostname: "cdn.alibaba.ir",
+        pathname: "/**", // Allow all paths
+      },
+      {
+        protocol: "https",
+        hostname: "www.flytoday.ir",
+        pathname: "/**", // Allow all paths
+      },
+    ],
+  },
   rewrites: async () => [
     { source: "/healthz", destination: "/api/health" },
     { source: "/api/healthz", destination: "/api/health" },

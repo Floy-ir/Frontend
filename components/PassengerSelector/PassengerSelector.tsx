@@ -1,18 +1,18 @@
 "use client"
 
-import * as React from "react"
 import { Add, Minus } from "iconsax-react"
+import * as React from "react"
 import { twMerge } from "tailwind-merge"
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
-import { Drawer, DrawerContent, DrawerTrigger, DrawerHeader, DrawerTitle } from "@/components/ui/drawer"
+import { Button } from "@/components/elements/Button/Button"
 import {
   TextField,
-  TextFieldProps,
   textFieldContainer,
   textFieldHelperText,
   textFieldLabel,
-} from "@/components/TextField/TextField"
-import { Button } from "@/components/Button/Button"
+  TextFieldProps,
+} from "@/components/elements/TextField/TextField"
+import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerTrigger } from "@/components/ui/drawer"
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { useMediaQuery } from "@/hooks/use-media-query"
 import { englishToFarsiNumber } from "utils/numbers"
 
@@ -61,6 +61,7 @@ export interface PassengerSelectorProps extends Omit<TextFieldProps, "onChange" 
   value: PassengerCount | string
   onChange: (value: PassengerCount) => void
   maxTotalPassengers?: number
+  hasError?: boolean
 }
 
 export function PassengerSelector({
@@ -83,6 +84,7 @@ export function PassengerSelector({
   customHeight,
   dir = "rtl",
   maxTotalPassengers = 9,
+  hasError,
   ...props
 }: PassengerSelectorProps) {
   // Convert string value to PassengerCount if needed
@@ -143,6 +145,7 @@ export function PassengerSelector({
       customHeight={customHeight}
       dir={dir}
       readOnly
+      hasError={hasError}
       {...props}
     />
   )

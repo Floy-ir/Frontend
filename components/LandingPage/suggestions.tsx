@@ -4,20 +4,20 @@ import Autoplay from "embla-carousel-autoplay"
 import Image from "next/image"
 import { useCallback, useState } from "react"
 import { Card } from "@/components/ui/card"
-import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel"
+import { Carousel, CarouselContent, CarouselItem } from "@/components/ui/carousel"
 import img from "../../public/images/dude.png"
 
 const suggestions = [
-    { text: "همین الان رزرو کن", discount: "۵۰ درصد تخفیف", bg: "from-[#10b98f] to-[#10b98f]" },
-    { text: "همین الان رزرو کن", discount: "۵۰ درصد تخفیف", bg: "from-[#d9333e] to-[#d9333e]" },
-    { text: "4tt4 الان رزرو کن", discount: "435 درصد تخفیف", bg: "from-[#5A28EE] to-[#764CF1]" },
-    { text: "همین الان رزرو کن", discount: "۵۰ درصد تخفیف", bg: "from-[#10b98f] to-[#10b98f]" },
-    { text: "همین الان رزرو کن", discount: "۵۰ درصد تخفیف", bg: "from-[#d9333e] to-[#d9333e]" },
-    { text: "4tt4 الان رزرو کن", discount: "435 درصد تخفیف", bg: "from-[#5A28EE] to-[#764CF1]" },
-    { text: "4tt4 الان رزرو کن", discount: "435 درصد تخفیف", bg: "from-[#5A28EE] to-[#764CF1]" },
-    { text: "همین الان رزرو کن", discount: "۵۰ درصد تخفیف", bg: "from-[#10b98f] to-[#10b98f]" },
-    { text: "همین الان رزرو کن", discount: "۵۰ درصد تخفیف", bg: "from-[#d9333e] to-[#d9333e]" },
-  ]
+  { text: "همین الان رزرو کن", discount: "۵۰ درصد تخفیف", bg: "from-[#10b98f] to-[#10b98f]" },
+  { text: "همین الان رزرو کن", discount: "۵۰ درصد تخفیف", bg: "from-[#d9333e] to-[#d9333e]" },
+  { text: "4tt4 الان رزرو کن", discount: "435 درصد تخفیف", bg: "from-[#5A28EE] to-[#764CF1]" },
+  { text: "همین الان رزرو کن", discount: "۵۰ درصد تخفیف", bg: "from-[#10b98f] to-[#10b98f]" },
+  { text: "همین الان رزرو کن", discount: "۵۰ درصد تخفیف", bg: "from-[#d9333e] to-[#d9333e]" },
+  { text: "4tt4 الان رزرو کن", discount: "435 درصد تخفیف", bg: "from-[#5A28EE] to-[#764CF1]" },
+  { text: "4tt4 الان رزرو کن", discount: "435 درصد تخفیف", bg: "from-[#5A28EE] to-[#764CF1]" },
+  { text: "همین الان رزرو کن", discount: "۵۰ درصد تخفیف", bg: "from-[#10b98f] to-[#10b98f]" },
+  { text: "همین الان رزرو کن", discount: "۵۰ درصد تخفیف", bg: "from-[#d9333e] to-[#d9333e]" },
+]
 
 function SuggestionCard({ text, discount, bg }: { text: string; discount: string; bg: string }) {
   return (
@@ -37,7 +37,7 @@ function SuggestionCard({ text, discount, bg }: { text: string; discount: string
         />
 
         {/* Text Content */}
-        <div className="z-10 flex flex-1 flex-col gap-1 pr-4 text-right text-white ">
+        <div className="z-10 flex flex-1 flex-col gap-1 pr-4 text-right text-white">
           <div className="text-Shade-White text-base leading-relaxed font-normal">{text}</div>
           <div className="text-Shade-White text-xl leading-loose font-bold">{discount}</div>
         </div>
@@ -45,7 +45,6 @@ function SuggestionCard({ text, discount, bg }: { text: string; discount: string
     </Card>
   )
 }
-
 
 export default function Suggestions() {
   const [activeIndex, setActiveIndex] = useState(0)
@@ -57,19 +56,18 @@ export default function Suggestions() {
 
   return (
     <Carousel
-       
-       opts={{ loop: true}}
+      opts={{ loop: true }}
       plugins={[Autoplay({ delay: 3000 })]}
       className="w-full"
       dir="ltr"
       setApi={(embla) => {
-        if (!embla) return;
-        embla.on("select", () => onSelect(embla));
+        if (!embla) return
+        embla.on("select", () => onSelect(embla))
       }}
     >
       <CarouselContent dir="ltr" className="">
         {suggestions.map((suggestion, index) => (
-          <CarouselItem key={index} className="basis-[85%] lg:basis-1/3 md:basis-1/2">
+          <CarouselItem key={index} className="basis-[85%] md:basis-1/2 lg:basis-1/3">
             <SuggestionCard {...suggestion} />
           </CarouselItem>
         ))}

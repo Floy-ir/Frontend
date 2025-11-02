@@ -1,0 +1,89 @@
+/* incomping messages*/
+.cs-message.cs-message--incoming.cs-message--single .cs-message__content {
+  background-color: transparent !important;
+}
+
+.cs-message__html-content {
+  font-family:
+    var(--font-anjoman-max),
+    Anjoman Max,
+    sans-serif !important;
+}
+
+/* outgoing messages*/
+.cs-message.cs-message--outgoing.cs-message--single .cs-message__content {
+  background-color: #ececec !important;
+  /* margin-top: 1px !important; */
+}
+
+/* send button */
+.cs-button {
+  color: rgba(90, 40, 238, 1) !important;
+}
+
+/* chat header */
+.cs-conversation-header {
+  background-color: transparent !important;
+}
+
+.cs-conversation-header__user-name {
+  background-color: transparent !important;
+}
+
+/* message input */
+.cs-message-input {
+  direction: rtl !important;
+}
+
+.cs-message-input__content-editor-container {
+  background-color: rgb(255, 255, 255) !important;
+}
+
+.cs-message-input__content-editor {
+  text-align: right !important;
+}
+
+.cs-message-input__content-editor-wrapper {
+  background-color: rgb(255, 255, 255) !important;
+  border: 1px solid #e5e5e5;
+  border-radius: 0.9rem !important;
+  margin-top: 4.5px !important;
+  margin-left: -2px !important;
+  margin-right: 10px !important;
+  height: 50px !important;
+}
+
+.cs-chat-container .cs-message-input {
+  height: 60px !important;
+  margin-bottom: 10px !important;
+}
+
+.cs-message-input__send-inside {
+  position: absolute !important;
+  right: 0.75rem !important;
+  bottom: 0.5rem !important;
+}
+
+/* message input placeholder */
+.cs-message-input__content-editor {
+  background-color: rgb(255, 255, 255) !important;
+  margin-top: 4px !important;
+  font-size: medium;
+  font-family:
+    var(--font-anjoman-max),
+    Anjoman Max,
+    sans-serif !important;
+}
+
+/* scrollbar */
+.ps__thumb-y {
+  background-color: #878787 !important;
+}
+
+/* chat main container */
+.cs-main-container {
+  position: relative !important;
+  border-top: none !important;
+  border-bottom: none !important;
+  border-top: right !important;
+}

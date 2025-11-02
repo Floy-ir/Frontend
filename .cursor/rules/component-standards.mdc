@@ -1,0 +1,338 @@
+---
+globs: components/**/*.tsx,components/**/*.jsx
+---
+
+# Component Development Standards
+
+## Component Architecture
+
+### Component Categories
+
+1. **Base UI Components** (`/components/ui`)
+   - Primitive, reusable components
+   - Based on Radix UI primitives
+   - Examples: `button.tsx`, `dialog.tsx`, `accordion.tsx`
+   - Highly composable with minimal business logic
+
+2. **Element Components** (`/components/elements`)
+   - Form inputs and controls
+   - Examples: `Button`, `TextField`, `ComboboxSelect`
+   - Contain controlled/uncontrolled logic
+
+3. **Feature Components** (`/components/[FeatureName]`)
+   - Business logic components
+   - Examples: `FlightSearchForm`, `FlightCard`, `PassengerSelector`
+   - May compose UI and element components
+
+4. **Layout Components** (`/components/layout`)
+   - Page structure components
+   - Examples: `Header`, `Footer`, `ActiveMenuProvider`
+
+### Component File Structure
+
+For simple components:
+```
+Button/
+  Button.tsx
+  Button.types.ts (if types are complex)
+```
+
+For complex components:
+```
+FlightCard/
+  FlightCard.tsx
+  FlightCardHeader.tsx
+  FlightCardDetails.tsx
+  index.ts (for clean exports)
+  types.ts (shared types)
+```
+
+## Component Props Patterns
+
+### Props Interface Naming
+- Use `ComponentNameProps` pattern
+- Example: `FlightSearchFormProps`, `ButtonProps`
+
+### Props Structure
+```typescript
+type ComponentProps = {
+  // Required props first
+  required: string
+  data: DataType
+  
+  // Optional props
+  optional?: number
+  className?: string
+  
+  // Event handlers
+  onClick?: () => void
+  onChange?: (value: string) => void
+  
+  // Render props / children
+  children?: React.ReactNode
+  renderHeader?: () => React.ReactNode
+}
+```
+
+### Default Props
+- Use default parameter values in destructuring
+- Example:
+  ```typescript
+  export function Component({ 
+    size = "medium",
+    variant = "primary",
+    disabled = false 
+  }: ComponentProps) {
+    // ...
+  }
+  ```
+
+## Component Composition
+
+### Compound Components Pattern
+When components work together as a system:
+```typescript
+export function Card({ children }: { children: React.ReactNode }) {
+  return <div className="card">{children}</div>
+}
+
+Card.Header = function CardHeader({ children }: { children: React.ReactNode }) {
+  return <div className="card-header">{children}</div>
+}
+
+Card.Body = function CardBody({ children }: { children: React.ReactNode }) {
+  return <div className="card-body">{children}</div>
+}
+
+// Usage:
+<Card>
+  <Card.Header>Title</Card.Header>
+  <Card.Body>Content</Card.Body>
+</Card>
+```
+
+### Render Props Pattern
+For flexible rendering:
+```typescript
+type ListProps<T> = {
+  items: T[]
+  renderItem: (item: T) => React.ReactNode
+}
+
+export function List<T>({ items, renderItem }: ListProps<T>) {
+  return <div>{items.map(renderItem)}</div>
+}
+```
+
+## Form Components
+
+### Form Component Standards
+Reference: [components/FlightSearchForm/FlightSearchForm.tsx](mdc:components/FlightSearchForm/FlightSearchForm.tsx)
+
+1. Use React Hook Form with Controller for controlled inputs
+2. Use Zod for validation schemas
+3. Implement proper error handling and display
+4. Support loading states
+5. Provide accessibility attributes
+
+Example:
+```typescript
+import { Controller, useForm } from "react-hook-form"
+import { z } from "zod"
+import { zodResolver } from "@hookform/resolvers/zod"
+
+const schema = z.object({
+  email: z.string().email({ message: "Invalid email" })
+})
+
+type FormValues = z.infer<typeof schema>
+
+export function FormComponent() {
+  const { control, handleSubmit } = useForm<FormValues>({
+    resolver: zodResolver(schema)
+  })
+  
+  return (
+    <form onSubmit={handleSubmit(onSubmit)}>
+      <Controller
+        name="email"
+        control={control}
+        render={({ field, fieldState }) => (
+          <>
+            <Input {...field} hasError={!!fieldState.error} />
+            {fieldState.error && <Error>{fieldState.error.message}</Error>}
+          </>
+        )}
+      />
+    </form>
+  )
+}
+```
+
+## Styling Components
+
+### className Prop Pattern
+- Always accept `className` prop for composition
+- Use `clsx` or `cn` utility to merge classes
+- Example:
+  ```typescript
+  import { cn } from "@/lib/utils"
+  
+  type Props = {
+    className?: string
+  }
+  
+  export function Component({ className }: Props) {
+    return (
+      <div className={cn("base-class", "default-styles", className)}>
+        Content
+      </div>
+    )
+  }
+  ```
+
+### Tailwind Class Organization
+Order classes logically:
+1. Layout (display, position, flex/grid)
+2. Sizing (width, height, padding, margin)
+3. Typography (font, text size, color)
+4. Visual (background, border, shadow)
+5. Interactive (hover, focus, active states)
+
+Example:
+```typescript
+className="flex items-center justify-between w-full h-12 px-4 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2"
+```
+
+### Variant Patterns
+Use `class-variance-authority` (cva) for component variants:
+```typescript
+import { cva, type VariantProps } from "class-variance-authority"
+
+const buttonVariants = cva("base-button-classes", {
+  variants: {
+    intent: {
+      primary: "bg-primary text-white",
+      secondary: "bg-gray-200 text-gray-900"
+    },
+    size: {
+      small: "px-3 py-1 text-sm",
+      large: "px-6 py-3 text-lg"
+    }
+  },
+  defaultVariants: {
+    intent: "primary",
+    size: "medium"
+  }
+})
+
+type ButtonProps = VariantProps<typeof buttonVariants> & {
+  // other props
+}
+```
+
+## Component State Management
+
+### Local State
+- Use `useState` for UI state
+- Keep state as close to where it's used as possible
+- Example:
+  ```typescript
+  const [isOpen, setIsOpen] = useState(false)
+  const [selectedValue, setSelectedValue] = useState<string | null>(null)
+  ```
+
+### Derived State
+- Use `useMemo` for computed values
+- Example:
+  ```typescript
+  const filteredItems = useMemo(
+    () => items.filter(item => item.active),
+    [items]
+  )
+  ```
+
+### State Initialization
+- Use lazy initialization for expensive initial state
+- Example:
+  ```typescript
+  const [data, setData] = useState(() => expensiveComputation())
+  ```
+
+## Accessibility
+
+### ARIA Attributes
+- Always include proper ARIA labels
+- Use semantic HTML when possible
+- Example:
+  ```typescript
+  <button
+    aria-label="Close dialog"
+    aria-expanded={isOpen}
+    aria-controls="dialog-content"
+  >
+    Close
+  </button>
+  ```
+
+### Keyboard Navigation
+- Ensure all interactive elements are keyboard accessible
+- Handle `onKeyDown` for custom interactions
+- Support Tab navigation
+
+### Focus Management
+- Use `autoFocus` sparingly
+- Trap focus in modals/dialogs
+- Return focus after closing modals
+
+## Performance Optimization
+
+### Memoization
+- Use `React.memo` for components that render often with same props
+- Use `useMemo` for expensive calculations
+- Use `useCallback` for functions passed to memoized children
+
+Example:
+```typescript
+export const ExpensiveComponent = React.memo(function ExpensiveComponent({ 
+  data 
+}: Props) {
+  return <div>{/* expensive render */}</div>
+})
+```
+
+### Lazy Loading
+- Use dynamic imports for heavy components
+- Example:
+  ```typescript
+  import dynamic from "next/dynamic"
+  
+  const HeavyComponent = dynamic(() => import("./HeavyComponent"), {
+    loading: () => <Skeleton />,
+    ssr: false // if client-only
+  })
+  ```
+
+## Error Handling
+
+### Error Boundaries
+- Wrap risky components in Error Boundaries
+- Provide fallback UI
+- Log errors for debugging
+
+### Loading States
+- Always handle loading states in async components
+- Show appropriate loading UI (spinners, skeletons)
+- Example:
+  ```typescript
+  if (isLoading) return <Spinner />
+  if (error) return <ErrorMessage error={error} />
+  return <Data data={data} />
+  ```
+
+## Testing Considerations
+
+- Write components to be easily testable
+- Avoid inline complex logic
+- Extract business logic to hooks or utilities
+- Use data-testid for test targeting when necessary
