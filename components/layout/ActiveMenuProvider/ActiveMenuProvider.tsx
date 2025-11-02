@@ -24,7 +24,7 @@ export function ActiveMenuProvider() {
   const baseMenuItems: MenuItem[] = [
     { label: "صفحه اصلی", href: "/", isActive: false },
     { label: "پرواز", href: "/", isActive: false },
-    { label: " فولی ", href: "/chat", isActive: false },
+    // { label: " فولی ", href: "/chat", isActive: false },
     { label: "سوالات متداول", href: "/#faq", isActive: false },
     { label: "ارزان ترین هفته", href: "/#cheapest-week", isActive: false },
   ]
