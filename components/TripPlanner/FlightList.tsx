@@ -21,7 +21,7 @@ export function FlightList({ origin, destination, departureDate, onFlightSelect 
 
   const handleFlightBuy = (flight: MockFlightData) => {
     // Placeholder - could redirect to booking page
-    console.log("Redirecting to booking for:", flight)
+    // console.log("Redirecting to booking for:", flight)
     // In the future, this could open the booking URL
     window.open(flight.price.base_redirect_url, "_blank")
   }

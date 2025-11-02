@@ -22,7 +22,7 @@ function RedirectContent() {
               method: "POST",
               data: JSON.stringify({ provider: agency_eng }),
             })
-            console.log("Log provider response:", response)
+            // console.log("Log provider response:", response)
           } catch (error) {
             console.error("Logging provider failed:", error)
           }
