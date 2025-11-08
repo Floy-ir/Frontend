@@ -11,6 +11,8 @@ import mashhad from "../../public/images/mashhad.jpg"
 import shiraz from "../../public/images/shiraz.jpg"
 import tabriz from "../../public/images/tabriz.jpg"
 import tehran from "../../public/images/tehran.jpg"
+import isfahan from "../../public/images/isfahan.jpg"
+import ahvaz from "../../public/images/ahvaz.jpg"
 
 // Define interface for flight data
 interface FlightData {
@@ -35,6 +37,10 @@ const getDestinationImage = (destinationCode: string): StaticImageData => {
       return shiraz
     case "TBZ":
       return tabriz
+    case "IFN":
+      return isfahan
+    case "AWZ":
+      return ahvaz
     default:
       return tehran
   }
