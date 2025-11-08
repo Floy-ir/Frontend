@@ -88,9 +88,8 @@ function CityCard({
   return (
     <div
       onClick={handleClick}
-      className={`relative flex ${
-        large ? "h-80 w-67 px-8 py-4 md:w-80 lg:w-120" : "h-39 w-69 px-6 py-4"
-      } flex-1 cursor-pointer flex-col justify-end overflow-hidden rounded-2xl border-2 border-slate-200 transition-colors hover:border-blue-400`}
+      className={`relative flex ${large ? "h-80 w-67 px-8 py-4 md:w-80 lg:w-120" : "h-39 w-69 px-6 py-4"
+        } flex-1 cursor-pointer flex-col justify-end overflow-hidden rounded-2xl border-2 border-slate-200 transition-colors hover:border-blue-400`}
     >
       {/* Background Image */}
       <Image src={bg} alt={city} fill className="h-full w-full object-cover" priority />
@@ -138,7 +137,7 @@ export default function PopularCities() {
       console.error("Failed to read from localStorage:", e)
     }
 
-    ;(async () => {
+    ; (async () => {
       try {
         const query = `?favorite_cities=${originList.join(",")}`
         const response = (await apiFetch(`/flights/favorite_cities/${query}`, {
