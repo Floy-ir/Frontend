@@ -7,41 +7,99 @@ import { apiFetch } from "@/services/api"
 function RedirectContent() {
   const searchParams = useSearchParams()
   const router = useRouter()
-  const redirectUrl = searchParams.get("redirect_url")
+  const redirectUrlParam = searchParams.get("redirect_url")
   const agency = searchParams.get("agency")
   const agency_eng = searchParams.get("agency_eng")
 
+  // helper to reconstruct the full redirect target from the raw query string
+  const getFullRedirectFromRaw = () => {
+    if (typeof window === "undefined") return null
+    const rawSearch = window.location.search || ""
+    const key = "redirect_url="
+    const startIdx = rawSearch.indexOf(key)
+    if (startIdx === -1) return null
+    const valueStart = startIdx + key.length
+    const agencyIdx = rawSearch.indexOf("&agency=", valueStart)
+    const agencyEngIdx = rawSearch.indexOf("&agency_eng=", valueStart)
+    let endIdx = rawSearch.length
+    if (agencyIdx !== -1 && agencyEngIdx !== -1) {
+      endIdx = Math.min(agencyIdx, agencyEngIdx)
+    } else if (agencyIdx !== -1) {
+      endIdx = agencyIdx
+    } else if (agencyEngIdx !== -1) {
+      endIdx = agencyEngIdx
+    }
+
+    let extracted = rawSearch.substring(valueStart, endIdx)
+    try {
+      extracted = decodeURIComponent(extracted)
+    } catch {
+      // ignore
+    }
+
+    if (extracted.startsWith("redirect?")) extracted = extracted.replace(/^redirect\?/, "")
+    extracted = extracted.replace(/[?&]$/, "")
+    if (!/^https?:\/\//.test(extracted)) extracted = `https://${extracted}`
+    return extracted
+  }
+
   useEffect(() => {
-    if (redirectUrl) {
+    const full = getFullRedirectFromRaw()
+    if (full) {
       const timeout = setTimeout(async () => {
-        const fixedUrl = redirectUrl.startsWith("http") ? redirectUrl : `https://${redirectUrl}`
-        // Log provider before redirect
         if (agency) {
           try {
-            const response = await apiFetch("/statistics/", {
+            await apiFetch("/statistics/", {
               method: "POST",
               data: JSON.stringify({ provider: agency_eng }),
             })
-            // console.log("Log provider response:", response)
-          } catch (error) {
-            console.error("Logging provider failed:", error)
+          } catch {
+            console.error("Logging provider failed:")
           }
         }
-        router.push(fixedUrl)
+        console.log("Redirecting to:", full)
+        router.push(full)
       }, 1000)
-
       return () => clearTimeout(timeout)
-    } else {
-      router.back() // fallback if redirect_url is not present
     }
-  }, [redirectUrl, agency])
+
+    if (redirectUrlParam) {
+      let decoded = redirectUrlParam
+      try {
+        decoded = decodeURIComponent(decoded)
+      } catch {
+        // ignore
+      }
+      if (!/^https?:\/\//.test(decoded)) decoded = `https://${decoded}`
+      const timeout = setTimeout(() => {
+        console.log("Redirecting to:", decoded)
+        router.push(decoded)
+      }, 1000)
+      return () => clearTimeout(timeout)
+    }
+
+    router.back()
+  }, [redirectUrlParam, agency])
 
   const handleManualRedirect = () => {
-    if (redirectUrl) {
-      const fixedUrl = redirectUrl.startsWith("http") ? redirectUrl : `https://${redirectUrl}`
-      window.open(fixedUrl, "_blank")
+    const full = getFullRedirectFromRaw()
+    if (full) {
+      window.open(full, "_blank")
+      return
+    }
+    if (redirectUrlParam) {
+      let decoded = redirectUrlParam
+      try {
+        decoded = decodeURIComponent(decoded)
+      } catch {
+        // ignore
+      }
+      if (!/^https?:\/\//.test(decoded)) decoded = `https://${decoded}`
+      window.open(decoded, "_blank")
     }
   }
+
+  console.log("Redirecting to:", getFullRedirectFromRaw() ?? redirectUrlParam)
 
   return (
     <div className="mt-50 flex flex-col items-center justify-center gap-8">

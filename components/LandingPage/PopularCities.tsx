@@ -6,6 +6,8 @@ import { useEffect, useState } from "react"
 import { getCityByCode } from "@/config/cities"
 import { apiFetch } from "@/services/api"
 import { englishToFarsiNumber } from "@/utils/numbers"
+import ahvaz from "../../public/images/ahvaz.jpg"
+import isfahan from "../../public/images/isfahan.jpg"
 import kish from "../../public/images/kish.jpeg"
 import mashhad from "../../public/images/mashhad.jpg"
 import shiraz from "../../public/images/shiraz.jpg"
@@ -35,6 +37,10 @@ const getDestinationImage = (destinationCode: string): StaticImageData => {
       return shiraz
     case "TBZ":
       return tabriz
+    case "IFN":
+      return isfahan
+    case "AWZ":
+      return ahvaz
     default:
       return tehran
   }
@@ -43,7 +49,14 @@ const getDestinationImage = (destinationCode: string): StaticImageData => {
 function CityRow({
   cities,
 }: {
-  cities: { city: string; price: string; bg: StaticImageData; origin: string; destination: string }[]
+  cities: {
+    city: string
+    price: string
+    bg: StaticImageData
+    origin: string
+    destination: string
+    departingDate?: string
+  }[]
 }) {
   return (
     <div className="flex w-full gap-2">
@@ -61,6 +74,7 @@ function CityCard({
   large,
   origin,
   destination,
+  departingDate,
 }: {
   city: string
   price: string
@@ -68,17 +82,13 @@ function CityCard({
   large?: boolean
   origin?: string
   destination?: string
+  departingDate?: string
 }) {
   const router = useRouter()
 
   const handleClick = () => {
-    if (origin && destination) {
-      // Get tomorrow's date for the default departing date
-      const tomorrow = new Date()
-      tomorrow.setDate(tomorrow.getDate() + 1)
-      const formattedDate = tomorrow.toISOString().split("T")[0]
-
-      router.push(`/flights/${origin}-${destination}?adult=1&child=0&infant=0&departing=${formattedDate}&sort=cheapest`)
+    if (origin && destination && departingDate) {
+      router.push(`/flights/${origin}-${destination}?adult=1&child=0&infant=0&departing=${departingDate}&sort=cheapest`)
     }
   }
 
@@ -175,6 +185,7 @@ export default function PopularCities() {
                   large
                   origin={cityData.results[0].origin}
                   destination={cityData.results[0].destination}
+                  departingDate={String(cityData.results[0].date)}
                 />
               </div>
             )}
@@ -188,6 +199,7 @@ export default function PopularCities() {
                     originLabel: string
                     destinationLabel: string
                     price: number
+                    date?: string
                   }[][]
                 >((rows, flight, index, arr) => {
                   if (index % 2 === 0) rows.push(arr.slice(index, index + 2))
@@ -201,6 +213,7 @@ export default function PopularCities() {
                       originLabel: string
                       destinationLabel: string
                       price: number
+                      date?: string
                     }[],
                     index: number
                   ) => (
@@ -212,6 +225,7 @@ export default function PopularCities() {
                           bg: getDestinationImage(flight.destination),
                           origin: flight.origin,
                           destination: flight.destination,
+                          departingDate: String(flight.date),
                         }))}
                       />
                     </div>

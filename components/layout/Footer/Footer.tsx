@@ -58,7 +58,7 @@ const Footer: React.FC = () => {
 
               {/* Second Grid */}
               <div className="flex flex-col items-end justify-end gap-8.5">
-                <h1 className="text-5xl leading-[87px] font-semibold text-primary-500">فلوی</h1>
+                <h1 className="text-primary-500 text-5xl leading-[87px] font-semibold">فلوی</h1>
                 {/* <h3 className="text-sm text-[#748297]">تلفن پشتیبانی: ۰۲۱۱۲۳۴۵۶۷۸</h3> */}
                 <div className="flex md:gap-4 lg:gap-8">
                   <div className="flex items-center justify-center rounded-lg bg-slate-100 md:h-8 md:w-8 lg:h-10 lg:w-10">
