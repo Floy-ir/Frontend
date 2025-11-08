@@ -92,13 +92,13 @@ export function FlightResultsList({ flights, onRefresh }: FlightResultsListProps
       .replace("${child_len}", child)
       .replace("${infant_len}", infant)
 
-      const finalRedirectUrl = `/redirect?redirect_url=${redirectUrl}&agency=${price.agency}&agency_eng=${price.agency_eng}`
-// const finalRedirectUrl = `/redirect?redirect_url=${encodeURIComponent(
-//         redirectUrl
-//       )}&agency=${encodeURIComponent(price.agency)}&agency_eng=${encodeURIComponent(price.agency_eng)}`
+    const finalRedirectUrl = `/redirect?redirect_url=${redirectUrl}&agency=${price.agency}&agency_eng=${price.agency_eng}`
+    // const finalRedirectUrl = `/redirect?redirect_url=${encodeURIComponent(
+    //         redirectUrl
+    //       )}&agency=${encodeURIComponent(price.agency)}&agency_eng=${encodeURIComponent(price.agency_eng)}`
 
-      console.log("redirectUrl", price.base_redirect_url)
-      console.log("finalRedirectUrl", finalRedirectUrl)
+    console.log("redirectUrl", price.base_redirect_url)
+    console.log("finalRedirectUrl", finalRedirectUrl)
     // Use Eitaa's link handling when running in Eitaa mini app, otherwise use regular window.open
     if (isRunningInEitaa()) {
       openExternalLink(finalRedirectUrl)
