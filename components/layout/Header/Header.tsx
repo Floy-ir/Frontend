@@ -6,6 +6,7 @@ import { Airplane, HambergerMenu } from "iconsax-react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import React, { useEffect, useState } from "react"
+import { isRunningInEitaa } from "@/utils/eitaa"
 import { twMerge } from "tailwind-merge"
 import { Button } from "@/components/ui/button"
 import AuthModal from "./AuthModal"
@@ -61,6 +62,7 @@ export function Header({ menuItems, className, forceScrolledStyle = false, compa
   const [isScrolled, setIsScrolled] = useState<boolean>(forceScrolledStyle ?? false)
   const [isSmallScreen, setIsSmallScreen] = useState<boolean>(false)
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
+  const [modalInitPayload, setModalInitPayload] = useState<any>(null)
   const [authUser, setAuthUser] = useState<{ mobile: string; full_name?: string } | null>(null)
   const [userMenuOpen, setUserMenuOpen] = useState<boolean>(false)
   const [toast, setToast] = useState<{ id: number; message: string } | null>(null)
@@ -122,11 +124,44 @@ export function Header({ menuItems, className, forceScrolledStyle = false, compa
     readUser()
     const onAuth = () => readUser()
     window.addEventListener("auth-changed", onAuth)
+    // If there's no stored auth_user but the app is running inside Eitaa,
+    // try to read Eitaa init data and show a greeting using the Eitaa user
+    // info. This provides a friendly UX inside the mini-app even before
+    // a server-side session (token) exists.
+    if (!localStorage.getItem("auth_user") && isRunningInEitaa()) {
+      try {
+        // runtime access to the Eitaa WebApp init data
+        const raw = (window as any)?.Eitaa?.WebApp?.initDataUnsafe?.user
+        if (raw && raw.first_name) {
+          const u = { mobile: "", full_name: raw.first_name }
+          try {
+            localStorage.setItem("auth_user", JSON.stringify(u))
+            window.dispatchEvent(new Event("auth-changed"))
+          } catch {}
+          setAuthUser(u)
+        }
+      } catch {}
+    }
     return () => window.removeEventListener("auth-changed", onAuth)
   }, [])
 
   useEffect(() => {
     document.documentElement.style.scrollBehavior = "smooth"
+  }, [])
+
+  useEffect(() => {
+    const handler = (e: Event) => {
+      try {
+        const ce = e as CustomEvent
+        setModalInitPayload(ce.detail ?? null)
+        setIsModalOpen(true)
+      } catch {
+        setModalInitPayload(null)
+        setIsModalOpen(true)
+      }
+    }
+    window.addEventListener("open-auth-modal", handler as EventListener)
+    return () => window.removeEventListener("open-auth-modal", handler as EventListener)
   }, [])
   // For very small flight pages we hide header to maximize space; show header on chat page
   if (pathname?.startsWith("/flights") && isSmallScreen) {
@@ -138,6 +173,13 @@ export function Header({ menuItems, className, forceScrolledStyle = false, compa
   const spacerLg = compact ? "lg:h-12" : "lg:h-22"
   const logoTextClass = compact ? "text-sm" : "text-lg"
   const navGap = compact ? "gap-6" : "gap-12"
+
+  // Determine a friendly display name. Priority:
+  // 1. server/local auth_user stored in localStorage (authUser)
+  // 2. Eitaa init data (when running inside the mini-app)
+  const eitaaDisplayName =
+    typeof window !== "undefined" ? (window as any)?.Eitaa?.WebApp?.initDataUnsafe?.user?.first_name : undefined
+  const displayName = authUser ? authUser.full_name || authUser.mobile : eitaaDisplayName || "کاربر"
 
   return (
     <>
@@ -190,7 +232,7 @@ export function Header({ menuItems, className, forceScrolledStyle = false, compa
               </NavigationMenu.List>
             </NavigationMenu.Root>
             <div className="relative">
-              {!authUser ? (
+              {!authUser && !isRunningInEitaa() ? (
                 <Button
                   size="default"
                   onClick={() => setIsModalOpen(true)}
@@ -212,7 +254,7 @@ export function Header({ menuItems, className, forceScrolledStyle = false, compa
                       isScrolled ? "text-Primary-P500main" : "bg-Gray-N50 text-Primary-P500main"
                     )}
                   >
-                    سلام {authUser.full_name ? authUser.full_name : authUser.mobile}!
+                    سلام {displayName}!
                   </button>
                   {userMenuOpen && (
                     <div className="absolute top-full left-0 mt-1 w-30 rounded-md bg-white shadow-lg">
@@ -271,7 +313,7 @@ export function Header({ menuItems, className, forceScrolledStyle = false, compa
                 </div>
               </DrawerContent>
             </Drawer>
-            {!authUser ? (
+            {!authUser && !isRunningInEitaa() ? (
               <Button
                 size="sm"
                 onClick={() => setIsModalOpen(true)}
@@ -293,7 +335,7 @@ export function Header({ menuItems, className, forceScrolledStyle = false, compa
                     isScrolled ? "text-Primary-P500main" : "bg-Gray-N50 text-Primary-P500main"
                   )}
                 >
-                  سلام {authUser.full_name ? authUser.full_name : authUser.mobile}!
+                  سلام {displayName}!
                 </button>
                 {userMenuOpen && (
                   <div className="absolute top-full left-0 mt-1 w-30 rounded-md border bg-white shadow-lg">
@@ -326,7 +368,15 @@ export function Header({ menuItems, className, forceScrolledStyle = false, compa
           </div>
         </div>
       )}
-      <AuthModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} showToast={showToast} />
+      <AuthModal
+        isOpen={isModalOpen}
+        onClose={() => {
+          setIsModalOpen(false)
+          setModalInitPayload(null)
+        }}
+        showToast={showToast}
+        initialPayload={modalInitPayload}
+      />
 
       {/* Spacer div to prevent layout shifts - matches header height */}
       <div className={`h-12 w-full ${spacerLg}`}></div>

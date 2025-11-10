@@ -3,6 +3,7 @@ import type { Metadata } from "next"
 import Script from "next/script"
 
 import EitaaDynamicInitializer from "@/components/Eitaa/EitaaDynamicInitializer/EitaaDynamicInitializer"
+import EitaaDynamicAutoAuth from "@/components/Eitaa/EitaaDynamicAutoAuth/EitaaDynamicAutoAuth"
 import { ActiveMenuProvider } from "@/components/layout/ActiveMenuProvider/ActiveMenuProvider"
 import Footer from "@/components/layout/Footer/Footer"
 import { anjomanMaxVF } from "../lib/fonts"
@@ -40,6 +41,7 @@ export default function RootLayout({
       <body className={`${anjomanMaxVF.variable} font-anjoman-max`} suppressHydrationWarning={true}>
         {/* Eitaa Mini App Initializer */}
         <EitaaDynamicInitializer />
+        <EitaaDynamicAutoAuth />
 
         {/* Global Header with dynamic active state */}
         <ActiveMenuProvider />
