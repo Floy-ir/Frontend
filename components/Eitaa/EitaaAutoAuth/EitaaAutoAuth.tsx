@@ -22,6 +22,12 @@ function formatMobile(raw: string) {
  *   askContactAndStore and trigger send-otp and open the auth modal by
  *   dispatching a custom 'open-auth-modal' event with payload.
  */
+type AuthUser = {
+  mobile: string
+  full_name?: string
+  request_id?: string
+}
+
 const EitaaAutoAuth: React.FC = () => {
   const [started, setStarted] = useState(false)
 
@@ -62,46 +68,49 @@ const EitaaAutoAuth: React.FC = () => {
           }
         }
 
-        // Build payload for backend Eitaa auth exchange
-        const payload: any = { eitaa_id: eitaaId, init_data: rawInitData }
-        if (phone) payload.phone = formatMobile(phone.replace(/[^0-9+]/g, ""))
-
         try {
-          // NOTE: ensure your backend exposes an endpoint like /accounts/eitaa-auth/
-          // that validates init_data and issues a token. If your backend uses a
-          // different path, update the string below.
-          const res = await apiFetch<{ token?: string; user?: any }>("/accounts/eitaa-auth/", {
-            method: "POST",
-            data: payload,
-          })
+          if (eitaaId) {
+            const res = await apiFetch<{ token?: string; user?: AuthUser; request_id?: string }>("/accounts/eitaa/", {
+              method: "POST",
+              data: { eita_id: eitaaId },
+            })
 
-          if (res?.token) {
+            if (res?.token) {
+              try {
+                localStorage.setItem("auth_token", res.token)
+              } catch {}
+            }
+
+            const initUser = (window as any)?.Eitaa?.WebApp?.initDataUnsafe?.user
+            const fallbackFullName = (initUser && initUser.first_name) || ""
+            const sanitizedPhone = phone ? formatMobile(phone.replace(/[^0-9+]/g, "")) : ""
+
+            const mergedUser: AuthUser = {
+              mobile:
+                (res?.user?.mobile && typeof res.user.mobile === "string" ? res.user.mobile : sanitizedPhone) || "",
+              full_name:
+                (res?.user?.full_name && typeof res.user.full_name === "string"
+                  ? res.user.full_name
+                  : fallbackFullName) || undefined,
+              request_id: res?.request_id,
+            }
+
             try {
-              localStorage.setItem("auth_token", res.token)
-              if (res.user) localStorage.setItem("auth_user", JSON.stringify(res.user))
+              localStorage.setItem("auth_user", JSON.stringify(mergedUser))
               try {
                 window.dispatchEvent(new Event("auth-changed"))
               } catch {}
             } catch {}
-            // successful server-side session created; nothing more to do
-            return
           }
-
-          // If backend did not return a token, fall back to persisting a
-          // lightweight local `auth_user` so UI can greet the user.
-          try {
-            const initUser = (window as any)?.Eitaa?.WebApp?.initDataUnsafe?.user
-            const userObj = { mobile: payload.phone || "", full_name: (initUser && initUser.first_name) || "" }
-            localStorage.setItem("auth_user", JSON.stringify(userObj))
-            try {
-              window.dispatchEvent(new Event("auth-changed"))
-            } catch {}
-          } catch {}
         } catch {
           // If backend call fails, persist minimal local info so header shows a greeting
           try {
             const initUser = (window as any)?.Eitaa?.WebApp?.initDataUnsafe?.user
-            const userObj = { mobile: payload.phone || "", full_name: (initUser && initUser.first_name) || "" }
+            const sanitizedPhone = phone ? formatMobile(phone.replace(/[^0-9+]/g, "")) : ""
+            const userObj: AuthUser = {
+              mobile: sanitizedPhone || "",
+              full_name: (initUser && initUser.first_name) || "",
+            }
             localStorage.setItem("auth_user", JSON.stringify(userObj))
             try {
               window.dispatchEvent(new Event("auth-changed"))
