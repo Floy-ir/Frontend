@@ -112,19 +112,17 @@ export const extractPhoneFromContact = (contactData: unknown): string | undefine
   }
 }
 
-export const askContactAndStore = async (_eitaaId: string): Promise<string | undefined> => {
-  const webApp = window?.Eitaa?.WebApp
+export const askContactAndStore = async (eitaaId: string): Promise<string | undefined> => {
+  const webApp = (window as any)?.Eitaa?.WebApp
   if (!webApp?.requestContact) return undefined
 
   return await new Promise<string | undefined>((resolve) => {
     try {
-      if (webApp.requestContact) {
-        webApp.requestContact((granted, data: unknown) => {
-          if (!granted) return resolve(undefined)
-          const phone = extractPhoneFromContact(data)
-          resolve(phone)
-        })
-      }
+      webApp.requestContact((granted: boolean, data: any) => {
+        if (!granted) return resolve(undefined)
+        const phone = extractPhoneFromContact(data)
+        resolve(phone)
+      })
     } catch {
       resolve(undefined)
     }
