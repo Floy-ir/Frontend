@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react"
+import { useCallback, useEffect, useState } from "react"
 import { CitiesStorageService } from "@/services/storage/CitiesStorageService"
 
 // Check if we're running in the browser

@@ -1,7 +1,7 @@
 /**
  * Generic storage service that provides type-safe access to browser storage
  */
-export class StorageService<T extends Record<string, any>> {
+export class StorageService<T extends Record<string, unknown>> {
   private readonly prefix: string
   private readonly storage: Storage | null
   private readonly isBrowser: boolean

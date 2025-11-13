@@ -26,7 +26,7 @@ export default function AuthModal({
   isOpen: boolean
   onClose: () => void
   showToast: (message: string) => void
-  initialPayload?: any
+  initialPayload?: Record<string, unknown>
 }) {
   // Optional initial payload for opening the modal programmatically
   // (e.g. from Eitaa auto-auth). We'll pick it up from a custom event
@@ -64,13 +64,15 @@ export default function AuthModal({
   React.useEffect(() => {
     if (!isOpen || !initialPayload) return
     try {
-      const p = initialPayload as any
+      const p = initialPayload as Record<string, unknown>
       if (p.step === "otp") {
-        if (p.phone) setPhoneForOtp(p.phone)
-        if (p.otp_uuid) setOtpUuid(p.otp_uuid)
-        setStep(1)
-        setResetMode(!!p.resetMode)
-      }
+  const phone = p.phone as string | undefined
+  const uuid = p.otp_uuid as string | undefined
+  if (phone) setPhoneForOtp(phone)
+  if (uuid) setOtpUuid(uuid)
+  setStep(1)
+  setResetMode(!!p.resetMode)
+}
     } catch {
       // ignore malformed payload
     }
@@ -209,18 +211,18 @@ export default function AuthModal({
           // persist a minimal user object so header can show a welcome label
           try {
             // Try to get full_name from response, fallback to phone
+            const resUser = (res as unknown as Record<string, unknown>)?.user as Record<string, unknown> | undefined;
             const userObj = {
               mobile,
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              full_name: (res as any)?.full_name || (res as any)?.user?.full_name || "",
+              full_name: resUser?.full_name as string || (res as unknown as Record<string, unknown>)?.full_name as string || "",
             }
             localStorage.setItem("auth_user", JSON.stringify(userObj))
-          } catch {}
+          } catch { }
           // notify other parts of the app that auth state changed
           try {
             window.dispatchEvent(new Event("auth-changed"))
-          } catch {}
-        } catch {}
+          } catch { }
+        } catch { }
       }
       // success - backend may return token or session cookie
       showToast("با موفقیت وارد شدید!")
@@ -611,8 +613,8 @@ export default function AuthModal({
                 step === 0 || step === "forgot-phone"
                   ? "translateX(0)"
                   : step === 1
-                  ? `translateX(${isRtl ? "33.333%" : "-33.333%"})`
-                  : `translateX(${isRtl ? "66.666%" : "-66.666%"})`,
+                    ? `translateX(${isRtl ? "33.333%" : "-33.333%"})`
+                    : `translateX(${isRtl ? "66.666%" : "-66.666%"})`,
             }}
           >
             <div className="items-strech flex w-1/3 flex-col px-2">
