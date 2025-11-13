@@ -212,6 +212,8 @@ export function Header({ menuItems, className, forceScrolledStyle = false, compa
       : undefined
 
   const displayName = authUser ? authUser.full_name || authUser.mobile : eitaaDisplayName || "کاربر"
+  const isInEitaa = isRunningInEitaa()
+
   return (
     <>
       <header className={headerClasses}>
@@ -262,7 +264,7 @@ export function Header({ menuItems, className, forceScrolledStyle = false, compa
               </NavigationMenu.List>
             </NavigationMenu.Root>
             <div className="relative">
-              {!authUser && !isRunningInEitaa() ? (
+              {!authUser ? (
                 <Button
                   size="default"
                   onClick={() => setIsModalOpen(true)}
@@ -275,6 +277,17 @@ export function Header({ menuItems, className, forceScrolledStyle = false, compa
                 >
                   ورود | ثبت‌نام
                 </Button>
+              ) : isInEitaa ? (
+                <span
+                  className={twMerge(
+                    "rounded-xl px-4 py-2 text-sm font-medium",
+                    isScrolled ? "text-Primary-P500main" : "bg-Gray-N50 text-Primary-P500main"
+                  )}
+                  role="status"
+                  aria-live="polite"
+                >
+                  سلام {displayName}!
+                </span>
               ) : (
                 <div className="relative">
                   <button
@@ -342,7 +355,7 @@ export function Header({ menuItems, className, forceScrolledStyle = false, compa
                 </div>
               </DrawerContent>
             </Drawer>
-            {!authUser && !isRunningInEitaa() ? (
+            {!authUser ? (
               <Button
                 size="sm"
                 onClick={() => setIsModalOpen(true)}
@@ -355,6 +368,17 @@ export function Header({ menuItems, className, forceScrolledStyle = false, compa
               >
                 ورود | ثبت‌نام
               </Button>
+            ) : isInEitaa ? (
+              <span
+                className={twMerge(
+                  "rounded-lg px-3 py-2 text-sm font-medium",
+                  isScrolled ? "text-Primary-P500main" : "bg-Gray-N50 text-Primary-P500main"
+                )}
+                role="status"
+                aria-live="polite"
+              >
+                سلام {displayName}!
+              </span>
             ) : (
               <div className="relative">
                 <button
