@@ -86,7 +86,7 @@ const EitaaAutoAuth: React.FC = () => {
           if (eitaaId) {
             const res = await apiFetch<{ token?: string; user?: AuthUser; request_id?: string }>("/accounts/eitaa/", {
               method: "POST",
-              data: { eita_id: eitaaId },
+              data: { eita_id: eitaaId, mobile: phone },
             })
 
             if (res?.token) {
