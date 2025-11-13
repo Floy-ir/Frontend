@@ -1,6 +1,6 @@
-import { StorageService } from "@/services/storage/StorageService"
-import { PassengerCount } from "@/components/PassengerSelector/PassengerSelector"
 import { useCallback } from "react"
+import { PassengerCount } from "@/components/PassengerSelector/PassengerSelector"
+import { StorageService } from "@/services/storage/StorageService"
 
 // Define the structure of our stored form data
 interface FlightFormData {

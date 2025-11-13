@@ -8,6 +8,8 @@ import { usePathname } from "next/navigation"
 import React, { useEffect, useState } from "react"
 import { twMerge } from "tailwind-merge"
 import { Button } from "@/components/ui/button"
+import { apiFetch } from "@/services/api"
+import { isRunningInEitaa } from "@/utils/eitaa"
 import AuthModal from "./AuthModal"
 import { Drawer, DrawerContent, DrawerTitle, DrawerTrigger } from "../../ui/drawer"
 
@@ -22,6 +24,12 @@ interface HeaderProps {
   className?: string
   forceScrolledStyle?: boolean
   compact?: boolean
+}
+
+type AuthUser = {
+  mobile: string
+  full_name?: string
+  request_id?: string
 }
 
 const navItem = cva(["flex", "flex-col", "items-center", "gap-1"], {
@@ -61,7 +69,8 @@ export function Header({ menuItems, className, forceScrolledStyle = false, compa
   const [isScrolled, setIsScrolled] = useState<boolean>(forceScrolledStyle ?? false)
   const [isSmallScreen, setIsSmallScreen] = useState<boolean>(false)
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
-  const [authUser, setAuthUser] = useState<{ mobile: string; full_name?: string } | null>(null)
+  const [modalInitPayload, setModalInitPayload] = useState<Record<string, unknown> | undefined>(undefined)
+  const [authUser, setAuthUser] = useState<AuthUser | null>(null)
   const [userMenuOpen, setUserMenuOpen] = useState<boolean>(false)
   const [toast, setToast] = useState<{ id: number; message: string } | null>(null)
   const showToast = (message: string) => {
@@ -122,11 +131,66 @@ export function Header({ menuItems, className, forceScrolledStyle = false, compa
     readUser()
     const onAuth = () => readUser()
     window.addEventListener("auth-changed", onAuth)
+    // If there's no stored auth_user but the app is running inside Eitaa,
+    // try to read Eitaa init data and show a greeting using the Eitaa user
+    // info. This provides a friendly UX inside the mini-app even before
+    // a server-side session (token) exists.
+    if (!localStorage.getItem("auth_user") && isRunningInEitaa()) {
+      try {
+        // runtime access to the Eitaa WebApp init data
+        const raw = (window as Window & { Eitaa?: { WebApp?: Record<string, unknown> } })?.Eitaa?.WebApp?.initDataUnsafe?.user
+        if (raw && raw.first_name) {
+          const userWithoutRequestId: AuthUser = { mobile: "", full_name: raw.first_name }
+          try {
+            localStorage.setItem("auth_user", JSON.stringify(userWithoutRequestId))
+            window.dispatchEvent(new Event("auth-changed"))
+          } catch { }
+          setAuthUser(userWithoutRequestId)
+
+          const eitaId = raw.id != null ? String(raw.id) : null
+          if (eitaId) {
+            ; (async () => {
+              try {
+                const response = await apiFetch<{ request_id?: string }>("/accounts/eita/", {
+                  method: "POST",
+                  data: { eita_id: eitaId },
+                })
+                if (response?.request_id) {
+                  const userWithRequestId: AuthUser = { ...userWithoutRequestId, request_id: response.request_id }
+                  setAuthUser(userWithRequestId)
+                  try {
+                    localStorage.setItem("auth_user", JSON.stringify(userWithRequestId))
+                    window.dispatchEvent(new Event("auth-changed"))
+                  } catch { }
+                }
+              } catch {
+                /* ignore */
+              }
+            })()
+          }
+        }
+      } catch { }
+    }
     return () => window.removeEventListener("auth-changed", onAuth)
   }, [])
 
   useEffect(() => {
     document.documentElement.style.scrollBehavior = "smooth"
+  }, [])
+
+  useEffect(() => {
+    const handler = (e: Event) => {
+      try {
+        const ce = e as CustomEvent
+        setModalInitPayload(ce.detail ?? undefined)
+        setIsModalOpen(true)
+      } catch {
+        setModalInitPayload(undefined)
+        setIsModalOpen(true)
+      }
+    }
+    window.addEventListener("open-auth-modal", handler as EventListener)
+    return () => window.removeEventListener("open-auth-modal", handler as EventListener)
   }, [])
   // For very small flight pages we hide header to maximize space; show header on chat page
   if (pathname?.startsWith("/flights") && isSmallScreen) {
@@ -139,14 +203,22 @@ export function Header({ menuItems, className, forceScrolledStyle = false, compa
   const logoTextClass = compact ? "text-sm" : "text-lg"
   const navGap = compact ? "gap-6" : "gap-12"
 
+  // Determine a friendly display name. Priority:
+  // 1. server/local auth_user stored in localStorage (authUser)
+  // 2. Eitaa init data (when running inside the mini-app)
+  const eitaaDisplayName =
+    typeof window !== "undefined"
+      ? (window as Window & { Eitaa?: { WebApp?: { initDataUnsafe?: { user?: { first_name?: string } } } } })?.Eitaa?.WebApp?.initDataUnsafe?.user?.first_name
+      : undefined
+
+  const displayName = authUser ? authUser.full_name || authUser.mobile : eitaaDisplayName || "کاربر"
   return (
     <>
       <header className={headerClasses}>
         {/* Content container - only constrain width for content, not background */}
         <div
-          className={`lg-xl:px-6 mx-auto w-full max-w-[1136px] px-4 md:px-4 ${
-            compact ? "px-3 lg:px-4" : "px-4 lg:px-6"
-          } ${isScrolled ? "w-full" : ""}`}
+          className={`lg-xl:px-6 mx-auto w-full max-w-[1136px] px-4 md:px-4 ${compact ? "px-3 lg:px-4" : "px-4 lg:px-6"
+            } ${isScrolled ? "w-full" : ""}`}
         >
           {/* Desktop view */}
           <div className={`hidden ${desktopHeight} items-center justify-between lg:flex`}>
@@ -190,7 +262,7 @@ export function Header({ menuItems, className, forceScrolledStyle = false, compa
               </NavigationMenu.List>
             </NavigationMenu.Root>
             <div className="relative">
-              {!authUser ? (
+              {!authUser && !isRunningInEitaa() ? (
                 <Button
                   size="default"
                   onClick={() => setIsModalOpen(true)}
@@ -212,7 +284,7 @@ export function Header({ menuItems, className, forceScrolledStyle = false, compa
                       isScrolled ? "text-Primary-P500main" : "bg-Gray-N50 text-Primary-P500main"
                     )}
                   >
-                    سلام {authUser.full_name ? authUser.full_name : authUser.mobile}!
+                    سلام {displayName}!
                   </button>
                   {userMenuOpen && (
                     <div className="absolute top-full left-0 mt-1 w-30 rounded-md bg-white shadow-lg">
@@ -221,10 +293,10 @@ export function Header({ menuItems, className, forceScrolledStyle = false, compa
                           try {
                             localStorage.removeItem("auth_token")
                             localStorage.removeItem("auth_user")
-                          } catch {}
+                          } catch { }
                           try {
                             window.dispatchEvent(new Event("auth-changed"))
-                          } catch {}
+                          } catch { }
                           setUserMenuOpen(false)
                         }}
                         className="hover:bg-Gray-N50 w-full px-4 py-2 text-right text-sm hover:rounded-md"
@@ -259,9 +331,8 @@ export function Header({ menuItems, className, forceScrolledStyle = false, compa
                       <Link
                         key={index}
                         href={item.href}
-                        className={`w-full px-6 py-3 text-right text-[1.15rem] ${
-                          item.isActive ? "font-semibold text-slate-800" : "text-slate-500"
-                        }`}
+                        className={`w-full px-6 py-3 text-right text-[1.15rem] ${item.isActive ? "font-semibold text-slate-800" : "text-slate-500"
+                          }`}
                         onClick={() => setMobileMenuOpen(false)}
                       >
                         {item.label}
@@ -271,7 +342,7 @@ export function Header({ menuItems, className, forceScrolledStyle = false, compa
                 </div>
               </DrawerContent>
             </Drawer>
-            {!authUser ? (
+            {!authUser && !isRunningInEitaa() ? (
               <Button
                 size="sm"
                 onClick={() => setIsModalOpen(true)}
@@ -293,7 +364,7 @@ export function Header({ menuItems, className, forceScrolledStyle = false, compa
                     isScrolled ? "text-Primary-P500main" : "bg-Gray-N50 text-Primary-P500main"
                   )}
                 >
-                  سلام {authUser.full_name ? authUser.full_name : authUser.mobile}!
+                  سلام {displayName}!
                 </button>
                 {userMenuOpen && (
                   <div className="absolute top-full left-0 mt-1 w-30 rounded-md border bg-white shadow-lg">
@@ -302,10 +373,10 @@ export function Header({ menuItems, className, forceScrolledStyle = false, compa
                         try {
                           localStorage.removeItem("auth_token")
                           localStorage.removeItem("auth_user")
-                        } catch {}
+                        } catch { }
                         try {
                           window.dispatchEvent(new Event("auth-changed"))
-                        } catch {}
+                        } catch { }
                         setUserMenuOpen(false)
                       }}
                       className="hover:bg-Gray-N50 w-full px-4 py-2 text-right text-sm hover:rounded-md"
@@ -326,7 +397,15 @@ export function Header({ menuItems, className, forceScrolledStyle = false, compa
           </div>
         </div>
       )}
-      <AuthModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} showToast={showToast} />
+      <AuthModal
+        isOpen={isModalOpen}
+        onClose={() => {
+          setIsModalOpen(false)
+          setModalInitPayload(undefined)
+        }}
+        showToast={showToast}
+        initialPayload={modalInitPayload}
+      />
 
       {/* Spacer div to prevent layout shifts - matches header height */}
       <div className={`h-12 w-full ${spacerLg}`}></div>

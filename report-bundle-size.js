@@ -1,16 +1,15 @@
 #!/usr/bin/env node
-/* eslint-disable no-console */
+
 /**
  * Copyright (c) HashiCorp, Inc.
  * SPDX-License-Identifier: MPL-2.0
  */
 
 // edited to work with the appdir by @raphaelbadia
-
-const gzSize = require("gzip-size")
-const mkdirp = require("mkdirp")
-const fs = require("fs")
-const path = require("path")
+import gzSize from "gzip-size"
+import mkdirp from "mkdirp"
+import fs from "fs"
+import path from "path"
 
 // Pull options from `package.json`
 const options = getOptions()
@@ -20,7 +19,7 @@ const BUILD_OUTPUT_DIRECTORY = getBuildOutputDirectory(options)
 const nextMetaRoot = path.join(process.cwd(), BUILD_OUTPUT_DIRECTORY)
 try {
   fs.accessSync(nextMetaRoot, fs.constants.R_OK)
-} catch (err) {
+} catch {
   console.error(
     `No build output found at "${nextMetaRoot}" - you may not have your working directory set correctly, or not have run "next build".`
   )
@@ -28,8 +27,8 @@ try {
 }
 
 // if so, we can import the build manifest
-const buildMeta = require(path.join(nextMetaRoot, "build-manifest.json"))
-const appDirMeta = require(path.join(nextMetaRoot, "app-build-manifest.json"))
+const buildMeta = JSON.parse(fs.readFileSync(path.join(nextMetaRoot, "build-manifest.json"), "utf8"))
+const appDirMeta = JSON.parse(fs.readFileSync(path.join(nextMetaRoot, "app-build-manifest.json"), "utf8"))
 
 // this memory cache ensures we dont read any script file more than once
 // bundles are often shared between pages
@@ -38,11 +37,11 @@ const memoryCache = {}
 // since _app is the template that all other pages are rendered into,
 // every page must load its scripts. we'll measure its size here
 const globalBundle = buildMeta.pages["/_app"]
-const globalBundleSizes = getScriptSizes(globalBundle)
+const _globalBundleSizes = getScriptSizes(globalBundle)
 
 // next, we calculate the size of each page's scripts, after
 // subtracting out the global scripts
-const allPageSizes = Object.values(buildMeta.pages).reduce((acc, scriptPaths, i) => {
+const _allPageSizes = Object.values(buildMeta.pages).reduce((acc, scriptPaths, i) => {
   const pagePath = Object.keys(buildMeta.pages)[i]
   const scriptSizes = getScriptSizes(scriptPaths.filter((scriptPath) => !globalBundle.includes(scriptPath)))
 
@@ -117,7 +116,7 @@ function getScriptSize(scriptPath) {
  * Reads options from `package.json`
  */
 function getOptions(pathPrefix = process.cwd()) {
-  const pkg = require(path.join(pathPrefix, "package.json"))
+  const pkg = JSON.parse(fs.readFileSync(path.join(pathPrefix, "package.json"), "utf8"))
 
   return { ...pkg.nextBundleAnalysis, name: pkg.name }
 }
