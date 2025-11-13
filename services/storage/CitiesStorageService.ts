@@ -1,7 +1,7 @@
 import { StorageService } from "./StorageService"
 
 // Define the shape of stored city data
-interface CitiesStorageSchema {
+interface CitiesStorageSchema extends Record<string, unknown> {
   recentSelections: Array<{ value: string; label: string; code: string }>
   lastSearches: Array<{ origin: string; destination: string; date: string }>
   favorites: string[] // City codes
