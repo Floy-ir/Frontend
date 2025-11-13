@@ -1,6 +1,6 @@
 import type { FlightCardProps } from "@/components/FlightsPage/FlightCard/flight-card"
 
-type MockFlightData = Omit<FlightCardProps, "onBuy" | "className" | "intent">
+export type MockFlightData = Omit<FlightCardProps, "onBuy" | "className" | "intent">
 
 export const mockFlightData: MockFlightData[] = [
   {
