@@ -51,14 +51,28 @@ const EitaaAutoAuth: React.FC = () => {
         // with your actual backend route if different.
         const rawInitData = (window as any)?.Eitaa?.WebApp?.initData ?? null
 
-        // Try to get a phone number: prefer contact picker if initData lacks it
+        // Try to get a phone number: first check if we already have it stored
         let phone: string | undefined
-        // Some Eitaa implementations include phone in initDataUnsafe.start_param or user - try common locations
         try {
-          const initUser = (window as any)?.Eitaa?.WebApp?.initDataUnsafe?.user
-          if (initUser && initUser.phone) phone = String(initUser.phone)
+          const storedUser = localStorage.getItem("auth_user")
+          if (storedUser) {
+            const parsed = JSON.parse(storedUser) as AuthUser
+            if (parsed.mobile && parsed.mobile.trim().length > 0) {
+              phone = parsed.mobile
+            }
+          }
         } catch { }
 
+        // If not stored, try to get from initData
+        if (!phone) {
+          try {
+            const initUser = (window as any)?.Eitaa?.WebApp?.initDataUnsafe?.user
+            if (initUser && initUser.phone) phone = String(initUser.phone)
+          } catch { }
+        }
+
+        // Only request contact if we don't have phone number from any source
+        // This prevents asking for contact on every mini app open
         if (!phone) {
           try {
             const picked = await askContactAndStore(eitaaId ?? "")
