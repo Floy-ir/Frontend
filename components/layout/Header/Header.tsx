@@ -9,6 +9,7 @@ import React, { useEffect, useState } from "react"
 import { isRunningInEitaa } from "@/utils/eitaa"
 import { twMerge } from "tailwind-merge"
 import { Button } from "@/components/ui/button"
+import { apiFetch } from "@/services/api"
 import AuthModal from "./AuthModal"
 import { Drawer, DrawerContent, DrawerTitle, DrawerTrigger } from "../../ui/drawer"
 
@@ -23,6 +24,12 @@ interface HeaderProps {
   className?: string
   forceScrolledStyle?: boolean
   compact?: boolean
+}
+
+type AuthUser = {
+  mobile: string
+  full_name?: string
+  request_id?: string
 }
 
 const navItem = cva(["flex", "flex-col", "items-center", "gap-1"], {
@@ -63,7 +70,7 @@ export function Header({ menuItems, className, forceScrolledStyle = false, compa
   const [isSmallScreen, setIsSmallScreen] = useState<boolean>(false)
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
   const [modalInitPayload, setModalInitPayload] = useState<any>(null)
-  const [authUser, setAuthUser] = useState<{ mobile: string; full_name?: string } | null>(null)
+  const [authUser, setAuthUser] = useState<AuthUser | null>(null)
   const [userMenuOpen, setUserMenuOpen] = useState<boolean>(false)
   const [toast, setToast] = useState<{ id: number; message: string } | null>(null)
   const showToast = (message: string) => {
@@ -133,12 +140,34 @@ export function Header({ menuItems, className, forceScrolledStyle = false, compa
         // runtime access to the Eitaa WebApp init data
         const raw = (window as any)?.Eitaa?.WebApp?.initDataUnsafe?.user
         if (raw && raw.first_name) {
-          const u = { mobile: "", full_name: raw.first_name }
+          const userWithoutRequestId: AuthUser = { mobile: "", full_name: raw.first_name }
           try {
-            localStorage.setItem("auth_user", JSON.stringify(u))
+            localStorage.setItem("auth_user", JSON.stringify(userWithoutRequestId))
             window.dispatchEvent(new Event("auth-changed"))
           } catch {}
-          setAuthUser(u)
+          setAuthUser(userWithoutRequestId)
+
+          const eitaId = raw.id != null ? String(raw.id) : null
+          if (eitaId) {
+            ;(async () => {
+              try {
+                const response = await apiFetch<{ request_id?: string }>("/accounts/eita/", {
+                  method: "POST",
+                  data: { eita_id: eitaId },
+                })
+                if (response?.request_id) {
+                  const userWithRequestId: AuthUser = { ...userWithoutRequestId, request_id: response.request_id }
+                  setAuthUser(userWithRequestId)
+                  try {
+                    localStorage.setItem("auth_user", JSON.stringify(userWithRequestId))
+                    window.dispatchEvent(new Event("auth-changed"))
+                  } catch {}
+                }
+              } catch {
+                /* ignore */
+              }
+            })()
+          }
         }
       } catch {}
     }
