@@ -37,11 +37,12 @@ declare global {
 
 /**
  * Check if the app is running inside Eitaa
+ * This checks for actual initData or user data, not just the presence of the WebApp object,
+ * to avoid false positives when the Eitaa script is loaded but not in mini app context.
  */
 export const isRunningInEitaa = (): boolean => {
-  return typeof window !== "undefined" && !!window.Eitaa?.WebApp
+  return !!(window as any)?.Eitaa?.WebApp?.initData
 }
-
 /**
  * Notes on Eitaa auth helpers in this file:
  *
