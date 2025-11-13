@@ -1,5 +1,5 @@
-import { formatDate } from "./dateUtils"
 import { PassengerCount } from "@/components/PassengerSelector/PassengerSelector"
+import { formatDate } from "./dateUtils"
 
 /**
  * Generate a URL for flight search results

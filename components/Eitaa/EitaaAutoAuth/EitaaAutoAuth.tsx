@@ -1,8 +1,8 @@
 "use client"
 
 import React, { useEffect, useState } from "react"
-import { isRunningInEitaa, getStableEitaaId, askContactAndStore } from "@/utils/eitaa"
 import { apiFetch } from "@/services/api"
+import { askContactAndStore, getStableEitaaId, isRunningInEitaa } from "@/utils/eitaa"
 
 function formatMobile(raw: string) {
   if (!raw) return raw
@@ -39,7 +39,7 @@ const EitaaAutoAuth: React.FC = () => {
     try {
       const existing = localStorage.getItem("auth_token")
       if (existing) return
-    } catch {}
+    } catch { }
 
     const run = async () => {
       try {
@@ -57,7 +57,7 @@ const EitaaAutoAuth: React.FC = () => {
         try {
           const initUser = (window as any)?.Eitaa?.WebApp?.initDataUnsafe?.user
           if (initUser && initUser.phone) phone = String(initUser.phone)
-        } catch {}
+        } catch { }
 
         if (!phone) {
           try {
@@ -78,7 +78,7 @@ const EitaaAutoAuth: React.FC = () => {
             if (res?.token) {
               try {
                 localStorage.setItem("auth_token", res.token)
-              } catch {}
+              } catch { }
             }
 
             const initUser = (window as any)?.Eitaa?.WebApp?.initDataUnsafe?.user
@@ -94,13 +94,12 @@ const EitaaAutoAuth: React.FC = () => {
                   : fallbackFullName) || undefined,
               request_id: res?.request_id,
             }
-
             try {
               localStorage.setItem("auth_user", JSON.stringify(mergedUser))
               try {
                 window.dispatchEvent(new Event("auth-changed"))
-              } catch {}
-            } catch {}
+              } catch { }
+            } catch { }
           }
         } catch {
           // If backend call fails, persist minimal local info so header shows a greeting
@@ -114,8 +113,8 @@ const EitaaAutoAuth: React.FC = () => {
             localStorage.setItem("auth_user", JSON.stringify(userObj))
             try {
               window.dispatchEvent(new Event("auth-changed"))
-            } catch {}
-          } catch {}
+            } catch { }
+          } catch { }
         }
       } catch {
         // ignore
