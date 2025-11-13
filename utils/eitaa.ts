@@ -40,8 +40,13 @@ declare global {
  * This checks for actual initData or user data, not just the presence of the WebApp object,
  * to avoid false positives when the Eitaa script is loaded but not in mini app context.
  */
+const getBrowserWindow = (): (Window & typeof globalThis) | undefined => {
+  return typeof window === "undefined" ? undefined : window
+}
+
 export const isRunningInEitaa = (): boolean => {
-  return !!(window as any)?.Eitaa?.WebApp?.initData
+  const browserWindow = getBrowserWindow()
+  return !!browserWindow?.Eitaa?.WebApp?.initData
 }
 /**
  * Notes on Eitaa auth helpers in this file:
@@ -64,12 +69,14 @@ export const isRunningInEitaa = (): boolean => {
 
 // Additional helpers for Eitaa auth flows
 export const getStableEitaaId = (): string | null => {
-  const id = window?.Eitaa?.WebApp?.initDataUnsafe?.user?.id
+  const browserWindow = getBrowserWindow()
+  const id = browserWindow?.Eitaa?.WebApp?.initDataUnsafe?.user?.id
   return id != null ? String(id) : null
 }
 
 export const getRawInitData = (): string | null => {
-  return window?.Eitaa?.WebApp?.initData ?? null
+  const browserWindow = getBrowserWindow()
+  return browserWindow?.Eitaa?.WebApp?.initData ?? null
 }
 export const extractPhoneFromContact = (contactData: unknown): string | undefined => {
   const getPhoneFromObject = (obj: unknown): string | undefined => {
@@ -114,7 +121,8 @@ export const extractPhoneFromContact = (contactData: unknown): string | undefine
 }
 
 export const askContactAndStore = async (_eitaaId: string): Promise<string | undefined> => {
-  const webApp = window?.Eitaa?.WebApp
+  const browserWindow = getBrowserWindow()
+  const webApp = browserWindow?.Eitaa?.WebApp
   if (!webApp?.requestContact) return undefined
 
   return await new Promise<string | undefined>((resolve) => {
@@ -136,8 +144,9 @@ export const askContactAndStore = async (_eitaaId: string): Promise<string | und
  * Notify Eitaa that the app is ready to be displayed
  */
 export const notifyEitaaReady = (): void => {
-  if (isRunningInEitaa()) {
-    window.Eitaa?.WebApp?.ready()
+  const browserWindow = getBrowserWindow()
+  if (browserWindow && isRunningInEitaa()) {
+    browserWindow.Eitaa?.WebApp?.ready()
   }
 }
 
@@ -145,8 +154,9 @@ export const notifyEitaaReady = (): void => {
  * Expand the mini app to maximum available height
  */
 export const expandEitaaApp = (): void => {
-  if (isRunningInEitaa()) {
-    window.Eitaa?.WebApp?.expand()
+  const browserWindow = getBrowserWindow()
+  if (browserWindow && isRunningInEitaa()) {
+    browserWindow.Eitaa?.WebApp?.expand()
   }
 }
 
@@ -163,11 +173,12 @@ export const openExternalLink = (
     [key: string]: string | undefined
   }
 ): void => {
-  if (isRunningInEitaa()) {
-    window.Eitaa?.WebApp?.openLink(url, options)
+  const browserWindow = getBrowserWindow()
+  if (browserWindow && isRunningInEitaa()) {
+    browserWindow.Eitaa?.WebApp?.openLink(url, options)
   } else {
     // Fallback for when not running in Eitaa
-    window.open(url, "_blank")
+    browserWindow?.open(url, "_blank")
   }
 }
 
@@ -176,10 +187,11 @@ export const openExternalLink = (
  * @param url Eitaa URL to open
  */
 export const openEitaaLink = (url: string): void => {
-  if (isRunningInEitaa()) {
-    window.Eitaa?.WebApp?.openEitaaLink(url)
+  const browserWindow = getBrowserWindow()
+  if (browserWindow && isRunningInEitaa()) {
+    browserWindow.Eitaa?.WebApp?.openEitaaLink(url)
   } else {
     // Fallback for when not running in Eitaa
-    window.open(url, "_blank")
+    browserWindow?.open(url, "_blank")
   }
 }
