@@ -2,6 +2,15 @@
  * Utility functions for Eitaa Mini App integration
  */
 
+// Type definition for the Eitaa BackButton object
+export interface EitaaBackButton {
+  isVisible: boolean
+  onClick: (callback: () => void) => void
+  offClick: (callback: () => void) => void
+  show: () => void
+  hide: () => void
+}
+
 // Type definition for the Eitaa WebApp object
 interface EitaaWebApp {
   ready: () => void
@@ -21,6 +30,8 @@ interface EitaaWebApp {
   }
   // The requestContact callback shapes vary between Eitaa versions; keep it optional
   requestContact?: (callback: (granted: boolean, data?: unknown) => void) => void
+  // Back button API
+  BackButton?: EitaaBackButton
 }
 
 // Type definition for the Eitaa global object
@@ -194,4 +205,54 @@ export const openEitaaLink = (url: string): void => {
     // Fallback for when not running in Eitaa
     browserWindow?.open(url, "_blank")
   }
+}
+
+/**
+ * Get the Eitaa BackButton object
+ * @returns BackButton object or undefined if not available
+ */
+export const getEitaaBackButton = (): EitaaBackButton | undefined => {
+  const browserWindow = getBrowserWindow()
+  return browserWindow?.Eitaa?.WebApp?.BackButton
+}
+
+/**
+ * Show the Eitaa back button
+ */
+export const showEitaaBackButton = (): void => {
+  const browserWindow = getBrowserWindow()
+  if (browserWindow && isRunningInEitaa()) {
+    browserWindow.Eitaa?.WebApp?.BackButton?.show()
+  }
+}
+
+/**
+ * Hide the Eitaa back button
+ */
+export const hideEitaaBackButton = (): void => {
+  const browserWindow = getBrowserWindow()
+  if (browserWindow && isRunningInEitaa()) {
+    browserWindow.Eitaa?.WebApp?.BackButton?.hide()
+  }
+}
+
+/**
+ * Set up a callback for when the Eitaa back button is clicked
+ * @param callback Function to call when back button is clicked
+ * @returns Function to remove the callback
+ */
+export const onEitaaBackButtonClick = (callback: () => void): (() => void) => {
+  const browserWindow = getBrowserWindow()
+  const backButton = browserWindow?.Eitaa?.WebApp?.BackButton
+  
+  if (backButton && isRunningInEitaa()) {
+    backButton.onClick(callback)
+    // Return cleanup function
+    return () => {
+      backButton.offClick(callback)
+    }
+  }
+  
+  // Return no-op cleanup if not available
+  return () => {}
 }

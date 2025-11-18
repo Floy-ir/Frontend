@@ -211,7 +211,7 @@ export function Header({ menuItems, className, forceScrolledStyle = false, compa
       ? (window as Window & { Eitaa?: { WebApp?: { initDataUnsafe?: { user?: { first_name?: string } } } } })?.Eitaa?.WebApp?.initDataUnsafe?.user?.first_name
       : undefined
 
-  const displayName = authUser ? authUser.full_name || authUser.mobile : eitaaDisplayName || "کاربر"
+  const displayName = authUser ? authUser.full_name || sessionStorage.getItem("full_name") : eitaaDisplayName || "کاربر"
   const isInEitaa = isRunningInEitaa()
 
   return (

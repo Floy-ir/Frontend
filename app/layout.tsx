@@ -3,6 +3,7 @@ import type { Metadata } from "next"
 import Script from "next/script"
 
 import EitaaDynamicAutoAuth from "@/components/Eitaa/EitaaDynamicAutoAuth/EitaaDynamicAutoAuth"
+import EitaaDynamicBackButton from "@/components/Eitaa/EitaaDynamicBackButton/EitaaDynamicBackButton"
 import EitaaDynamicInitializer from "@/components/Eitaa/EitaaDynamicInitializer/EitaaDynamicInitializer"
 import { ActiveMenuProvider } from "@/components/layout/ActiveMenuProvider/ActiveMenuProvider"
 import Footer from "@/components/layout/Footer/Footer"
@@ -42,6 +43,7 @@ export default function RootLayout({
         {/* Eitaa Mini App Initializer */}
         <EitaaDynamicInitializer />
         <EitaaDynamicAutoAuth />
+        <EitaaDynamicBackButton />
 
         {/* Global Header with dynamic active state */}
         <ActiveMenuProvider />

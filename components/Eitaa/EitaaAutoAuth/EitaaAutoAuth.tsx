@@ -52,41 +52,41 @@ const EitaaAutoAuth: React.FC = () => {
         const rawInitData = (window as any)?.Eitaa?.WebApp?.initData ?? null
 
         // Try to get a phone number: first check if we already have it stored
-        let phone: string | undefined
-        try {
-          const storedUser = localStorage.getItem("auth_user")
-          if (storedUser) {
-            const parsed = JSON.parse(storedUser) as AuthUser
-            if (parsed.mobile && parsed.mobile.trim().length > 0) {
-              phone = parsed.mobile
-            }
-          }
-        } catch { }
+        // let phone: string | undefined
+        // try {
+        //   const storedUser = localStorage.getItem("auth_user")
+        //   if (storedUser) {
+        //     const parsed = JSON.parse(storedUser) as AuthUser
+        //     if (parsed.mobile && parsed.mobile.trim().length > 0) {
+        //       phone = parsed.mobile
+        //     }
+        //   }
+        // } catch { }
 
-        // If not stored, try to get from initData
-        if (!phone) {
-          try {
-            const initUser = (window as any)?.Eitaa?.WebApp?.initDataUnsafe?.user
-            if (initUser && initUser.phone) phone = String(initUser.phone)
-          } catch { }
-        }
+        // // If not stored, try to get from initData
+        // if (!phone) {
+        //   try {
+        //     const initUser = (window as any)?.Eitaa?.WebApp?.initDataUnsafe?.user
+        //     if (initUser && initUser.phone) phone = String(initUser.phone)
+        //   } catch { }
+        // }
 
-        // Only request contact if we don't have phone number from any source
-        // This prevents asking for contact on every mini app open
-        if (!phone) {
-          try {
-            const picked = await askContactAndStore(eitaaId ?? "")
-            if (picked) phone = picked
-          } catch {
-            /* ignore */
-          }
-        }
+        // // Only request contact if we don't have phone number from any source
+        // // This prevents asking for contact on every mini app open
+        // if (!phone) {
+        //   try {
+        //     const picked = await askContactAndStore(eitaaId ?? "")
+        //     if (picked) phone = picked
+        //   } catch {
+        //     /* ignore */
+        //   }
+        // }
 
         try {
           if (eitaaId) {
             const res = await apiFetch<{ token?: string; user?: AuthUser; request_id?: string }>("/accounts/eitaa/", {
               method: "POST",
-              data: { eita_id: eitaaId, mobile: phone },
+              data: { eita_id: eitaaId },
             })
 
             if (res?.token) {
@@ -97,32 +97,51 @@ const EitaaAutoAuth: React.FC = () => {
 
             const initUser = (window as any)?.Eitaa?.WebApp?.initDataUnsafe?.user
             const fallbackFullName = (initUser && initUser.first_name) || ""
-            const sanitizedPhone = phone ? formatMobile(phone.replace(/[^0-9+]/g, "")) : ""
+            // const sanitizedPhone = phone ? formatMobile(phone.replace(/[^0-9+]/g, "")) : ""
 
-            const mergedUser: AuthUser = {
-              mobile:
-                (res?.user?.mobile && typeof res.user.mobile === "string" ? res.user.mobile : sanitizedPhone) || "",
-              full_name:
-                (res?.user?.full_name && typeof res.user.full_name === "string"
-                  ? res.user.full_name
-                  : fallbackFullName) || undefined,
-              request_id: res?.request_id,
-            }
-            try {
-              localStorage.setItem("auth_user", JSON.stringify(mergedUser))
+            // Store full_name in session storage
+            const fullName = (res?.user?.full_name && typeof res.user.full_name === "string"
+              ? res.user.full_name
+              : fallbackFullName) || ""
+            if (fullName) {
               try {
-                window.dispatchEvent(new Event("auth-changed"))
+                sessionStorage.setItem("full_name", fullName)
               } catch { }
-            } catch { }
+            }
+
+            // const mergedUser: AuthUser = {
+            //   mobile:
+            //     (res?.user?.mobile && typeof res.user.mobile === "string" ? res.user.mobile : sanitizedPhone) || "",
+            //   full_name:
+            //     (res?.user?.full_name && typeof res.user.full_name === "string"
+            //       ? res.user.full_name
+            //       : fallbackFullName) || undefined,
+            //   request_id: res?.request_id,
+            // }
+            // try {
+            //   localStorage.setItem("auth_user", JSON.stringify(mergedUser))
+            //   try {
+            //     window.dispatchEvent(new Event("auth-changed"))
+            //   } catch { }
+            // } catch { }
           }
         } catch {
           // If backend call fails, persist minimal local info so header shows a greeting
           try {
             const initUser = (window as any)?.Eitaa?.WebApp?.initDataUnsafe?.user
-            const sanitizedPhone = phone ? formatMobile(phone.replace(/[^0-9+]/g, "")) : ""
+            const fullName = (initUser && initUser.first_name) || ""
+            
+            // Store full_name in session storage
+            if (fullName) {
+              try {
+                sessionStorage.setItem("full_name", fullName)
+              } catch { }
+            }
+            
+            const sanitizedPhone = "" // phone variable is commented out above
             const userObj: AuthUser = {
               mobile: sanitizedPhone || "",
-              full_name: (initUser && initUser.first_name) || "",
+              full_name: fullName,
             }
             localStorage.setItem("auth_user", JSON.stringify(userObj))
             try {
