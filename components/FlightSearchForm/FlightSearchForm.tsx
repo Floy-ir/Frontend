@@ -64,7 +64,40 @@ export function FlightSearchForm({
   const [isLoading, setIsLoading] = useState(false)
 
   // Load persisted form data
-  const persistedFormData = useMemo(() => loadFormData(), [])
+  const persistedFormData = useMemo(() => loadFormData(), [loadFormData])
+
+  // Normalize stored departure date: if it's earlier than today, replace with today and persist back
+  const today = useMemo(() => {
+    const now = new Date()
+    now.setHours(0, 0, 0, 0)
+    return now
+  }, [])
+
+  const normalizedPersistedFormData = useMemo(() => {
+    if (!persistedFormData.departureDate) return persistedFormData
+
+    const storedDate = new Date(persistedFormData.departureDate)
+    if (Number.isNaN(storedDate.getTime())) return persistedFormData
+
+    const storedDay = new Date(storedDate)
+    storedDay.setHours(0, 0, 0, 0)
+
+    if (storedDay < today) {
+      return {
+        ...persistedFormData,
+        departureDate: today.toISOString(),
+      }
+    }
+
+    return persistedFormData
+  }, [persistedFormData, today])
+
+  // If we had to normalize (bump to today), save it back to storage once
+  useEffect(() => {
+    if (normalizedPersistedFormData.departureDate !== persistedFormData.departureDate) {
+      saveFormData(normalizedPersistedFormData)
+    }
+  }, [normalizedPersistedFormData, persistedFormData, saveFormData])
 
   // Create form with react-hook-form
   const { control, handleSubmit, setValue, watch, trigger } = useForm<SearchFormValues>({
@@ -76,12 +109,12 @@ export function FlightSearchForm({
     },
     defaultValues: {
       // Prioritize prop values over persisted values
-      origin: initialOrigin || persistedFormData.origin,
-      destination: initialDestination || persistedFormData.destination,
+      origin: initialOrigin || normalizedPersistedFormData.origin,
+      destination: initialDestination || normalizedPersistedFormData.destination,
       departureDate:
         initialDepartureDate ||
-        (persistedFormData.departureDate ? new Date(persistedFormData.departureDate) : undefined),
-      passengers: initialPassengers || persistedFormData.passengers,
+        (normalizedPersistedFormData.departureDate ? new Date(normalizedPersistedFormData.departureDate) : undefined),
+      passengers: initialPassengers || normalizedPersistedFormData.passengers,
     },
     mode: "onChange",
   })
