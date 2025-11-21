@@ -484,8 +484,16 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
         .toLocaleTimeString("fa-IR", { hour: "2-digit", minute: "2-digit", hour12: false })
         .replace(/\d/g, (d) => "۰۱۲۳۴۵۶۷۸۹".charAt(parseInt(d)))
 
+    // Sort websites by total price (same logic used in comparison TicketCard)
+    const getTotalPrice = (website: FlightResult["websites"][number]) =>
+      website.adult_price * adult +
+      (website.child_price ?? 0) * child +
+      (website.infant_price ?? 0) * infant
+
+    const sortedWebsites = [...input.websites].sort((a, b) => getTotalPrice(a) - getTotalPrice(b))
+
     // Transform websites to match FlightData's websites structure
-    const transformedWebsites = input.websites.map((website) => ({
+    const transformedWebsites = sortedWebsites.map((website) => ({
       adult_price: website.adult_price,
       base_redirect_url: website.base_redirect_url,
       child_price: website.child_price,
@@ -867,11 +875,10 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                   <button
                     key={key}
                     onClick={() => setSortKey(key)}
-                    className={`flex items-center justify-center gap-1 overflow-hidden rounded-2xl px-3 py-1 outline-2 outline-offset-[-2px] ${
-                      sortKey === key
-                        ? "bg-Primary-P50 text-Primary-P500main outline-Primary-P500main font-semibold"
-                        : "bg-Shade-White text-Gray-N700 outline-Gray-N100 font-medium"
-                    }`}
+                    className={`flex items-center justify-center gap-1 overflow-hidden rounded-2xl px-3 py-1 outline-2 outline-offset-[-2px] ${sortKey === key
+                      ? "bg-Primary-P50 text-Primary-P500main outline-Primary-P500main font-semibold"
+                      : "bg-Shade-White text-Gray-N700 outline-Gray-N100 font-medium"
+                      }`}
                   >
                     <span className="text-sm leading-normal">{label}</span>
                   </button>
@@ -1584,9 +1591,8 @@ const FilterDrawerContent = React.forwardRef<DrawerContentRefType, FilterDrawerC
         <DialogTitle className="bg-Shade-White border-Gray-N100 sticky top-0 z-10 inline-flex items-center self-stretch border-b py-4">
           <div className="relative inline-flex w-full items-center justify-center gap-2 self-stretch">
             <div
-              className={`text-Primary-P500main absolute left-5 cursor-pointer text-[13px] leading-normal font-medium ${
-                localActiveFiltersCount === 0 || activeSection !== "all" ? "invisible" : ""
-              }`}
+              className={`text-Primary-P500main absolute left-5 cursor-pointer text-[13px] leading-normal font-medium ${localActiveFiltersCount === 0 || activeSection !== "all" ? "invisible" : ""
+                }`}
               onClick={handleLocalClearFilters}
             >
               حذف فیلتر‌ها
@@ -1724,23 +1730,23 @@ const FilterDrawerContent = React.forwardRef<DrawerContentRefType, FilterDrawerC
                 {/* Price Range Filter */}
                 {(localPriceRange[0] !== localPriceRangeBounds[0] ||
                   localPriceRange[1] !== localPriceRangeBounds[1]) && (
-                  <div className="bg-Shade-White outline-Gray-N100 flex flex-shrink-0 items-center justify-center gap-1 overflow-hidden rounded-2xl px-3 py-1 outline-2 outline-offset-[-2px]">
-                    <div
-                      className="flex cursor-pointer items-center justify-start gap-2 py-1"
-                      onClick={() => setLocalPriceRange(localPriceRangeBounds)}
-                    >
-                      <div className="relative size-4 overflow-hidden rounded-[48px]">
-                        <CloseCircle size="16" color="#94A3B8" />
+                    <div className="bg-Shade-White outline-Gray-N100 flex flex-shrink-0 items-center justify-center gap-1 overflow-hidden rounded-2xl px-3 py-1 outline-2 outline-offset-[-2px]">
+                      <div
+                        className="flex cursor-pointer items-center justify-start gap-2 py-1"
+                        onClick={() => setLocalPriceRange(localPriceRangeBounds)}
+                      >
+                        <div className="relative size-4 overflow-hidden rounded-[48px]">
+                          <CloseCircle size="16" color="#94A3B8" />
+                        </div>
+                      </div>
+                      <div className="flex items-center justify-center gap-1">
+                        <div className="text-Gray-N700 text-sm leading-normal font-medium">
+                          بازه قیمت (تومان): {englishToFarsiNumber(Math.floor(localPriceRange[0] / 1000))} تا{" "}
+                          {englishToFarsiNumber(Math.floor(localPriceRange[1] / 1000))} هزار
+                        </div>
                       </div>
                     </div>
-                    <div className="flex items-center justify-center gap-1">
-                      <div className="text-Gray-N700 text-sm leading-normal font-medium">
-                        بازه قیمت (تومان): {englishToFarsiNumber(Math.floor(localPriceRange[0] / 1000))} تا{" "}
-                        {englishToFarsiNumber(Math.floor(localPriceRange[1] / 1000))} هزار
-                      </div>
-                    </div>
-                  </div>
-                )}
+                  )}
 
                 {/* Flight Time Range Filter */}
                 {(localFlightTimeRange[0] !== 4 || localFlightTimeRange[1] !== 24) && (
@@ -1944,9 +1950,8 @@ const FilterCheckbox: React.FC<FilterCheckboxProps> = ({ label, checked, onChang
   <div className="inline-flex items-center justify-end gap-2 self-stretch">
     <div className="flex items-center justify-center gap-2 p-[3px]">
       <div
-        className={`relative flex size-[18px] items-center justify-center overflow-hidden rounded-sm ${
-          checked ? "bg-Primary-P500main" : "outline-Gray-N300 outline-1 outline-offset-[-1px]"
-        }`}
+        className={`relative flex size-[18px] items-center justify-center overflow-hidden rounded-sm ${checked ? "bg-Primary-P500main" : "outline-Gray-N300 outline-1 outline-offset-[-1px]"
+          }`}
         onClick={() => onChange(!checked)}
       >
         {checked && (
