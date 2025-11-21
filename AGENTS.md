@@ -25,6 +25,7 @@ Follow these rules for all changes unless the user explicitly overrides them.
 - Prefer **server components** / data fetching strategies already used in this repo; do not introduce new patterns unless necessary and clearly localized.
 - Use existing **hooks** in `hooks/` where applicable (`useStoredCities`, persistence hooks, etc.) instead of re‑implementing similar logic.
 - Keep styling consistent with current Tailwind utility usage and class patterns from nearby components.
+- For colors, always use the project’s predefined Tailwind tokens (as configured in `tailwind.config.js`, e.g. `bg-primary-500`, `text-Primary-P500main`, etc.) instead of raw Tailwind default colors (`bg-blue-500`) or hard-coded values like `#RRGGBB` / `rgb(...)` in components.
 
 ### Testing & Tooling
 
