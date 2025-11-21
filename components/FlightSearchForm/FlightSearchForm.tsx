@@ -12,7 +12,7 @@ import { Button } from "@/components/elements/Button/Button"
 import { ComboboxSelect } from "@/components/elements/ComboboxSelect/ComboboxSelect"
 import { PassengerCount, PassengerSelector } from "@/components/PassengerSelector/PassengerSelector"
 import type { CityOption } from "@/config/cities"
-import { getCityByName, getCityOptions } from "@/config/cities"
+import { getCityByName, getCityOptions, getDestinationOptions } from "@/config/cities"
 import { useFlightFormPersistence } from "@/hooks/useFlightFormPersistence"
 import { useStoredCities } from "@/hooks/useStoredCities"
 import { formatDate } from "@/utils/dateUtils"
@@ -57,6 +57,7 @@ export function FlightSearchForm({
 }: FlightSearchFormProps) {
   const router = useRouter()
   const [options, setOptions] = useState<Pick<CityOption, "value" | "label">[]>([])
+  const [destinationOptions, setDestinationOptions] = useState<Pick<CityOption, "value" | "label">[]>([])
   // Use our custom hooks
   const { recentSelections, addRecentSelection, saveSearch } = useStoredCities()
   const { loadFormData, saveFormData } = useFlightFormPersistence()
@@ -107,10 +108,6 @@ export function FlightSearchForm({
     return options.filter((option) => option.value !== destination)
   }, [options, destination])
 
-  const destinationOptions = useMemo(() => {
-    return options.filter((option) => option.value !== origin)
-  }, [options, origin])
-
   const filteredRecentSelectionsOrigin = useMemo(() => {
     return recentSelections.filter((city) => city.value !== destination)
   }, [recentSelections, destination])
@@ -123,6 +120,33 @@ export function FlightSearchForm({
   useEffect(() => {
     getCityOptions().then(setOptions)
   }, [])
+
+  // Update destination options when origin or full options change
+  useEffect(() => {
+    const updateDestinationOptions = async () => {
+      // If no origin selected yet, show all cities (excluding origin itself which is empty anyway)
+      if (!origin) {
+        setDestinationOptions(options)
+        return
+      }
+
+      try {
+        const destinationOpts = await getDestinationOptions(origin)
+
+        // If backend returns no destinations, fall back to all cities except origin
+        if (!destinationOpts.length) {
+          setDestinationOptions(options.filter((option) => option.value !== origin))
+        } else {
+          setDestinationOptions(destinationOpts)
+        }
+      } catch {
+        // On any error, fall back to all cities except origin
+        setDestinationOptions(options.filter((option) => option.value !== origin))
+      }
+    }
+
+    updateDestinationOptions()
+  }, [origin, options])
 
   // Custom onChange handlers
   const handleOriginChange = async (value: string) => {
