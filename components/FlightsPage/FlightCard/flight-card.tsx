@@ -375,16 +375,17 @@ export function FlightCard({
               <Button
                 intent="text"
                 size="small"
-                className="self-stretch bg-Gray-N50 border border-Gray-N200"
+                className="self-stretch bg-[#F5F5F7] text-Gray-N700 hover:bg-[#EDEDEF] transition rounded-xl"
                 onClick={() => setShowComparison(true)}
               >
-                <span className="flex items-center justify-center gap-2">
+                <span className="flex py-2 items-center justify-center gap-2 font-medium">
+
                   <span>
                     {otherSellersCount > 1
-                      ? `مشاهده ${englishToFarsiNumber(otherSellersCount - 1)}  فروشنده دیگر`
-                      : "مشاهده جزئیات "}
+                      ? `مشاهده ${englishToFarsiNumber(otherSellersCount - 1)} فروشنده دیگر`
+                      : "مشاهده جزئیات"}
                   </span>
-                  {otherSellersCount > 1 && <SellersAvatars websites={websites} />}
+
                 </span>
               </Button>
             </div>
@@ -406,18 +407,22 @@ export function FlightCard({
             <Button
               intent="text"
               size="small"
-              className="self-stretch bg-Gray-N50 border border-Gray-N200 mb-2 py-2"
+              className="self-stretch mb-2 py-2 rounded-xl bg-[#F5F5F7] text-Gray-N700 hover:bg-[#EDEDEF] transition"
               onClick={() => setShowComparison(true)}
             >
               <span className="flex items-center justify-center gap-2">
-                <span>
+                <span className="font-medium">
                   {otherSellersCount > 1
-                    ? `مشاهده ${englishToFarsiNumber(otherSellersCount - 1)}  فروشنده دیگر`
-                    : "مشاهده جزئیات "}
+                    ? `مشاهده ${englishToFarsiNumber(otherSellersCount - 1)} فروشنده دیگر`
+                    : "مشاهده جزئیات"}
                 </span>
-                {otherSellersCount > 1 && <SellersAvatars websites={websites} />}
+
+                {otherSellersCount > 1 && (
+                  <SellersAvatars websites={websites} />
+                )}
               </span>
             </Button>
+
           </div>
         </div>
       </div>
@@ -548,18 +553,25 @@ export function FlightCard({
                 <Button
                   intent="text"
                   size="small"
-                  className="self-stretch mb-2 py-2 bg-Gray-N50 border border-Gray-N200"
+                  className="self-stretch mb-2 py-2 bg-[#F5F5F7] text-Gray-N700 hover:bg-[#EDEDEF] transition rounded-xl"
                   onClick={() => setShowComparison(true)}
                 >
-                  <span className="flex items-center justify-center gap-2">
+                  <span className={`flex items-center justify-center gap-2 font-medium
+    ${otherSellersCount > 1 ? "" : "py-1"}
+  `}>
                     <span>
                       {otherSellersCount > 1
                         ? `مشاهده ${englishToFarsiNumber(otherSellersCount - 1)} فروشنده دیگر`
-                        : "مشاهده جزئیات "}
+                        : "مشاهده جزئیات"}
                     </span>
-                    {otherSellersCount > 1 && <SellersAvatars websites={websites} />}
+
+                    {otherSellersCount > 1 && (
+                      <SellersAvatars websites={websites} />
+                    )}
+
                   </span>
                 </Button>
+
               </div>
             </div>
           </div>
