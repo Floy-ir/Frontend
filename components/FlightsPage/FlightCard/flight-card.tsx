@@ -408,8 +408,9 @@ export function FlightCard({
               className="text-Gray-N700 mb-2 self-stretch rounded-xl bg-[#F5F5F7] py-2 transition hover:bg-[#EDEDEF]"
               onClick={() => setShowComparison(true)}
             >
-              <span className="flex items-center justify-center gap-2">
-                <span className="font-medium">
+              <span className={`flex items-center justify-center gap-2 font-medium ${otherSellersCount > 1 ? "" : "py-1"
+                } `}>
+                <span>
                   {otherSellersCount > 1
                     ? `مشاهده ${englishToFarsiNumber(otherSellersCount - 1)} فروشنده دیگر`
                     : "مشاهده جزئیات"}
@@ -552,9 +553,8 @@ export function FlightCard({
                   onClick={() => setShowComparison(true)}
                 >
                   <span
-                    className={`flex items-center justify-center gap-2 font-medium ${
-                      otherSellersCount > 1 ? "" : "py-1"
-                    } `}
+                    className={`flex items-center justify-center gap-2 font-medium ${otherSellersCount > 1 ? "" : "py-1"
+                      } `}
                   >
                     <span>
                       {otherSellersCount > 1
