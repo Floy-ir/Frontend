@@ -2,12 +2,15 @@ import "styles/tailwind.css"
 import type { Metadata } from "next"
 import Script from "next/script"
 
+import { ClarityAnalytics } from "@/components/analytics/ClarityAnalytics"
 import EitaaDynamicAutoAuth from "@/components/Eitaa/EitaaDynamicAutoAuth/EitaaDynamicAutoAuth"
 import EitaaDynamicBackButton from "@/components/Eitaa/EitaaDynamicBackButton/EitaaDynamicBackButton"
 import EitaaDynamicInitializer from "@/components/Eitaa/EitaaDynamicInitializer/EitaaDynamicInitializer"
 import { ActiveMenuProvider } from "@/components/layout/ActiveMenuProvider/ActiveMenuProvider"
 import Footer from "@/components/layout/Footer/Footer"
 import { anjomanMaxVF } from "../lib/fonts"
+
+const GA_MEASUREMENT_ID = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID
 
 // Define metadata
 export const metadata: Metadata = {
@@ -36,10 +39,31 @@ export default function RootLayout({
   return (
     <html lang="fa" dir="rtl" suppressHydrationWarning>
       <head>
+        {/* Google Analytics */}
+        {GA_MEASUREMENT_ID && (
+          <>
+            <Script
+              src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
+              strategy="afterInteractive"
+            />
+            <Script id="ga-gtag" strategy="afterInteractive">
+              {`
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+                gtag('config', '${GA_MEASUREMENT_ID}');
+              `}
+            </Script>
+          </>
+        )}
+
         <Script src="https://developer.eitaa.com/eitaa-web-app.js" strategy="beforeInteractive" />
         <meta name="format-detection" content="telephone=no, date=no, email=no, address=no" />
       </head>
       <body className={`${anjomanMaxVF.variable} font-anjoman-max`} suppressHydrationWarning={true}>
+        {/* Analytics */}
+        <ClarityAnalytics />
+
         {/* Eitaa Mini App Initializer */}
         <EitaaDynamicInitializer />
         <EitaaDynamicAutoAuth />
