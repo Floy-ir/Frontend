@@ -60,9 +60,7 @@ export async function getCityOptions(): Promise<Pick<CityOption, "value" | "labe
 }
 
 // Get destination options for a given origin (by origin name)
-export async function getDestinationOptions(
-  originName: string,
-): Promise<Pick<CityOption, "value" | "label">[]> {
+export async function getDestinationOptions(originName: string): Promise<Pick<CityOption, "value" | "label">[]> {
   // Ensure cities (and thus results) are loaded
   await loadCities()
 

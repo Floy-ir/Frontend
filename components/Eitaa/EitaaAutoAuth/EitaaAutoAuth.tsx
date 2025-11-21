@@ -39,7 +39,7 @@ const EitaaAutoAuth: React.FC = () => {
     try {
       const existing = localStorage.getItem("auth_token")
       if (existing) return
-    } catch { }
+    } catch {}
 
     const run = async () => {
       try {
@@ -92,7 +92,7 @@ const EitaaAutoAuth: React.FC = () => {
             if (res?.token) {
               try {
                 localStorage.setItem("auth_token", res.token)
-              } catch { }
+              } catch {}
             }
 
             const initUser = (window as any)?.Eitaa?.WebApp?.initDataUnsafe?.user
@@ -100,13 +100,14 @@ const EitaaAutoAuth: React.FC = () => {
             // const sanitizedPhone = phone ? formatMobile(phone.replace(/[^0-9+]/g, "")) : ""
 
             // Store full_name in session storage
-            const fullName = (res?.user?.full_name && typeof res.user.full_name === "string"
-              ? res.user.full_name
-              : fallbackFullName) || ""
+            const fullName =
+              (res?.user?.full_name && typeof res.user.full_name === "string"
+                ? res.user.full_name
+                : fallbackFullName) || ""
             if (fullName) {
               try {
                 sessionStorage.setItem("full_name", fullName)
-              } catch { }
+              } catch {}
             }
 
             // const mergedUser: AuthUser = {
@@ -130,14 +131,14 @@ const EitaaAutoAuth: React.FC = () => {
           try {
             const initUser = (window as any)?.Eitaa?.WebApp?.initDataUnsafe?.user
             const fullName = (initUser && initUser.first_name) || ""
-            
+
             // Store full_name in session storage
             if (fullName) {
               try {
                 sessionStorage.setItem("full_name", fullName)
-              } catch { }
+              } catch {}
             }
-            
+
             const sanitizedPhone = "" // phone variable is commented out above
             const userObj: AuthUser = {
               mobile: sanitizedPhone || "",
@@ -146,8 +147,8 @@ const EitaaAutoAuth: React.FC = () => {
             localStorage.setItem("auth_user", JSON.stringify(userObj))
             try {
               window.dispatchEvent(new Event("auth-changed"))
-            } catch { }
-          } catch { }
+            } catch {}
+          } catch {}
         }
       } catch {
         // ignore

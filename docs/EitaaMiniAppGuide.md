@@ -1,8 +1,6 @@
-Eitaa MiniApp Integration Guide for Floy
-=======================================
+# Eitaa MiniApp Integration Guide for Floy
 
-Project Overview: Floy and Eitaa MiniApp Context
-------------------------------------------------
+## Project Overview: Floy and Eitaa MiniApp Context
 
 Floy is a multi-source travel search engine that aggregates flight, hotel, and train ticket data from multiple
 providers, displaying the cheapest and fastest options in a clean UI. The project is composed of a Next.js
@@ -12,8 +10,7 @@ user login and real-time notifications (e.g. booking alerts). This guide explain
 Eitaa MiniApp platform in a README-style format, covering the authentication flow, hash validation, Eitaa JS
 SDK usage, sending messages to users, and the necessary backend setup.
 
-Eitaa MiniApp Authentication Flow (Auth via Hash)
--------------------------------------------------
+## Eitaa MiniApp Authentication Flow (Auth via Hash)
 
 When a user launches the Floy MiniApp within the Eitaa messenger, Eitaa provides initial data (called
 initData) to the app, which includes the user’s information and a digital signature (hash) to verify the
@@ -54,8 +51,7 @@ data’s authenticity. The overall login flow is as follows:
 By following these steps, the Floy app can securely authenticate Eitaa users and start a session without
 asking for a separate login, using Eitaa as the identity provider.
 
-Hash Validation on the Backend (Verify Eitaa initData)
-------------------------------------------------------
+## Hash Validation on the Backend (Verify Eitaa initData)
 
 On the Django backend, implement the verification of the `initData` signature (the `hash`) to confirm
 that the user data is legitimate. This process uses HMAC-SHA256, combining your Eitaa app’s bot token and
@@ -103,8 +99,7 @@ the `initDataUnsafe.user` info as authentic. At this point, you can trust fields
 `first_name`, etc., and use them in your application (for example, greet the user by name or load their
 preferences).
 
-Optional: Double-Check via Eitaa Verify API
--------------------------------------------
+## Optional: Double-Check via Eitaa Verify API
 
 For extra security, Eitaa offers an optional server-side verification API. After you validate the hash locally,
 you can send a request to Eitaa’s verify endpoint to confirm that the hash was indeed issued by them and is
@@ -128,8 +123,7 @@ true }`. Otherwise, you’ll get `{ "ok": false }`. Note that each hash can only
 step is not mandatory if you have implemented the local HMAC validation correctly, but it provides an
 extra layer of assurance.
 
-Using the Eitaa MiniApp JavaScript SDK (Frontend Usage)
--------------------------------------------------------
+## Using the Eitaa MiniApp JavaScript SDK (Frontend Usage)
 
 The Eitaa MiniApp JS SDK allows the Floy frontend to interact with the Eitaa app environment and utilize
 features of the Eitaa platform. Below are key points and common use-cases for the SDK in Floy’s context:
@@ -203,8 +197,7 @@ In summary, the JS SDK allows the Floy frontend to seamlessly integrate into the
 environment, providing a native-like experience. Use it to get necessary user context (after auth), adjust to
 the Eitaa app UI, and request any extra permissions you need.
 
-Sending Messages and Notifications via Eitaa
---------------------------------------------
+## Sending Messages and Notifications via Eitaa
 
 One powerful feature of integrating with Eitaa is the ability to send messages (notifications) to users via the
 Eitaa messaging system – for example, sending booking confirmations, price drop alerts, or verification
@@ -213,7 +206,7 @@ once the user is authenticated. Here’s how to manage outgoing messages:
 
 - Prerequisite – User Permission: Before attempting to send a message, ensure the user has given
   permission for the app to contact them. As noted, this is indicated by `allows_write_to_pm =
-  true` in the user data. The user typically grants this by pressing “Start” when opening the MiniApp
+true` in the user data. The user typically grants this by pressing “Start” when opening the MiniApp
   or via a direct bot link. If this flag is `false`, you cannot send them messages until they allow it (you
   might prompt them to press the start button in Eitaa or use the `requestWriteAccess()` popup
   as discussed). Without send permission, any message API call will fail.
@@ -261,8 +254,7 @@ request to the `sendMessage` API. Ensure to handle errors (e.g., log if a messag
 permission) and perhaps notify the user in-app if they need to take action (like pressing the Start button in
 Eitaa to enable notifications).
 
-Backend Setup and Requirements for Eitaa Integration
-----------------------------------------------------
+## Backend Setup and Requirements for Eitaa Integration
 
 To support the above functionality, make sure the following are set up in Floy’s backend:
 
@@ -342,8 +334,7 @@ By covering these backend requirements, you ensure that Floy’s integration wit
 The result will be a smooth login experience for users (one-tap via Eitaa) and a channel to keep users
 engaged with timely notifications.
 
-Conclusion and Next Steps
--------------------------
+## Conclusion and Next Steps
 
 Following this guide, you should be able to integrate Eitaa MiniApp authentication and messaging into the
 Floy project. In summary, the process involves using Eitaa’s hash-based auth to log users in, verifying that
@@ -366,4 +357,3 @@ Be sure to keep Eitaa’s documentation handy for any advanced features or updat
 With these resources and the steps outlined above, agents working on the Floy repo should have clear
 guidance on integrating and working with Eitaa MiniApps. Happy coding, and enjoy the enhanced
 connectivity with your users through Eitaa!
-

@@ -2,24 +2,21 @@
 
 import { useRouter } from "next/navigation"
 import { useEffect } from "react"
-import { isRunningInEitaa, onEitaaBackButtonClick, showEitaaBackButton, hideEitaaBackButton } from "@/utils/eitaa"
+import { hideEitaaBackButton, isRunningInEitaa, onEitaaBackButtonClick, showEitaaBackButton } from "@/utils/eitaa"
 
 /**
  * Hook to handle Eitaa back button integration with Next.js router
- * 
+ *
  * This hook:
  * - Shows the back button when running in Eitaa
  * - Sets up a click handler that uses Next.js router to navigate back
  * - Automatically cleans up the event listener on unmount
- * 
+ *
  * @param options Configuration options
  * @param options.showOnMount Whether to show the back button on mount (default: true)
  * @param options.hideOnUnmount Whether to hide the back button on unmount (default: true)
  */
-export function useEitaaBackButton(options?: {
-  showOnMount?: boolean
-  hideOnUnmount?: boolean
-}) {
+export function useEitaaBackButton(options?: { showOnMount?: boolean; hideOnUnmount?: boolean }) {
   const router = useRouter()
   const showOnMount = options?.showOnMount !== false // default true
   const hideOnUnmount = options?.hideOnUnmount !== false // default true
@@ -50,4 +47,3 @@ export function useEitaaBackButton(options?: {
     }
   }, [router, showOnMount, hideOnUnmount])
 }
-

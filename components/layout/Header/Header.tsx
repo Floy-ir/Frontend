@@ -138,18 +138,19 @@ export function Header({ menuItems, className, forceScrolledStyle = false, compa
     if (!localStorage.getItem("auth_user") && isRunningInEitaa()) {
       try {
         // runtime access to the Eitaa WebApp init data
-        const raw = (window as Window & { Eitaa?: { WebApp?: Record<string, unknown> } })?.Eitaa?.WebApp?.initDataUnsafe?.user
+        const raw = (window as Window & { Eitaa?: { WebApp?: Record<string, unknown> } })?.Eitaa?.WebApp?.initDataUnsafe
+          ?.user
         if (raw && raw.first_name) {
           const userWithoutRequestId: AuthUser = { mobile: "", full_name: raw.first_name }
           try {
             localStorage.setItem("auth_user", JSON.stringify(userWithoutRequestId))
             window.dispatchEvent(new Event("auth-changed"))
-          } catch { }
+          } catch {}
           setAuthUser(userWithoutRequestId)
 
           const eitaId = raw.id != null ? String(raw.id) : null
           if (eitaId) {
-            ; (async () => {
+            ;(async () => {
               try {
                 const response = await apiFetch<{ request_id?: string }>("/accounts/eita/", {
                   method: "POST",
@@ -161,7 +162,7 @@ export function Header({ menuItems, className, forceScrolledStyle = false, compa
                   try {
                     localStorage.setItem("auth_user", JSON.stringify(userWithRequestId))
                     window.dispatchEvent(new Event("auth-changed"))
-                  } catch { }
+                  } catch {}
                 }
               } catch {
                 /* ignore */
@@ -169,7 +170,7 @@ export function Header({ menuItems, className, forceScrolledStyle = false, compa
             })()
           }
         }
-      } catch { }
+      } catch {}
     }
     return () => window.removeEventListener("auth-changed", onAuth)
   }, [])
@@ -208,7 +209,8 @@ export function Header({ menuItems, className, forceScrolledStyle = false, compa
   // 2. Eitaa init data (when running inside the mini-app)
   const eitaaDisplayName =
     typeof window !== "undefined"
-      ? (window as Window & { Eitaa?: { WebApp?: { initDataUnsafe?: { user?: { first_name?: string } } } } })?.Eitaa?.WebApp?.initDataUnsafe?.user?.first_name
+      ? (window as Window & { Eitaa?: { WebApp?: { initDataUnsafe?: { user?: { first_name?: string } } } } })?.Eitaa
+          ?.WebApp?.initDataUnsafe?.user?.first_name
       : undefined
 
   const displayName = authUser ? authUser.full_name || sessionStorage.getItem("full_name") : eitaaDisplayName || "کاربر"
@@ -219,8 +221,9 @@ export function Header({ menuItems, className, forceScrolledStyle = false, compa
       <header className={headerClasses}>
         {/* Content container - only constrain width for content, not background */}
         <div
-          className={`lg-xl:px-6 mx-auto w-full max-w-[1136px] px-4 md:px-4 ${compact ? "px-3 lg:px-4" : "px-4 lg:px-6"
-            } ${isScrolled ? "w-full" : ""}`}
+          className={`lg-xl:px-6 mx-auto w-full max-w-[1136px] px-4 md:px-4 ${
+            compact ? "px-3 lg:px-4" : "px-4 lg:px-6"
+          } ${isScrolled ? "w-full" : ""}`}
         >
           {/* Desktop view */}
           <div className={`hidden ${desktopHeight} items-center justify-between lg:flex`}>
@@ -306,10 +309,10 @@ export function Header({ menuItems, className, forceScrolledStyle = false, compa
                           try {
                             localStorage.removeItem("auth_token")
                             localStorage.removeItem("auth_user")
-                          } catch { }
+                          } catch {}
                           try {
                             window.dispatchEvent(new Event("auth-changed"))
-                          } catch { }
+                          } catch {}
                           setUserMenuOpen(false)
                         }}
                         className="hover:bg-Gray-N50 w-full px-4 py-2 text-right text-sm hover:rounded-md"
@@ -344,8 +347,9 @@ export function Header({ menuItems, className, forceScrolledStyle = false, compa
                       <Link
                         key={index}
                         href={item.href}
-                        className={`w-full px-6 py-3 text-right text-[1.15rem] ${item.isActive ? "font-semibold text-slate-800" : "text-slate-500"
-                          }`}
+                        className={`w-full px-6 py-3 text-right text-[1.15rem] ${
+                          item.isActive ? "font-semibold text-slate-800" : "text-slate-500"
+                        }`}
                         onClick={() => setMobileMenuOpen(false)}
                       >
                         {item.label}
@@ -397,10 +401,10 @@ export function Header({ menuItems, className, forceScrolledStyle = false, compa
                         try {
                           localStorage.removeItem("auth_token")
                           localStorage.removeItem("auth_user")
-                        } catch { }
+                        } catch {}
                         try {
                           window.dispatchEvent(new Event("auth-changed"))
-                        } catch { }
+                        } catch {}
                         setUserMenuOpen(false)
                       }}
                       className="hover:bg-Gray-N50 w-full px-4 py-2 text-right text-sm hover:rounded-md"

@@ -120,7 +120,7 @@ const SellersAvatars = ({ websites }: { websites?: FlightCardProps["websites"] }
         const initials = displayName ? displayName.slice(0, 2) : "?"
 
         return (
-          <Avatar key={site.detail?.uid ?? `${displayName}-${index}`} className="h-6 w-6 border border-Gray-N100">
+          <Avatar key={site.detail?.uid ?? `${displayName}-${index}`} className="border-Gray-N100 h-6 w-6 border">
             {site.detail?.image ? (
               <AvatarImage src={site.detail.image} alt={displayName} />
             ) : (
@@ -375,17 +375,15 @@ export function FlightCard({
               <Button
                 intent="text"
                 size="small"
-                className="self-stretch bg-[#F5F5F7] text-Gray-N700 hover:bg-[#EDEDEF] transition rounded-xl"
+                className="text-Gray-N700 self-stretch rounded-xl bg-[#F5F5F7] transition hover:bg-[#EDEDEF]"
                 onClick={() => setShowComparison(true)}
               >
-                <span className="flex py-2 items-center justify-center gap-2 font-medium">
-
+                <span className="flex items-center justify-center gap-2 py-2 font-medium">
                   <span>
                     {otherSellersCount > 1
                       ? `مشاهده ${englishToFarsiNumber(otherSellersCount - 1)} فروشنده دیگر`
                       : "مشاهده جزئیات"}
                   </span>
-
                 </span>
               </Button>
             </div>
@@ -407,7 +405,7 @@ export function FlightCard({
             <Button
               intent="text"
               size="small"
-              className="self-stretch mb-2 py-2 rounded-xl bg-[#F5F5F7] text-Gray-N700 hover:bg-[#EDEDEF] transition"
+              className="text-Gray-N700 mb-2 self-stretch rounded-xl bg-[#F5F5F7] py-2 transition hover:bg-[#EDEDEF]"
               onClick={() => setShowComparison(true)}
             >
               <span className="flex items-center justify-center gap-2">
@@ -417,12 +415,9 @@ export function FlightCard({
                     : "مشاهده جزئیات"}
                 </span>
 
-                {otherSellersCount > 1 && (
-                  <SellersAvatars websites={websites} />
-                )}
+                {otherSellersCount > 1 && <SellersAvatars websites={websites} />}
               </span>
             </Button>
-
           </div>
         </div>
       </div>
@@ -553,25 +548,23 @@ export function FlightCard({
                 <Button
                   intent="text"
                   size="small"
-                  className="self-stretch mb-2 py-2 bg-[#F5F5F7] text-Gray-N700 hover:bg-[#EDEDEF] transition rounded-xl"
+                  className="text-Gray-N700 mb-2 self-stretch rounded-xl bg-[#F5F5F7] py-2 transition hover:bg-[#EDEDEF]"
                   onClick={() => setShowComparison(true)}
                 >
-                  <span className={`flex items-center justify-center gap-2 font-medium
-    ${otherSellersCount > 1 ? "" : "py-1"}
-  `}>
+                  <span
+                    className={`flex items-center justify-center gap-2 font-medium ${
+                      otherSellersCount > 1 ? "" : "py-1"
+                    } `}
+                  >
                     <span>
                       {otherSellersCount > 1
                         ? `مشاهده ${englishToFarsiNumber(otherSellersCount - 1)} فروشنده دیگر`
                         : "مشاهده جزئیات"}
                     </span>
 
-                    {otherSellersCount > 1 && (
-                      <SellersAvatars websites={websites} />
-                    )}
-
+                    {otherSellersCount > 1 && <SellersAvatars websites={websites} />}
                   </span>
                 </Button>
-
               </div>
             </div>
           </div>
@@ -596,12 +589,7 @@ export function FlightCard({
         <div className="bg-Gray-N100 relative h-45 w-[1px]" />
 
         {/* Price and action section - Left */}
-        <PriceActionSection
-          price={price}
-          onBuy={onBuy}
-          otherSellersCount={otherSellersCount}
-          websites={websites}
-        />
+        <PriceActionSection price={price} onBuy={onBuy} otherSellersCount={otherSellersCount} websites={websites} />
       </div>
       {showComparison && (
         <ComparisonDialog

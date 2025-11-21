@@ -244,7 +244,7 @@ export const hideEitaaBackButton = (): void => {
 export const onEitaaBackButtonClick = (callback: () => void): (() => void) => {
   const browserWindow = getBrowserWindow()
   const backButton = browserWindow?.Eitaa?.WebApp?.BackButton
-  
+
   if (backButton && isRunningInEitaa()) {
     backButton.onClick(callback)
     // Return cleanup function
@@ -252,7 +252,7 @@ export const onEitaaBackButtonClick = (callback: () => void): (() => void) => {
       backButton.offClick(callback)
     }
   }
-  
+
   // Return no-op cleanup if not available
   return () => {}
 }

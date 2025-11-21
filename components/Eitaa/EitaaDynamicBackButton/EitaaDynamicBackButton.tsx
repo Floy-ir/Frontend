@@ -5,4 +5,3 @@ const EitaaBackButton = dynamic(() => import("@/components/Eitaa/EitaaBackButton
 export default function EitaaDynamicBackButton() {
   return <EitaaBackButton />
 }
-

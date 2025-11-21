@@ -11,7 +11,7 @@ const Avatar = React.forwardRef<HTMLDivElement, AvatarProps>(({ className, ...pr
       ref={ref}
       data-slot="avatar"
       className={cn(
-        "relative flex h-10 w-10 shrink-0 overflow-hidden rounded-full bg-Gray-N100 text-Gray-N600",
+        "bg-Gray-N100 text-Gray-N600 relative flex h-10 w-10 shrink-0 overflow-hidden rounded-full",
         className
       )}
       {...props}
@@ -42,7 +42,7 @@ const AvatarFallback = React.forwardRef<HTMLSpanElement, AvatarFallbackProps>(({
     <span
       ref={ref}
       className={cn(
-        "flex h-full w-full items-center justify-center rounded-full bg-Gray-N200 text-[10px] font-medium",
+        "bg-Gray-N200 flex h-full w-full items-center justify-center rounded-full text-[10px] font-medium",
         className
       )}
       {...props}
