@@ -8,6 +8,7 @@ import { PiSuitcaseRollingLight } from "react-icons/pi"
 import { twMerge } from "tailwind-merge"
 import { Button } from "@/components/elements/Button/Button"
 import ComparisonDialog from "@/components/FlightsPage/comparisonPage/page"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { englishToFarsiNumber } from "@/utils/numbers"
 
 // Card wrapper styles with variants
@@ -100,6 +101,36 @@ export interface FlightCardProps extends VariantProps<typeof flightCardVariants>
   onBuy: () => void
   otherSellersCount?: number
   className?: string
+}
+
+// Render up to 3 seller avatars as overlapping circles (shadcn avatar group style)
+const SellersAvatars = ({ websites }: { websites?: FlightCardProps["websites"] }) => {
+  if (!websites || !websites.length) return null
+
+  const sellers = websites
+    .filter((site) => site.detail && (site.detail.image || site.detail.name_fa || site.detail.name))
+    .slice(0, 3)
+
+  if (!sellers.length) return null
+
+  return (
+    <div className="*:data-[slot=avatar]:ring-background flex -space-x-2 *:data-[slot=avatar]:ring-2">
+      {sellers.map((site, index) => {
+        const displayName = site.detail?.name_fa || site.detail?.name || ""
+        const initials = displayName ? displayName.slice(0, 2) : "?"
+
+        return (
+          <Avatar key={site.detail?.uid ?? `${displayName}-${index}`} className="h-6 w-6 border border-Gray-N100">
+            {site.detail?.image ? (
+              <AvatarImage src={site.detail.image} alt={displayName} />
+            ) : (
+              <AvatarFallback>{initials}</AvatarFallback>
+            )}
+          </Avatar>
+        )
+      })}
+    </div>
+  )
 }
 
 // Format duration for display
@@ -326,7 +357,8 @@ export function FlightCard({
     onBuy,
     otherSellersCount = 0,
     isMobile = false,
-  }: Pick<FlightCardProps, "price" | "onBuy" | "otherSellersCount"> & {
+    websites,
+  }: Pick<FlightCardProps, "price" | "onBuy" | "otherSellersCount" | "websites"> & {
     isMobile?: boolean
   }) => {
     if (isMobile) {
@@ -340,10 +372,20 @@ export function FlightCard({
                 رفتن به {price.agency}
               </Button>
 
-              <Button intent="text" size="small" className="self-stretch" onClick={() => setShowComparison(true)}>
-                {otherSellersCount > 1
-                  ? `مشاهده ${englishToFarsiNumber(otherSellersCount - 1)}  فروشنده دیگر`
-                  : "مشاهده جزئیات "}
+              <Button
+                intent="text"
+                size="small"
+                className="self-stretch bg-Gray-N50 border border-Gray-N200"
+                onClick={() => setShowComparison(true)}
+              >
+                <span className="flex items-center justify-center gap-2">
+                  <span>
+                    {otherSellersCount > 1
+                      ? `مشاهده ${englishToFarsiNumber(otherSellersCount - 1)}  فروشنده دیگر`
+                      : "مشاهده جزئیات "}
+                  </span>
+                  {otherSellersCount > 1 && <SellersAvatars websites={websites} />}
+                </span>
               </Button>
             </div>
           </div>
@@ -356,15 +398,25 @@ export function FlightCard({
         <div className="flex flex-col items-center justify-center gap-3 self-stretch">
           <PriceInfo price={price} />
 
-          <div className="flex flex-col items-start justify-start gap-1 self-stretch">
+          <div className="flex flex-col items-start justify-start gap-2 self-stretch">
             <Button intent="primary" size="small" className="self-stretch" onClick={onBuy}>
               رفتن به {price.agency}
             </Button>
 
-            <Button intent="text" size="small" className="self-stretch" onClick={() => setShowComparison(true)}>
-              {otherSellersCount > 1
-                ? `مشاهده ${englishToFarsiNumber(otherSellersCount - 1)}  فروشنده دیگر`
-                : "مشاهده جزئیات "}
+            <Button
+              intent="text"
+              size="small"
+              className="self-stretch bg-Gray-N50 border border-Gray-N200 mb-2 py-2"
+              onClick={() => setShowComparison(true)}
+            >
+              <span className="flex items-center justify-center gap-2">
+                <span>
+                  {otherSellersCount > 1
+                    ? `مشاهده ${englishToFarsiNumber(otherSellersCount - 1)}  فروشنده دیگر`
+                    : "مشاهده جزئیات "}
+                </span>
+                {otherSellersCount > 1 && <SellersAvatars websites={websites} />}
+              </span>
             </Button>
           </div>
         </div>
@@ -496,12 +548,17 @@ export function FlightCard({
                 <Button
                   intent="text"
                   size="small"
-                  className="self-stretch px-5 py-3.5"
+                  className="self-stretch mb-2 py-2 bg-Gray-N50 border border-Gray-N200"
                   onClick={() => setShowComparison(true)}
                 >
-                  {otherSellersCount > 1
-                    ? `مشاهده ${englishToFarsiNumber(otherSellersCount - 1)} فروشنده دیگر`
-                    : "مشاهده جزئیات "}
+                  <span className="flex items-center justify-center gap-2">
+                    <span>
+                      {otherSellersCount > 1
+                        ? `مشاهده ${englishToFarsiNumber(otherSellersCount - 1)} فروشنده دیگر`
+                        : "مشاهده جزئیات "}
+                    </span>
+                    {otherSellersCount > 1 && <SellersAvatars websites={websites} />}
+                  </span>
                 </Button>
               </div>
             </div>
@@ -524,10 +581,15 @@ export function FlightCard({
         />
 
         {/* Vertical divider */}
-        <div className="bg-Gray-N100 relative h-40 w-[1px]" />
+        <div className="bg-Gray-N100 relative h-45 w-[1px]" />
 
         {/* Price and action section - Left */}
-        <PriceActionSection price={price} onBuy={onBuy} otherSellersCount={otherSellersCount} />
+        <PriceActionSection
+          price={price}
+          onBuy={onBuy}
+          otherSellersCount={otherSellersCount}
+          websites={websites}
+        />
       </div>
       {showComparison && (
         <ComparisonDialog
