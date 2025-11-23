@@ -3,6 +3,7 @@ import type { Metadata } from "next"
 import Script from "next/script"
 
 import { ClarityAnalytics } from "@/components/analytics/ClarityAnalytics"
+import BaleScriptLoader from "@/components/Bale/BaleScriptLoader/BaleScriptLoader"
 import BaleDynamicBackButton from "@/components/Bale/BaleDynamicBackButton/BaleDynamicBackButton"
 import BaleDynamicInitializer from "@/components/Bale/BaleDynamicInitializer/BaleDynamicInitializer"
 import EitaaDynamicAutoAuth from "@/components/Eitaa/EitaaDynamicAutoAuth/EitaaDynamicAutoAuth"
@@ -60,12 +61,14 @@ export default function RootLayout({
         )}
 
         <Script src="https://developer.eitaa.com/eitaa-web-app.js" strategy="beforeInteractive" />
-        <Script src="https://tapi.bale.ai/miniapp.js?3" strategy="beforeInteractive" />
         <meta name="format-detection" content="telephone=no, date=no, email=no, address=no" />
       </head>
       <body className={`${anjomanMaxVF.variable} font-anjoman-max`} suppressHydrationWarning={true}>
         {/* Analytics */}
         <ClarityAnalytics />
+
+        {/* Bale SDK (only when in Bale mini app) */}
+        <BaleScriptLoader />
 
         {/* Mini App Initializers */}
         <EitaaDynamicInitializer />

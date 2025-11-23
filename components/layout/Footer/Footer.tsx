@@ -3,7 +3,7 @@ import { ArrowDown2, ArrowUp2 } from "iconsax-react"
 import Image from "next/image"
 import type { StaticImageData } from "next/image"
 import { usePathname } from "next/navigation"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 import { isRunningInMiniApp } from "@/utils/miniapp"
 import aparat from "../../../public/images/Frame 4402.svg"
@@ -15,8 +15,11 @@ import { Button } from "../../elements/Button/Button"
 
 const Footer: React.FC = () => {
   const [isExpanded, setIsExpanded] = useState(false)
+  const [isMiniApp, setIsMiniApp] = useState(false)
   const pathname = usePathname()
-  const isInMiniApp = isRunningInMiniApp()
+  useEffect(() => {
+    setIsMiniApp(isRunningInMiniApp())
+  }, [])
 
   const desktopSocialLinks: { href: string; label: string; icon: StaticImageData }[] = [
     { href: "https://www.instagram.com/floy.io?igsh=ZzQ4YWdqc2Y4MWY0&utm_source=qr", label: "Instagram", icon: instagram },
@@ -75,7 +78,7 @@ const Footer: React.FC = () => {
               <div className="flex flex-col items-end justify-end gap-8.5">
                 <h1 className="text-primary-500 text-5xl leading-[87px] font-semibold">فلوی</h1>
                 {/* <h3 className="text-sm text-[#748297]">تلفن پشتیبانی: ۰۲۱۱۲۳۴۵۶۷۸</h3> */}
-                {!isInMiniApp && (
+                {!isMiniApp && (
                   <div className="flex md:gap-4 lg:gap-8">
                     {desktopSocialLinks.map(({ href, label, icon }) => (
                       <a
@@ -165,7 +168,7 @@ const Footer: React.FC = () => {
               <div className="flex flex-col items-center justify-center gap-8.5">
                 <h1 className="text-5xl leading-[87px] font-semibold text-[#4641fb]">فلوی</h1>
                 <h3 className="text-sm text-[#748297]">تلفن پشتیبانی: ۰۲۱۱۲۳۴۵۶۷۸</h3>
-                {!isInMiniApp && (
+                {!isMiniApp && (
                   <div className="flex gap-6">
                     {mobileSocialLinks.map(({ href, label, icon }) => (
                       <a

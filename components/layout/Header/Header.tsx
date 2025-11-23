@@ -74,6 +74,7 @@ export function Header({ menuItems, className, forceScrolledStyle = false, compa
   const [authUser, setAuthUser] = useState<AuthUser | null>(null)
   const [userMenuOpen, setUserMenuOpen] = useState<boolean>(false)
   const [toast, setToast] = useState<{ id: number; message: string } | null>(null)
+  const [isMiniApp, setIsMiniApp] = useState(false)
   const showToast = (message: string) => {
     const id = Date.now()
     setToast({ id, message })
@@ -111,6 +112,10 @@ export function Header({ menuItems, className, forceScrolledStyle = false, compa
     checkScreen()
     window.addEventListener("resize", checkScreen)
     return () => window.removeEventListener("resize", checkScreen)
+  }, [])
+
+  useEffect(() => {
+    setIsMiniApp(isRunningInMiniApp())
   }, [])
 
   useEffect(() => {
@@ -209,7 +214,7 @@ export function Header({ menuItems, className, forceScrolledStyle = false, compa
   // 1. server/local auth_user stored in localStorage (authUser)
   const miniAppDisplayName = getMiniAppFirstName()
   const displayName = authUser ? authUser.full_name || sessionStorage.getItem("full_name") : miniAppDisplayName || "کاربر"
-  const isInMiniApp = isRunningInMiniApp()
+  const isInMiniApp = isMiniApp
 
   return (
     <>

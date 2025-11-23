@@ -49,7 +49,9 @@ const getBrowserWindow = (): (Window & typeof globalThis) | undefined => {
 export const isRunningInBale = (): boolean => {
   const browserWindow = getBrowserWindow()
   const webApp = browserWindow?.Bale?.WebApp
-  return !!(webApp?.initData || webApp?.initDataUnsafe)
+  const hasInitData = typeof webApp?.initData === "string" && webApp.initData.length > 0
+  const hasUser = !!webApp?.initDataUnsafe?.user?.id
+  return Boolean(webApp && (hasInitData || hasUser))
 }
 
 export const getStableBaleId = (): string | null => {
@@ -72,7 +74,13 @@ export const getBaleUserFirstName = (): string | undefined => {
 export const notifyBaleReady = (): void => {
   const browserWindow = getBrowserWindow()
   if (browserWindow && isRunningInBale()) {
-    browserWindow.Bale?.WebApp?.ready?.()
+    try {
+      browserWindow.Bale?.WebApp?.ready?.()
+    } catch (error) {
+      if (process.env.NODE_ENV !== "production") {
+        console.warn("Failed to notify Bale ready", error)
+      }
+    }
   }
 }
 
@@ -107,16 +115,28 @@ export const getBaleBackButton = (): BaleBackButton | undefined => {
 export const showBaleBackButton = (): void => {
   const browserWindow = getBrowserWindow()
   if (browserWindow && isRunningInBale()) {
-    const backButton = browserWindow.Bale?.WebApp?.BackButton
-    backButton?.show?.()
+    try {
+      const backButton = browserWindow.Bale?.WebApp?.BackButton
+      backButton?.show?.()
+    } catch (error) {
+      if (process.env.NODE_ENV !== "production") {
+        console.warn("Failed to show Bale back button", error)
+      }
+    }
   }
 }
 
 export const hideBaleBackButton = (): void => {
   const browserWindow = getBrowserWindow()
   if (browserWindow && isRunningInBale()) {
-    const backButton = browserWindow.Bale?.WebApp?.BackButton
-    backButton?.hide?.()
+    try {
+      const backButton = browserWindow.Bale?.WebApp?.BackButton
+      backButton?.hide?.()
+    } catch (error) {
+      if (process.env.NODE_ENV !== "production") {
+        console.warn("Failed to hide Bale back button", error)
+      }
+    }
   }
 }
 
