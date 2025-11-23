@@ -89,6 +89,12 @@ export const getRawInitData = (): string | null => {
   const browserWindow = getBrowserWindow()
   return browserWindow?.Eitaa?.WebApp?.initData ?? null
 }
+
+export const getEitaaUserFirstName = (): string | undefined => {
+  const browserWindow = getBrowserWindow()
+  const name = browserWindow?.Eitaa?.WebApp?.initDataUnsafe?.user?.first_name
+  return typeof name === "string" && name.trim().length > 0 ? name : undefined
+}
 export const extractPhoneFromContact = (contactData: unknown): string | undefined => {
   const getPhoneFromObject = (obj: unknown): string | undefined => {
     if (!obj || typeof obj !== "object") return undefined

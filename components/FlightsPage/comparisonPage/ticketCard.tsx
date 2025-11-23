@@ -5,7 +5,7 @@ import Image from "next/image"
 import { useEffect, useRef, useState } from "react"
 import { Button } from "@/components/elements/Button/Button"
 import dude from "@/public/images/flash-circle-outline.svg"
-import { isRunningInEitaa, openExternalLink } from "@/utils/eitaa"
+import { isRunningInMiniApp, openMiniAppExternalLink } from "@/utils/miniapp"
 import { englishToFarsiNumber } from "@/utils/numbers"
 
 type dude = {
@@ -70,9 +70,9 @@ export default function TicketCard({ websites }: { websites: dude[] }) {
 
     const finalRedirectUrl = `/redirect?redirect_url=${redirectUrl}&agency=${website.detail.name_fa}&agency_eng=${website.detail.name}`
 
-    // Use Eitaa's link handling when running in Eitaa mini app, otherwise use regular window.open
-    if (isRunningInEitaa()) {
-      openExternalLink(finalRedirectUrl)
+    // Use mini app link handling when embedded, otherwise use regular window.open
+    if (isRunningInMiniApp()) {
+      openMiniAppExternalLink(finalRedirectUrl)
     } else {
       window.open(finalRedirectUrl, "_blank")
     }

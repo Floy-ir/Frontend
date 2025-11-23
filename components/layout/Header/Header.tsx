@@ -10,6 +10,7 @@ import { twMerge } from "tailwind-merge"
 import { Button } from "@/components/ui/button"
 import { apiFetch } from "@/services/api"
 import { isRunningInEitaa } from "@/utils/eitaa"
+import { getMiniAppFirstName, isRunningInMiniApp } from "@/utils/miniapp"
 import AuthModal from "./AuthModal"
 import { Drawer, DrawerContent, DrawerTitle, DrawerTrigger } from "../../ui/drawer"
 
@@ -206,15 +207,9 @@ export function Header({ menuItems, className, forceScrolledStyle = false, compa
 
   // Determine a friendly display name. Priority:
   // 1. server/local auth_user stored in localStorage (authUser)
-  // 2. Eitaa init data (when running inside the mini-app)
-  const eitaaDisplayName =
-    typeof window !== "undefined"
-      ? (window as Window & { Eitaa?: { WebApp?: { initDataUnsafe?: { user?: { first_name?: string } } } } })?.Eitaa
-          ?.WebApp?.initDataUnsafe?.user?.first_name
-      : undefined
-
-  const displayName = authUser ? authUser.full_name || sessionStorage.getItem("full_name") : eitaaDisplayName || "کاربر"
-  const isInEitaa = isRunningInEitaa()
+  const miniAppDisplayName = getMiniAppFirstName()
+  const displayName = authUser ? authUser.full_name || sessionStorage.getItem("full_name") : miniAppDisplayName || "کاربر"
+  const isInMiniApp = isRunningInMiniApp()
 
   return (
     <>
@@ -280,7 +275,7 @@ export function Header({ menuItems, className, forceScrolledStyle = false, compa
                 >
                   ورود | ثبت‌نام
                 </Button>
-              ) : isInEitaa ? (
+              ) : isInMiniApp ? (
                 <span
                   className={twMerge(
                     "rounded-xl px-4 py-2 text-sm font-medium",
@@ -372,7 +367,7 @@ export function Header({ menuItems, className, forceScrolledStyle = false, compa
               >
                 ورود | ثبت‌نام
               </Button>
-            ) : isInEitaa ? (
+            ) : isInMiniApp ? (
               <span
                 className={twMerge(
                   "rounded-lg px-3 py-2 text-sm font-medium",

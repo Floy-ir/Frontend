@@ -3,6 +3,8 @@ import type { Metadata } from "next"
 import Script from "next/script"
 
 import { ClarityAnalytics } from "@/components/analytics/ClarityAnalytics"
+import BaleDynamicBackButton from "@/components/Bale/BaleDynamicBackButton/BaleDynamicBackButton"
+import BaleDynamicInitializer from "@/components/Bale/BaleDynamicInitializer/BaleDynamicInitializer"
 import EitaaDynamicAutoAuth from "@/components/Eitaa/EitaaDynamicAutoAuth/EitaaDynamicAutoAuth"
 import EitaaDynamicBackButton from "@/components/Eitaa/EitaaDynamicBackButton/EitaaDynamicBackButton"
 import EitaaDynamicInitializer from "@/components/Eitaa/EitaaDynamicInitializer/EitaaDynamicInitializer"
@@ -58,16 +60,19 @@ export default function RootLayout({
         )}
 
         <Script src="https://developer.eitaa.com/eitaa-web-app.js" strategy="beforeInteractive" />
+        <Script src="https://tapi.bale.ai/miniapp.js?3" strategy="beforeInteractive" />
         <meta name="format-detection" content="telephone=no, date=no, email=no, address=no" />
       </head>
       <body className={`${anjomanMaxVF.variable} font-anjoman-max`} suppressHydrationWarning={true}>
         {/* Analytics */}
         <ClarityAnalytics />
 
-        {/* Eitaa Mini App Initializer */}
+        {/* Mini App Initializers */}
         <EitaaDynamicInitializer />
+        <BaleDynamicInitializer />
         <EitaaDynamicAutoAuth />
         <EitaaDynamicBackButton />
+        <BaleDynamicBackButton />
 
         {/* Global Header with dynamic active state */}
         <ActiveMenuProvider />

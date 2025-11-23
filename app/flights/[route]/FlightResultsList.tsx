@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react"
 import { EXPIRATION_MODAL_SETTINGS } from "@/app/config/settings"
 import ExpirationModal from "@/components/FlightsPage/expiration-modal/page"
 import { FlightCard } from "@/components/FlightsPage/FlightCard"
-import { isRunningInEitaa, openExternalLink } from "@/utils/eitaa"
+import { isRunningInMiniApp, openMiniAppExternalLink } from "@/utils/miniapp"
 
 type FlightData = {
   id: string
@@ -99,9 +99,9 @@ export function FlightResultsList({ flights, onRefresh }: FlightResultsListProps
 
     console.log("redirectUrl", price.base_redirect_url)
     console.log("finalRedirectUrl", finalRedirectUrl)
-    // Use Eitaa's link handling when running in Eitaa mini app, otherwise use regular window.open
-    if (isRunningInEitaa()) {
-      openExternalLink(finalRedirectUrl)
+    // Use mini app link handling when embedded, otherwise use regular window.open
+    if (isRunningInMiniApp()) {
+      openMiniAppExternalLink(finalRedirectUrl)
     } else {
       window.open(finalRedirectUrl, "_blank")
     }
