@@ -9,6 +9,9 @@ import BaleDynamicInitializer from "@/components/Bale/BaleDynamicInitializer/Bal
 import EitaaDynamicAutoAuth from "@/components/Eitaa/EitaaDynamicAutoAuth/EitaaDynamicAutoAuth"
 import EitaaDynamicBackButton from "@/components/Eitaa/EitaaDynamicBackButton/EitaaDynamicBackButton"
 import EitaaDynamicInitializer from "@/components/Eitaa/EitaaDynamicInitializer/EitaaDynamicInitializer"
+import TelegramDynamicAutoAuth from "@/components/Telegram/TelegramDynamicAutoAuth/TelegramDynamicAutoAuth"
+import TelegramDynamicBackButton from "@/components/Telegram/TelegramDynamicBackButton/TelegramDynamicBackButton"
+import TelegramDynamicInitializer from "@/components/Telegram/TelegramDynamicInitializer/TelegramDynamicInitializer"
 import { ActiveMenuProvider } from "@/components/layout/ActiveMenuProvider/ActiveMenuProvider"
 import Footer from "@/components/layout/Footer/Footer"
 import { anjomanMaxVF } from "../lib/fonts"
@@ -61,6 +64,7 @@ export default function RootLayout({
         )}
 
         <Script src="https://developer.eitaa.com/eitaa-web-app.js" strategy="beforeInteractive" />
+        <Script src="https://telegram.org/js/telegram-web-app.js" strategy="beforeInteractive" />
         <meta name="format-detection" content="telephone=no, date=no, email=no, address=no" />
       </head>
       <body className={`${anjomanMaxVF.variable} font-anjoman-max`} suppressHydrationWarning={true}>
@@ -73,9 +77,12 @@ export default function RootLayout({
         {/* Mini App Initializers */}
         <EitaaDynamicInitializer />
         <BaleDynamicInitializer />
+        <TelegramDynamicInitializer />
         <EitaaDynamicAutoAuth />
+        <TelegramDynamicAutoAuth />
         <EitaaDynamicBackButton />
         <BaleDynamicBackButton />
+        <TelegramDynamicBackButton />
 
         {/* Global Header with dynamic active state */}
         <ActiveMenuProvider />

@@ -1,5 +1,6 @@
 import { getBaleUserFirstName, isRunningInBale, openExternalLink as openBaleExternalLink } from "./bale"
 import { getEitaaUserFirstName, isRunningInEitaa, openExternalLink as openEitaaExternalLink } from "./eitaa"
+import { getTelegramUserFirstName, isRunningInTelegram, openExternalLink as openTelegramExternalLink } from "./telegram"
 
 type LinkOptions = {
   target?: string
@@ -7,9 +8,14 @@ type LinkOptions = {
   [key: string]: string | undefined
 }
 
-export const isRunningInMiniApp = (): boolean => isRunningInEitaa() || isRunningInBale()
+export const isRunningInMiniApp = (): boolean => isRunningInEitaa() || isRunningInBale() || isRunningInTelegram()
 
 export const openMiniAppExternalLink = (url: string, options?: LinkOptions): void => {
+  if (isRunningInTelegram()) {
+    openTelegramExternalLink(url, options)
+    return
+  }
+
   if (isRunningInBale()) {
     openBaleExternalLink(url, options)
     return
@@ -26,5 +32,5 @@ export const openMiniAppExternalLink = (url: string, options?: LinkOptions): voi
 }
 
 export const getMiniAppFirstName = (): string | undefined => {
-  return getEitaaUserFirstName() ?? getBaleUserFirstName()
+  return getEitaaUserFirstName() ?? getBaleUserFirstName() ?? getTelegramUserFirstName()
 }
