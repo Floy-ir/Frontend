@@ -1,0 +1,96 @@
+"use client"
+
+import React, { useEffect, useState } from "react"
+import { apiFetch } from "@/services/api"
+import { getBaleUserFirstName, getStableBaleId, isRunningInBale } from "@/utils/bale"
+
+/**
+ * Component that runs in Bale mini app and attempts to kick off
+ * a login/signup flow using the user's Bale id if available.
+ *
+ * Behavior:
+ * - If user already has auth_token in localStorage, do nothing.
+ * - If running in Bale and no auth_token: call backend Bale auth endpoint
+ *   and persist token/full_name when present.
+ */
+type AuthUser = {
+  mobile: string
+  full_name?: string
+  request_id?: string
+}
+
+const BaleAutoAuth: React.FC = () => {
+  const [started, setStarted] = useState(false)
+
+  useEffect(() => {
+    if (started) return
+    setStarted(true)
+    if (!isRunningInBale()) return
+
+    // don't override existing logged-in user
+    try {
+      const existing = localStorage.getItem("auth_token")
+      if (existing) return
+    } catch {}
+
+    const run = async () => {
+      try {
+        const baleId = getStableBaleId()
+
+        try {
+          if (baleId) {
+            const res = await apiFetch<{ token?: string; user?: AuthUser; request_id?: string }>("/accounts/bale/", {
+              method: "POST",
+              data: { bale_id: baleId },
+            })
+
+            if (res?.token) {
+              try {
+                localStorage.setItem("auth_token", res.token)
+              } catch {}
+            }
+
+            const fallbackFullName = getBaleUserFirstName() ?? ""
+            const fullName =
+              (res?.user?.full_name && typeof res.user.full_name === "string"
+                ? res.user.full_name
+                : fallbackFullName) || ""
+            if (fullName) {
+              try {
+                sessionStorage.setItem("full_name", fullName)
+              } catch {}
+            }
+          }
+        } catch {
+          // If backend call fails, persist minimal local info so header shows a greeting
+          try {
+            const fullName = getBaleUserFirstName() ?? ""
+
+            if (fullName) {
+              try {
+                sessionStorage.setItem("full_name", fullName)
+              } catch {}
+            }
+
+            const userObj: AuthUser = {
+              mobile: "",
+              full_name: fullName,
+            }
+            localStorage.setItem("auth_user", JSON.stringify(userObj))
+            try {
+              window.dispatchEvent(new Event("auth-changed"))
+            } catch {}
+          } catch {}
+        }
+      } catch {
+        // ignore
+      }
+    }
+
+    run()
+  }, [started])
+
+  return null
+}
+
+export default BaleAutoAuth
