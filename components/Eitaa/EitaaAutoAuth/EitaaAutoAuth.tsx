@@ -3,7 +3,12 @@
 import React, { useEffect, useState } from "react"
 import { apiFetch } from "@/services/api"
 import { askContactAndStore, getStableEitaaId } from "@/utils/eitaa"
-import { clearStoredAuthPlatform, getMiniAppPlatform, hasMismatchedPlatformToken, setStoredAuthPlatform } from "@/utils/miniapp"
+import {
+  clearStoredAuthPlatform,
+  getMiniAppPlatform,
+  hasMismatchedPlatformToken,
+  setStoredAuthPlatform,
+} from "@/utils/miniapp"
 
 function formatMobile(raw: string) {
   if (!raw) return raw

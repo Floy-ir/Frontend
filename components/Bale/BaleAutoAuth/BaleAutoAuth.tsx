@@ -3,7 +3,12 @@
 import React, { useEffect, useState } from "react"
 import { apiFetch } from "@/services/api"
 import { getBaleUserFirstName, getStableBaleId } from "@/utils/bale"
-import { clearStoredAuthPlatform, getMiniAppPlatform, hasMismatchedPlatformToken, setStoredAuthPlatform } from "@/utils/miniapp"
+import {
+  clearStoredAuthPlatform,
+  getMiniAppPlatform,
+  hasMismatchedPlatformToken,
+  setStoredAuthPlatform,
+} from "@/utils/miniapp"
 
 /**
  * Component that runs in Bale mini app and attempts to kick off

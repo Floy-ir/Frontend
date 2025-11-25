@@ -2,8 +2,13 @@
 
 import React, { useEffect, useState } from "react"
 import { apiFetch } from "@/services/api"
+import {
+  clearStoredAuthPlatform,
+  getMiniAppPlatform,
+  hasMismatchedPlatformToken,
+  setStoredAuthPlatform,
+} from "@/utils/miniapp"
 import { getRawTelegramInitData, getStableTelegramId, getTelegramUserFirstName } from "@/utils/telegram"
-import { clearStoredAuthPlatform, getMiniAppPlatform, hasMismatchedPlatformToken, setStoredAuthPlatform } from "@/utils/miniapp"
 
 /**
  * Component that attempts automatic auth when running inside Telegram Mini App.

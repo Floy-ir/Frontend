@@ -213,7 +213,9 @@ export function Header({ menuItems, className, forceScrolledStyle = false, compa
   // Determine a friendly display name. Priority:
   // 1. server/local auth_user stored in localStorage (authUser)
   const miniAppDisplayName = getMiniAppFirstName()
-  const displayName = authUser ? authUser.full_name || sessionStorage.getItem("full_name") : miniAppDisplayName || "کاربر"
+  const displayName = authUser
+    ? authUser.full_name || sessionStorage.getItem("full_name")
+    : miniAppDisplayName || "کاربر"
   const isInMiniApp = isMiniApp
 
   return (

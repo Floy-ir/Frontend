@@ -223,10 +223,7 @@ export const TextField = React.forwardRef<HTMLInputElement, TextFieldProps>(func
       )}
     >
       {label && (
-        <label
-          htmlFor={id}
-          className={twMerge(textFieldLabel({ intent: fieldIntent, className: labelClassName }))}
-        >
+        <label htmlFor={id} className={twMerge(textFieldLabel({ intent: fieldIntent, className: labelClassName }))}>
           {label}
         </label>
       )}

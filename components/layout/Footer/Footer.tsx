@@ -22,7 +22,11 @@ const Footer: React.FC = () => {
   }, [])
 
   const desktopSocialLinks: { href: string; label: string; icon: StaticImageData }[] = [
-    { href: "https://www.instagram.com/floy.io?igsh=ZzQ4YWdqc2Y4MWY0&utm_source=qr", label: "Instagram", icon: instagram },
+    {
+      href: "https://www.instagram.com/floy.io?igsh=ZzQ4YWdqc2Y4MWY0&utm_source=qr",
+      label: "Instagram",
+      icon: instagram,
+    },
     { href: "https://t.me/floy_ir", label: "Telegram", icon: telegram },
     // { href: "https://x.com/floy_ir", label: "X", icon: X },
     // { href: "https://www.linkedin.com", label: "LinkedIn", icon: linkdin },
