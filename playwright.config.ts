@@ -71,7 +71,7 @@ export default defineConfig({
 
   /* Run your local dev server before starting the tests */
   webServer: {
-    command: "pnpm start",
+    command: "pnpm run build && pnpm start",
     url: "http://127.0.0.1:3000",
     env: {
       NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL ?? "https://example.com",
