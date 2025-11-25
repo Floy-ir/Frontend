@@ -2,7 +2,13 @@
 
 import React, { useEffect, useState } from "react"
 import { apiFetch } from "@/services/api"
-import { askContactAndStore, getStableEitaaId, isRunningInEitaa } from "@/utils/eitaa"
+import { askContactAndStore, getStableEitaaId } from "@/utils/eitaa"
+import {
+  clearStoredAuthPlatform,
+  getMiniAppPlatform,
+  hasMismatchedPlatformToken,
+  setStoredAuthPlatform,
+} from "@/utils/miniapp"
 
 function formatMobile(raw: string) {
   if (!raw) return raw
@@ -34,12 +40,26 @@ const EitaaAutoAuth: React.FC = () => {
   useEffect(() => {
     if (started) return
     setStarted(true)
-    if (!isRunningInEitaa()) return
+    const platform = getMiniAppPlatform()
+    if (platform !== "eitaa") return
     // don't override existing logged-in user
     try {
       const existing = localStorage.getItem("auth_token")
-      if (existing) return
+      const mismatchedToken = hasMismatchedPlatformToken("eitaa")
+      if (existing) {
+        if (!mismatchedToken) return
+        localStorage.removeItem("auth_token")
+        localStorage.removeItem("auth_user")
+        clearStoredAuthPlatform()
+      }
     } catch {}
+
+    const persistFullName = (name?: string) => {
+      if (!name) return
+      try {
+        sessionStorage.setItem("full_name", name)
+      } catch {}
+    }
 
     const run = async () => {
       try {
@@ -92,6 +112,10 @@ const EitaaAutoAuth: React.FC = () => {
             if (res?.token) {
               try {
                 localStorage.setItem("auth_token", res.token)
+                setStoredAuthPlatform("eitaa")
+                try {
+                  window.dispatchEvent(new Event("auth-changed"))
+                } catch {}
               } catch {}
             }
 
@@ -104,11 +128,7 @@ const EitaaAutoAuth: React.FC = () => {
               (res?.user?.full_name && typeof res.user.full_name === "string"
                 ? res.user.full_name
                 : fallbackFullName) || ""
-            if (fullName) {
-              try {
-                sessionStorage.setItem("full_name", fullName)
-              } catch {}
-            }
+            persistFullName(fullName)
 
             // const mergedUser: AuthUser = {
             //   mobile:
@@ -133,11 +153,7 @@ const EitaaAutoAuth: React.FC = () => {
             const fullName = (initUser && initUser.first_name) || ""
 
             // Store full_name in session storage
-            if (fullName) {
-              try {
-                sessionStorage.setItem("full_name", fullName)
-              } catch {}
-            }
+            persistFullName(fullName)
 
             const sanitizedPhone = "" // phone variable is commented out above
             const userObj: AuthUser = {

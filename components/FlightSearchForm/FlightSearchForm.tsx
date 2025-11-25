@@ -191,6 +191,20 @@ export function FlightSearchForm({
     if (cityOption) {
       addRecentSelection(value, cityOption.label, cityOption.code)
     }
+
+    // If destination is selected and no longer valid for the new origin, clear it
+    try {
+      if (destination) {
+        const validDestinations = await getDestinationOptions(value)
+        const isStillValid = validDestinations.some((opt) => opt.value === destination)
+        if (!isStillValid) {
+          setValue("destination", "")
+          trigger("destination")
+        }
+      }
+    } catch {
+      // On errors fetching destination options, leave current destination as-is
+    }
   }
 
   const handleDestinationChange = async (value: string) => {

@@ -10,7 +10,7 @@ import { twMerge } from "tailwind-merge"
 import { Button } from "@/components/ui/button"
 import { apiFetch } from "@/services/api"
 import { isRunningInEitaa } from "@/utils/eitaa"
-import { getMiniAppFirstName, isRunningInMiniApp } from "@/utils/miniapp"
+import { clearStoredAuthPlatform, getMiniAppFirstName, isRunningInMiniApp } from "@/utils/miniapp"
 import AuthModal from "./AuthModal"
 import { Drawer, DrawerContent, DrawerTitle, DrawerTrigger } from "../../ui/drawer"
 
@@ -213,7 +213,9 @@ export function Header({ menuItems, className, forceScrolledStyle = false, compa
   // Determine a friendly display name. Priority:
   // 1. server/local auth_user stored in localStorage (authUser)
   const miniAppDisplayName = getMiniAppFirstName()
-  const displayName = authUser ? authUser.full_name || sessionStorage.getItem("full_name") : miniAppDisplayName || "کاربر"
+  const displayName = authUser
+    ? authUser.full_name || sessionStorage.getItem("full_name")
+    : miniAppDisplayName || "کاربر"
   const isInMiniApp = isMiniApp
 
   return (
@@ -309,6 +311,7 @@ export function Header({ menuItems, className, forceScrolledStyle = false, compa
                           try {
                             localStorage.removeItem("auth_token")
                             localStorage.removeItem("auth_user")
+                            clearStoredAuthPlatform()
                           } catch {}
                           try {
                             window.dispatchEvent(new Event("auth-changed"))
@@ -401,6 +404,7 @@ export function Header({ menuItems, className, forceScrolledStyle = false, compa
                         try {
                           localStorage.removeItem("auth_token")
                           localStorage.removeItem("auth_user")
+                          clearStoredAuthPlatform()
                         } catch {}
                         try {
                           window.dispatchEvent(new Event("auth-changed"))

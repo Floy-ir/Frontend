@@ -20,11 +20,13 @@ jobs:
   analyze:
     env:
       SKIP_ENV_VALIDATION: true
+      REPO_PAT: ${{ secrets.REPO_PAT }}
     runs-on: ubuntu-latest
     permissions:
       actions: read
       contents: read
       issues: write
+      pull-requests: write
     steps:
       - uses: actions/checkout@v4
 
@@ -108,24 +110,27 @@ jobs:
 
       - name: Find Comment
         uses: peter-evans/find-comment@v2
-        if: success() && github.event.number
+        if: success() && github.event.number && env.REPO_PAT != ''
         id: fc
         with:
           issue-number: ${{ github.event.number }}
           body-includes: "<!-- __NEXTJS_BUNDLE -->"
+          token: ${{ env.REPO_PAT }}
 
       - name: Create Comment
         uses: peter-evans/create-or-update-comment@v3
-        if: success() && github.event.number && steps.fc.outputs.comment-id == 0
+        if: success() && github.event.number && env.REPO_PAT != '' && steps.fc.outputs.comment-id == 0
         with:
           issue-number: ${{ github.event.number }}
           body: ${{ steps.get-comment-body.outputs.body }}
+          token: ${{ env.REPO_PAT }}
 
       - name: Update Comment
         uses: peter-evans/create-or-update-comment@v3
-        if: success() && github.event.number && steps.fc.outputs.comment-id != 0
+        if: success() && github.event.number && env.REPO_PAT != '' && steps.fc.outputs.comment-id != 0
         with:
           issue-number: ${{ github.event.number }}
           body: ${{ steps.get-comment-body.outputs.body }}
           comment-id: ${{ steps.fc.outputs.comment-id }}
           edit-mode: replace
+          token: ${{ env.REPO_PAT }}

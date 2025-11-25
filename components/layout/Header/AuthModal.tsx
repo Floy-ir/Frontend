@@ -4,6 +4,7 @@ import React from "react"
 import { twMerge } from "tailwind-merge"
 import { Button } from "@/components/ui/button"
 import { apiFetch } from "@/services/api/index"
+import { setStoredAuthPlatform } from "@/utils/miniapp"
 import ForgotPasswordPhoneForm from "./ForgotPasswordPhoneForm"
 import LoginForm from "./LoginForm"
 import OTPInput from "./OTPInput"
@@ -208,6 +209,7 @@ export default function AuthModal({
       if (lr?.token) {
         try {
           localStorage.setItem("auth_token", lr.token)
+          setStoredAuthPlatform("web")
           // persist a minimal user object so header can show a welcome label
           try {
             // Try to get full_name from response, fallback to phone

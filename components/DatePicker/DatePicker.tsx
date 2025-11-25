@@ -98,10 +98,14 @@ export const DatePicker = React.forwardRef<HTMLInputElement, DatePickerProps>(fu
   const formattedDate = selectedDate ? (formatDate ? formatDate(selectedDate) : defaultFormatDate(selectedDate)) : ""
 
   const handleDateSelect = (day: Date | undefined) => {
-    if (day) {
-      onChange?.(day)
-      setOpen(false)
+    const finalDate = day ?? selectedDate ?? null
+
+    if (finalDate) {
+      onChange?.(finalDate)
     }
+
+    // Always close after a click (including re-selecting the same day)
+    setOpen(false)
   }
 
   // The trigger field component

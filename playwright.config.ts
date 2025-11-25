@@ -25,6 +25,7 @@ export default defineConfig({
   use: {
     /* Base URL to use in actions like `await page.goto('/')`. */
     baseURL: "http://127.0.0.1:3000",
+    navigationTimeout: 60000,
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: "on-first-retry",
@@ -70,8 +71,13 @@ export default defineConfig({
 
   /* Run your local dev server before starting the tests */
   webServer: {
-    command: "pnpm dev",
+    command: "pnpm run build && pnpm start",
     url: "http://127.0.0.1:3000",
+    env: {
+      NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL ?? "https://example.com",
+      SKIP_ENV_VALIDATION: "true",
+    },
     reuseExistingServer: !process.env.CI,
+    timeout: 120_000,
   },
 })

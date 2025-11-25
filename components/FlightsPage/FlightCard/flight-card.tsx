@@ -460,8 +460,9 @@ export function FlightCard({
               data-clarity-name={clarityElementTags.compare}
               onClick={handleComparisonClick}
             >
-              <span className={`flex items-center justify-center gap-2 font-medium ${otherSellersCount > 1 ? "" : "py-1"
-                } `}>
+              <span
+                className={`flex items-center justify-center gap-2 font-medium ${otherSellersCount > 1 ? "" : "py-1"} `}
+              >
                 <span>
                   {otherSellersCount > 1
                     ? `مشاهده ${englishToFarsiNumber(otherSellersCount - 1)} فروشنده دیگر`
@@ -612,8 +613,9 @@ export function FlightCard({
                   onClick={handleComparisonClick}
                 >
                   <span
-                    className={`flex items-center justify-center gap-2 font-medium ${otherSellersCount > 1 ? "" : "py-1"
-                      } `}
+                    className={`flex items-center justify-center gap-2 font-medium ${
+                      otherSellersCount > 1 ? "" : "py-1"
+                    } `}
                   >
                     <span>
                       {otherSellersCount > 1
