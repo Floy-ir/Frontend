@@ -1,5 +1,6 @@
 import axios, { AxiosRequestConfig } from "axios"
 import { env } from "@/env.mjs"
+import { getPlatformBoundAuthToken } from "@/utils/miniapp"
 
 // type RequestOptions = AxiosRequestConfig & {
 //   params?: Record<string, string | number>;
@@ -19,8 +20,8 @@ export async function apiFetch<T>(endpoint: string, options: RequestOptions = {}
     //     ...(options.headers || {}),
     //   }
     // });
-    // attach token if present
-    const token = typeof window !== "undefined" ? localStorage.getItem("auth_token") : null
+    // attach token if present (guarded by mini app platform to avoid cross-app reuse)
+    const token = typeof window !== "undefined" ? getPlatformBoundAuthToken() : null
     const response = await axios<T>(url, {
       ...options,
       headers: {

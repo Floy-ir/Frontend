@@ -2,7 +2,8 @@
 
 import React, { useEffect, useState } from "react"
 import { apiFetch } from "@/services/api"
-import { getRawTelegramInitData, getStableTelegramId, getTelegramUserFirstName, isRunningInTelegram } from "@/utils/telegram"
+import { getRawTelegramInitData, getStableTelegramId, getTelegramUserFirstName } from "@/utils/telegram"
+import { clearStoredAuthPlatform, getMiniAppPlatform, hasMismatchedPlatformToken, setStoredAuthPlatform } from "@/utils/miniapp"
 
 /**
  * Component that attempts automatic auth when running inside Telegram Mini App.
@@ -24,12 +25,26 @@ const TelegramAutoAuth: React.FC = () => {
   useEffect(() => {
     if (started) return
     setStarted(true)
-    if (!isRunningInTelegram()) return
+    const platform = getMiniAppPlatform()
+    if (platform !== "telegram") return
 
     try {
       const existing = localStorage.getItem("auth_token")
-      if (existing) return
+      const mismatchedToken = hasMismatchedPlatformToken("telegram")
+      if (existing) {
+        if (!mismatchedToken) return
+        localStorage.removeItem("auth_token")
+        localStorage.removeItem("auth_user")
+        clearStoredAuthPlatform()
+      }
     } catch {}
+
+    const persistFullName = (name?: string) => {
+      if (!name) return
+      try {
+        sessionStorage.setItem("full_name", name)
+      } catch {}
+    }
 
     const run = async () => {
       try {
@@ -45,6 +60,10 @@ const TelegramAutoAuth: React.FC = () => {
           if (res?.token) {
             try {
               localStorage.setItem("auth_token", res.token)
+              setStoredAuthPlatform("telegram")
+              try {
+                window.dispatchEvent(new Event("auth-changed"))
+              } catch {}
             } catch {}
           }
 
@@ -52,18 +71,12 @@ const TelegramAutoAuth: React.FC = () => {
           const fullName =
             (res?.user?.full_name && typeof res.user.full_name === "string" ? res.user.full_name : fallbackFullName) ||
             ""
-          if (fullName) {
-            try {
-              sessionStorage.setItem("full_name", fullName)
-            } catch {}
-          }
+          persistFullName(fullName)
         }
       } catch {
         try {
           const fullName = getTelegramUserFirstName() ?? ""
-          if (fullName) {
-            sessionStorage.setItem("full_name", fullName)
-          }
+          persistFullName(fullName)
 
           const userObj: AuthUser = {
             mobile: "",

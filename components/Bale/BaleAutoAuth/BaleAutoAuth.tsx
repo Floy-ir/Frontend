@@ -2,7 +2,8 @@
 
 import React, { useEffect, useState } from "react"
 import { apiFetch } from "@/services/api"
-import { getBaleUserFirstName, getStableBaleId, isRunningInBale } from "@/utils/bale"
+import { getBaleUserFirstName, getStableBaleId } from "@/utils/bale"
+import { clearStoredAuthPlatform, getMiniAppPlatform, hasMismatchedPlatformToken, setStoredAuthPlatform } from "@/utils/miniapp"
 
 /**
  * Component that runs in Bale mini app and attempts to kick off
@@ -25,13 +26,27 @@ const BaleAutoAuth: React.FC = () => {
   useEffect(() => {
     if (started) return
     setStarted(true)
-    if (!isRunningInBale()) return
+    const platform = getMiniAppPlatform()
+    if (platform !== "bale") return
 
     // don't override existing logged-in user
     try {
       const existing = localStorage.getItem("auth_token")
-      if (existing) return
+      const mismatchedToken = hasMismatchedPlatformToken("bale")
+      if (existing) {
+        if (!mismatchedToken) return
+        localStorage.removeItem("auth_token")
+        localStorage.removeItem("auth_user")
+        clearStoredAuthPlatform()
+      }
     } catch {}
+
+    const persistFullName = (name?: string) => {
+      if (!name) return
+      try {
+        sessionStorage.setItem("full_name", name)
+      } catch {}
+    }
 
     const run = async () => {
       try {
@@ -47,6 +62,10 @@ const BaleAutoAuth: React.FC = () => {
             if (res?.token) {
               try {
                 localStorage.setItem("auth_token", res.token)
+                setStoredAuthPlatform("bale")
+                try {
+                  window.dispatchEvent(new Event("auth-changed"))
+                } catch {}
               } catch {}
             }
 
@@ -55,22 +74,14 @@ const BaleAutoAuth: React.FC = () => {
               (res?.user?.full_name && typeof res.user.full_name === "string"
                 ? res.user.full_name
                 : fallbackFullName) || ""
-            if (fullName) {
-              try {
-                sessionStorage.setItem("full_name", fullName)
-              } catch {}
-            }
+            persistFullName(fullName)
           }
         } catch {
           // If backend call fails, persist minimal local info so header shows a greeting
           try {
             const fullName = getBaleUserFirstName() ?? ""
 
-            if (fullName) {
-              try {
-                sessionStorage.setItem("full_name", fullName)
-              } catch {}
-            }
+            persistFullName(fullName)
 
             const userObj: AuthUser = {
               mobile: "",
