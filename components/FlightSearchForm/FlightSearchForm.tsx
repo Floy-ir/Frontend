@@ -13,6 +13,7 @@ import { ComboboxSelect } from "@/components/elements/ComboboxSelect/ComboboxSel
 import { PassengerCount, PassengerSelector } from "@/components/PassengerSelector/PassengerSelector"
 import type { CityOption } from "@/config/cities"
 import { getCityByName, getCityOptions, getDestinationOptions } from "@/config/cities"
+import { useMediaQuery } from "@/hooks/use-media-query"
 import { useFlightFormPersistence } from "@/hooks/useFlightFormPersistence"
 import { useStoredCities } from "@/hooks/useStoredCities"
 import { formatDate } from "@/utils/dateUtils"
@@ -58,10 +59,16 @@ export function FlightSearchForm({
   const router = useRouter()
   const [options, setOptions] = useState<Pick<CityOption, "value" | "label">[]>([])
   const [destinationOptions, setDestinationOptions] = useState<Pick<CityOption, "value" | "label">[]>([])
+  const [originOpen, setOriginOpen] = useState(false)
+  const [destinationOpen, setDestinationOpen] = useState(false)
+  const [dateOpen, setDateOpen] = useState(false)
+  const [passengerOpen, setPassengerOpen] = useState(false)
   // Use our custom hooks
   const { recentSelections, addRecentSelection, saveSearch } = useStoredCities()
   const { loadFormData, saveFormData } = useFlightFormPersistence()
   const [isLoading, setIsLoading] = useState(false)
+  const isLgUp = useMediaQuery("(min-width: 1024px)")
+  const shouldAutoAdvance = contextPage === "landing"
 
   // Load persisted form data
   const persistedFormData = useMemo(() => loadFormData(), [loadFormData])
@@ -205,6 +212,15 @@ export function FlightSearchForm({
     } catch {
       // On errors fetching destination options, leave current destination as-is
     }
+
+    if (shouldAutoAdvance) {
+      if (value) {
+        setOriginOpen(false)
+        setDestinationOpen(true)
+      } else {
+        setDestinationOpen(false)
+      }
+    }
   }
 
   const handleDestinationChange = async (value: string) => {
@@ -216,6 +232,15 @@ export function FlightSearchForm({
     if (cityOption) {
       addRecentSelection(value, cityOption.label, cityOption.code)
     }
+
+    if (shouldAutoAdvance) {
+      if (value) {
+        setDestinationOpen(false)
+        setDateOpen(true)
+      } else {
+        setDateOpen(false)
+      }
+    }
   }
 
   // Add function to handle date change with validation
@@ -224,6 +249,11 @@ export function FlightSearchForm({
       setValue("departureDate", date instanceof Date ? date : new Date(date))
       // Trigger validation immediately
       trigger("departureDate")
+    }
+    if (shouldAutoAdvance) {
+      setDateOpen(false)
+      // Auto-advance to passengers (commented out per request)
+      // setPassengerOpen(true)
     }
   }
 
@@ -296,18 +326,16 @@ export function FlightSearchForm({
   return (
     <div className="m-0 flex w-full flex-col items-center" id={id}>
       <div
-        className={`relative flex h-full w-full flex-col items-center lg:flex-row lg:justify-center ${
-          contextPage == "flights" ? "px-0 lg:px-30" : ""
-        }`}
+        className={`relative flex h-full w-full flex-col items-center lg:flex-row lg:justify-center ${contextPage == "flights" ? "px-0 lg:px-30" : ""
+          }`}
         role="dialog"
         aria-label="جستجوی پرواز"
       >
         <div className={`flex w-full flex-col items-start gap-4 lg:flex-row lg:items-center lg:gap-6 ${className}`}>
           {/* mobile title and Arrow */}
           <div
-            className={`mx-4 w-full items-center justify-start gap-4 ${
-              contextPage == "flights" ? "flex md:hidden" : "hidden"
-            }`}
+            className={`mx-4 w-full items-center justify-start gap-4 ${contextPage == "flights" ? "flex md:hidden" : "hidden"
+              }`}
           >
             <ArrowRight size="24" color="#748297" onClick={onClose} className="cursor-pointer" />
             <div className="text-Gray-N600 text-sm leading-normal font-semibold">تغییر جستجو</div>
@@ -358,6 +386,8 @@ export function FlightSearchForm({
                             recentSelections={filteredRecentSelectionsOrigin}
                             autoFocus={shouldFocus}
                             hasError={!!fieldState.error}
+                            open={shouldAutoAdvance && !isLgUp ? originOpen : undefined}
+                            onOpenChange={setOriginOpen}
                           />
                           {renderErrorMessage(fieldState.error?.message)}
                         </>
@@ -389,6 +419,8 @@ export function FlightSearchForm({
                             onChange={handleDestinationChange}
                             recentSelections={filteredRecentSelectionsDestination}
                             hasError={!!fieldState.error}
+                            open={shouldAutoAdvance && !isLgUp ? destinationOpen : undefined}
+                            onOpenChange={setDestinationOpen}
                           />
                           {renderErrorMessage(fieldState.error?.message)}
                         </>
@@ -425,6 +457,8 @@ export function FlightSearchForm({
                         onChange={handleOriginChange}
                         recentSelections={filteredRecentSelectionsOrigin}
                         hasError={!!fieldState.error}
+                        open={shouldAutoAdvance && isLgUp ? originOpen : undefined}
+                        onOpenChange={setOriginOpen}
                       />
                       {renderErrorMessage(fieldState.error?.message)}
                     </>
@@ -468,6 +502,8 @@ export function FlightSearchForm({
                         onChange={handleDestinationChange}
                         recentSelections={filteredRecentSelectionsDestination}
                         hasError={!!fieldState.error}
+                        open={shouldAutoAdvance && isLgUp ? destinationOpen : undefined}
+                        onOpenChange={setDestinationOpen}
                       />
                       {renderErrorMessage(fieldState.error?.message)}
                     </>
@@ -501,6 +537,8 @@ export function FlightSearchForm({
                           className: "w-full",
                         }}
                         hasError={!!fieldState.error}
+                        open={shouldAutoAdvance ? dateOpen : undefined}
+                        onOpenChange={setDateOpen}
                       />
                       {renderErrorMessage(fieldState.error?.message)}
                     </>
@@ -539,6 +577,9 @@ export function FlightSearchForm({
                         value={field.value}
                         onChange={handlePassengersChange}
                         hasError={!!fieldState.error}
+                      // Auto-open passengers after date (kept commented intentionally)
+                      // open={shouldAutoAdvance ? passengerOpen : undefined}
+                      // onOpenChange={setPassengerOpen}
                       />
                       {fieldState.error && renderErrorMessage(fieldState.error?.message)}
                     </>
