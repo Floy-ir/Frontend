@@ -7,6 +7,7 @@ import EitaaDynamicBackButton from "@/components/Eitaa/EitaaDynamicBackButton/Ei
 import EitaaDynamicInitializer from "@/components/Eitaa/EitaaDynamicInitializer/EitaaDynamicInitializer"
 import { ActiveMenuProvider } from "@/components/layout/ActiveMenuProvider/ActiveMenuProvider"
 import Footer from "@/components/layout/Footer/Footer"
+import { env } from "../env.mjs"
 import { anjomanMaxVF } from "../lib/fonts"
 
 // Define metadata
@@ -38,6 +39,9 @@ export default function RootLayout({
       <head>
         <Script src="https://developer.eitaa.com/eitaa-web-app.js" strategy="beforeInteractive" />
         <meta name="format-detection" content="telephone=no, date=no, email=no, address=no" />
+        {env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION && (
+          <meta name="google-site-verification" content={env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION} />
+        )}
       </head>
       <body className={`${anjomanMaxVF.variable} font-anjoman-max`} suppressHydrationWarning={true}>
         {/* Eitaa Mini App Initializer */}
