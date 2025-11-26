@@ -89,6 +89,12 @@ export const getRawInitData = (): string | null => {
   const browserWindow = getBrowserWindow()
   return browserWindow?.Eitaa?.WebApp?.initData ?? null
 }
+
+export const getEitaaUserFirstName = (): string | undefined => {
+  const browserWindow = getBrowserWindow()
+  const name = browserWindow?.Eitaa?.WebApp?.initDataUnsafe?.user?.first_name
+  return typeof name === "string" && name.trim().length > 0 ? name : undefined
+}
 export const extractPhoneFromContact = (contactData: unknown): string | undefined => {
   const getPhoneFromObject = (obj: unknown): string | undefined => {
     if (!obj || typeof obj !== "object") return undefined
@@ -244,7 +250,7 @@ export const hideEitaaBackButton = (): void => {
 export const onEitaaBackButtonClick = (callback: () => void): (() => void) => {
   const browserWindow = getBrowserWindow()
   const backButton = browserWindow?.Eitaa?.WebApp?.BackButton
-  
+
   if (backButton && isRunningInEitaa()) {
     backButton.onClick(callback)
     // Return cleanup function
@@ -252,7 +258,7 @@ export const onEitaaBackButtonClick = (callback: () => void): (() => void) => {
       backButton.offClick(callback)
     }
   }
-  
+
   // Return no-op cleanup if not available
   return () => {}
 }

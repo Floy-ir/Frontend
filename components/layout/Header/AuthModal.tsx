@@ -4,6 +4,7 @@ import React from "react"
 import { twMerge } from "tailwind-merge"
 import { Button } from "@/components/ui/button"
 import { apiFetch } from "@/services/api/index"
+import { setStoredAuthPlatform } from "@/utils/miniapp"
 import ForgotPasswordPhoneForm from "./ForgotPasswordPhoneForm"
 import LoginForm from "./LoginForm"
 import OTPInput from "./OTPInput"
@@ -66,13 +67,13 @@ export default function AuthModal({
     try {
       const p = initialPayload as Record<string, unknown>
       if (p.step === "otp") {
-  const phone = p.phone as string | undefined
-  const uuid = p.otp_uuid as string | undefined
-  if (phone) setPhoneForOtp(phone)
-  if (uuid) setOtpUuid(uuid)
-  setStep(1)
-  setResetMode(!!p.resetMode)
-}
+        const phone = p.phone as string | undefined
+        const uuid = p.otp_uuid as string | undefined
+        if (phone) setPhoneForOtp(phone)
+        if (uuid) setOtpUuid(uuid)
+        setStep(1)
+        setResetMode(!!p.resetMode)
+      }
     } catch {
       // ignore malformed payload
     }
@@ -208,21 +209,25 @@ export default function AuthModal({
       if (lr?.token) {
         try {
           localStorage.setItem("auth_token", lr.token)
+          setStoredAuthPlatform("web")
           // persist a minimal user object so header can show a welcome label
           try {
             // Try to get full_name from response, fallback to phone
-            const resUser = (res as unknown as Record<string, unknown>)?.user as Record<string, unknown> | undefined;
+            const resUser = (res as unknown as Record<string, unknown>)?.user as Record<string, unknown> | undefined
             const userObj = {
               mobile,
-              full_name: resUser?.full_name as string || (res as unknown as Record<string, unknown>)?.full_name as string || "",
+              full_name:
+                (resUser?.full_name as string) ||
+                ((res as unknown as Record<string, unknown>)?.full_name as string) ||
+                "",
             }
             localStorage.setItem("auth_user", JSON.stringify(userObj))
-          } catch { }
+          } catch {}
           // notify other parts of the app that auth state changed
           try {
             window.dispatchEvent(new Event("auth-changed"))
-          } catch { }
-        } catch { }
+          } catch {}
+        } catch {}
       }
       // success - backend may return token or session cookie
       showToast("با موفقیت وارد شدید!")
@@ -613,8 +618,8 @@ export default function AuthModal({
                 step === 0 || step === "forgot-phone"
                   ? "translateX(0)"
                   : step === 1
-                    ? `translateX(${isRtl ? "33.333%" : "-33.333%"})`
-                    : `translateX(${isRtl ? "66.666%" : "-66.666%"})`,
+                  ? `translateX(${isRtl ? "33.333%" : "-33.333%"})`
+                  : `translateX(${isRtl ? "66.666%" : "-66.666%"})`,
             }}
           >
             <div className="items-strech flex w-1/3 flex-col px-2">

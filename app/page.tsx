@@ -80,19 +80,19 @@ export default function Web() {
 
               {/*Buttons */}
               {/* <div className="flex flex-row items-center">
-              <Button intent="text" size="medium" className="mr-6">
-                مشاهده همه
-              </Button>
-              <div className="hidden flex-row items-center sm:flex">
-                <Button
-                  size="medium"
-                  intent="secondary"
-                  rightIcon={<ArrowRight2 size="20" color="#4641FB" />}
-                  className="ml-4.5"
-                />
-                <Button size="medium" intent="secondary" rightIcon={<ArrowLeft2 size="20" color="#4641FB" />} />
-              </div>
-            </div> */}
+                <Button intent="text" size="medium" className="mr-6">
+                  مشاهده همه
+                </Button>
+                <div className="hidden flex-row items-center sm:flex">
+                  <Button
+                    size="medium"
+                    intent="secondary"
+                    rightIcon={<ArrowRight2 size="20" color="#4641FB" />}
+                    className="ml-4.5"
+                  />
+                  <Button size="medium" intent="secondary" rightIcon={<ArrowLeft2 size="20" color="#4641FB" />} />
+                </div>
+              </div> */}
             </div>
             <PopularCities />
           </div>

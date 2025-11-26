@@ -12,7 +12,7 @@ import { Button } from "@/components/elements/Button/Button"
 import { ComboboxSelect } from "@/components/elements/ComboboxSelect/ComboboxSelect"
 import { PassengerCount, PassengerSelector } from "@/components/PassengerSelector/PassengerSelector"
 import type { CityOption } from "@/config/cities"
-import { getCityByName, getCityOptions } from "@/config/cities"
+import { getCityByName, getCityOptions, getDestinationOptions } from "@/config/cities"
 import { useFlightFormPersistence } from "@/hooks/useFlightFormPersistence"
 import { useStoredCities } from "@/hooks/useStoredCities"
 import { formatDate } from "@/utils/dateUtils"
@@ -57,13 +57,47 @@ export function FlightSearchForm({
 }: FlightSearchFormProps) {
   const router = useRouter()
   const [options, setOptions] = useState<Pick<CityOption, "value" | "label">[]>([])
+  const [destinationOptions, setDestinationOptions] = useState<Pick<CityOption, "value" | "label">[]>([])
   // Use our custom hooks
   const { recentSelections, addRecentSelection, saveSearch } = useStoredCities()
   const { loadFormData, saveFormData } = useFlightFormPersistence()
   const [isLoading, setIsLoading] = useState(false)
 
   // Load persisted form data
-  const persistedFormData = useMemo(() => loadFormData(), [])
+  const persistedFormData = useMemo(() => loadFormData(), [loadFormData])
+
+  // Normalize stored departure date: if it's earlier than today, replace with today and persist back
+  const today = useMemo(() => {
+    const now = new Date()
+    now.setHours(0, 0, 0, 0)
+    return now
+  }, [])
+
+  const normalizedPersistedFormData = useMemo(() => {
+    if (!persistedFormData.departureDate) return persistedFormData
+
+    const storedDate = new Date(persistedFormData.departureDate)
+    if (Number.isNaN(storedDate.getTime())) return persistedFormData
+
+    const storedDay = new Date(storedDate)
+    storedDay.setHours(0, 0, 0, 0)
+
+    if (storedDay < today) {
+      return {
+        ...persistedFormData,
+        departureDate: today.toISOString(),
+      }
+    }
+
+    return persistedFormData
+  }, [persistedFormData, today])
+
+  // If we had to normalize (bump to today), save it back to storage once
+  useEffect(() => {
+    if (normalizedPersistedFormData.departureDate !== persistedFormData.departureDate) {
+      saveFormData(normalizedPersistedFormData)
+    }
+  }, [normalizedPersistedFormData, persistedFormData, saveFormData])
 
   // Create form with react-hook-form
   const { control, handleSubmit, setValue, watch, trigger } = useForm<SearchFormValues>({
@@ -75,12 +109,12 @@ export function FlightSearchForm({
     },
     defaultValues: {
       // Prioritize prop values over persisted values
-      origin: initialOrigin || persistedFormData.origin,
-      destination: initialDestination || persistedFormData.destination,
+      origin: initialOrigin || normalizedPersistedFormData.origin,
+      destination: initialDestination || normalizedPersistedFormData.destination,
       departureDate:
         initialDepartureDate ||
-        (persistedFormData.departureDate ? new Date(persistedFormData.departureDate) : undefined),
-      passengers: initialPassengers || persistedFormData.passengers,
+        (normalizedPersistedFormData.departureDate ? new Date(normalizedPersistedFormData.departureDate) : undefined),
+      passengers: initialPassengers || normalizedPersistedFormData.passengers,
     },
     mode: "onChange",
   })
@@ -107,10 +141,6 @@ export function FlightSearchForm({
     return options.filter((option) => option.value !== destination)
   }, [options, destination])
 
-  const destinationOptions = useMemo(() => {
-    return options.filter((option) => option.value !== origin)
-  }, [options, origin])
-
   const filteredRecentSelectionsOrigin = useMemo(() => {
     return recentSelections.filter((city) => city.value !== destination)
   }, [recentSelections, destination])
@@ -124,6 +154,33 @@ export function FlightSearchForm({
     getCityOptions().then(setOptions)
   }, [])
 
+  // Update destination options when origin or full options change
+  useEffect(() => {
+    const updateDestinationOptions = async () => {
+      // If no origin selected yet, show all cities (excluding origin itself which is empty anyway)
+      if (!origin) {
+        setDestinationOptions(options)
+        return
+      }
+
+      try {
+        const destinationOpts = await getDestinationOptions(origin)
+
+        // If backend returns no destinations, fall back to all cities except origin
+        if (!destinationOpts.length) {
+          setDestinationOptions(options.filter((option) => option.value !== origin))
+        } else {
+          setDestinationOptions(destinationOpts)
+        }
+      } catch {
+        // On any error, fall back to all cities except origin
+        setDestinationOptions(options.filter((option) => option.value !== origin))
+      }
+    }
+
+    updateDestinationOptions()
+  }, [origin, options])
+
   // Custom onChange handlers
   const handleOriginChange = async (value: string) => {
     setValue("origin", value)
@@ -133,6 +190,20 @@ export function FlightSearchForm({
     const cityOption = await getCityByName(value)
     if (cityOption) {
       addRecentSelection(value, cityOption.label, cityOption.code)
+    }
+
+    // If destination is selected and no longer valid for the new origin, clear it
+    try {
+      if (destination) {
+        const validDestinations = await getDestinationOptions(value)
+        const isStillValid = validDestinations.some((opt) => opt.value === destination)
+        if (!isStillValid) {
+          setValue("destination", "")
+          trigger("destination")
+        }
+      }
+    } catch {
+      // On errors fetching destination options, leave current destination as-is
     }
   }
 

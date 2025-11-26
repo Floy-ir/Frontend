@@ -5,11 +5,12 @@
  * SPDX-License-Identifier: MPL-2.0
  */
 
+/* eslint-disable @typescript-eslint/no-require-imports */
 // edited to work with the appdir by @raphaelbadia
-import gzSize from "gzip-size"
-import mkdirp from "mkdirp"
-import fs from "fs"
-import path from "path"
+const gzSize = require("gzip-size")
+const mkdirp = require("mkdirp")
+const fs = require("fs")
+const path = require("path")
 
 // Pull options from `package.json`
 const options = getOptions()

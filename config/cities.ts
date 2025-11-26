@@ -58,3 +58,21 @@ export async function getCityOptions(): Promise<Pick<CityOption, "value" | "labe
   const cities = await loadCities()
   return cities.map(({ value, label }) => ({ value, label }))
 }
+
+// Get destination options for a given origin (by origin name)
+export async function getDestinationOptions(originName: string): Promise<Pick<CityOption, "value" | "label">[]> {
+  // Ensure cities (and thus results) are loaded
+  await loadCities()
+
+  if (!results) return []
+
+  // Find origin either by its Persian name or by code, just in case
+  const originCity = results.find((city) => city.name === originName || city.value === originName)
+
+  if (!originCity || !originCity.destinations) return []
+
+  return originCity.destinations.map((destination) => ({
+    value: destination.name,
+    label: destination.name,
+  }))
+}

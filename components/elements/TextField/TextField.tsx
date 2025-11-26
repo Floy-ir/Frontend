@@ -1,6 +1,5 @@
 "use client"
 
-import * as Form from "@radix-ui/react-form"
 import { cva, type VariantProps } from "class-variance-authority"
 import * as React from "react"
 import { twMerge } from "tailwind-merge"
@@ -217,66 +216,62 @@ export const TextField = React.forwardRef<HTMLInputElement, TextFieldProps>(func
   }
 
   return (
-    <Form.Root
+    <div
       className={twMerge(
         textFieldContainer({ intent: fieldIntent, disabled, className: containerClassName }),
         noBorder && "gap-0"
       )}
     >
-      <Form.Field name={id || "textfield"}>
-        {label && (
-          <Form.Label className={twMerge(textFieldLabel({ intent: fieldIntent, className: labelClassName }))}>
-            {label}
-          </Form.Label>
+      {label && (
+        <label htmlFor={id} className={twMerge(textFieldLabel({ intent: fieldIntent, className: labelClassName }))}>
+          {label}
+        </label>
+      )}
+
+      <div
+        className={twMerge(
+          textFieldWrapper({ intent: fieldIntent, size, width, filled, disabled }),
+          noBorder && "border-0 bg-transparent"
         )}
+        style={Object.keys(customStyles).length > 0 ? customStyles : undefined}
+      >
+        <div className={`flex h-full w-full items-center ${noBorder ? "" : "px-4"}`}>
+          {rightIcon && <div className={twMerge(textFieldIcon({ position: "right" }))}>{rightIcon}</div>}
 
-        <div
-          className={twMerge(
-            textFieldWrapper({ intent: fieldIntent, size, width, filled, disabled }),
-            noBorder && "border-0 bg-transparent"
-          )}
-          style={Object.keys(customStyles).length > 0 ? customStyles : undefined}
-        >
-          <div className={`flex h-full w-full items-center ${noBorder ? "" : "px-4"}`}>
-            {rightIcon && <div className={twMerge(textFieldIcon({ position: "right" }))}>{rightIcon}</div>}
+          {prefix && <div className={twMerge(textFieldAffix({ position: "prefix" }))}>{prefix}</div>}
 
-            {prefix && <div className={twMerge(textFieldAffix({ position: "prefix" }))}>{prefix}</div>}
+          <input
+            id={id}
+            type="text"
+            value={inputValue}
+            onChange={handleChange}
+            disabled={disabled ?? undefined}
+            placeholder={placeholder}
+            className={twMerge(textFieldInput({ textAlign, disabled, className: inputClassName }))}
+            {...props}
+            ref={ref}
+          />
 
-            <Form.Control asChild>
-              <input
-                id={id}
-                type="text"
-                value={inputValue}
-                onChange={handleChange}
-                disabled={disabled ?? undefined}
-                placeholder={placeholder}
-                className={twMerge(textFieldInput({ textAlign, disabled, className: inputClassName }))}
-                {...props}
-                ref={ref}
-              />
-            </Form.Control>
+          {suffix && <div className={twMerge(textFieldAffix({ position: "suffix" }))}>{suffix}</div>}
 
-            {suffix && <div className={twMerge(textFieldAffix({ position: "suffix" }))}>{suffix}</div>}
-
-            {leftIcon && <div className={twMerge(textFieldIcon({ position: "left" }))}>{leftIcon}</div>}
-          </div>
+          {leftIcon && <div className={twMerge(textFieldIcon({ position: "left" }))}>{leftIcon}</div>}
         </div>
+      </div>
 
-        {(helperText || (showCharCount && maxLength)) && (
-          <div className="flex justify-between">
-            {helperText && (
-              <div className={twMerge(textFieldHelperText({ intent: fieldIntent, className: helperTextClassName }))}>
-                {helperText}
-              </div>
-            )}
-            {showCharCount && maxLength && (
-              <div className="px-3 text-xs text-slate-500">
-                {inputValue.length}/{maxLength}
-              </div>
-            )}
-          </div>
-        )}
-      </Form.Field>
-    </Form.Root>
+      {(helperText || (showCharCount && maxLength)) && (
+        <div className="flex justify-between">
+          {helperText && (
+            <div className={twMerge(textFieldHelperText({ intent: fieldIntent, className: helperTextClassName }))}>
+              {helperText}
+            </div>
+          )}
+          {showCharCount && maxLength && (
+            <div className="px-3 text-xs text-slate-500">
+              {inputValue.length}/{maxLength}
+            </div>
+          )}
+        </div>
+      )}
+    </div>
   )
 })

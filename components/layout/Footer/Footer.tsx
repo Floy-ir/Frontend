@@ -1,19 +1,41 @@
 "use client"
 import { ArrowDown2, ArrowUp2 } from "iconsax-react"
 import Image from "next/image"
+import type { StaticImageData } from "next/image"
 import { usePathname } from "next/navigation"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
+import { isRunningInMiniApp } from "@/utils/miniapp"
 import aparat from "../../../public/images/Frame 4402.svg"
 import instagram from "../../../public/images/instagram.svg"
-import linkdin from "../../../public/images/linkedin-svgrepo-com 1.svg"
+// import linkdin from "../../../public/images/linkedin-svgrepo-com 1.svg"
 import telegram from "../../../public/images/send-2.svg"
-import youtube from "../../../public/images/youtube.svg"
+// import youtube from "../../../public/images/youtube.svg"
 import { Button } from "../../elements/Button/Button"
 
 const Footer: React.FC = () => {
   const [isExpanded, setIsExpanded] = useState(false)
+  const [isMiniApp, setIsMiniApp] = useState(false)
   const pathname = usePathname()
+  useEffect(() => {
+    setIsMiniApp(isRunningInMiniApp())
+  }, [])
+
+  const desktopSocialLinks: { href: string; label: string; icon: StaticImageData }[] = [
+    {
+      href: "https://www.instagram.com/floy.io?igsh=ZzQ4YWdqc2Y4MWY0&utm_source=qr",
+      label: "Instagram",
+      icon: instagram,
+    },
+    { href: "https://t.me/floy_ir", label: "Telegram", icon: telegram },
+    // { href: "https://x.com/floy_ir", label: "X", icon: X },
+    // { href: "https://www.linkedin.com", label: "LinkedIn", icon: linkdin },
+  ]
+
+  const mobileSocialLinks: { href: string; label: string; icon: StaticImageData }[] = [
+    ...desktopSocialLinks,
+    { href: "https://www.aparat.com", label: "Aparat", icon: aparat },
+  ]
 
   if (pathname?.startsWith("/chat")) {
     return <></>
@@ -60,23 +82,22 @@ const Footer: React.FC = () => {
               <div className="flex flex-col items-end justify-end gap-8.5">
                 <h1 className="text-primary-500 text-5xl leading-[87px] font-semibold">فلوی</h1>
                 {/* <h3 className="text-sm text-[#748297]">تلفن پشتیبانی: ۰۲۱۱۲۳۴۵۶۷۸</h3> */}
-                <div className="flex md:gap-4 lg:gap-8">
-                  <div className="flex items-center justify-center rounded-lg bg-slate-100 md:h-8 md:w-8 lg:h-10 lg:w-10">
-                    <Image src={instagram} alt="LinkedIn" width={24} height={24} />
+                {!isMiniApp && (
+                  <div className="flex md:gap-4 lg:gap-8">
+                    {desktopSocialLinks.map(({ href, label, icon }) => (
+                      <a
+                        key={label}
+                        href={href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label={label}
+                        className="flex items-center justify-center rounded-lg bg-slate-100 md:h-8 md:w-8 lg:h-10 lg:w-10"
+                      >
+                        <Image src={icon} alt={label} width={24} height={24} />
+                      </a>
+                    ))}
                   </div>
-                  <div className="flex items-center justify-center rounded-lg bg-slate-100 md:h-8 md:w-8 lg:h-10 lg:w-10">
-                    <Image src={telegram} alt="telegram" width={24} height={24} />
-                  </div>
-                  <div className="flex items-center justify-center rounded-lg bg-slate-100 md:h-8 md:w-8 lg:h-10 lg:w-10">
-                    <Image src={youtube} alt="YouTube" width={24} height={24} />
-                  </div>
-                  <div className="flex items-center justify-center rounded-lg bg-slate-100 md:h-8 md:w-8 lg:h-10 lg:w-10">
-                    <Image src={linkdin} alt="Instagram" width={24} height={24} />
-                  </div>
-                  {/* <div className="flex items-center justify-center rounded-lg bg-slate-100 md:h-8 md:w-8 lg:h-10 lg:w-10">
-                    <Image src={aparat} alt="aparat" width={24} height={24} />
-                  </div> */}
-                </div>
+                )}
               </div>
             </div>
 
@@ -151,23 +172,22 @@ const Footer: React.FC = () => {
               <div className="flex flex-col items-center justify-center gap-8.5">
                 <h1 className="text-5xl leading-[87px] font-semibold text-[#4641fb]">فلوی</h1>
                 <h3 className="text-sm text-[#748297]">تلفن پشتیبانی: ۰۲۱۱۲۳۴۵۶۷۸</h3>
-                <div className="flex gap-6">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-slate-100">
-                    <Image src={instagram} alt="LinkedIn" width={24} height={24} />
+                {!isMiniApp && (
+                  <div className="flex gap-6">
+                    {mobileSocialLinks.map(({ href, label, icon }) => (
+                      <a
+                        key={label}
+                        href={href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label={label}
+                        className="flex h-10 w-10 items-center justify-center rounded-lg bg-slate-100"
+                      >
+                        <Image src={icon} alt={label} width={24} height={24} />
+                      </a>
+                    ))}
                   </div>
-                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-slate-100">
-                    <Image src={telegram} alt="YouTube" width={24} height={24} />
-                  </div>
-                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-slate-100">
-                    <Image src={youtube} alt="Send" width={24} height={24} />
-                  </div>
-                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-slate-100">
-                    <Image src={linkdin} alt="Instagram" width={24} height={24} />
-                  </div>
-                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-slate-100">
-                    <Image src={aparat} alt="Instagram" width={24} height={24} />
-                  </div>
-                </div>
+                )}
               </div>
             </div>
 

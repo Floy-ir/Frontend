@@ -484,8 +484,14 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
         .toLocaleTimeString("fa-IR", { hour: "2-digit", minute: "2-digit", hour12: false })
         .replace(/\d/g, (d) => "۰۱۲۳۴۵۶۷۸۹".charAt(parseInt(d)))
 
+    // Sort websites by total price (same logic used in comparison TicketCard)
+    const getTotalPrice = (website: FlightResult["websites"][number]) =>
+      website.adult_price * adult + (website.child_price ?? 0) * child + (website.infant_price ?? 0) * infant
+
+    const sortedWebsites = [...input.websites].sort((a, b) => getTotalPrice(a) - getTotalPrice(b))
+
     // Transform websites to match FlightData's websites structure
-    const transformedWebsites = input.websites.map((website) => ({
+    const transformedWebsites = sortedWebsites.map((website) => ({
       adult_price: website.adult_price,
       base_redirect_url: website.base_redirect_url,
       child_price: website.child_price,
