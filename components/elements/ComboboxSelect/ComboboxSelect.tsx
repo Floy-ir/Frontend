@@ -149,8 +149,9 @@ export const ComboboxSelect = React.forwardRef<HTMLInputElement, ComboboxSelectP
                 value={searchValue}
                 onValueChange={setSearchValue}
                 placeholder={searchPlaceholder || `جستجو ${label || "options"}...`}
-                className={`h-10 flex-grow py-3 ${dir === "rtl" ? "text-right" : "text-left"
-                  } border-none outline-none placeholder:text-gray-400`}
+                className={`h-10 flex-grow py-3 ${
+                  dir === "rtl" ? "text-right" : "text-left"
+                } border-none outline-none placeholder:text-gray-400`}
               />
               <div className="flex cursor-pointer items-center justify-center" onClick={clearSearch}>
                 {!searchValue ? "" : <CloseCircle size={16} color="var(--color-Gray-N500)" />}
