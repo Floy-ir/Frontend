@@ -21,6 +21,8 @@ export interface ComboboxSelectProps extends Omit<TextFieldProps, "onChange" | "
   options: Array<{ value: string; label: string }>
   value?: string
   onChange?: (value: string) => void
+  open?: boolean
+  onOpenChange?: (open: boolean) => void
   noResultsText?: string
   showSelectedIcon?: boolean
   maxHeight?: string
@@ -40,6 +42,8 @@ export const ComboboxSelect = React.forwardRef<HTMLInputElement, ComboboxSelectP
     options,
     value = "",
     onChange,
+    open,
+    onOpenChange,
     placeholder = "یک گزینه را انتخاب کنید",
     noResultsText = "نتیجه‌ای پیدا نشد",
     disabled,
@@ -68,15 +72,24 @@ export const ComboboxSelect = React.forwardRef<HTMLInputElement, ComboboxSelectP
   },
   ref
 ) {
-  const [open, setOpen] = React.useState(false)
+  const [internalOpen, setInternalOpen] = React.useState(false)
+  const isControlled = open !== undefined
+  const currentOpen = isControlled ? open : internalOpen
   const isDesktop = useMediaQuery("(min-width: 768px)")
+
+  const setOpenState = (nextOpen: boolean) => {
+    if (!isControlled) {
+      setInternalOpen(nextOpen)
+    }
+    onOpenChange?.(nextOpen)
+  }
 
   // Find the selected option
   const selectedOption = options.find((option) => option.value === value)
 
   const handleSelect = (currentValue: string) => {
     onChange?.(currentValue)
-    setOpen(false)
+    setOpenState(false)
   }
 
   // The trigger field
@@ -98,7 +111,7 @@ export const ComboboxSelect = React.forwardRef<HTMLInputElement, ComboboxSelectP
       rightIcon={rightIcon}
       leftIcon={
         leftIcon ||
-        (open ? (
+        (currentOpen ? (
           <ArrowUp2 size={16} color="var(--color-Gray-N500)" />
         ) : (
           <ArrowDown2 size={16} color="var(--color-Gray-N500)" />
@@ -255,7 +268,7 @@ export const ComboboxSelect = React.forwardRef<HTMLInputElement, ComboboxSelectP
   if (isDesktop) {
     return (
       <Container>
-        <Popover open={open && !disabled} onOpenChange={disabled ? undefined : setOpen}>
+        <Popover open={currentOpen && !disabled} onOpenChange={disabled ? undefined : setOpenState}>
           <PopoverTrigger asChild>
             <div>{triggerField}</div>
           </PopoverTrigger>
@@ -275,7 +288,7 @@ export const ComboboxSelect = React.forwardRef<HTMLInputElement, ComboboxSelectP
   // Mobile view uses Drawer
   return (
     <Container>
-      <Drawer open={open && !disabled} onOpenChange={disabled ? undefined : setOpen}>
+      <Drawer open={currentOpen && !disabled} onOpenChange={disabled ? undefined : setOpenState}>
         <DrawerTrigger asChild>
           <div>{triggerField}</div>
         </DrawerTrigger>

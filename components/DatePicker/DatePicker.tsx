@@ -18,6 +18,8 @@ import { englishToFarsiNumber } from "utils/numbers"
 export interface DatePickerProps extends Omit<TextFieldProps, "onChange" | "value"> {
   value?: Date | string | null
   onChange?: (date: Date | string | null) => void
+  open?: boolean
+  onOpenChange?: (open: boolean) => void
   minDate?: Date
   maxDate?: Date
   formatDate?: (date: Date) => string
@@ -32,6 +34,8 @@ export const DatePicker = React.forwardRef<HTMLInputElement, DatePickerProps>(fu
     helperText,
     value = null,
     onChange,
+    open,
+    onOpenChange,
     placeholder = "انتخاب تاریخ",
     disabled,
     intent,
@@ -54,12 +58,21 @@ export const DatePicker = React.forwardRef<HTMLInputElement, DatePickerProps>(fu
   },
   ref
 ) {
-  const [open, setOpen] = React.useState(false)
+  const [internalOpen, setInternalOpen] = React.useState(false)
+  const isControlled = open !== undefined
+  const currentOpen = isControlled ? open : internalOpen
   const isDesktop = useMediaQuery("(min-width: 768px)")
+
+  const setOpenState = (nextOpen: boolean) => {
+    if (!isControlled) {
+      setInternalOpen(nextOpen)
+    }
+    onOpenChange?.(nextOpen)
+  }
 
   // Prevent scrolling and hide main page header when datepicker is open on mobile
   React.useEffect(() => {
-    if (!isDesktop && open) {
+    if (!isDesktop && currentOpen) {
       // Prevent scrolling on the body
       document.body.style.overflow = "hidden"
 
@@ -78,7 +91,7 @@ export const DatePicker = React.forwardRef<HTMLInputElement, DatePickerProps>(fu
       document.body.style.overflow = ""
       document.body.classList.remove("datepicker-fullscreen-open")
     }
-  }, [open, isDesktop])
+  }, [currentOpen, isDesktop])
 
   // Convert string dates to Date objects if needed
   const selectedDate = value instanceof Date ? value : typeof value === "string" && value ? new Date(value) : null
@@ -105,7 +118,7 @@ export const DatePicker = React.forwardRef<HTMLInputElement, DatePickerProps>(fu
     }
 
     // Always close after a click (including re-selecting the same day)
-    setOpen(false)
+    setOpenState(false)
   }
 
   // The trigger field component
@@ -224,7 +237,7 @@ export const DatePicker = React.forwardRef<HTMLInputElement, DatePickerProps>(fu
   if (isDesktop) {
     return (
       <Container>
-        <Popover open={open && !disabled} onOpenChange={disabled ? undefined : setOpen}>
+        <Popover open={currentOpen && !disabled} onOpenChange={disabled ? undefined : setOpenState}>
           <PopoverTrigger asChild>
             <div className="cursor-pointer">{triggerField}</div>
           </PopoverTrigger>
@@ -243,15 +256,15 @@ export const DatePicker = React.forwardRef<HTMLInputElement, DatePickerProps>(fu
   // Mobile view uses full screen modal
   return (
     <Container>
-      <div className="cursor-pointer" onClick={() => !disabled && setOpen(true)}>
+      <div className="cursor-pointer" onClick={() => !disabled && setOpenState(true)}>
         {triggerField}
       </div>
 
-      {open && !disabled && (
+      {currentOpen && !disabled && (
         <div className="fixed inset-0 z-[9999] flex flex-col bg-white">
           <div className="inline-flex flex-col items-end justify-center gap-4 self-stretch pt-4">
             <div className="inline-flex items-center justify-start gap-4 self-stretch px-4">
-              <div className="relative size-6 cursor-pointer" onClick={() => setOpen(false)}>
+              <div className="relative size-6 cursor-pointer" onClick={() => setOpenState(false)}>
                 <ArrowRight className="text-Gray-N500 h-6 w-6" />
               </div>
               <div className="text-Gray-N600 text-right text-sm leading-normal font-semibold">
