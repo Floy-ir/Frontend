@@ -3,16 +3,21 @@
 import * as NavigationMenu from "@radix-ui/react-navigation-menu"
 import { cva } from "class-variance-authority"
 import { Airplane, HambergerMenu } from "iconsax-react"
+import dynamic from "next/dynamic"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import React, { useEffect, useState } from "react"
+import React, { useEffect, useRef, useState } from "react"
 import { twMerge } from "tailwind-merge"
 import { Button } from "@/components/ui/button"
 import { apiFetch } from "@/services/api"
 import { isRunningInEitaa } from "@/utils/eitaa"
 import { clearStoredAuthPlatform, extractFirstName, getMiniAppFirstName, isRunningInMiniApp } from "@/utils/miniapp"
-import AuthModal from "./AuthModal"
 import { Drawer, DrawerContent, DrawerTitle, DrawerTrigger } from "../../ui/drawer"
+
+const AuthModal = dynamic(() => import("./AuthModal"), {
+  ssr: false,
+  loading: () => null,
+})
 
 interface MenuItem {
   label: string
@@ -65,7 +70,6 @@ const navItem = cva(["flex", "flex-col", "items-center", "gap-1"], {
 export function Header({ menuItems, className, forceScrolledStyle = false, compact = false }: HeaderProps) {
   const pathname = usePathname()
   const [mobileMenuOpen, setMobileMenuOpen] = useState<boolean>(false)
-  const [prevScrollPos, setPrevScrollPos] = useState<number>(0)
   const [visible, setVisible] = useState<boolean>(true)
   const [isScrolled, setIsScrolled] = useState<boolean>(forceScrolledStyle ?? false)
   const [isSmallScreen, setIsSmallScreen] = useState<boolean>(false)
@@ -85,20 +89,28 @@ export function Header({ menuItems, className, forceScrolledStyle = false, compa
     setIsScrolled(forceScrolledStyle || window.scrollY > 50)
   }, [forceScrolledStyle])
 
+  const scrollTickingRef = useRef(false)
+  const prevScrollPosRef = useRef(0)
+
   useEffect(() => {
     const handleScroll = () => {
-      const currentScrollPos = window.scrollY
-      const hasScrolledEnough = currentScrollPos > 50
-      const isScrollingUp = prevScrollPos > currentScrollPos
-      const isAtTop = currentScrollPos < 70
-      const shouldBeVisible = isScrollingUp || isAtTop || mobileMenuOpen
-      setVisible(shouldBeVisible)
-      setIsScrolled(forceScrolledStyle || hasScrolledEnough)
-      setPrevScrollPos(currentScrollPos)
+      if (scrollTickingRef.current) return
+      scrollTickingRef.current = true
+      window.requestAnimationFrame(() => {
+        const currentScrollPos = window.scrollY
+        const hasScrolledEnough = currentScrollPos > 50
+        const isScrollingUp = prevScrollPosRef.current > currentScrollPos
+        const isAtTop = currentScrollPos < 70
+        const shouldBeVisible = isScrollingUp || isAtTop || mobileMenuOpen
+        setVisible(shouldBeVisible)
+        setIsScrolled(forceScrolledStyle || hasScrolledEnough)
+        prevScrollPosRef.current = currentScrollPos
+        scrollTickingRef.current = false
+      })
     }
-    window.addEventListener("scroll", handleScroll)
+    window.addEventListener("scroll", handleScroll, { passive: true })
     return () => window.removeEventListener("scroll", handleScroll)
-  }, [prevScrollPos, mobileMenuOpen, forceScrolledStyle])
+  }, [mobileMenuOpen, forceScrolledStyle])
 
   const headerClasses = twMerge(
     "w-full fixed top-0 left-0 right-0 z-20 transition-all duration-300",
@@ -134,51 +146,76 @@ export function Header({ menuItems, className, forceScrolledStyle = false, compa
         setAuthUser(null)
       }
     }
-    readUser()
+    const hydrateUser = () => {
+      readUser()
+      // If there's no stored auth_user but the app is running inside Eitaa,
+      // try to read Eitaa init data and show a greeting using the Eitaa user.
+      if (!localStorage.getItem("auth_user") && isRunningInEitaa()) {
+        try {
+          // runtime access to the Eitaa WebApp init data
+          const raw = (window as Window & { Eitaa?: { WebApp?: Record<string, unknown> } })?.Eitaa?.WebApp
+            ?.initDataUnsafe?.user
+          if (raw && raw.first_name) {
+            const userWithoutRequestId: AuthUser = { mobile: "", full_name: raw.first_name }
+            try {
+              localStorage.setItem("auth_user", JSON.stringify(userWithoutRequestId))
+              window.dispatchEvent(new Event("auth-changed"))
+            } catch {}
+            setAuthUser(userWithoutRequestId)
+
+            const eitaId = raw.id != null ? String(raw.id) : null
+            if (eitaId) {
+              ;(async () => {
+                try {
+                  const response = await apiFetch<{ request_id?: string }>("/accounts/eita/", {
+                    method: "POST",
+                    data: { eita_id: eitaId },
+                  })
+                  if (response?.request_id) {
+                    const userWithRequestId: AuthUser = { ...userWithoutRequestId, request_id: response.request_id }
+                    setAuthUser(userWithRequestId)
+                    try {
+                      localStorage.setItem("auth_user", JSON.stringify(userWithRequestId))
+                      window.dispatchEvent(new Event("auth-changed"))
+                    } catch {}
+                  }
+                } catch {
+                  /* ignore */
+                }
+              })()
+            }
+          }
+        } catch {}
+      }
+    }
+
     const onAuth = () => readUser()
     window.addEventListener("auth-changed", onAuth)
-    // If there's no stored auth_user but the app is running inside Eitaa,
-    // try to read Eitaa init data and show a greeting using the Eitaa user
-    // info. This provides a friendly UX inside the mini-app even before
-    // a server-side session (token) exists.
-    if (!localStorage.getItem("auth_user") && isRunningInEitaa()) {
-      try {
-        // runtime access to the Eitaa WebApp init data
-        const raw = (window as Window & { Eitaa?: { WebApp?: Record<string, unknown> } })?.Eitaa?.WebApp?.initDataUnsafe
-          ?.user
-        if (raw && raw.first_name) {
-          const userWithoutRequestId: AuthUser = { mobile: "", full_name: raw.first_name }
-          try {
-            localStorage.setItem("auth_user", JSON.stringify(userWithoutRequestId))
-            window.dispatchEvent(new Event("auth-changed"))
-          } catch {}
-          setAuthUser(userWithoutRequestId)
 
-          const eitaId = raw.id != null ? String(raw.id) : null
-          if (eitaId) {
-            ;(async () => {
-              try {
-                const response = await apiFetch<{ request_id?: string }>("/accounts/eita/", {
-                  method: "POST",
-                  data: { eita_id: eitaId },
-                })
-                if (response?.request_id) {
-                  const userWithRequestId: AuthUser = { ...userWithoutRequestId, request_id: response.request_id }
-                  setAuthUser(userWithRequestId)
-                  try {
-                    localStorage.setItem("auth_user", JSON.stringify(userWithRequestId))
-                    window.dispatchEvent(new Event("auth-changed"))
-                  } catch {}
-                }
-              } catch {
-                /* ignore */
-              }
-            })()
-          }
-        }
-      } catch {}
+    const win = window as typeof window & {
+      requestIdleCallback?: (cb: () => void, opts?: { timeout?: number }) => number
+      cancelIdleCallback?: (id: number) => void
     }
-    return () => window.removeEventListener("auth-changed", onAuth)
+    const idle = win.requestIdleCallback
+    const cancelIdle = win.cancelIdleCallback
+    let idleId: number | undefined
+    let fallbackTimeout: number | undefined
+
+    if (idle) {
+      idleId = idle(hydrateUser, { timeout: 1200 })
+    } else {
+      fallbackTimeout = window.setTimeout(hydrateUser, 400)
+    }
+
+    return () => {
+      window.removeEventListener("auth-changed", onAuth)
+      if (idleId != null && cancelIdle) {
+        cancelIdle(idleId)
+      }
+      if (fallbackTimeout != null) {
+        window.clearTimeout(fallbackTimeout)
+      }
+    }
   }, [])
 
   useEffect(() => {
@@ -211,13 +248,11 @@ export function Header({ menuItems, className, forceScrolledStyle = false, compa
   const navGap = compact ? "gap-6" : "gap-12"
 
   // Determine a friendly display name. Priority:
+  const storedFirstName = typeof window !== "undefined" ? sessionStorage.getItem("full_name") : null
   // 1. server/local auth_user stored in localStorage (authUser)
   const miniAppDisplayName = getMiniAppFirstName()
   const resolvedName =
-    (authUser && (authUser.full_name || sessionStorage.getItem("full_name"))) ||
-    miniAppDisplayName ||
-    sessionStorage.getItem("full_name") ||
-    "کاربر"
+    (authUser && (authUser.full_name || storedFirstName)) || miniAppDisplayName || storedFirstName || "کاربر"
   const displayName = isMiniApp ? extractFirstName(resolvedName) ?? "کاربر" : resolvedName
   const isInMiniApp = isMiniApp
 
@@ -432,15 +467,17 @@ export function Header({ menuItems, className, forceScrolledStyle = false, compa
           </div>
         </div>
       )}
-      <AuthModal
-        isOpen={isModalOpen}
-        onClose={() => {
-          setIsModalOpen(false)
-          setModalInitPayload(undefined)
-        }}
-        showToast={showToast}
-        initialPayload={modalInitPayload}
-      />
+      {isModalOpen ? (
+        <AuthModal
+          isOpen={isModalOpen}
+          onClose={() => {
+            setIsModalOpen(false)
+            setModalInitPayload(undefined)
+          }}
+          showToast={showToast}
+          initialPayload={modalInitPayload}
+        />
+      ) : null}
 
       {/* Spacer div to prevent layout shifts - matches header height */}
       <div className={`h-12 w-full ${spacerLg}`}></div>
