@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useEffect, useState } from "react"
+import React, { useEffect, useRef, useState } from "react"
 import { EXPIRATION_MODAL_SETTINGS } from "@/app/config/settings"
 import ExpirationModal from "@/components/FlightsPage/expiration-modal/page"
 import { FlightCard } from "@/components/FlightsPage/FlightCard"
@@ -60,13 +60,53 @@ export function FlightResultsList({ flights, onRefresh }: FlightResultsListProps
   // Handle actions
 
   const [showExpirationModal, setShowExpirationModal] = useState(false)
+  const expirationTimerIdRef = useRef<number | null>(null)
 
-  useEffect(() => {
-    const interval = setInterval(() => {
+  const startExpirationTimer = () => {
+    if (expirationTimerIdRef.current !== null) return
+    const id = window.setTimeout(() => {
       setShowExpirationModal(true)
     }, EXPIRATION_MODAL_SETTINGS.SHOW_AFTER_MS)
+    expirationTimerIdRef.current = id
+  }
 
-    return () => clearInterval(interval)
+  useEffect(() => {
+    const start = () => {
+      startExpirationTimer()
+    }
+
+    const win = window as typeof window & {
+      requestIdleCallback?: (cb: () => void, opts?: { timeout?: number }) => number
+      cancelIdleCallback?: (id: number) => void
+    }
+
+    const idle = win.requestIdleCallback
+    const cancelIdle = win.cancelIdleCallback
+    let idleId: number | undefined
+    let fallbackTimeout: number | undefined
+
+    if (idle) {
+      idleId = idle(start, { timeout: 2000 })
+    } else {
+      fallbackTimeout = window.setTimeout(start, 800)
+    }
+
+    window.addEventListener("pointerdown", start, { once: true })
+    window.addEventListener("keydown", start, { once: true })
+
+    return () => {
+      if (idleId != null && cancelIdle) {
+        cancelIdle(idleId)
+      }
+      if (fallbackTimeout != null) {
+        window.clearTimeout(fallbackTimeout)
+      }
+      if (expirationTimerIdRef.current !== null) {
+        window.clearTimeout(expirationTimerIdRef.current)
+      }
+      window.removeEventListener("pointerdown", start)
+      window.removeEventListener("keydown", start)
+    }
   }, [])
 
   const handleBuy = (_flightId: string, price: FlightData["price"]) => {
