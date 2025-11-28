@@ -10,7 +10,7 @@ import { twMerge } from "tailwind-merge"
 import { Button } from "@/components/ui/button"
 import { apiFetch } from "@/services/api"
 import { isRunningInEitaa } from "@/utils/eitaa"
-import { clearStoredAuthPlatform, getMiniAppFirstName, isRunningInMiniApp } from "@/utils/miniapp"
+import { clearStoredAuthPlatform, extractFirstName, getMiniAppFirstName, isRunningInMiniApp } from "@/utils/miniapp"
 import AuthModal from "./AuthModal"
 import { Drawer, DrawerContent, DrawerTitle, DrawerTrigger } from "../../ui/drawer"
 
@@ -213,9 +213,12 @@ export function Header({ menuItems, className, forceScrolledStyle = false, compa
   // Determine a friendly display name. Priority:
   // 1. server/local auth_user stored in localStorage (authUser)
   const miniAppDisplayName = getMiniAppFirstName()
-  const displayName = authUser
-    ? authUser.full_name || sessionStorage.getItem("full_name")
-    : miniAppDisplayName || "کاربر"
+  const resolvedName =
+    (authUser && (authUser.full_name || sessionStorage.getItem("full_name"))) ||
+    miniAppDisplayName ||
+    sessionStorage.getItem("full_name") ||
+    "کاربر"
+  const displayName = isMiniApp ? extractFirstName(resolvedName) ?? "کاربر" : resolvedName
   const isInMiniApp = isMiniApp
 
   return (

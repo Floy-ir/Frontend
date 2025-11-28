@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react"
 import { apiFetch } from "@/services/api"
 import {
   clearStoredAuthPlatform,
+  extractFirstName,
   getMiniAppPlatform,
   hasMismatchedPlatformToken,
   setStoredAuthPlatform,
@@ -44,10 +45,11 @@ const TelegramAutoAuth: React.FC = () => {
       }
     } catch {}
 
-    const persistFullName = (name?: string) => {
-      if (!name) return
+    const persistFirstName = (name?: string) => {
+      const firstName = extractFirstName(name)
+      if (!firstName) return
       try {
-        sessionStorage.setItem("full_name", name)
+        sessionStorage.setItem("full_name", firstName)
       } catch {}
     }
 
@@ -72,20 +74,18 @@ const TelegramAutoAuth: React.FC = () => {
             } catch {}
           }
 
-          const fallbackFullName = getTelegramUserFirstName() ?? ""
-          const fullName =
-            (res?.user?.full_name && typeof res.user.full_name === "string" ? res.user.full_name : fallbackFullName) ||
-            ""
-          persistFullName(fullName)
+          const fallbackFirstName = getTelegramUserFirstName() ?? ""
+          const firstName = extractFirstName(res?.user?.full_name) ?? extractFirstName(fallbackFirstName) ?? ""
+          persistFirstName(firstName)
         }
       } catch {
         try {
-          const fullName = getTelegramUserFirstName() ?? ""
-          persistFullName(fullName)
+          const firstName = getTelegramUserFirstName() ?? ""
+          persistFirstName(firstName)
 
           const userObj: AuthUser = {
             mobile: "",
-            full_name: fullName,
+            full_name: extractFirstName(firstName),
           }
           localStorage.setItem("auth_user", JSON.stringify(userObj))
           try {

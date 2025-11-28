@@ -5,6 +5,7 @@ import { apiFetch } from "@/services/api"
 import { getBaleUserFirstName, getStableBaleId } from "@/utils/bale"
 import {
   clearStoredAuthPlatform,
+  extractFirstName,
   getMiniAppPlatform,
   hasMismatchedPlatformToken,
   setStoredAuthPlatform,
@@ -46,10 +47,11 @@ const BaleAutoAuth: React.FC = () => {
       }
     } catch {}
 
-    const persistFullName = (name?: string) => {
-      if (!name) return
+    const persistFirstName = (name?: string) => {
+      const firstName = extractFirstName(name)
+      if (!firstName) return
       try {
-        sessionStorage.setItem("full_name", name)
+        sessionStorage.setItem("full_name", firstName)
       } catch {}
     }
 
@@ -74,23 +76,24 @@ const BaleAutoAuth: React.FC = () => {
               } catch {}
             }
 
-            const fallbackFullName = getBaleUserFirstName() ?? ""
-            const fullName =
-              (res?.user?.full_name && typeof res.user.full_name === "string"
-                ? res.user.full_name
-                : fallbackFullName) || ""
-            persistFullName(fullName)
+            const fallbackFirstName = getBaleUserFirstName() ?? ""
+            const firstName =
+              extractFirstName(res?.user?.full_name) ??
+              extractFirstName(fallbackFirstName) ??
+              extractFirstName(sessionStorage.getItem("full_name")) ??
+              ""
+            persistFirstName(firstName)
           }
         } catch {
           // If backend call fails, persist minimal local info so header shows a greeting
           try {
-            const fullName = getBaleUserFirstName() ?? ""
+            const firstName = getBaleUserFirstName() ?? ""
 
-            persistFullName(fullName)
+            persistFirstName(firstName)
 
             const userObj: AuthUser = {
               mobile: "",
-              full_name: fullName,
+              full_name: extractFirstName(firstName),
             }
             localStorage.setItem("auth_user", JSON.stringify(userObj))
             try {

@@ -46,6 +46,14 @@ export const getMiniAppFirstName = (): string | undefined => {
   return getEitaaUserFirstName() ?? getBaleUserFirstName() ?? getTelegramUserFirstName()
 }
 
+export const extractFirstName = (name?: string | null): string | undefined => {
+  if (!name) return undefined
+  const trimmed = name.trim()
+  if (!trimmed) return undefined
+  const [first] = trimmed.split(/\s+/)
+  return first || undefined
+}
+
 export const getStoredAuthPlatform = (): MiniAppPlatform | "web" | null => {
   try {
     const value = localStorage.getItem(AUTH_PLATFORM_KEY)

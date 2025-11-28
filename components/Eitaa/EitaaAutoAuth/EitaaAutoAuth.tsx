@@ -5,6 +5,7 @@ import { apiFetch } from "@/services/api"
 import { askContactAndStore, getStableEitaaId } from "@/utils/eitaa"
 import {
   clearStoredAuthPlatform,
+  extractFirstName,
   getMiniAppPlatform,
   hasMismatchedPlatformToken,
   setStoredAuthPlatform,
@@ -54,10 +55,11 @@ const EitaaAutoAuth: React.FC = () => {
       }
     } catch {}
 
-    const persistFullName = (name?: string) => {
-      if (!name) return
+    const persistFirstName = (name?: string) => {
+      const firstName = extractFirstName(name)
+      if (!firstName) return
       try {
-        sessionStorage.setItem("full_name", name)
+        sessionStorage.setItem("full_name", firstName)
       } catch {}
     }
 
@@ -120,15 +122,12 @@ const EitaaAutoAuth: React.FC = () => {
             }
 
             const initUser = (window as any)?.Eitaa?.WebApp?.initDataUnsafe?.user
-            const fallbackFullName = (initUser && initUser.first_name) || ""
+            const fallbackFirstName = (initUser && initUser.first_name) || ""
             // const sanitizedPhone = phone ? formatMobile(phone.replace(/[^0-9+]/g, "")) : ""
 
             // Store full_name in session storage
-            const fullName =
-              (res?.user?.full_name && typeof res.user.full_name === "string"
-                ? res.user.full_name
-                : fallbackFullName) || ""
-            persistFullName(fullName)
+            const firstName = extractFirstName(res?.user?.full_name) ?? extractFirstName(fallbackFirstName) ?? ""
+            persistFirstName(firstName)
 
             // const mergedUser: AuthUser = {
             //   mobile:
@@ -150,15 +149,15 @@ const EitaaAutoAuth: React.FC = () => {
           // If backend call fails, persist minimal local info so header shows a greeting
           try {
             const initUser = (window as any)?.Eitaa?.WebApp?.initDataUnsafe?.user
-            const fullName = (initUser && initUser.first_name) || ""
+            const firstName = (initUser && initUser.first_name) || ""
 
             // Store full_name in session storage
-            persistFullName(fullName)
+            persistFirstName(firstName)
 
             const sanitizedPhone = "" // phone variable is commented out above
             const userObj: AuthUser = {
               mobile: sanitizedPhone || "",
-              full_name: fullName,
+              full_name: extractFirstName(firstName),
             }
             localStorage.setItem("auth_user", JSON.stringify(userObj))
             try {
