@@ -11,6 +11,38 @@ import ComparisonDialog from "@/components/FlightsPage/comparisonPage/page"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { englishToFarsiNumber } from "@/utils/numbers"
 
+type ClarityWindow = Window & {
+  clarity?: (...args: unknown[]) => void
+}
+
+const clarityElementTags = {
+  buy: "flight-card-buy-button",
+  compare: "flight-card-other-sellers-button",
+} as const
+
+const clarityEvents = {
+  buy: "flight_card_buy_button_click",
+  compare: "flight_card_other_sellers_button_click",
+} as const
+
+const trackClarityEvent = (eventName: string) => {
+  if (typeof window === "undefined") return
+
+  const clarityInstance = (window as ClarityWindow).clarity
+
+  if (typeof clarityInstance !== "function") return
+
+  import("@microsoft/clarity")
+    .then((module) => {
+      module.default?.event?.(eventName)
+    })
+    .catch((error) => {
+      if (process.env.NODE_ENV !== "production") {
+        console.error("Failed to send Clarity event", error)
+      }
+    })
+}
+
 // Card wrapper styles with variants
 const flightCardVariants = cva(
   "bg-Shade-White rounded-xl outline-1 outline-offset-[-1px] outline-Gray-N200 overflow-hidden",
@@ -350,15 +382,22 @@ export function FlightCard({
   origin,
 }: FlightCardProps) {
   const [showComparison, setShowComparison] = useState(false)
+  const handleBuyClick = () => {
+    trackClarityEvent(clarityEvents.buy)
+    onBuy()
+  }
+  const handleComparisonClick = () => {
+    trackClarityEvent(clarityEvents.compare)
+    setShowComparison(true)
+  }
 
   // Price and Action Section (Left Section in Desktop)
   const PriceActionSection = ({
     price,
-    onBuy,
     otherSellersCount = 0,
     isMobile = false,
     websites,
-  }: Pick<FlightCardProps, "price" | "onBuy" | "otherSellersCount" | "websites"> & {
+  }: Pick<FlightCardProps, "price" | "otherSellersCount" | "websites"> & {
     isMobile?: boolean
   }) => {
     if (isMobile) {
@@ -368,7 +407,13 @@ export function FlightCard({
             <PriceInfo price={price} />
 
             <div className="flex flex-col items-start justify-start gap-2 self-stretch">
-              <Button intent="primary" size="small" className="self-stretch" onClick={onBuy}>
+              <Button
+                intent="primary"
+                size="small"
+                className="self-stretch"
+                data-clarity-name={clarityElementTags.buy}
+                onClick={handleBuyClick}
+              >
                 رفتن به {price.agency}
               </Button>
 
@@ -376,7 +421,8 @@ export function FlightCard({
                 intent="text"
                 size="small"
                 className="text-Gray-N700 self-stretch rounded-xl bg-[#F5F5F7] transition hover:bg-[#EDEDEF]"
-                onClick={() => setShowComparison(true)}
+                data-clarity-name={clarityElementTags.compare}
+                onClick={handleComparisonClick}
               >
                 <span className="flex items-center justify-center gap-2 py-2 font-medium">
                   <span>
@@ -398,7 +444,13 @@ export function FlightCard({
           <PriceInfo price={price} />
 
           <div className="flex flex-col items-start justify-start gap-2 self-stretch">
-            <Button intent="primary" size="small" className="self-stretch" onClick={onBuy}>
+            <Button
+              intent="primary"
+              size="small"
+              className="self-stretch"
+              data-clarity-name={clarityElementTags.buy}
+              onClick={handleBuyClick}
+            >
               رفتن به {price.agency}
             </Button>
 
@@ -406,7 +458,8 @@ export function FlightCard({
               intent="text"
               size="small"
               className="text-Gray-N700 mb-2 self-stretch rounded-xl bg-[#F5F5F7] py-2 transition hover:bg-[#EDEDEF]"
-              onClick={() => setShowComparison(true)}
+              data-clarity-name={clarityElementTags.compare}
+              onClick={handleComparisonClick}
             >
               <span
                 className={`flex items-center justify-center gap-2 font-medium ${otherSellersCount > 1 ? "" : "py-1"} `}
@@ -543,7 +596,13 @@ export function FlightCard({
               </div>
 
               <div data-layer="Frame 1000002404" className="flex flex-col items-start justify-start gap-2 self-stretch">
-                <Button intent="primary" size="small" className="self-stretch px-5 py-3.5" onClick={onBuy}>
+                <Button
+                  intent="primary"
+                  size="small"
+                  className="self-stretch px-5 py-3.5"
+                  data-clarity-name={clarityElementTags.buy}
+                  onClick={handleBuyClick}
+                >
                   رفتن به {price.agency}
                 </Button>
 
@@ -551,7 +610,8 @@ export function FlightCard({
                   intent="text"
                   size="small"
                   className="text-Gray-N700 mb-2 self-stretch rounded-xl bg-[#F5F5F7] py-2 transition hover:bg-[#EDEDEF]"
-                  onClick={() => setShowComparison(true)}
+                  data-clarity-name={clarityElementTags.compare}
+                  onClick={handleComparisonClick}
                 >
                   <span
                     className={`flex items-center justify-center gap-2 font-medium ${
@@ -591,7 +651,7 @@ export function FlightCard({
         <div className="bg-Gray-N100 relative h-45 w-[1px]" />
 
         {/* Price and action section - Left */}
-        <PriceActionSection price={price} onBuy={onBuy} otherSellersCount={otherSellersCount} websites={websites} />
+        <PriceActionSection price={price} otherSellersCount={otherSellersCount} websites={websites} />
       </div>
       {showComparison && (
         <ComparisonDialog
