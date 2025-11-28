@@ -62,6 +62,8 @@ export interface PassengerSelectorProps extends Omit<TextFieldProps, "onChange" 
   onChange: (value: PassengerCount) => void
   maxTotalPassengers?: number
   hasError?: boolean
+  open?: boolean
+  onOpenChange?: (open: boolean) => void
 }
 
 export function PassengerSelector({
@@ -85,14 +87,25 @@ export function PassengerSelector({
   dir = "rtl",
   maxTotalPassengers = 9,
   hasError,
+  open,
+  onOpenChange,
   ...props
 }: PassengerSelectorProps) {
   // Convert string value to PassengerCount if needed
   const passengerCount: PassengerCount = typeof value === "string" ? { adult: 1, child: 0, infant: 0 } : value
 
   // Use the value from props directly, don't maintain a separate internal state
-  const [open, setOpen] = React.useState(false)
+  const [internalOpen, setInternalOpen] = React.useState(false)
+  const isControlled = open !== undefined
+  const currentOpen = isControlled ? open : internalOpen
   const isDesktop = useMediaQuery("(min-width: 768px)")
+
+  const setOpenState = (nextOpen: boolean) => {
+    if (!isControlled) {
+      setInternalOpen(nextOpen)
+    }
+    onOpenChange?.(nextOpen)
+  }
 
   // Calculate total passengers
   const totalPassengers = Object.values(passengerCount).reduce((sum, count) => sum + count, 0)
@@ -228,7 +241,7 @@ export function PassengerSelector({
   if (isDesktop) {
     return (
       <Container>
-        <Popover open={open && !disabled} onOpenChange={disabled ? undefined : setOpen}>
+        <Popover open={currentOpen && !disabled} onOpenChange={disabled ? undefined : setOpenState}>
           <PopoverTrigger asChild>
             <div className="cursor-pointer">{triggerField}</div>
           </PopoverTrigger>
@@ -247,7 +260,7 @@ export function PassengerSelector({
   // Mobile view uses Drawer
   return (
     <Container>
-      <Drawer open={open && !disabled} onOpenChange={disabled ? undefined : setOpen}>
+      <Drawer open={currentOpen && !disabled} onOpenChange={disabled ? undefined : setOpenState}>
         <DrawerTrigger asChild>
           <div className="cursor-pointer">{triggerField}</div>
         </DrawerTrigger>
