@@ -1,4 +1,5 @@
 "use client"
+
 import { cva, type VariantProps } from "class-variance-authority"
 import { Airplane } from "iconsax-react"
 import Image from "next/image"
