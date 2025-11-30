@@ -55,8 +55,6 @@ export default function RootLayout({
           </>
         )}
 
-        <Script src="https://developer.eitaa.com/eitaa-web-app.js" strategy="beforeInteractive" />
-        <Script src="https://telegram.org/js/telegram-web-app.js" strategy="beforeInteractive" />
         <meta name="format-detection" content="telephone=no, date=no, email=no, address=no" />
       </head>
       <body className={`${anjomanMaxVF.variable} font-anjoman-max`} suppressHydrationWarning={true}>
