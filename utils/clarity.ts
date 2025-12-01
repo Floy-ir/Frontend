@@ -55,6 +55,11 @@ export const clarityTasks = {
   miniAppPlatformDetected: "miniapp_platform_detected",
   eitaaSdkLoadSuccess: "eitaa_sdk_load_success",
   eitaaSdkLoadError: "eitaa_sdk_load_error",
+  flightsFilterUsed: "flights_filter_used",
+  flightsFiltersCleared: "flights_filters_cleared",
+  flightsSortChanged: "flights_sort_changed",
+  flightsApiFailed: "flights_api_failed",
+  redirectToSeller: "redirect_to_seller",
 } as const
 
 export type ClarityTaskName = (typeof clarityTasks)[keyof typeof clarityTasks]
@@ -103,4 +108,33 @@ export const setClarityTag = async (key: string, value: string | number | boolea
   }
 
   dispatch(0)
+}
+
+// Track seller redirects in-session to surface top provider
+const sellerRedirectCounts: Record<string, number> = {}
+
+export const recordSellerRedirect = async (providerId: string, extra?: Record<string, unknown>) => {
+  const normalizedProvider = providerId || "unknown"
+  sellerRedirectCounts[normalizedProvider] = (sellerRedirectCounts[normalizedProvider] || 0) + 1
+
+  // Calculate current top provider in-session
+  let topProvider = normalizedProvider
+  let topCount = 0
+  for (const [provider, count] of Object.entries(sellerRedirectCounts)) {
+    if (count > topCount) {
+      topProvider = provider
+      topCount = count
+    }
+  }
+
+  await Promise.all([
+    trackClarityEvent(clarityTasks.redirectToSeller, {
+      provider: normalizedProvider,
+      total_for_provider: sellerRedirectCounts[normalizedProvider],
+      top_provider: topProvider,
+      top_provider_count: topCount,
+      ...extra,
+    }),
+    setClarityTag("top_redirect_provider", topProvider),
+  ])
 }

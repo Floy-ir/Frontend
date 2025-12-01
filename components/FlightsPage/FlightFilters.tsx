@@ -69,14 +69,16 @@ const FilterCheckbox = ({
   onChange,
   logo,
   extraText,
+  dataClarityElement,
 }: {
   label: string
   checked: boolean
   onChange: (value: boolean) => void
   logo?: string
   extraText?: string
+  dataClarityElement?: string
 }) => (
-  <div className="inline-flex items-center justify-end gap-2 self-stretch">
+  <div className="inline-flex items-center justify-end gap-2 self-stretch" data-clarity-element={dataClarityElement}>
     <div className="flex items-center justify-center gap-2 p-[3px]">
       <div
         className={`relative flex size-[18px] items-center justify-center overflow-hidden rounded-sm ${
@@ -460,6 +462,7 @@ export function FlightFilters({
                 extraText={formatMinPrice(website.min_price)}
                 checked={filters.agencies[website.uid] || false}
                 onChange={(v) => updateFilter("agencies", website.uid, v)}
+                dataClarityElement="filter-website"
               />
             ))
           ) : (
@@ -482,6 +485,7 @@ export function FlightFilters({
                 extraText={formatMinPrice(airline.min_price)}
                 checked={filters.airlines[airline.uid] || false}
                 onChange={(v) => updateFilter("airlines", airline.uid, v)}
+                dataClarityElement="filter-airline"
               />
             ))
           ) : (

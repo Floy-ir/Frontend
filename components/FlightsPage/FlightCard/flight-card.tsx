@@ -9,11 +9,8 @@ import { twMerge } from "tailwind-merge"
 import { Button } from "@/components/elements/Button/Button"
 import ComparisonDialog from "@/components/FlightsPage/comparisonPage/page"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { clarityTasks, recordSellerRedirect, trackClarityEvent as trackClarity } from "@/utils/clarity"
 import { englishToFarsiNumber } from "@/utils/numbers"
-
-type ClarityWindow = Window & {
-  clarity?: (...args: unknown[]) => void
-}
 
 const clarityElementTags = {
   buy: "flight-card-buy-button",
@@ -24,24 +21,6 @@ const clarityEvents = {
   buy: "flight_card_buy_button_click",
   compare: "flight_card_other_sellers_button_click",
 } as const
-
-const trackClarityEvent = (eventName: string) => {
-  if (typeof window === "undefined") return
-
-  const clarityInstance = (window as ClarityWindow).clarity
-
-  if (typeof clarityInstance !== "function") return
-
-  import("@microsoft/clarity")
-    .then((module) => {
-      module.default?.event?.(eventName)
-    })
-    .catch((error) => {
-      if (process.env.NODE_ENV !== "production") {
-        console.error("Failed to send Clarity event", error)
-      }
-    })
-}
 
 // Card wrapper styles with variants
 const flightCardVariants = cva(
@@ -383,11 +362,31 @@ export function FlightCard({
 }: FlightCardProps) {
   const [showComparison, setShowComparison] = useState(false)
   const handleBuyClick = () => {
-    trackClarityEvent(clarityEvents.buy)
+    void trackClarity(clarityEvents.buy, {
+      event: clarityEvents.buy,
+      provider: price.agency,
+      provider_eng: price.agency_eng,
+      origin,
+      destination,
+    })
+    void recordSellerRedirect(price.agency_eng || price.agency, {
+      provider_fa: price.agency,
+      origin,
+      destination,
+      redirect_url: price.base_redirect_url,
+      price: price.amount,
+    })
     onBuy()
   }
   const handleComparisonClick = () => {
-    trackClarityEvent(clarityEvents.compare)
+    void trackClarity(clarityEvents.compare, {
+      event: clarityEvents.compare,
+      provider: price.agency,
+      provider_eng: price.agency_eng,
+      origin,
+      destination,
+      other_sellers: otherSellersCount,
+    })
     setShowComparison(true)
   }
 
@@ -411,7 +410,7 @@ export function FlightCard({
                 intent="primary"
                 size="small"
                 className="self-stretch"
-                data-clarity-name={clarityElementTags.buy}
+                data-clarity-element="redirect-to-seller"
                 onClick={handleBuyClick}
               >
                 رفتن به {price.agency}
@@ -421,7 +420,7 @@ export function FlightCard({
                 intent="text"
                 size="small"
                 className="text-Gray-N700 self-stretch rounded-xl bg-[#F5F5F7] transition hover:bg-[#EDEDEF]"
-                data-clarity-name={clarityElementTags.compare}
+                data-clarity-element={clarityElementTags.compare}
                 onClick={handleComparisonClick}
               >
                 <span className="flex items-center justify-center gap-2 py-2 font-medium">
@@ -448,7 +447,7 @@ export function FlightCard({
               intent="primary"
               size="small"
               className="self-stretch"
-              data-clarity-name={clarityElementTags.buy}
+              data-clarity-element="redirect-to-seller"
               onClick={handleBuyClick}
             >
               رفتن به {price.agency}
@@ -458,7 +457,7 @@ export function FlightCard({
               intent="text"
               size="small"
               className="text-Gray-N700 mb-2 self-stretch rounded-xl bg-[#F5F5F7] py-2 transition hover:bg-[#EDEDEF]"
-              data-clarity-name={clarityElementTags.compare}
+              data-clarity-element={clarityElementTags.compare}
               onClick={handleComparisonClick}
             >
               <span
@@ -600,7 +599,7 @@ export function FlightCard({
                   intent="primary"
                   size="small"
                   className="self-stretch px-5 py-3.5"
-                  data-clarity-name={clarityElementTags.buy}
+                  data-clarity-element="redirect-to-seller"
                   onClick={handleBuyClick}
                 >
                   رفتن به {price.agency}
@@ -610,7 +609,7 @@ export function FlightCard({
                   intent="text"
                   size="small"
                   className="text-Gray-N700 mb-2 self-stretch rounded-xl bg-[#F5F5F7] py-2 transition hover:bg-[#EDEDEF]"
-                  data-clarity-name={clarityElementTags.compare}
+                  data-clarity-element={clarityElementTags.compare}
                   onClick={handleComparisonClick}
                 >
                   <span
