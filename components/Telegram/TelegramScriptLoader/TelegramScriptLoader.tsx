@@ -30,7 +30,7 @@ const TelegramScriptLoader = () => {
 
   if (!shouldLoad) return null
 
-  return <Script src={TELEGRAM_SDK_SRC} strategy="beforeInteractive" />
+  return <Script src={TELEGRAM_SDK_SRC} strategy="afterInteractive" />
 }
 
 export default TelegramScriptLoader

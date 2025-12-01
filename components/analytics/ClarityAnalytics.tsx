@@ -211,7 +211,6 @@ export function ClarityAnalytics() {
     }
 
     // Quick back: pagehide before 3 seconds AND not BFCache restore
-    const navigationStart = performance.timeOrigin
     let returned = false
 
     const handlePageHide = (event: PageTransitionEvent) => {

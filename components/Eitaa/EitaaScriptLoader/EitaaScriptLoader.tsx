@@ -33,7 +33,7 @@ const EitaaScriptLoader = () => {
   return (
     <Script
       src={EITAA_SDK_SRC}
-      strategy="beforeInteractive"
+      strategy="afterInteractive"
       onLoad={() => void trackClarityEvent(clarityTasks.eitaaSdkLoadSuccess)}
       onError={(event) => {
         const scriptElement = event?.currentTarget as HTMLScriptElement | null

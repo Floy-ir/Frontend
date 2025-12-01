@@ -9,7 +9,7 @@ import { twMerge } from "tailwind-merge"
 import { Button } from "@/components/elements/Button/Button"
 import ComparisonDialog from "@/components/FlightsPage/comparisonPage/page"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { clarityTasks, recordSellerRedirect, trackClarityEvent as trackClarity } from "@/utils/clarity"
+import { recordSellerRedirect, trackClarityEvent as trackClarity } from "@/utils/clarity"
 import { englishToFarsiNumber } from "@/utils/numbers"
 
 const clarityElementTags = {
@@ -88,6 +88,7 @@ export interface FlightCardProps extends VariantProps<typeof flightCardVariants>
     amount: number
     formattedAmount: string
     agency: string
+    agency_eng?: string
     agencyLogo: string
     label?: string
     base_redirect_url: string
