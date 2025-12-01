@@ -67,6 +67,7 @@ export const clarityTasks = {
   lcpSlow: "lcp_slow",
   rageClick: "rage_click",
   quickBack: "quick_back",
+  citySearchNotFound: "city_search_not_found",
 } as const
 
 export type ClarityTaskName = (typeof clarityTasks)[keyof typeof clarityTasks]

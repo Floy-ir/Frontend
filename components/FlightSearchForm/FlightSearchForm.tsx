@@ -17,6 +17,7 @@ import { useMediaQuery } from "@/hooks/use-media-query"
 import { useFlightFormPersistence } from "@/hooks/useFlightFormPersistence"
 import { useStoredCities } from "@/hooks/useStoredCities"
 import { formatDate } from "@/utils/dateUtils"
+import { clarityTasks, trackClarityEvent } from "@/utils/clarity"
 import { createFlightSearchUrl } from "@/utils/navigation"
 
 // Define zod schema for form validation
@@ -283,6 +284,13 @@ export function FlightSearchForm({
 
       // If we can't find the codes, don't proceed
       if (!originCity || !destinationCity) {
+        void trackClarityEvent(clarityTasks.citySearchNotFound, {
+          origin_query: data.origin,
+          destination_query: data.destination,
+          missing_origin: !originCity,
+          missing_destination: !destinationCity,
+          context: contextPage || "unknown",
+        })
         setIsLoading(false)
         return
       }
