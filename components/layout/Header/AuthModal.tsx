@@ -447,15 +447,21 @@ export default function AuthModal({
         method: "POST",
         data: { mobile, password, full_name: name, otp_uuid: otpUuid },
       })
-      showToast("ثبت‌نام با موفقیت انجام شد!")
+      showToast("ثبت‌نام با موفقیت انجام شد! لطفا وارد شوید")
       setTimeout(() => {
-        // reset all state and close
+        // reset and switch to login so the user can sign in immediately
+        setActiveTab("login")
         setStep(0)
+        setLoginPhone(phoneForOtp)
+        setLoginPassword("")
+        setSignupPhone("")
         setPhoneForOtp("")
         setOtpValue("")
+        setOtpUuid(null)
         setFormError("")
+        setOtpError("")
         setEmptyFields([])
-        onClose()
+        setResetMode(false)
       }, 200)
     } catch (err) {
       console.error(err)
