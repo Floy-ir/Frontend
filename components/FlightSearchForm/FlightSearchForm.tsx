@@ -16,6 +16,7 @@ import { getCityByName, getCityOptions, getDestinationOptions } from "@/config/c
 import { useMediaQuery } from "@/hooks/use-media-query"
 import { useFlightFormPersistence } from "@/hooks/useFlightFormPersistence"
 import { useStoredCities } from "@/hooks/useStoredCities"
+import { clarityTasks, trackClarityEvent } from "@/utils/clarity"
 import { formatDate } from "@/utils/dateUtils"
 import { createFlightSearchUrl } from "@/utils/navigation"
 
@@ -62,7 +63,7 @@ export function FlightSearchForm({
   const [originOpen, setOriginOpen] = useState(false)
   const [destinationOpen, setDestinationOpen] = useState(false)
   const [dateOpen, setDateOpen] = useState(false)
-  const [passengerOpen, setPassengerOpen] = useState(false)
+  // const [passengerOpen, setPassengerOpen] = useState(false)
   // Use our custom hooks
   const { recentSelections, addRecentSelection, saveSearch } = useStoredCities()
   const { loadFormData, saveFormData } = useFlightFormPersistence()
@@ -283,6 +284,13 @@ export function FlightSearchForm({
 
       // If we can't find the codes, don't proceed
       if (!originCity || !destinationCity) {
+        void trackClarityEvent(clarityTasks.citySearchNotFound, {
+          origin_query: data.origin,
+          destination_query: data.destination,
+          missing_origin: !originCity,
+          missing_destination: !destinationCity,
+          context: contextPage || "unknown",
+        })
         setIsLoading(false)
         return
       }

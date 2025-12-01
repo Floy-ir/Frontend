@@ -53,7 +53,10 @@ export default function ComparisonDialog({
 }) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="bg-Gray-N100 m-0 h-full w-full gap-0 rounded-none border-none p-0 shadow-none lg:h-[665px] lg:max-w-[968px] lg:rounded-2xl">
+      <DialogContent
+        className="bg-Gray-N100 m-0 h-full w-full gap-0 rounded-none border-none p-0 shadow-none lg:h-[665px] lg:max-w-[968px] lg:rounded-2xl"
+        data-clarity-region="compare-modal"
+      >
         <DialogHeader className="bg-Shade-white rounded-none lg:rounded-t-2xl">
           <div className="flex flex-row items-center justify-between px-6 py-4">
             <DialogTitle className="text-Gray-N600 text-sm leading-normal font-semibold">جزییات پرواز</DialogTitle>

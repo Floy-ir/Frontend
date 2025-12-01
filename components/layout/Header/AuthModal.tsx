@@ -4,6 +4,7 @@ import React from "react"
 import { twMerge } from "tailwind-merge"
 import { Button } from "@/components/ui/button"
 import { apiFetch } from "@/services/api/index"
+import { clarityTasks, trackClarityEvent } from "@/utils/clarity"
 import { setStoredAuthPlatform } from "@/utils/miniapp"
 import ForgotPasswordPhoneForm from "./ForgotPasswordPhoneForm"
 import LoginForm from "./LoginForm"
@@ -51,6 +52,38 @@ export default function AuthModal({
   const [loginPhone, setLoginPhone] = React.useState("")
   const [loginPassword, setLoginPassword] = React.useState("")
   const [signupPhone, setSignupPhone] = React.useState("")
+  const previousIsOpenRef = React.useRef(isOpen)
+
+  React.useEffect(() => {
+    if (isOpen && !previousIsOpenRef.current) {
+      void trackClarityEvent(clarityTasks.authModalOpen, {
+        initial_tab: activeTab,
+        initial_step: step,
+        has_initial_payload: Boolean(initialPayload),
+      })
+    } else if (!isOpen && previousIsOpenRef.current) {
+      void trackClarityEvent(clarityTasks.authModalClose, {
+        last_step: step,
+        last_tab: activeTab,
+      })
+    }
+
+    previousIsOpenRef.current = isOpen
+  }, [activeTab, initialPayload, isOpen, step])
+
+  const handleTabChange = (tab: "login" | "signup") => {
+    if (tab === activeTab) return
+    setActiveTab(tab)
+    setFormError("")
+    setEmptyFields([])
+    void trackClarityEvent(clarityTasks.authModalTabSwitch, { tab })
+  }
+
+  const handleClose = () => {
+    onClose()
+    setFormError("")
+    setEmptyFields([])
+  }
 
   // reset inputs when modal opens
   React.useEffect(() => {
@@ -193,6 +226,11 @@ export default function AuthModal({
     setFormError("")
     setIsLoading(true)
     try {
+      void trackClarityEvent(clarityTasks.authModalLoginAttempt, {
+        has_initial_payload: Boolean(initialPayload),
+        has_phone: Boolean(phone),
+        is_phone_valid: isPhoneValid,
+      })
       // call login endpoint
       const mobile = formatMobile(phone)
       const res = await apiFetch<{ token?: string; detail?: string }>("/accounts/login/", {
@@ -222,19 +260,26 @@ export default function AuthModal({
                 "",
             }
             localStorage.setItem("auth_user", JSON.stringify(userObj))
-          } catch { }
+          } catch {}
           // notify other parts of the app that auth state changed
           try {
             window.dispatchEvent(new Event("auth-changed"))
-          } catch { }
-        } catch { }
+          } catch {}
+        } catch {}
       }
       // success - backend may return token or session cookie
       showToast("با موفقیت وارد شدید!")
-      setTimeout(() => onClose(), 200)
+      void trackClarityEvent(clarityTasks.authModalLoginSuccess, { has_token: Boolean(lr?.token) })
+      setTimeout(handleClose, 200)
     } catch (err) {
       console.error(err)
-      setFormError(extractServerMessage(err) || "خطایی رخ داد")
+      const friendlyMessage = extractServerMessage(err) || "خطایی رخ داد"
+      setFormError(friendlyMessage)
+      void trackClarityEvent(clarityTasks.authModalLoginError, {
+        has_phone: Boolean(phone),
+        is_phone_valid: isPhoneValid,
+        message: friendlyMessage,
+      })
     } finally {
       setIsLoading(false)
     }
@@ -261,6 +306,7 @@ export default function AuthModal({
     setFormError("")
     setIsLoading(true)
     try {
+      void trackClarityEvent(clarityTasks.authModalSignupAttempt, { has_phone: Boolean(phone) })
       // call send-otp for signup
       const mobile = formatMobile(phone)
       const res = await apiFetch<{ otp_uuid?: string }>("/accounts/send-otp/", {
@@ -275,6 +321,10 @@ export default function AuthModal({
       setStep(1)
       setResetMode(false)
       setOtpError("")
+      void trackClarityEvent(clarityTasks.authModalOtpRequested, {
+        flow: "signup",
+        has_uuid: Boolean(uuid),
+      })
     } catch (err) {
       console.error(err)
       setFormError(extractServerMessage(err) || "خطایی رخ داد")
@@ -333,6 +383,10 @@ export default function AuthModal({
       setStep(1)
       setResetMode(true)
       setOtpError("")
+      void trackClarityEvent(clarityTasks.authModalOtpRequested, {
+        flow: "reset",
+        has_uuid: Boolean(uuid),
+      })
     } catch (err) {
       console.error(err)
       setFormError(extractServerMessage(err) || "خطایی رخ داد")
@@ -344,15 +398,18 @@ export default function AuthModal({
   const handleVerifyOtp = async (code: string) => {
     setOtpError("")
     setIsVerifying(true)
+    const flow = resetMode ? "reset" : "signup"
     try {
       // Basic local validation
       if (!code || code.length !== 6) {
         setOtpError("کد وارد شده معتبر نیست.")
+        void trackClarityEvent(clarityTasks.authModalOtpError, { flow, reason: "invalid_length" })
         return
       }
       // call verify endpoint with phoneForOtp and code + otp uuid
       if (!phoneForOtp) {
         setOtpError("شماره تلفن یافت نشد.")
+        void trackClarityEvent(clarityTasks.authModalOtpError, { flow, reason: "missing_phone" })
         return
       }
       const mobile = formatMobile(phoneForOtp)
@@ -367,10 +424,16 @@ export default function AuthModal({
       setStep(2)
       // prepare details step
       setOtpValue("")
+      void trackClarityEvent(clarityTasks.authModalOtpVerified, {
+        flow,
+        has_uuid: Boolean(res?.otp_uuid ?? otpUuid),
+      })
     } catch (err) {
       console.error(err)
       // prefer server-provided message translated to Persian when available
-      setOtpError(extractServerMessage(err) || "خطایی رخ داد")
+      const friendlyMessage = extractServerMessage(err) || "خطایی رخ داد"
+      setOtpError(friendlyMessage)
+      void trackClarityEvent(clarityTasks.authModalOtpError, { flow, reason: "server_error", message: friendlyMessage })
     } finally {
       setIsVerifying(false)
     }
@@ -401,9 +464,19 @@ export default function AuthModal({
       // start 2 minute cooldown
       setResendCooldown(120)
       setOtpError("")
+      void trackClarityEvent(clarityTasks.authModalOtpResent, {
+        flow: resetMode ? "reset" : "signup",
+        has_uuid: Boolean(res?.otp_uuid ?? otpUuid),
+      })
     } catch (err) {
       console.error(err)
-      setOtpError(extractServerMessage(err) || "خطایی رخ داد")
+      const friendlyMessage = extractServerMessage(err) || "خطایی رخ داد"
+      setOtpError(friendlyMessage)
+      void trackClarityEvent(clarityTasks.authModalOtpError, {
+        flow: resetMode ? "reset" : "signup",
+        reason: "resend_failed",
+        message: friendlyMessage,
+      })
     } finally {
       setIsLoading(false)
     }
@@ -446,6 +519,9 @@ export default function AuthModal({
       await apiFetch("/accounts/signup/", {
         method: "POST",
         data: { mobile, password, full_name: name, otp_uuid: otpUuid },
+      })
+      void trackClarityEvent(clarityTasks.authModalSignupComplete, {
+        has_phone: Boolean(phoneForOtp),
       })
       showToast("ثبت‌نام با موفقیت انجام شد! لطفا وارد شوید")
       setTimeout(() => {
@@ -507,6 +583,9 @@ export default function AuthModal({
         method: "POST",
         data: { mobile, new_password: password, otp_uuid: otpUuid },
       })
+      void trackClarityEvent(clarityTasks.authModalResetComplete, {
+        has_phone: Boolean(phoneForOtp),
+      })
       showToast("رمز عبور با موفقیت تغییر کرد! لطفا وارد شوید")
       setTimeout(() => {
         // reset state and return to login so the user can sign in
@@ -563,15 +642,7 @@ export default function AuthModal({
       {!showOtp && step !== "forgot-phone" && (
         <div className="my-4 flex items-center justify-center">
           <div className="absolute top-3 right-5">
-            <button
-              onClick={() => {
-                onClose()
-                setFormError("")
-                setEmptyFields([])
-              }}
-              className="text-gray-500 hover:text-gray-700"
-              aria-label="close"
-            >
+            <button onClick={handleClose} className="text-gray-500 hover:text-gray-700" aria-label="close">
               ✕
             </button>
           </div>
@@ -583,11 +654,7 @@ export default function AuthModal({
             <button
               role="tab"
               aria-selected={activeTab === "login"}
-              onClick={() => {
-                setActiveTab("login")
-                setFormError("")
-                setEmptyFields([])
-              }}
+              onClick={() => handleTabChange("login")}
               className={twMerge(
                 "rounded-full px-4 py-2 text-sm font-medium transition-all duration-200 md:px-6 md:py-2",
                 activeTab === "login"
@@ -600,11 +667,7 @@ export default function AuthModal({
             <button
               role="tab"
               aria-selected={activeTab === "signup"}
-              onClick={() => {
-                setActiveTab("signup")
-                setFormError("")
-                setEmptyFields([])
-              }}
+              onClick={() => handleTabChange("signup")}
               className={twMerge(
                 "rounded-full px-4 py-2 text-sm font-medium transition-all duration-200 md:px-6 md:py-2",
                 activeTab === "signup"
@@ -629,8 +692,8 @@ export default function AuthModal({
                 step === 0 || step === "forgot-phone"
                   ? "translateX(0)"
                   : step === 1
-                    ? `translateX(${isRtl ? "33.333%" : "-33.333%"})`
-                    : `translateX(${isRtl ? "66.666%" : "-66.666%"})`,
+                  ? `translateX(${isRtl ? "33.333%" : "-33.333%"})`
+                  : `translateX(${isRtl ? "66.666%" : "-66.666%"})`,
             }}
           >
             <div className="items-strech flex w-1/3 flex-col px-2">
@@ -743,7 +806,7 @@ export default function AuthModal({
       <Drawer
         open={isOpen}
         onOpenChange={(open) => {
-          if (!open) onClose()
+          if (!open) handleClose()
         }}
       >
         {/* no vertical scrolling on Drawer itself */}

@@ -2,7 +2,8 @@
 
 import React, { useEffect, useState } from "react"
 import { apiFetch } from "@/services/api"
-import { askContactAndStore, getStableEitaaId } from "@/utils/eitaa"
+import { clarityTasks, trackClarityEvent } from "@/utils/clarity"
+import { getStableEitaaId } from "@/utils/eitaa"
 import {
   clearStoredAuthPlatform,
   extractFirstName,
@@ -10,14 +11,6 @@ import {
   hasMismatchedPlatformToken,
   setStoredAuthPlatform,
 } from "@/utils/miniapp"
-
-function formatMobile(raw: string) {
-  if (!raw) return raw
-  if (raw.startsWith("+")) return raw
-  if (raw.startsWith("09")) return "+98" + raw.slice(1)
-  if (raw.startsWith("98")) return "+" + raw
-  return raw
-}
 
 /**
  * Component that runs in Eitaa mini app and attempts to kick off
@@ -43,6 +36,7 @@ const EitaaAutoAuth: React.FC = () => {
     setStarted(true)
     const platform = getMiniAppPlatform()
     if (platform !== "eitaa") return
+    void trackClarityEvent(clarityTasks.eitaaAutoAuthStart)
     // don't override existing logged-in user
     try {
       const existing = localStorage.getItem("auth_token")
@@ -71,7 +65,9 @@ const EitaaAutoAuth: React.FC = () => {
         // raw initData and the stable eitaa id to the backend and expect a
         // response { token, user } on success. Replace the endpoint below
         // with your actual backend route if different.
-        const rawInitData = (window as any)?.Eitaa?.WebApp?.initData ?? null
+        const eitaaWindow = window as typeof window & {
+          Eitaa?: { WebApp?: { initData?: unknown; initDataUnsafe?: { user?: { first_name?: string } } } }
+        }
 
         // Try to get a phone number: first check if we already have it stored
         // let phone: string | undefined
@@ -121,13 +117,18 @@ const EitaaAutoAuth: React.FC = () => {
               } catch {}
             }
 
-            const initUser = (window as any)?.Eitaa?.WebApp?.initDataUnsafe?.user
+            const initUser = eitaaWindow.Eitaa?.WebApp?.initDataUnsafe?.user
             const fallbackFirstName = (initUser && initUser.first_name) || ""
             // const sanitizedPhone = phone ? formatMobile(phone.replace(/[^0-9+]/g, "")) : ""
 
             // Store full_name in session storage
             const firstName = extractFirstName(res?.user?.full_name) ?? extractFirstName(fallbackFirstName) ?? ""
             persistFirstName(firstName)
+            void trackClarityEvent(clarityTasks.eitaaAutoAuthSuccess, {
+              has_token: Boolean(res?.token),
+              has_user: Boolean(res?.user),
+              has_request_id: Boolean(res?.request_id),
+            })
 
             // const mergedUser: AuthUser = {
             //   mobile:
@@ -148,7 +149,7 @@ const EitaaAutoAuth: React.FC = () => {
         } catch {
           // If backend call fails, persist minimal local info so header shows a greeting
           try {
-            const initUser = (window as any)?.Eitaa?.WebApp?.initDataUnsafe?.user
+            const initUser = eitaaWindow.Eitaa?.WebApp?.initDataUnsafe?.user
             const firstName = (initUser && initUser.first_name) || ""
 
             // Store full_name in session storage
@@ -163,10 +164,11 @@ const EitaaAutoAuth: React.FC = () => {
             try {
               window.dispatchEvent(new Event("auth-changed"))
             } catch {}
+            void trackClarityEvent(clarityTasks.eitaaAutoAuthFallback, { reason: "backend_request_failed" })
           } catch {}
         }
       } catch {
-        // ignore
+        void trackClarityEvent(clarityTasks.eitaaAutoAuthError, { reason: "auto_auth_run_failed" })
       }
     }
 

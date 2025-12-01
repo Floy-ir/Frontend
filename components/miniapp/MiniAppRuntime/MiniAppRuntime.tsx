@@ -12,6 +12,7 @@ import TelegramDynamicAutoAuth from "@/components/Telegram/TelegramDynamicAutoAu
 import TelegramDynamicBackButton from "@/components/Telegram/TelegramDynamicBackButton/TelegramDynamicBackButton"
 import TelegramDynamicInitializer from "@/components/Telegram/TelegramDynamicInitializer/TelegramDynamicInitializer"
 import TelegramScriptLoader from "@/components/Telegram/TelegramScriptLoader/TelegramScriptLoader"
+import { clarityTasks, setClarityTag, trackClarityEvent } from "@/utils/clarity"
 import { getMiniAppPlatform, MiniAppPlatform } from "@/utils/miniapp"
 
 /**
@@ -22,10 +23,14 @@ const MiniAppRuntime = () => {
   const [platform, setPlatform] = useState<MiniAppPlatform | null>(null)
 
   useEffect(() => {
+    void trackClarityEvent(clarityTasks.miniAppPlatformPollingStarted)
+
     const detectPlatform = () => {
       const detected = getMiniAppPlatform()
       if (detected) {
         setPlatform(detected)
+        void setClarityTag("miniapp_platform", detected)
+        void trackClarityEvent(clarityTasks.miniAppPlatformDetected, { platform: detected })
         return true
       }
       return false

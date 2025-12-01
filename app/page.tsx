@@ -51,7 +51,10 @@ export default function Web() {
         <Header menuItems={menuItems} />
       </div> */}
 
-      <main className="rtl relative z-10 flex min-h-screen flex-col items-center bg-transparent">
+      <main
+        className="rtl relative z-10 flex min-h-screen flex-col items-center bg-transparent"
+        data-clarity-region="home-page"
+      >
         <div className="w-full">
           <HeroSection />
         </div>

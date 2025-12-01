@@ -27,6 +27,7 @@ import { FancySlider } from "@/components/ui/fancy-slider"
 import { getCityByCode } from "@/config/cities"
 import dude from "@/public/images/flash-circle-outline.svg"
 import { apiFetch } from "@/services/api/index"
+import { clarityTasks, trackClarityEvent } from "@/utils/clarity"
 import { formatDate } from "@/utils/dateUtils"
 import { englishToFarsiNumber } from "@/utils/numbers"
 import { FlightResultsList } from "./FlightResultsList"
@@ -385,6 +386,12 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
 
     // This will cause the URL update in the useEffect hook
     // The drawer state is now preserved separately in openDrawers state
+    void trackClarityEvent(clarityTasks.flightsFilterUsed, {
+      category,
+      key,
+      value,
+      route: unwrappedParams.route,
+    })
   }
 
   const _clearFilters = () => {
@@ -396,14 +403,31 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
     })
     setFlightTimeRange([4, 24])
     setPriceRange(priceRangeBounds) // Use dynamic bounds instead of hardcoded values
+    void trackClarityEvent(clarityTasks.flightsFiltersCleared, { route: unwrappedParams.route })
   }
 
   const _setFlightTimeRange = (range: [number, number]) => {
     setFlightTimeRange(range)
+    void trackClarityEvent(clarityTasks.flightsFilterUsed, {
+      category: "flightTimeRange",
+      key: "range",
+      value: true,
+      route: unwrappedParams.route,
+      min: range[0],
+      max: range[1],
+    })
   }
 
   const _setPriceRange = (range: [number, number]) => {
     setPriceRange(range)
+    void trackClarityEvent(clarityTasks.flightsFilterUsed, {
+      category: "priceRange",
+      key: "range",
+      value: true,
+      route: unwrappedParams.route,
+      min: range[0],
+      max: range[1],
+    })
   }
 
   // Sort options
@@ -413,6 +437,11 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
     { key: "earliest" as SortKey, label: "زودترین" },
     { key: "latest" as SortKey, label: "دیر‌ترین" },
   ]
+
+  const handleSortChange = (key: SortKey) => {
+    setSortKey(key)
+    void trackClarityEvent(clarityTasks.flightsSortChanged, { sort: key, route: unwrappedParams.route })
+  }
 
   // Get current sort label
   const getCurrentSortLabel = () => {
@@ -627,6 +656,12 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
       // Clear previous flights on error
       setFlights([])
       setHasLoadedFlights(true)
+      void trackClarityEvent(clarityTasks.flightsApiFailed, {
+        endpoint: "/flights/",
+        route: unwrappedParams.route,
+        departureDate,
+        message: err instanceof Error ? err.message : "unknown_error",
+      })
     } finally {
       setIsLoading(false)
     }
@@ -823,7 +858,7 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
   }
 
   return (
-    <div className="bg-Gray/N100 mb-8 flex min-h-screen flex-col">
+    <div className="bg-Gray/N100 mb-8 flex min-h-screen flex-col" data-clarity-region="flights-page">
       {/* Search header */}
       <FlightSearchHeader
         originCity={originCity}
@@ -872,7 +907,9 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                 {sortOptions.map(({ key, label }) => (
                   <button
                     key={key}
-                    onClick={() => setSortKey(key)}
+                    onClick={() => handleSortChange(key)}
+                    data-clarity-element="sort-option"
+                    data-sort-key={key}
                     className={`flex items-center justify-center gap-1 overflow-hidden rounded-2xl px-3 py-1 outline-2 outline-offset-[-2px] ${
                       sortKey === key
                         ? "bg-Primary-P50 text-Primary-P500main outline-Primary-P500main font-semibold"
@@ -928,9 +965,10 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                               <Checkbox
                                 checked={sortKey === key}
                                 onCheckedChange={() => {
-                                  setSortKey(key)
+                                  handleSortChange(key)
                                   closeDrawer("sort")
                                 }}
+                                data-clarity-element="sort-option"
                                 className="data-[state=checked]:bg-Primary-P500main data-[state=checked]:border-Primary-P500main rounded-full"
                               />
                               <span className="text-Gray-N700 text-sm font-medium">{label}</span>
