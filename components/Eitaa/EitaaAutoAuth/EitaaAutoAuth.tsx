@@ -10,6 +10,7 @@ import {
   hasMismatchedPlatformToken,
   setStoredAuthPlatform,
 } from "@/utils/miniapp"
+import { clarityTasks, trackClarityEvent } from "@/utils/clarity"
 
 function formatMobile(raw: string) {
   if (!raw) return raw
@@ -43,6 +44,7 @@ const EitaaAutoAuth: React.FC = () => {
     setStarted(true)
     const platform = getMiniAppPlatform()
     if (platform !== "eitaa") return
+    void trackClarityEvent(clarityTasks.eitaaAutoAuthStart)
     // don't override existing logged-in user
     try {
       const existing = localStorage.getItem("auth_token")
@@ -128,6 +130,11 @@ const EitaaAutoAuth: React.FC = () => {
             // Store full_name in session storage
             const firstName = extractFirstName(res?.user?.full_name) ?? extractFirstName(fallbackFirstName) ?? ""
             persistFirstName(firstName)
+            void trackClarityEvent(clarityTasks.eitaaAutoAuthSuccess, {
+              has_token: Boolean(res?.token),
+              has_user: Boolean(res?.user),
+              has_request_id: Boolean(res?.request_id),
+            })
 
             // const mergedUser: AuthUser = {
             //   mobile:
@@ -163,10 +170,11 @@ const EitaaAutoAuth: React.FC = () => {
             try {
               window.dispatchEvent(new Event("auth-changed"))
             } catch {}
+            void trackClarityEvent(clarityTasks.eitaaAutoAuthFallback, { reason: "backend_request_failed" })
           } catch {}
         }
       } catch {
-        // ignore
+        void trackClarityEvent(clarityTasks.eitaaAutoAuthError, { reason: "auto_auth_run_failed" })
       }
     }
 

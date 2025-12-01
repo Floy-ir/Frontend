@@ -2,6 +2,7 @@
 
 import Script from "next/script"
 import { useEffect, useState } from "react"
+import { clarityTasks, trackClarityEvent } from "@/utils/clarity"
 
 const EITAA_SDK_SRC = "https://developer.eitaa.com/eitaa-web-app.js"
 
@@ -29,7 +30,20 @@ const EitaaScriptLoader = () => {
 
   if (!shouldLoad) return null
 
-  return <Script src={EITAA_SDK_SRC} strategy="beforeInteractive" />
+  return (
+    <Script
+      src={EITAA_SDK_SRC}
+      strategy="beforeInteractive"
+      onLoad={() => void trackClarityEvent(clarityTasks.eitaaSdkLoadSuccess)}
+      onError={(event) => {
+        const scriptElement = event?.currentTarget as HTMLScriptElement | null
+        void trackClarityEvent(clarityTasks.eitaaSdkLoadError, {
+          message: "script_load_error",
+          src: scriptElement?.src || EITAA_SDK_SRC,
+        })
+      }}
+    />
+  )
 }
 
 export default EitaaScriptLoader
