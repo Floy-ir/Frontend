@@ -3,8 +3,6 @@
 import Script from "next/script"
 import { useEffect, useState } from "react"
 
-import { MINIAPP_SDK_READY_EVENT } from "@/utils/miniapp"
-
 const EITAA_SDK_SRC = "https://developer.eitaa.com/eitaa-web-app.js"
 
 const isEitaaMiniAppEnvironment = (): boolean => {
@@ -31,15 +29,7 @@ const EitaaScriptLoader = () => {
 
   if (!shouldLoad) return null
 
-  return (
-    <Script
-      src={EITAA_SDK_SRC}
-      strategy="beforeInteractive"
-      onLoad={() => {
-        window.dispatchEvent(new Event(MINIAPP_SDK_READY_EVENT))
-      }}
-    />
-  )
+  return <Script src={EITAA_SDK_SRC} strategy="beforeInteractive" />
 }
 
 export default EitaaScriptLoader

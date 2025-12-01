@@ -2,6 +2,7 @@
 
 import Script from "next/script"
 import { useEffect, useState } from "react"
+
 import { isRunningInBale } from "@/utils/bale"
 
 /**
@@ -11,8 +12,23 @@ import { isRunningInBale } from "@/utils/bale"
 const BaleScriptLoader = () => {
   const [shouldLoad, setShouldLoad] = useState(false)
 
+  const isProbablyBaleEnvironment = () => {
+    if (typeof window === "undefined") return false
+    if (isRunningInBale()) return true
+
+    const hashParams = new URLSearchParams(window.location.hash.startsWith("#") ? window.location.hash.slice(1) : "")
+    const searchParams = new URLSearchParams(window.location.search)
+    const userAgent = window.navigator?.userAgent ?? ""
+    const fromBaleReferrer = (document.referrer || "").toLowerCase().includes("bale")
+
+    const hasInitData = hashParams.has("initData") || searchParams.has("initData")
+    const hasBaleUA = /Bale/i.test(userAgent)
+
+    return hasInitData || hasBaleUA || fromBaleReferrer
+  }
+
   useEffect(() => {
-    setShouldLoad(isRunningInBale())
+    setShouldLoad(isProbablyBaleEnvironment())
   }, [])
 
   if (!shouldLoad) return null

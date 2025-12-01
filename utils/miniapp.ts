@@ -11,7 +11,6 @@ type LinkOptions = {
 export type MiniAppPlatform = "eitaa" | "bale" | "telegram"
 
 const AUTH_PLATFORM_KEY = "auth_platform"
-export const MINIAPP_SDK_READY_EVENT = "miniapp-sdk-ready"
 
 export const getMiniAppPlatform = (): MiniAppPlatform | null => {
   if (isRunningInEitaa()) return "eitaa"
