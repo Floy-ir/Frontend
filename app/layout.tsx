@@ -6,9 +6,12 @@ import { ClarityAnalytics } from "@/components/analytics/ClarityAnalytics"
 import { ActiveMenuProvider } from "@/components/layout/ActiveMenuProvider/ActiveMenuProvider"
 import Footer from "@/components/layout/Footer/Footer"
 import MiniAppRuntime from "@/components/miniapp/MiniAppRuntime/MiniAppRuntime"
+import { MINIAPP_SDK_READY_EVENT } from "@/utils/miniapp"
 import { anjomanMaxVF } from "../lib/fonts"
 
 const GA_MEASUREMENT_ID = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID
+const EITAA_SDK_SRC = "https://developer.eitaa.com/eitaa-web-app.js"
+const BALE_SDK_SRC = "https://tapi.bale.ai/miniapp.js?3"
 
 // Define metadata
 export const metadata: Metadata = {
@@ -56,6 +59,24 @@ export default function RootLayout({
         )}
 
         <meta name="format-detection" content="telephone=no, date=no, email=no, address=no" />
+
+        {/* Eitaa MiniApp SDK (always loaded) */}
+        <Script
+          src={EITAA_SDK_SRC}
+          strategy="beforeInteractive"
+          onLoad={() => {
+            window.dispatchEvent(new Event(MINIAPP_SDK_READY_EVENT))
+          }}
+        />
+
+        {/* Bale MiniApp SDK */}
+        <Script
+          src={BALE_SDK_SRC}
+          strategy="afterInteractive"
+          onLoad={() => {
+            window.dispatchEvent(new Event(MINIAPP_SDK_READY_EVENT))
+          }}
+        />
       </head>
       <body className={`${anjomanMaxVF.variable} font-anjoman-max`} suppressHydrationWarning={true}>
         {/* Analytics */}

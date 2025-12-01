@@ -4,16 +4,14 @@ import { useEffect, useState } from "react"
 
 import BaleDynamicBackButton from "@/components/Bale/BaleDynamicBackButton/BaleDynamicBackButton"
 import BaleDynamicInitializer from "@/components/Bale/BaleDynamicInitializer/BaleDynamicInitializer"
-import BaleScriptLoader from "@/components/Bale/BaleScriptLoader/BaleScriptLoader"
 import EitaaDynamicAutoAuth from "@/components/Eitaa/EitaaDynamicAutoAuth/EitaaDynamicAutoAuth"
 import EitaaDynamicBackButton from "@/components/Eitaa/EitaaDynamicBackButton/EitaaDynamicBackButton"
 import EitaaDynamicInitializer from "@/components/Eitaa/EitaaDynamicInitializer/EitaaDynamicInitializer"
-import EitaaScriptLoader from "@/components/Eitaa/EitaaScriptLoader/EitaaScriptLoader"
 import TelegramDynamicAutoAuth from "@/components/Telegram/TelegramDynamicAutoAuth/TelegramDynamicAutoAuth"
 import TelegramDynamicBackButton from "@/components/Telegram/TelegramDynamicBackButton/TelegramDynamicBackButton"
 import TelegramDynamicInitializer from "@/components/Telegram/TelegramDynamicInitializer/TelegramDynamicInitializer"
 import TelegramScriptLoader from "@/components/Telegram/TelegramScriptLoader/TelegramScriptLoader"
-import { getMiniAppPlatform, isRunningInMiniApp, MINIAPP_SDK_READY_EVENT, MiniAppPlatform } from "@/utils/miniapp"
+import { getMiniAppPlatform, MINIAPP_SDK_READY_EVENT, MiniAppPlatform } from "@/utils/miniapp"
 
 /**
  * Mounts all mini-app only behaviors (SDKs, auto-auth, back buttons) once we
@@ -55,11 +53,9 @@ const MiniAppRuntime = () => {
   return (
     <>
       <TelegramScriptLoader />
-      <EitaaScriptLoader />
 
       {platform === "bale" && (
         <>
-          <BaleScriptLoader />
           <BaleDynamicInitializer />
           <BaleDynamicBackButton />
         </>
