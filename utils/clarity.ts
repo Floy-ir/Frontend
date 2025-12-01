@@ -3,7 +3,7 @@
 type ClarityClient = {
   (event: string, value?: unknown): void
   event?: (eventName: string, payload?: Record<string, unknown>) => void
-  setTag?: (key: string, value: string | number | boolean) => void
+  setTag?: (key: string, value: string | number | boolean | string[]) => void
 }
 
 const CLARITY_DEV_LOG_PREFIX = "[Clarity]"
@@ -24,7 +24,7 @@ const loadClarity = async (): Promise<ClarityClient | null> => {
   if (typeof window === "undefined") return null
   if (!clarityPromise) {
     clarityPromise = import("@microsoft/clarity")
-      .then(({ default: clarity }) => clarity ?? null)
+      .then(({ default: clarity }) => (clarity as unknown as ClarityClient) ?? null)
       .catch((error) => {
         logClarityError("Failed to import Clarity", error)
         return null
@@ -95,7 +95,7 @@ export const trackClarityEvent = async (eventName: ClarityTaskName | string, pay
   dispatch(0)
 }
 
-export const setClarityTag = async (key: string, value: string | number | boolean) => {
+export const setClarityTag = async (key: string, value: string | number | boolean | string[]) => {
   if (!key) return
   const clarity = await loadClarity()
   if (!clarity?.setTag) return
