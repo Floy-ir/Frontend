@@ -127,6 +127,7 @@ export function ClarityAnalytics() {
     const reportLcp = () => {
       if (!lcpEntries.length) return
       const lastEntry = lcpEntries[lcpEntries.length - 1]
+      if (!lastEntry) return
       const { value, element, url } = lastEntry
       const tag = element instanceof Element ? element.tagName : undefined
       const classes =
