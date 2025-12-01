@@ -222,12 +222,12 @@ export default function AuthModal({
                 "",
             }
             localStorage.setItem("auth_user", JSON.stringify(userObj))
-          } catch {}
+          } catch { }
           // notify other parts of the app that auth state changed
           try {
             window.dispatchEvent(new Event("auth-changed"))
-          } catch {}
-        } catch {}
+          } catch { }
+        } catch { }
       }
       // success - backend may return token or session cookie
       showToast("با موفقیت وارد شدید!")
@@ -507,16 +507,21 @@ export default function AuthModal({
         method: "POST",
         data: { mobile, new_password: password, otp_uuid: otpUuid },
       })
-      showToast("رمز عبور با موفقیت تغییر کرد!")
+      showToast("رمز عبور با موفقیت تغییر کرد! لطفا وارد شوید")
       setTimeout(() => {
-        // reset all state and close
+        // reset state and return to login so the user can sign in
+        setActiveTab("login")
         setStep(0)
+        setLoginPhone(phoneForOtp)
+        setLoginPassword("")
+        setSignupPhone("")
         setPhoneForOtp("")
         setOtpValue("")
         setFormError("")
+        setOtpError("")
         setEmptyFields([])
         setResetMode(false)
-        onClose()
+        setOtpUuid(null)
       }, 200)
     } catch (err) {
       console.error(err)
@@ -624,8 +629,8 @@ export default function AuthModal({
                 step === 0 || step === "forgot-phone"
                   ? "translateX(0)"
                   : step === 1
-                  ? `translateX(${isRtl ? "33.333%" : "-33.333%"})`
-                  : `translateX(${isRtl ? "66.666%" : "-66.666%"})`,
+                    ? `translateX(${isRtl ? "33.333%" : "-33.333%"})`
+                    : `translateX(${isRtl ? "66.666%" : "-66.666%"})`,
             }}
           >
             <div className="items-strech flex w-1/3 flex-col px-2">
