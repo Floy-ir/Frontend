@@ -75,7 +75,8 @@ export type ClarityTaskName = (typeof clarityTasks)[keyof typeof clarityTasks]
 export const trackClarityEvent = async (eventName: ClarityTaskName | string, payload?: Record<string, unknown>) => {
   if (!eventName) return
   const clarity = await loadClarity()
-  if (!clarity?.event) return
+  const clarityEvent = clarity?.event
+  if (!clarityEvent) return
 
   const dispatch = (attempt: number) => {
     if (!isClarityReady()) {
@@ -86,7 +87,7 @@ export const trackClarityEvent = async (eventName: ClarityTaskName | string, pay
     }
 
     try {
-      clarity.event(eventName, payload)
+      clarityEvent(eventName, payload)
     } catch (error) {
       logClarityError(`Failed to send event "${eventName}"`, error)
     }
@@ -98,7 +99,8 @@ export const trackClarityEvent = async (eventName: ClarityTaskName | string, pay
 export const setClarityTag = async (key: string, value: string | number | boolean | string[]) => {
   if (!key) return
   const clarity = await loadClarity()
-  if (!clarity?.setTag) return
+  const claritySetTag = clarity?.setTag
+  if (!claritySetTag) return
 
   const dispatch = (attempt: number) => {
     if (!isClarityReady()) {
@@ -109,7 +111,7 @@ export const setClarityTag = async (key: string, value: string | number | boolea
     }
 
     try {
-      clarity.setTag(key, value)
+      claritySetTag(key, value)
     } catch (error) {
       logClarityError(`Failed to set tag "${key}"`, error)
     }
