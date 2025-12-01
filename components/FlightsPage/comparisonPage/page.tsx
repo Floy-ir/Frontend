@@ -49,8 +49,8 @@ export default function ComparisonDialog({
     one_adult_redirect_url: string
     remaining_seat: number
     two_adult_redirect_url: string
-    }[]
-  }) {
+  }[]
+}) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent

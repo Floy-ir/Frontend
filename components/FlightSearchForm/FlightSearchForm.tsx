@@ -16,8 +16,8 @@ import { getCityByName, getCityOptions, getDestinationOptions } from "@/config/c
 import { useMediaQuery } from "@/hooks/use-media-query"
 import { useFlightFormPersistence } from "@/hooks/useFlightFormPersistence"
 import { useStoredCities } from "@/hooks/useStoredCities"
-import { formatDate } from "@/utils/dateUtils"
 import { clarityTasks, trackClarityEvent } from "@/utils/clarity"
+import { formatDate } from "@/utils/dateUtils"
 import { createFlightSearchUrl } from "@/utils/navigation"
 
 // Define zod schema for form validation

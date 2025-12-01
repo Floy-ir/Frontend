@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react"
 import { apiFetch } from "@/services/api"
+import { clarityTasks, trackClarityEvent } from "@/utils/clarity"
 import { askContactAndStore, getStableEitaaId } from "@/utils/eitaa"
 import {
   clearStoredAuthPlatform,
@@ -10,7 +11,6 @@ import {
   hasMismatchedPlatformToken,
   setStoredAuthPlatform,
 } from "@/utils/miniapp"
-import { clarityTasks, trackClarityEvent } from "@/utils/clarity"
 
 function formatMobile(raw: string) {
   if (!raw) return raw

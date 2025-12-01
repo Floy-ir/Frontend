@@ -2,8 +2,8 @@
 
 import { useEffect } from "react"
 import { isRunningInBale } from "@/utils/bale"
-import { isRunningInEitaa } from "@/utils/eitaa"
 import { clarityTasks, trackClarityEvent } from "@/utils/clarity"
+import { isRunningInEitaa } from "@/utils/eitaa"
 
 const detectTrafficSource = (): "web" | "bale" | "eitaa" => {
   if (isRunningInBale()) return "bale"
