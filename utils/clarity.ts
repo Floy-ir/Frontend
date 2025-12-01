@@ -60,6 +60,13 @@ export const clarityTasks = {
   flightsSortChanged: "flights_sort_changed",
   flightsApiFailed: "flights_api_failed",
   redirectToSeller: "redirect_to_seller",
+  jsError: "js_error",
+  consoleWarning: "console_warning",
+  pageLoadMetrics: "page_load_metrics",
+  lcpObserved: "lcp_observed",
+  lcpSlow: "lcp_slow",
+  rageClick: "rage_click",
+  quickBack: "quick_back",
 } as const
 
 export type ClarityTaskName = (typeof clarityTasks)[keyof typeof clarityTasks]
