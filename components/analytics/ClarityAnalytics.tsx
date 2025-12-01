@@ -103,13 +103,19 @@ export function ClarityAnalytics() {
       })
     }
 
-    const lcpEntries: LargestContentfulPaint[] = []
+    type LcpEntry = {
+      value: number
+      element?: Element | null
+      url?: string
+    }
+
+    const lcpEntries: LcpEntry[] = []
     let lcpObserver: PerformanceObserver | null = null
 
     if ("PerformanceObserver" in window) {
       try {
         lcpObserver = new PerformanceObserver((list) => {
-          const entries = list.getEntries() as LargestContentfulPaint[]
+          const entries = list.getEntries() as unknown as LcpEntry[]
           lcpEntries.push(...entries)
         })
         lcpObserver.observe({ type: "largest-contentful-paint", buffered: true })
@@ -122,8 +128,9 @@ export function ClarityAnalytics() {
       if (!lcpEntries.length) return
       const lastEntry = lcpEntries[lcpEntries.length - 1]
       const { value, element, url } = lastEntry
-      const tag = element?.tagName
-      const classes = element?.className && typeof element.className === "string" ? element.className : undefined
+      const tag = element instanceof Element ? element.tagName : undefined
+      const classes =
+        element instanceof Element && typeof element.className === "string" ? element.className : undefined
       void trackClarityEvent(clarityTasks.lcpObserved, {
         lcp_ms: Math.round(value),
         tag,

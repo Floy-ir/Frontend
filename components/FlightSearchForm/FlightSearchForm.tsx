@@ -334,16 +334,18 @@ export function FlightSearchForm({
   return (
     <div className="m-0 flex w-full flex-col items-center" id={id}>
       <div
-        className={`relative flex h-full w-full flex-col items-center lg:flex-row lg:justify-center ${contextPage == "flights" ? "px-0 lg:px-30" : ""
-          }`}
+        className={`relative flex h-full w-full flex-col items-center lg:flex-row lg:justify-center ${
+          contextPage == "flights" ? "px-0 lg:px-30" : ""
+        }`}
         role="dialog"
         aria-label="جستجوی پرواز"
       >
         <div className={`flex w-full flex-col items-start gap-4 lg:flex-row lg:items-center lg:gap-6 ${className}`}>
           {/* mobile title and Arrow */}
           <div
-            className={`mx-4 w-full items-center justify-start gap-4 ${contextPage == "flights" ? "flex md:hidden" : "hidden"
-              }`}
+            className={`mx-4 w-full items-center justify-start gap-4 ${
+              contextPage == "flights" ? "flex md:hidden" : "hidden"
+            }`}
           >
             <ArrowRight size="24" color="#748297" onClick={onClose} className="cursor-pointer" />
             <div className="text-Gray-N600 text-sm leading-normal font-semibold">تغییر جستجو</div>
@@ -585,9 +587,9 @@ export function FlightSearchForm({
                         value={field.value}
                         onChange={handlePassengersChange}
                         hasError={!!fieldState.error}
-                      // Auto-open passengers after date (kept commented intentionally)
-                      // open={shouldAutoAdvance ? passengerOpen : undefined}
-                      // onOpenChange={setPassengerOpen}
+                        // Auto-open passengers after date (kept commented intentionally)
+                        // open={shouldAutoAdvance ? passengerOpen : undefined}
+                        // onOpenChange={setPassengerOpen}
                       />
                       {fieldState.error && renderErrorMessage(fieldState.error?.message)}
                     </>
