@@ -71,7 +71,9 @@ export default function RootLayout({
         <ActiveMenuProvider />
 
         {/* Main Content */}
-        <main className="min-h-screen">{children}</main>
+        <main className="min-h-screen" data-clarity-region="app-shell">
+          {children}
+        </main>
 
         {/* Global Footer */}
         <Footer />

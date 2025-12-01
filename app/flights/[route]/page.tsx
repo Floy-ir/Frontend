@@ -858,7 +858,7 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
   }
 
   return (
-    <div className="bg-Gray/N100 mb-8 flex min-h-screen flex-col">
+    <div className="bg-Gray/N100 mb-8 flex min-h-screen flex-col" data-clarity-region="flights-page">
       {/* Search header */}
       <FlightSearchHeader
         originCity={originCity}
