@@ -7,6 +7,7 @@ import { Button } from "@/components/elements/Button/Button"
 import dude from "@/public/images/flash-circle-outline.svg"
 import { isRunningInMiniApp, openMiniAppExternalLink } from "@/utils/miniapp"
 import { englishToFarsiNumber } from "@/utils/numbers"
+import { clarityTasks, trackClarityEvent } from "@/utils/clarity"
 
 type dude = {
   adult_price: number
@@ -33,6 +34,8 @@ export default function TicketCard({ websites }: { websites: dude[] }) {
   const adultCount = searchParams.get("adult") ?? "0"
   const childCount = searchParams.get("child") ?? "0"
   const infantCount = searchParams.get("infant") ?? "0"
+  const routeParam =
+    typeof window !== "undefined" ? window.location.pathname.split("/").filter(Boolean).pop() || "" : ""
 
   // Calculate total price for a website
   const getTotalPrice = (website: dude) =>
@@ -69,6 +72,16 @@ export default function TicketCard({ websites }: { websites: dude[] }) {
       .replace("${infant_len}", infantCount)
 
     const finalRedirectUrl = `/redirect?redirect_url=${redirectUrl}&agency=${website.detail.name_fa}&agency_eng=${website.detail.name}`
+
+    void trackClarityEvent(clarityTasks.compareModalVisitProvider, {
+      provider: website.detail.name_fa,
+      provider_eng: website.detail.name,
+      remaining_seat: website.remaining_seat,
+      route: searchParams.get("route") || routeParam,
+      adult,
+      child,
+      infant,
+    })
 
     // Use mini app link handling when embedded, otherwise use regular window.open
     if (isRunningInMiniApp()) {

@@ -1,9 +1,7 @@
 "use client"
 
 type ClarityClient = {
-  (event: string, value?: unknown): void
-  event?: (eventName: string, payload?: Record<string, unknown>) => void
-  setTag?: (key: string, value: string | number | boolean | string[]) => void
+  (...args: unknown[]): void
 }
 
 const CLARITY_DEV_LOG_PREFIX = "[Clarity]"
@@ -13,24 +11,10 @@ const logClarityError = (message: string, error: unknown) => {
   console.error(`${CLARITY_DEV_LOG_PREFIX} ${message}`, error)
 }
 
-let clarityPromise: Promise<ClarityClient | null> | null = null
-
-const isClarityReady = () => {
-  if (typeof window === "undefined") return false
-  return typeof (window as unknown as { clarity?: unknown }).clarity === "function"
-}
-
-const loadClarity = async (): Promise<ClarityClient | null> => {
+const getClarityClient = (): ClarityClient | null => {
   if (typeof window === "undefined") return null
-  if (!clarityPromise) {
-    clarityPromise = import("@microsoft/clarity")
-      .then(({ default: clarity }) => (clarity as unknown as ClarityClient) ?? null)
-      .catch((error) => {
-        logClarityError("Failed to import Clarity", error)
-        return null
-      })
-  }
-  return clarityPromise
+  const clarity = (window as unknown as { clarity?: unknown }).clarity
+  return typeof clarity === "function" ? (clarity as unknown as ClarityClient) : null
 }
 
 export const clarityTasks = {
@@ -68,26 +52,28 @@ export const clarityTasks = {
   rageClick: "rage_click",
   quickBack: "quick_back",
   citySearchNotFound: "city_search_not_found",
+  homeSearchSubmit: "home_search_submit",
+  flightsPageView: "flights_page_view",
+  flightCardVisitProvider: "flight_card_visit_provider",
+  flightCardOtherSellers: "flight_card_other_sellers_click",
+  compareModalVisitProvider: "compare_modal_visit_provider",
 } as const
 
 export type ClarityTaskName = (typeof clarityTasks)[keyof typeof clarityTasks]
 
 export const trackClarityEvent = async (eventName: ClarityTaskName | string, payload?: Record<string, unknown>) => {
   if (!eventName) return
-  const clarity = await loadClarity()
-  const clarityEvent = clarity?.event
-  if (!clarityEvent) return
-
   const dispatch = (attempt: number) => {
-    if (!isClarityReady()) {
-      if (attempt >= 3) return
-      const delay = 200 * (attempt + 1)
+    const clarity = getClarityClient()
+    if (!clarity) {
+      if (attempt >= 20) return
+      const delay = 300 * (attempt + 1)
       setTimeout(() => dispatch(attempt + 1), delay)
       return
     }
 
     try {
-      clarityEvent(eventName, payload)
+      clarity("event", eventName, payload)
     } catch (error) {
       logClarityError(`Failed to send event "${eventName}"`, error)
     }
@@ -98,20 +84,17 @@ export const trackClarityEvent = async (eventName: ClarityTaskName | string, pay
 
 export const setClarityTag = async (key: string, value: string | number | boolean | string[]) => {
   if (!key) return
-  const clarity = await loadClarity()
-  const claritySetTag = clarity?.setTag
-  if (!claritySetTag) return
-
   const dispatch = (attempt: number) => {
-    if (!isClarityReady()) {
-      if (attempt >= 3) return
-      const delay = 200 * (attempt + 1)
+    const clarity = getClarityClient()
+    if (!clarity) {
+      if (attempt >= 20) return
+      const delay = 300 * (attempt + 1)
       setTimeout(() => dispatch(attempt + 1), delay)
       return
     }
 
     try {
-      claritySetTag(key, value)
+      clarity("set", key, value)
     } catch (error) {
       logClarityError(`Failed to set tag "${key}"`, error)
     }

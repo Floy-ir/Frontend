@@ -17,29 +17,26 @@ export function ClarityAnalytics() {
 
     if (!projectId) return
 
-    const run = () => {
-      import("@microsoft/clarity")
-        .then(({ default: clarity }) => {
-          clarity.init(projectId)
-
-          const trafficSource = detectTrafficSource()
-          clarity.setTag("traffic_source", trafficSource)
-          clarity.event(`traffic_source_detected_${trafficSource}`)
-        })
-        .catch((error) => {
-          if (process.env.NODE_ENV !== "production") {
-            console.error("Failed to initialize Microsoft Clarity", error)
-          }
-        })
-    }
-
     if (typeof window === "undefined") return
+
+    const run = (attempt = 0) => {
+      const clarity = (window as unknown as { clarity?: unknown }).clarity
+      if (typeof clarity !== "function") {
+        if (attempt >= 5) return
+        setTimeout(() => run(attempt + 1), 400 * (attempt + 1))
+        return
+      }
+
+      const trafficSource = detectTrafficSource()
+      clarity("set", "traffic_source", trafficSource)
+      clarity("event", `traffic_source_detected_${trafficSource}`)
+    }
 
     const idle = (window as typeof window & { requestIdleCallback?: typeof requestIdleCallback }).requestIdleCallback
     if (idle) {
-      idle(run, { timeout: 1500 })
+      idle(() => run(), { timeout: 1500 })
     } else {
-      setTimeout(run, 500)
+      setTimeout(() => run(), 500)
     }
   }, [])
 
@@ -54,6 +51,10 @@ export function ClarityAnalytics() {
         colno: event.colno,
         stack: event.error?.stack?.slice(0, 5000),
         type: "error",
+        user_agent: typeof navigator !== "undefined" ? navigator.userAgent : undefined,
+        src: event.filename,
+        line: event.lineno,
+        col: event.colno,
       }
       void trackClarityEvent(clarityTasks.jsError, payload)
     }
@@ -64,6 +65,7 @@ export function ClarityAnalytics() {
         message: typeof reason === "string" ? reason : reason?.message,
         stack: typeof reason === "string" ? undefined : reason?.stack?.slice(0, 5000),
         type: "unhandledrejection",
+        user_agent: typeof navigator !== "undefined" ? navigator.userAgent : undefined,
       }
       void trackClarityEvent(clarityTasks.jsError, payload)
     }

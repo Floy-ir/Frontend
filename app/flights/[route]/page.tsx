@@ -73,6 +73,7 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
 
   const [originCity, setOriginCity] = useState("")
   const [destinationCity, setDestinationCity] = useState("")
+  const [pageViewTracked, setPageViewTracked] = useState(false)
 
   useEffect(() => {
     const fetchOrigin = async () => {
@@ -85,6 +86,18 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
 
     fetchOrigin()
   }, [])
+  useEffect(() => {
+    if (pageViewTracked) return
+    if (!originCode || !destinationCode) return
+    setPageViewTracked(true)
+    void trackClarityEvent(clarityTasks.flightsPageView, {
+      route: unwrappedParams.route,
+      origin_code: originCode,
+      destination_code: destinationCode,
+      departure: departureDate,
+      passengers: { adult, child, infant, total: passengerCount },
+    })
+  }, [adult, child, departureDate, destinationCode, originCode, passengerCount, pageViewTracked, unwrappedParams.route])
 
   // Get passenger counts and date from URL
   const adult = parseInt(unwrappedSearchParams.adult || "1")
