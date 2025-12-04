@@ -78,9 +78,9 @@ export default function TicketCard({ websites }: { websites: dude[] }) {
       provider_eng: website.detail.name,
       remaining_seat: website.remaining_seat,
       route: searchParams.get("route") || routeParam,
-      adult,
-      child,
-      infant,
+      adult: Number(adultCount),
+      child: Number(childCount),
+      infant: Number(infantCount),
     })
 
     // Use mini app link handling when embedded, otherwise use regular window.open
