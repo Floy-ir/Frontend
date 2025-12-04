@@ -73,6 +73,7 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
 
   const [originCity, setOriginCity] = useState("")
   const [destinationCity, setDestinationCity] = useState("")
+  const [pageViewTracked, setPageViewTracked] = useState(false)
 
   useEffect(() => {
     const fetchOrigin = async () => {
@@ -92,6 +93,19 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
   const infant = parseInt(unwrappedSearchParams.infant || "0")
   const passengerCount = adult + child + infant
   const departureDate = unwrappedSearchParams.departing || formatDate(new Date())
+
+  useEffect(() => {
+    if (pageViewTracked) return
+    if (!originCode || !destinationCode) return
+    setPageViewTracked(true)
+    void trackClarityEvent(clarityTasks.flightsPageView, {
+      route: unwrappedParams.route,
+      origin_code: originCode,
+      destination_code: destinationCode,
+      departure: departureDate,
+      passengers: { adult, child, infant, total: passengerCount },
+    })
+  }, [adult, child, departureDate, destinationCode, originCode, passengerCount, pageViewTracked, unwrappedParams.route])
 
   // For timeline component - ensure it's always a string
   const selectedDate = unwrappedSearchParams.departing || formatDate(new Date())

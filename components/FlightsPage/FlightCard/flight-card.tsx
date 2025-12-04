@@ -9,7 +9,7 @@ import { twMerge } from "tailwind-merge"
 import { Button } from "@/components/elements/Button/Button"
 import ComparisonDialog from "@/components/FlightsPage/comparisonPage/page"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { recordSellerRedirect, trackClarityEvent as trackClarity } from "@/utils/clarity"
+import { clarityTasks, recordSellerRedirect, trackClarityEvent as trackClarity } from "@/utils/clarity"
 import { englishToFarsiNumber } from "@/utils/numbers"
 
 const clarityElementTags = {
@@ -18,8 +18,8 @@ const clarityElementTags = {
 } as const
 
 const clarityEvents = {
-  buy: "flight_card_buy_button_click",
-  compare: "flight_card_other_sellers_button_click",
+  buy: clarityTasks.flightCardVisitProvider,
+  compare: clarityTasks.flightCardOtherSellers,
 } as const
 
 // Card wrapper styles with variants
@@ -364,11 +364,12 @@ export function FlightCard({
   const [showComparison, setShowComparison] = useState(false)
   const handleBuyClick = () => {
     void trackClarity(clarityEvents.buy, {
-      event: clarityEvents.buy,
       provider: price.agency,
       provider_eng: price.agency_eng,
       origin,
       destination,
+      route: `${origin}-${destination}`,
+      button: "primary",
     })
     void recordSellerRedirect(price.agency_eng || price.agency, {
       provider_fa: price.agency,
@@ -381,12 +382,12 @@ export function FlightCard({
   }
   const handleComparisonClick = () => {
     void trackClarity(clarityEvents.compare, {
-      event: clarityEvents.compare,
       provider: price.agency,
       provider_eng: price.agency_eng,
       origin,
       destination,
       other_sellers: otherSellersCount,
+      route: `${origin}-${destination}`,
     })
     setShowComparison(true)
   }

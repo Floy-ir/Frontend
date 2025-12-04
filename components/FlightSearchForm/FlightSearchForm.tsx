@@ -298,6 +298,19 @@ export function FlightSearchForm({
       // Save search when user submits
       saveSearch(originCity.code, destinationCity.code, formatDate(data.departureDate))
 
+      // Track homepage search submission
+      if (contextPage === "landing") {
+        void trackClarityEvent(clarityTasks.homeSearchSubmit, {
+          origin: originCity.label,
+          destination: destinationCity.label,
+          origin_code: originCity.code,
+          destination_code: destinationCity.code,
+          departure: formatDate(data.departureDate),
+          passengers: data.passengers,
+          context: contextPage,
+        })
+      }
+
       // Close form if needed
       if (onClose) {
         onClose()
