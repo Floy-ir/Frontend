@@ -59,7 +59,7 @@ export default function ComparisonDialog({
       >
         <DialogHeader className="bg-Shade-white rounded-none lg:rounded-t-2xl">
           <div className="flex flex-row items-center justify-between px-6 py-4">
-            <DialogTitle className="text-Gray-N600 text-sm font-semibold leading-normal">جزییات پرواز</DialogTitle>
+            <DialogTitle className="text-Gray-N600 text-sm leading-normal font-semibold">جزییات پرواز</DialogTitle>
             <DialogClose>
               <CloseCircle size="24" color="#334155" />
             </DialogClose>
@@ -69,7 +69,7 @@ export default function ComparisonDialog({
           <div className="bg-Gray-N200 h-px self-stretch" />
         </DialogHeader>
 
-        <div className="md:pt-6.5 lg:px-6.5 mb-7 flex flex-col items-start gap-4 overflow-y-auto md:px-24 lg:flex-row">
+        <div className="mb-7 flex flex-col items-start gap-4 overflow-y-auto md:px-24 md:pt-6.5 lg:flex-row lg:px-6.5">
           {/* flight info */}
           <FlightInfo
             departureTime={departureTime}

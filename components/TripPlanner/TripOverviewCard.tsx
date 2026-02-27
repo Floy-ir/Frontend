@@ -94,7 +94,7 @@ export function TripOverviewCard({ tripPlan }: TripOverviewCardProps) {
       {/* Header with preview text */}
       <button
         onClick={() => setIsExpanded(!isExpanded)}
-        className="text-Gray-N800 flex w-full flex-col items-start gap-2 bg-gray-50 px-4 py-3 text-right font-anjoman-max transition-colors"
+        className="text-Gray-N800 font-anjoman-max flex w-full flex-col items-start gap-2 bg-gray-50 px-4 py-3 text-right transition-colors"
         aria-expanded={isExpanded}
         aria-controls="trip-overview-content"
         type="button"

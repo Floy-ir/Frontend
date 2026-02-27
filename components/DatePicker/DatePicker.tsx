@@ -267,7 +267,7 @@ export const DatePicker = React.forwardRef<HTMLInputElement, DatePickerProps>(fu
               <div className="relative size-6 cursor-pointer" onClick={() => setOpenState(false)}>
                 <ArrowRight className="text-Gray-N500 h-6 w-6" />
               </div>
-              <div className="text-Gray-N600 text-right text-sm font-semibold leading-normal">
+              <div className="text-Gray-N600 text-right text-sm leading-normal font-semibold">
                 {label || "انتخاب تاریخ"}
               </div>
             </div>

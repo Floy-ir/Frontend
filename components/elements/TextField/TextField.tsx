@@ -131,7 +131,8 @@ export const textFieldHelperText = cva(["flex", "items-center", "text-xs", "px-3
 })
 
 export interface TextFieldProps
-  extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "size" | "disabled" | "width">,
+  extends
+    Omit<React.InputHTMLAttributes<HTMLInputElement>, "size" | "disabled" | "width">,
     VariantProps<typeof textFieldWrapper> {
   label?: string
   helperText?: string

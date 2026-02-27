@@ -48,7 +48,7 @@ const Footer: React.FC = () => {
         {/* Main footer container */}
         <div className="flex w-full flex-col justify-between bg-white">
           <div className="mx-auto w-full max-w-[1136px] px-6 xl:px-0">
-            <div className="mb-9 mt-10 flex w-full flex-row justify-between">
+            <div className="mt-10 mb-9 flex w-full flex-row justify-between">
               {/* First Grid */}
               <div className="my-2 grid grid-cols-3 gap-10 text-right">
                 <div className="flex flex-col gap-6">
@@ -79,8 +79,8 @@ const Footer: React.FC = () => {
               </div>
 
               {/* Second Grid */}
-              <div className="gap-8.5 flex flex-col items-end justify-end">
-                <h1 className="text-5xl font-semibold leading-[87px] text-primary-500">فلوی</h1>
+              <div className="flex flex-col items-end justify-end gap-8.5">
+                <h1 className="text-primary-500 text-5xl leading-[87px] font-semibold">فلوی</h1>
                 {/* <h3 className="text-sm text-[#748297]">تلفن پشتیبانی: ۰۲۱۱۲۳۴۵۶۷۸</h3> */}
                 {!isMiniApp && (
                   <div className="flex md:gap-4 lg:gap-8">
@@ -106,7 +106,7 @@ const Footer: React.FC = () => {
 
             {/* Third Grid */}
             <div className="flex flex-col md:my-4 lg:my-6">
-              <div className="text-Gray-N600 mb-1 justify-center text-right text-lg font-medium leading-loose">
+              <div className="text-Gray-N600 mb-1 justify-center text-right text-lg leading-loose font-medium">
                 {" "}
                 فلوی{" "}
               </div>
@@ -168,9 +168,9 @@ const Footer: React.FC = () => {
             <div className="border-b border-slate-100 last:border-b-0" />
 
             {/* Second Grid */}
-            <div className="mb-9 mt-10 flex w-full flex-col justify-between">
-              <div className="gap-8.5 flex flex-col items-center justify-center">
-                <h1 className="text-5xl font-semibold leading-[87px] text-[#4641fb]">فلوی</h1>
+            <div className="mt-10 mb-9 flex w-full flex-col justify-between">
+              <div className="flex flex-col items-center justify-center gap-8.5">
+                <h1 className="text-5xl leading-[87px] font-semibold text-[#4641fb]">فلوی</h1>
                 <h3 className="text-sm text-[#748297]">تلفن پشتیبانی: ۰۲۱۱۲۳۴۵۶۷۸</h3>
                 {!isMiniApp && (
                   <div className="flex gap-6">
@@ -196,7 +196,7 @@ const Footer: React.FC = () => {
 
             {/* Third Grid */}
             <div className="my-6 flex w-full flex-col">
-              <div className="text-Gray-N600 mb-1 justify-center text-right text-lg font-medium leading-loose">
+              <div className="text-Gray-N600 mb-1 justify-center text-right text-lg leading-loose font-medium">
                 فلوی
               </div>
               <p className="text-Gray-N500 flex flex-col items-start justify-start text-right text-[13px] leading-normal">

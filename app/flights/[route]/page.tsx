@@ -887,7 +887,7 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
       />
 
       {/* Main content */}
-      <div className="max-w-266 container mx-auto p-0 lg:px-4 lg:py-6">
+      <div className="container mx-auto max-w-266 p-0 lg:px-4 lg:py-6">
         {/* Timeline component from HEAD branch */}
         <div className="mb-0 lg:mb-8">
           <Timeline
@@ -906,7 +906,7 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
 
         {isLoading ? (
           <div className="flex flex-col items-center justify-center py-12">
-            <div className="border-primary mb-4 h-12 w-12 animate-spin rounded-full border-b-2 border-t-2"></div>
+            <div className="border-primary mb-4 h-12 w-12 animate-spin rounded-full border-t-2 border-b-2"></div>
             <p className="text-Gray-N600 text-lg font-medium">در حال جستجوی پروازها...</p>
           </div>
         ) : filteredFlights.length > 0 ? (
@@ -949,11 +949,11 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                     >
                       <Sort size="16" color="#1E1E1E" />
                       <div className="flex items-center justify-center gap-2">
-                        <div className="text-Gray-N700 text-nowrap text-sm font-medium leading-normal">
+                        <div className="text-Gray-N700 text-sm leading-normal font-medium text-nowrap">
                           {" "}
                           مرتب سازی:{" "}
                         </div>
-                        <div className="text-Gray-N700 text-sm font-medium leading-normal">
+                        <div className="text-Gray-N700 text-sm leading-normal font-medium">
                           {sortKey ? getCurrentSortLabel() : " ارزان‌ترین "}
                         </div>
                       </div>
@@ -964,7 +964,7 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                       <DialogTitle className="bg-Shade-White border-Gray-N100 inline-flex items-center justify-center self-stretch border-b px-5 py-4">
                         <div className="flex flex-1 items-center justify-center">
                           <div className="flex items-center justify-center gap-1">
-                            <div className="text-Gray-N600 text-right text-base font-semibold leading-7">
+                            <div className="text-Gray-N600 text-right text-base leading-7 font-semibold">
                               ترتیب نمایش
                             </div>
                           </div>
@@ -999,15 +999,15 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                 <Drawer open={openDrawers.all} onOpenChange={(isOpen) => handleDrawerOpenChange(isOpen, "all")}>
                   <DrawerTrigger asChild>
                     <div
-                      className="bg-Shade-White outline-Gray-N100 mr-1 inline-flex cursor-pointer items-center justify-center gap-1 whitespace-nowrap rounded-2xl px-3 py-1 outline-2 outline-offset-[-2px]"
+                      className="bg-Shade-White outline-Gray-N100 mr-1 inline-flex cursor-pointer items-center justify-center gap-1 rounded-2xl px-3 py-1 whitespace-nowrap outline-2 outline-offset-[-2px]"
                       onClick={() => openDrawer("all")}
                     >
                       <Setting5 size="16" color="#1E1E1E" />
                       <div className="flex items-center gap-1">
-                        <div className="text-Gray-N700 text-sm font-medium leading-normal">فیلتر‌ها</div>
+                        <div className="text-Gray-N700 text-sm leading-normal font-medium">فیلتر‌ها</div>
                         {_activeFiltersCount > 0 && (
                           <div className="bg-Primary-P50 flex size-5 items-center justify-center rounded-[80px]">
-                            <div className="text-Primary-P500main text-[11px] font-semibold leading-none">
+                            <div className="text-Primary-P500main text-[11px] leading-none font-semibold">
                               {englishToFarsiNumber(_activeFiltersCount)}
                             </div>
                           </div>
@@ -1045,14 +1045,14 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                   >
                     <DrawerTrigger asChild>
                       <div
-                        className="bg-Primary-P50 outline-Primary-P500main mr-1 inline-flex cursor-pointer items-center justify-center gap-1 whitespace-nowrap rounded-2xl px-3 py-1 outline-2 outline-offset-[-2px]"
+                        className="bg-Primary-P50 outline-Primary-P500main mr-1 inline-flex cursor-pointer items-center justify-center gap-1 rounded-2xl px-3 py-1 whitespace-nowrap outline-2 outline-offset-[-2px]"
                         onClick={() => {
                           setActiveFilterSection("priceRange")
                           setOpenDrawers((prev) => ({ ...prev, priceRange: true }))
                         }}
                       >
                         <div className="flex items-center gap-1">
-                          <div className="text-Primary-P500main text-sm font-medium leading-normal">
+                          <div className="text-Primary-P500main text-sm leading-normal font-medium">
                             قیمت: {englishToFarsiNumber(Math.floor(priceRange[0] / 1000))} تا{" "}
                             {englishToFarsiNumber(Math.floor(priceRange[1] / 1000))} هزار
                           </div>
@@ -1091,14 +1091,14 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                   >
                     <DrawerTrigger asChild>
                       <div
-                        className="bg-Primary-P50 outline-Primary-P500main mr-1 inline-flex cursor-pointer items-center justify-center gap-1 whitespace-nowrap rounded-2xl px-3 py-1 outline-2 outline-offset-[-2px]"
+                        className="bg-Primary-P50 outline-Primary-P500main mr-1 inline-flex cursor-pointer items-center justify-center gap-1 rounded-2xl px-3 py-1 whitespace-nowrap outline-2 outline-offset-[-2px]"
                         onClick={() => {
                           setActiveFilterSection("flightTime")
                           openDrawer("flightTime")
                         }}
                       >
                         <div className="flex items-center gap-1">
-                          <div className="text-Primary-P500main text-sm font-medium leading-normal">
+                          <div className="text-Primary-P500main text-sm leading-normal font-medium">
                             ساعت پرواز: {englishToFarsiNumber(flightTimeRange[0])} تا{" "}
                             {englishToFarsiNumber(flightTimeRange[1])}
                           </div>
@@ -1135,14 +1135,14 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                   >
                     <DrawerTrigger asChild>
                       <div
-                        className="bg-Primary-P50 outline-Primary-P500main mr-1 inline-flex cursor-pointer items-center justify-center gap-1 whitespace-nowrap rounded-2xl px-3 py-1 outline-2 outline-offset-[-2px]"
+                        className="bg-Primary-P50 outline-Primary-P500main mr-1 inline-flex cursor-pointer items-center justify-center gap-1 rounded-2xl px-3 py-1 whitespace-nowrap outline-2 outline-offset-[-2px]"
                         onClick={() => {
                           setActiveFilterSection("cabinClass")
                           openDrawer("cabinClass")
                         }}
                       >
                         <div className="flex items-center gap-1">
-                          <div className="text-Primary-P500main text-sm font-medium leading-normal">
+                          <div className="text-Primary-P500main text-sm leading-normal font-medium">
                             کلاس پروازی:{" "}
                             {[
                               filters.cabinClass.economy ? "اکونومی" : null,
@@ -1186,14 +1186,14 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                   >
                     <DrawerTrigger asChild>
                       <div
-                        className="bg-Primary-P50 outline-Primary-P500main mr-1 inline-flex cursor-pointer items-center justify-center gap-1 whitespace-nowrap rounded-2xl px-3 py-1 outline-2 outline-offset-[-2px]"
+                        className="bg-Primary-P50 outline-Primary-P500main mr-1 inline-flex cursor-pointer items-center justify-center gap-1 rounded-2xl px-3 py-1 whitespace-nowrap outline-2 outline-offset-[-2px]"
                         onClick={() => {
                           setActiveFilterSection("airlines")
                           openDrawer("airlines")
                         }}
                       >
                         <div className="flex items-center gap-1">
-                          <div className="text-Primary-P500main text-sm font-medium leading-normal">
+                          <div className="text-Primary-P500main text-sm leading-normal font-medium">
                             ایرلاین‌ها:{" "}
                             {availableAirlines
                               .filter((airline) => filters.airlines[airline.uid])
@@ -1233,14 +1233,14 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                   >
                     <DrawerTrigger asChild>
                       <div
-                        className="bg-Primary-P50 outline-Primary-P500main mr-1 inline-flex cursor-pointer items-center justify-center gap-1 whitespace-nowrap rounded-2xl px-3 py-1 outline-2 outline-offset-[-2px]"
+                        className="bg-Primary-P50 outline-Primary-P500main mr-1 inline-flex cursor-pointer items-center justify-center gap-1 rounded-2xl px-3 py-1 whitespace-nowrap outline-2 outline-offset-[-2px]"
                         onClick={() => {
                           setActiveFilterSection("agencies")
                           openDrawer("agencies")
                         }}
                       >
                         <div className="flex items-center gap-1">
-                          <div className="text-Primary-P500main text-sm font-medium leading-normal">
+                          <div className="text-Primary-P500main text-sm leading-normal font-medium">
                             وبسایت‌ها:{" "}
                             {availableWebsites
                               .filter((website) => filters.agencies[website.uid])
@@ -1281,14 +1281,14 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                   >
                     <DrawerTrigger asChild>
                       <div
-                        className="bg-Shade-White outline-Gray-N100 mr-1 inline-flex cursor-pointer items-center justify-center gap-1 whitespace-nowrap rounded-2xl px-3 py-1 outline-2 outline-offset-[-2px]"
+                        className="bg-Shade-White outline-Gray-N100 mr-1 inline-flex cursor-pointer items-center justify-center gap-1 rounded-2xl px-3 py-1 whitespace-nowrap outline-2 outline-offset-[-2px]"
                         onClick={() => {
                           setActiveFilterSection("priceRange")
                           openDrawer("priceRange")
                         }}
                       >
                         <div className="flex items-center gap-1">
-                          <div className="text-Gray-N700 text-sm font-medium leading-normal">قیمت</div>
+                          <div className="text-Gray-N700 text-sm leading-normal font-medium">قیمت</div>
                         </div>
                       </div>
                     </DrawerTrigger>
@@ -1324,14 +1324,14 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                   >
                     <DrawerTrigger asChild>
                       <div
-                        className="bg-Shade-White outline-Gray-N100 mr-1 inline-flex cursor-pointer items-center justify-center gap-1 whitespace-nowrap rounded-2xl px-3 py-1 outline-2 outline-offset-[-2px]"
+                        className="bg-Shade-White outline-Gray-N100 mr-1 inline-flex cursor-pointer items-center justify-center gap-1 rounded-2xl px-3 py-1 whitespace-nowrap outline-2 outline-offset-[-2px]"
                         onClick={() => {
                           setActiveFilterSection("flightTime")
                           openDrawer("flightTime")
                         }}
                       >
                         <div className="flex items-center gap-1">
-                          <div className="text-Gray-N700 text-sm font-medium leading-normal">ساعت پرواز</div>
+                          <div className="text-Gray-N700 text-sm leading-normal font-medium">ساعت پرواز</div>
                         </div>
                       </div>
                     </DrawerTrigger>
@@ -1365,14 +1365,14 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                   >
                     <DrawerTrigger asChild>
                       <div
-                        className="bg-Shade-White outline-Gray-N100 mr-1 inline-flex cursor-pointer items-center justify-center gap-1 whitespace-nowrap rounded-2xl px-3 py-1 outline-2 outline-offset-[-2px]"
+                        className="bg-Shade-White outline-Gray-N100 mr-1 inline-flex cursor-pointer items-center justify-center gap-1 rounded-2xl px-3 py-1 whitespace-nowrap outline-2 outline-offset-[-2px]"
                         onClick={() => {
                           setActiveFilterSection("airlines")
                           openDrawer("airlines")
                         }}
                       >
                         <div className="flex items-center gap-1">
-                          <div className="text-Gray-N700 text-sm font-medium leading-normal">ایرلاین‌ها</div>
+                          <div className="text-Gray-N700 text-sm leading-normal font-medium">ایرلاین‌ها</div>
                         </div>
                       </div>
                     </DrawerTrigger>
@@ -1406,14 +1406,14 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
                   >
                     <DrawerTrigger asChild>
                       <div
-                        className="bg-Shade-White outline-Gray-N100 mr-1 inline-flex cursor-pointer items-center justify-center gap-1 whitespace-nowrap rounded-2xl px-3 py-1 outline-2 outline-offset-[-2px]"
+                        className="bg-Shade-White outline-Gray-N100 mr-1 inline-flex cursor-pointer items-center justify-center gap-1 rounded-2xl px-3 py-1 whitespace-nowrap outline-2 outline-offset-[-2px]"
                         onClick={() => {
                           setActiveFilterSection("agencies")
                           openDrawer("agencies")
                         }}
                       >
                         <div className="flex items-center gap-1">
-                          <div className="text-Gray-N700 text-sm font-medium leading-normal">وبسایت‌ها</div>
+                          <div className="text-Gray-N700 text-sm leading-normal font-medium">وبسایت‌ها</div>
                         </div>
                       </div>
                     </DrawerTrigger>
@@ -1505,7 +1505,7 @@ export default function FlightResults({ params, searchParams }: RouteParams) {
         ) : (
           // No flights at all for this day
           <>
-            <div className="max-w-266 container mx-auto flex flex-col items-center justify-center p-0 lg:px-4 lg:py-6">
+            <div className="container mx-auto flex max-w-266 flex-col items-center justify-center p-0 lg:px-4 lg:py-6">
               <NoTicketFound
                 type="noFlights"
                 onChangeSearch={() => {
@@ -1642,7 +1642,7 @@ const FilterDrawerContent = React.forwardRef<DrawerContentRefType, FilterDrawerC
         <DialogTitle className="bg-Shade-White border-Gray-N100 sticky top-0 z-10 inline-flex items-center self-stretch border-b py-4">
           <div className="relative inline-flex w-full items-center justify-center gap-2 self-stretch">
             <div
-              className={`text-Primary-P500main absolute left-5 cursor-pointer text-[13px] font-medium leading-normal ${
+              className={`text-Primary-P500main absolute left-5 cursor-pointer text-[13px] leading-normal font-medium ${
                 localActiveFiltersCount === 0 || activeSection !== "all" ? "invisible" : ""
               }`}
               onClick={handleLocalClearFilters}
@@ -1652,11 +1652,11 @@ const FilterDrawerContent = React.forwardRef<DrawerContentRefType, FilterDrawerC
 
             <div className="flex flex-1 items-center justify-center text-center">
               <div className="flex items-center justify-center">
-                <div className="text-Gray-N600 ml-2 text-center text-base font-semibold leading-7">{title}</div>
+                <div className="text-Gray-N600 ml-2 text-center text-base leading-7 font-semibold">{title}</div>
               </div>
               {localActiveFiltersCount > 0 && activeSection === "all" && (
                 <div className="bg-Primary-P50 flex size-5 items-center justify-center gap-2 rounded-[80px]">
-                  <div className="text-Primary-P500main text-[13px] font-medium leading-normal">
+                  <div className="text-Primary-P500main text-[13px] leading-normal font-medium">
                     {englishToFarsiNumber(localActiveFiltersCount)}
                   </div>
                 </div>
@@ -1676,7 +1676,7 @@ const FilterDrawerContent = React.forwardRef<DrawerContentRefType, FilterDrawerC
           {activeSection === "all" && totalActiveFiltersForChips > 0 && (
             <div className="border-Gray-N100 w-full border-b px-5 py-1">
               <div
-                className="flex items-center gap-[7px] overflow-x-auto whitespace-nowrap p-2"
+                className="flex items-center gap-[7px] overflow-x-auto p-2 whitespace-nowrap"
                 style={{ WebkitOverflowScrolling: "touch", scrollbarWidth: "thin" }}
               >
                 {/* Ticket Type Filters */}
@@ -1696,7 +1696,7 @@ const FilterDrawerContent = React.forwardRef<DrawerContentRefType, FilterDrawerC
                           </div>
                         </div>
                         <div className="flex items-center justify-center gap-1">
-                          <div className="text-Gray-N700 text-sm font-medium leading-normal">
+                          <div className="text-Gray-N700 text-sm leading-normal font-medium">
                             {key === "charter" ? "چارتری" : "سیستمی"}
                           </div>
                         </div>
@@ -1721,7 +1721,7 @@ const FilterDrawerContent = React.forwardRef<DrawerContentRefType, FilterDrawerC
                           </div>
                         </div>
                         <div className="flex items-center justify-center gap-1">
-                          <div className="text-Gray-N700 text-sm font-medium leading-normal">
+                          <div className="text-Gray-N700 text-sm leading-normal font-medium">
                             {key === "economy" ? "اکونومی" : key === "premiumEconomy" ? "اکونومی پریمیوم" : "بیزینس"}
                           </div>
                         </div>
@@ -1746,7 +1746,7 @@ const FilterDrawerContent = React.forwardRef<DrawerContentRefType, FilterDrawerC
                           </div>
                         </div>
                         <div className="flex items-center justify-center gap-1">
-                          <div className="text-Gray-N700 text-sm font-medium leading-normal">
+                          <div className="text-Gray-N700 text-sm leading-normal font-medium">
                             {availableAirlines.find((airline) => airline.uid === key)?.name || key}
                           </div>
                         </div>
@@ -1771,7 +1771,7 @@ const FilterDrawerContent = React.forwardRef<DrawerContentRefType, FilterDrawerC
                           </div>
                         </div>
                         <div className="flex items-center justify-center gap-1">
-                          <div className="text-Gray-N700 text-sm font-medium leading-normal">
+                          <div className="text-Gray-N700 text-sm leading-normal font-medium">
                             {availableWebsites.find((website) => website.uid === key)?.name_fa || key}
                           </div>
                         </div>
@@ -1792,7 +1792,7 @@ const FilterDrawerContent = React.forwardRef<DrawerContentRefType, FilterDrawerC
                       </div>
                     </div>
                     <div className="flex items-center justify-center gap-1">
-                      <div className="text-Gray-N700 text-sm font-medium leading-normal">
+                      <div className="text-Gray-N700 text-sm leading-normal font-medium">
                         بازه قیمت (تومان): {englishToFarsiNumber(Math.floor(localPriceRange[0] / 1000))} تا{" "}
                         {englishToFarsiNumber(Math.floor(localPriceRange[1] / 1000))} هزار
                       </div>
@@ -1812,7 +1812,7 @@ const FilterDrawerContent = React.forwardRef<DrawerContentRefType, FilterDrawerC
                       </div>
                     </div>
                     <div className="flex items-center justify-center gap-1">
-                      <div className="text-Gray-N700 text-sm font-medium leading-normal">
+                      <div className="text-Gray-N700 text-sm leading-normal font-medium">
                         ساعت پرواز: {englishToFarsiNumber(localFlightTimeRange[0])} تا{" "}
                         {englishToFarsiNumber(localFlightTimeRange[1])}
                       </div>
@@ -1965,12 +1965,12 @@ const FilterSection: React.FC<FilterSectionProps> = ({ title, children, count = 
         onClick={() => setExpanded(!expanded)}
       >
         <div className="flex items-center gap-2">
-          <div className="text-Gray-N600 text-sm font-semibold leading-normal">{title}</div>
+          <div className="text-Gray-N600 text-sm leading-normal font-semibold">{title}</div>
         </div>
         <div className="flex items-center gap-2">
           {count > 0 && (
             <div className="bg-Primary-P50 flex h-5 w-10 items-center justify-center rounded-[80px]">
-              <div className="text-Primary-P500main text-[13px] font-medium leading-normal">
+              <div className="text-Primary-P500main text-[13px] leading-normal font-medium">
                 {englishToFarsiNumber(count)}
               </div>
             </div>
@@ -2023,10 +2023,10 @@ const FilterCheckbox: React.FC<FilterCheckboxProps> = ({ label, checked, onChang
     )}
 
     <div className="inline-flex flex-1 flex-col items-end justify-start gap-1">
-      <div className="text-Gray-N700 self-stretch text-right text-sm font-medium leading-normal">{label}</div>
+      <div className="text-Gray-N700 self-stretch text-right text-sm leading-normal font-medium">{label}</div>
     </div>
     {extraText && (
-      <div className="text-Gray-N500 text-right text-[13px] font-normal leading-none">
+      <div className="text-Gray-N500 text-right text-[13px] leading-none font-normal">
         {englishToFarsiNumber(extraText)}
       </div>
     )}

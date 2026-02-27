@@ -76,7 +76,7 @@ export function FlightList({ origin, destination, departureDate, onFlightSelect 
         ) : (
           <div className="flex flex-col items-center justify-center py-12 text-center">
             <p className="text-Gray-N600 font-anjoman-max text-lg">پروازی برای این مسیر یافت نشد</p>
-            <p className="text-Gray-N500 mt-2 font-anjoman-max text-sm">لطفاً تاریخ یا مقصد دیگری را انتخاب کنید</p>
+            <p className="text-Gray-N500 font-anjoman-max mt-2 text-sm">لطفاً تاریخ یا مقصد دیگری را انتخاب کنید</p>
           </div>
         )}
       </div>

@@ -85,7 +85,7 @@ export default function FullChatDemo() {
         >
           {messages.length === 0 ? (
             <div className="flex h-full flex-col items-center justify-center text-center">
-              <div className="text-3xl font-semibold text-primary-500 md:text-2xl lg:text-3xl sm-md2:text-3xl xs:text-2xl">
+              <div className="text-primary-500 sm-md2:text-3xl xs:text-2xl text-3xl font-semibold md:text-2xl lg:text-3xl">
                 !برنامه سفرت رو با فولی بچین
               </div>
               <div
@@ -99,7 +99,7 @@ export default function FullChatDemo() {
             messages.map((msg, i) => (
               <div key={i} className="flex items-center justify-center">
                 {/* #ededed */}
-                {msg.direction === "incoming" && <Dot size={60} color="#5a28ee" className="-mr-6 mt-2" />}
+                {msg.direction === "incoming" && <Dot size={60} color="#5a28ee" className="mt-2 -mr-6" />}
                 <Message model={msg} />
               </div>
             ))

@@ -149,7 +149,7 @@ export const ItineraryTimeline = React.memo(function ItineraryTimeline({
                 <div className="relative mt-4 flex gap-4">
                   <div className="shrink-0">
                     <button
-                      className="text-Gray-N600 hover:border-Primary-P500main hover:bg-Primary-P50 hover:text-Primary-P500main focus:ring-Primary-P500main flex items-center gap-2 rounded-lg border border-dashed border-gray-300 bg-white px-3 py-2 text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2"
+                      className="text-Gray-N600 hover:border-Primary-P500main hover:bg-Primary-P50 hover:text-Primary-P500main focus:ring-Primary-P500main flex items-center gap-2 rounded-lg border border-dashed border-gray-300 bg-white px-3 py-2 text-sm font-medium transition-colors focus:ring-2 focus:ring-offset-2 focus:outline-none"
                       aria-label={`افزودن فعالیت به ${day.dayName}`}
                     >
                       <Plus className="h-4 w-4" aria-hidden="true" />

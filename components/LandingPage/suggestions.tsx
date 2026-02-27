@@ -21,7 +21,7 @@ const suggestions = [
 
 function SuggestionCard({ text, discount, bg }: { text: string; discount: string; bg: string }) {
   return (
-    <Card className="h-39 relative shrink-0 border-0">
+    <Card className="relative h-39 shrink-0 border-0">
       {/* Background  - Positioned Under Image */}
       <div className={`absolute inset-0 rounded-xl bg-gradient-to-l ${bg}`} />
 
@@ -38,8 +38,8 @@ function SuggestionCard({ text, discount, bg }: { text: string; discount: string
 
         {/* Text Content */}
         <div className="z-10 flex flex-1 flex-col gap-1 pr-4 text-right text-white">
-          <div className="text-Shade-White text-base font-normal leading-relaxed">{text}</div>
-          <div className="text-Shade-White text-xl font-bold leading-loose">{discount}</div>
+          <div className="text-Shade-White text-base leading-relaxed font-normal">{text}</div>
+          <div className="text-Shade-White text-xl leading-loose font-bold">{discount}</div>
         </div>
       </div>
     </Card>

@@ -85,8 +85,7 @@ export const button = cva(
 )
 
 export interface ButtonProps
-  extends React.ButtonHTMLAttributes<HTMLButtonElement | HTMLAnchorElement>,
-    VariantProps<typeof button> {
+  extends React.ButtonHTMLAttributes<HTMLButtonElement | HTMLAnchorElement>, VariantProps<typeof button> {
   href?: string
   disabled?: boolean
   leftIcon?: React.ReactNode

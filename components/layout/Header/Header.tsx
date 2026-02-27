@@ -253,7 +253,7 @@ export function Header({ menuItems, className, forceScrolledStyle = false, compa
   const miniAppDisplayName = getMiniAppFirstName()
   const resolvedName =
     (authUser && (authUser.full_name || storedFirstName)) || miniAppDisplayName || storedFirstName || "کاربر"
-  const displayName = isMiniApp ? extractFirstName(resolvedName) ?? "کاربر" : resolvedName
+  const displayName = isMiniApp ? (extractFirstName(resolvedName) ?? "کاربر") : resolvedName
   const isInMiniApp = isMiniApp
 
   return (
@@ -261,7 +261,7 @@ export function Header({ menuItems, className, forceScrolledStyle = false, compa
       <header className={headerClasses}>
         {/* Content container - only constrain width for content, not background */}
         <div
-          className={`mx-auto w-full max-w-[1136px] px-4 md:px-4 lg-xl:px-6 ${
+          className={`lg-xl:px-6 mx-auto w-full max-w-[1136px] px-4 md:px-4 ${
             compact ? "px-3 lg:px-4" : "px-4 lg:px-6"
           } ${isScrolled ? "w-full" : ""}`}
         >
@@ -343,7 +343,7 @@ export function Header({ menuItems, className, forceScrolledStyle = false, compa
                     سلام {displayName}!
                   </button>
                   {userMenuOpen && (
-                    <div className="w-30 absolute left-0 top-full mt-1 rounded-md bg-white shadow-lg">
+                    <div className="absolute top-full left-0 mt-1 w-30 rounded-md bg-white shadow-lg">
                       <button
                         onClick={() => {
                           try {
@@ -436,7 +436,7 @@ export function Header({ menuItems, className, forceScrolledStyle = false, compa
                   سلام {displayName}!
                 </button>
                 {userMenuOpen && (
-                  <div className="w-30 absolute left-0 top-full mt-1 rounded-md border bg-white shadow-lg">
+                  <div className="absolute top-full left-0 mt-1 w-30 rounded-md border bg-white shadow-lg">
                     <button
                       onClick={() => {
                         try {
@@ -461,7 +461,7 @@ export function Header({ menuItems, className, forceScrolledStyle = false, compa
         </div>
       </header>
       {toast && (
-        <div className="fixed left-1/2 top-6 z-[100] -translate-x-1/2">
+        <div className="fixed top-6 left-1/2 z-[100] -translate-x-1/2">
           <div className="bg-Gray-N900 fonr-small rounded-lg px-4 py-2 text-[12px] text-white shadow-lg md:text-[14px] md:font-normal">
             {toast.message}
           </div>

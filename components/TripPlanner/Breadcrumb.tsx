@@ -21,7 +21,7 @@ export function Breadcrumb({ items, className = "" }: BreadcrumbProps) {
             {item.onClick ? (
               <button
                 onClick={item.onClick}
-                className="text-Primary-P500main focus:ring-Primary-P500main rounded font-anjoman-max text-sm transition-colors hover:text-primary-600 focus:outline-none focus:ring-2 focus:ring-offset-2"
+                className="text-Primary-P500main focus:ring-Primary-P500main font-anjoman-max hover:text-primary-600 rounded text-sm transition-colors focus:ring-2 focus:ring-offset-2 focus:outline-none"
               >
                 {item.label}
               </button>

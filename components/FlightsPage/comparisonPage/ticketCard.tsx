@@ -97,7 +97,7 @@ export default function TicketCard({ websites }: { websites: dude[] }) {
         className="cards-container h-[550px] w-full snap-y snap-mandatory overflow-y-auto px-3 md:px-0"
         style={{ scrollbarWidth: "none" }}
       >
-        <div className="text-Gray-N600 mb-5 mt-5 h-6 self-stretch text-right text-sm font-semibold leading-normal md:mt-0">
+        <div className="text-Gray-N600 mt-5 mb-5 h-6 self-stretch text-right text-sm leading-normal font-semibold md:mt-0">
           {englishToFarsiNumber(websites.length)} فروشنده
         </div>
         {sortedWebsites.map((website, index) => {
@@ -117,7 +117,7 @@ export default function TicketCard({ websites }: { websites: dude[] }) {
               <div className="bg-Shade-White outline-Gray-N200 relative mb-3 inline-flex w-full flex-col items-center justify-center gap-3 self-stretch rounded-xl px-4 py-3 outline-1 outline-offset-[-1px]">
                 {/* badge */}
                 {getTotalPrice(website) === minPrice && (
-                  <div className="bg-Success-s50 absolute left-0 top-0 inline-flex items-center justify-center gap-1 rounded-br-sm rounded-tl-sm px-2.5 py-1">
+                  <div className="bg-Success-s50 absolute top-0 left-0 inline-flex items-center justify-center gap-1 rounded-tl-sm rounded-br-sm px-2.5 py-1">
                     <div className="text-Success-s700 justify-center text-right text-[8px] font-semibold">
                       ارزان‌ترین
                     </div>
@@ -186,10 +186,10 @@ export default function TicketCard({ websites }: { websites: dude[] }) {
                       <div className="flex flex-col items-end gap-2">
                         {Number(adultCount) > 0 && (
                           <div className="flex w-full items-center justify-end gap-3">
-                            <div className="text-Gray-N700 text-[11px] font-normal leading-none">
+                            <div className="text-Gray-N700 text-[11px] leading-none font-normal">
                               بزرگسال ({englishToFarsiNumber(adultCount)})
                             </div>
-                            <div className="text-Gray-N700 text-left text-sm font-normal leading-normal">
+                            <div className="text-Gray-N700 text-left text-sm leading-normal font-normal">
                               {englishToFarsiNumber(website.adult_price)}
                             </div>
                             <div className="text-Gray-N500 justify-start text-right text-[11px] font-semibold">
@@ -199,10 +199,10 @@ export default function TicketCard({ websites }: { websites: dude[] }) {
                         )}
                         {Number(childCount) > 0 && (
                           <div className="flex w-full items-center justify-end gap-3">
-                            <div className="text-Gray-N700 text-[11px] font-normal leading-none">
+                            <div className="text-Gray-N700 text-[11px] leading-none font-normal">
                               کودک ({englishToFarsiNumber(childCount)})
                             </div>
-                            <div className="text-Gray-N700 text-left text-sm font-normal leading-normal">
+                            <div className="text-Gray-N700 text-left text-sm leading-normal font-normal">
                               {englishToFarsiNumber(website.child_price ?? "نامشخص")}
                             </div>
                             <div className="text-Gray-N500 justify-start text-right text-[11px] font-semibold">
@@ -212,10 +212,10 @@ export default function TicketCard({ websites }: { websites: dude[] }) {
                         )}
                         {Number(infantCount) > 0 && (
                           <div className="flex w-full items-center justify-end gap-3">
-                            <div className="text-Gray-N700 text-[11px] font-normal leading-none">
+                            <div className="text-Gray-N700 text-[11px] leading-none font-normal">
                               نوزاد ({englishToFarsiNumber(infantCount)})
                             </div>
-                            <div className="text-Gray-N700 text-left text-sm font-normal leading-normal">
+                            <div className="text-Gray-N700 text-left text-sm leading-normal font-normal">
                               {englishToFarsiNumber(website.infant_price ?? "نامشخص")}
                             </div>
                             <div className="text-Gray-N500 justify-start text-right text-[11px] font-semibold">

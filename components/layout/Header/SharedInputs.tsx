@@ -24,7 +24,7 @@ export function FloatingInput({ label, error, ...props }: FloatingInputProps) {
         }}
         placeholder=" "
         className={twMerge(
-          "peer w-full rounded-lg border bg-transparent px-3 py-3 transition focus:outline-none focus:ring-2",
+          "peer w-full rounded-lg border bg-transparent px-3 py-3 transition focus:ring-2 focus:outline-none",
           error ? "border-red-500 focus:ring-red-300" : "focus:ring-Primary-P300 border-gray-300",
           props.className
         )}

@@ -50,7 +50,7 @@ export default function TicketCard({
         <div className="inline-flex items-center justify-end gap-4 self-stretch">
           <div className="inline-flex flex-1 flex-col items-start justify-center gap-2">
             {/* airline name */}
-            <div className="text-Gray-N700 mb-1 justify-start self-stretch text-right text-base font-semibold leading-normal">
+            <div className="text-Gray-N700 mb-1 justify-start self-stretch text-right text-base leading-normal font-semibold">
               {airline.name}
             </div>
             {/* tags */}
@@ -61,10 +61,10 @@ export default function TicketCard({
                 </div> */}
               </div>
               <div className="bg-Gray-N100 flex items-center justify-center gap-1.5 overflow-hidden rounded-sm px-1.5 py-1">
-                <div className="text-Gray-N600 justify-center text-right text-[13px] font-normal leading-3">سیستمی</div>
+                <div className="text-Gray-N600 justify-center text-right text-[13px] leading-3 font-normal">سیستمی</div>
               </div>
               <div className="bg-Gray-N100 flex items-center justify-center gap-1.5 overflow-hidden rounded-sm px-1.5 py-1">
-                <div className="text-Gray-N600 justify-center text-right text-[13px] font-normal leading-3">
+                <div className="text-Gray-N600 justify-center text-right text-[13px] leading-3 font-normal">
                   {flightInfo.cabinClass}
                 </div>
               </div>
@@ -80,11 +80,11 @@ export default function TicketCard({
         <div className="mt-3 flex flex-col items-center justify-start self-stretch pb-1">
           <div className="inline-flex items-center justify-start gap-2 self-stretch">
             <div className="inline-flex w-16 flex-col items-center justify-start">
-              <div className="text-Gray-N800 justify-start self-stretch text-center text-xl font-semibold leading-loose">
+              <div className="text-Gray-N800 justify-start self-stretch text-center text-xl leading-loose font-semibold">
                 {arrivalTime}
               </div>
               <div className="flex flex-col items-center justify-start gap-2" dir="rtl">
-                <div className="text-Gray-N500 justify-start text-center text-[12px] font-normal leading-3">
+                <div className="text-Gray-N500 justify-start text-center text-[12px] leading-3 font-normal">
                   {destination}
                 </div>
                 {/* <div className="text-Gray-N500 justify-start text-center text-[10px] leading-3 font-normal">
@@ -93,29 +93,29 @@ export default function TicketCard({
               </div>
             </div>
             {/* flight duriation */}
-            <div className="inline-flex flex-1 flex-col items-center justify-end gap-2 self-stretch pb-6 pt-2">
+            <div className="inline-flex flex-1 flex-col items-center justify-end gap-2 self-stretch pt-2 pb-6">
               <div className="inline-flex justify-start gap-1 text-center" dir="rtl">
-                <span className="text-Gray-N500 text-[13px] font-normal leading-3">
+                <span className="text-Gray-N500 text-[13px] leading-3 font-normal">
                   {englishToFarsiNumber(duration.hours)}
                 </span>
-                <span className="text-Gray-N500 text-[13px] font-normal leading-3">ساعت </span>
-                <span className="text-Gray-N500 text-[13px] font-normal leading-3">
+                <span className="text-Gray-N500 text-[13px] leading-3 font-normal">ساعت </span>
+                <span className="text-Gray-N500 text-[13px] leading-3 font-normal">
                   {englishToFarsiNumber(duration.minutes)}
                 </span>
-                <span className="text-Gray-N500 text-[13px] font-normal leading-3"> دقیقه</span>
+                <span className="text-Gray-N500 text-[13px] leading-3 font-normal"> دقیقه</span>
               </div>
               {/* image */}
-              <div className="w-45 md:w-90 lg:w-45 flex items-center justify-center gap-1.5">
+              <div className="flex w-45 items-center justify-center gap-1.5 md:w-90 lg:w-45">
                 <Image alt="airline" width={196} height={6} src={"/images/airplane.png"} />
               </div>
             </div>
 
             <div className="inline-flex w-16 flex-col items-center justify-start">
-              <div className="text-Gray-N800 justify-start self-stretch text-center text-xl font-semibold leading-loose">
+              <div className="text-Gray-N800 justify-start self-stretch text-center text-xl leading-loose font-semibold">
                 {departureTime}
               </div>
               <div className="flex flex-col items-center justify-start gap-2" dir="rtl">
-                <div className="text-Gray-N500 justify-start text-center text-[12px] font-normal leading-3">
+                <div className="text-Gray-N500 justify-start text-center text-[12px] leading-3 font-normal">
                   {origin}
                 </div>
                 {/* <div className="text-Gray-N500 justify-start text-center text-[10px] leading-3 font-normal">
@@ -134,7 +134,7 @@ export default function TicketCard({
             <Button
               intent="text"
               size="small"
-              className="text-Primary-P500main -mb-2 justify-center text-center text-[15px] font-semibold leading-none"
+              className="text-Primary-P500main -mb-2 justify-center text-center text-[15px] leading-none font-semibold"
             >
               جزییات
               <ArrowDown2 size="14" color="#5A28EE" />
@@ -145,7 +145,7 @@ export default function TicketCard({
         {/* details accordian */}
         <div
           style={{ maxHeight: height }}
-          className={`overflow-hidden transition-all duration-300 ease-in-out ${openDetails ? "mb-4 mt-2" : "my-0"}`}
+          className={`overflow-hidden transition-all duration-300 ease-in-out ${openDetails ? "mt-2 mb-4" : "my-0"}`}
         >
           <div
             ref={contentRef}
@@ -154,21 +154,21 @@ export default function TicketCard({
             <div className="">
               {/* Accordion Content Here */}
               <div className="flex w-full flex-col justify-start gap-4 self-stretch" dir="rtl">
-                <div className="gap-17 flex w-full flex-row">
+                <div className="flex w-full flex-row gap-17">
                   <div className="inline-flex w-full items-center justify-start gap-1">
-                    <div className="text-Gray-N500 shrink-0 justify-start text-start text-[14px] font-normal leading-[16px]">
+                    <div className="text-Gray-N500 shrink-0 justify-start text-start text-[14px] leading-[16px] font-normal">
                       بار مجاز:
                     </div>
-                    <div className="text-Gray-N800 shrink-0 justify-start text-start text-[14px] font-semibold leading-[16px]">
+                    <div className="text-Gray-N800 shrink-0 justify-start text-start text-[14px] leading-[16px] font-semibold">
                       {englishToFarsiNumber(flightInfo.baggage)}
                     </div>
                   </div>
 
                   <div className="inline-flex w-full items-center justify-end gap-1">
-                    <div className="text-Gray-N500 shrink-0 justify-start text-start text-[14px] font-normal leading-[16px]">
+                    <div className="text-Gray-N500 shrink-0 justify-start text-start text-[14px] leading-[16px] font-normal">
                       کلاس پرواز:
                     </div>
-                    <div className="text-Gray-N800 shrink-0 justify-start text-start text-[14px] font-semibold leading-[16px]">
+                    <div className="text-Gray-N800 shrink-0 justify-start text-start text-[14px] leading-[16px] font-semibold">
                       اکونومی
                     </div>
                   </div>

@@ -30,12 +30,12 @@ const FilterSection = ({
         onClick={() => setExpanded(!expanded)}
       >
         <div className="flex items-center gap-2">
-          <div className="text-Gray-N600 text-sm font-semibold leading-normal">{title}</div>
+          <div className="text-Gray-N600 text-sm leading-normal font-semibold">{title}</div>
         </div>
         <div className="flex items-center gap-2">
           {count > 0 && (
             <div className="bg-Primary-P50 flex h-5 w-10 items-center justify-center rounded-[80px]">
-              <div className="text-Primary-P500main text-[13px] font-medium leading-normal">
+              <div className="text-Primary-P500main text-[13px] leading-normal font-medium">
                 {englishToFarsiNumber(count)}
               </div>
             </div>
@@ -102,10 +102,10 @@ const FilterCheckbox = ({
     )}
 
     <div className="inline-flex flex-1 flex-col items-end justify-start gap-1">
-      <div className="text-Gray-N700 self-stretch text-right text-sm font-medium leading-normal">{label}</div>
+      <div className="text-Gray-N700 self-stretch text-right text-sm leading-normal font-medium">{label}</div>
     </div>
     {extraText && (
-      <div className="text-Gray-N500 text-right text-[13px] font-normal leading-none">
+      <div className="text-Gray-N500 text-right text-[13px] leading-none font-normal">
         {englishToFarsiNumber(extraText)}
       </div>
     )}
@@ -118,13 +118,13 @@ const _RangeSlider = ({ minValue, maxValue }: { minValue: number; maxValue: numb
     <div className="flex flex-col items-center justify-start gap-1 self-stretch py-3">
       <div className="relative inline-flex items-center justify-center self-stretch py-2">
         <div className="bg-Gray-N100 relative h-1 flex-1 overflow-hidden rounded-sm">
-          <div className="bg-Primary-P500main rounded-xs absolute h-1" style={{ width: "95%", left: "0" }} />
+          <div className="bg-Primary-P500main absolute h-1 rounded-xs" style={{ width: "95%", left: "0" }} />
         </div>
         {/* This is a simplified slider - for a real implementation, use a proper range slider component */}
       </div>
       <div className="inline-flex h-6 items-center justify-between self-stretch">
-        <div className="text-Gray-N500 text-sm font-medium leading-normal">{minValue}</div>
-        <div className="text-Gray-N500 text-right text-sm font-medium leading-normal">{maxValue}</div>
+        <div className="text-Gray-N500 text-sm leading-normal font-medium">{minValue}</div>
+        <div className="text-Gray-N500 text-right text-sm leading-normal font-medium">{maxValue}</div>
       </div>
     </div>
   )
@@ -245,7 +245,7 @@ export function FlightFilters({
                 </div>
               </div>
               <div className="flex items-center justify-center gap-1">
-                <div className="text-Primary-P500main text-sm font-medium leading-normal">
+                <div className="text-Primary-P500main text-sm leading-normal font-medium">
                   کلاس پروازی:{" "}
                   {[
                     filters.cabinClass.economy ? "اکونومی" : null,
@@ -271,7 +271,7 @@ export function FlightFilters({
                 </div>
               </div>
               <div className="flex items-center justify-center gap-1">
-                <div className="text-Primary-P500main text-sm font-medium leading-normal">
+                <div className="text-Primary-P500main text-sm leading-normal font-medium">
                   ایرلاین‌ها:{" "}
                   {availableAirlines
                     .filter((airline) => filters.airlines[airline.uid])
@@ -294,7 +294,7 @@ export function FlightFilters({
                 </div>
               </div>
               <div className="flex items-center justify-center gap-1">
-                <div className="text-Primary-P500main text-sm font-medium leading-normal">
+                <div className="text-Primary-P500main text-sm leading-normal font-medium">
                   وبسایت‌ها:{" "}
                   {availableWebsites
                     .filter((website) => filters.agencies[website.uid])
@@ -317,7 +317,7 @@ export function FlightFilters({
                 </div>
               </div>
               <div className="flex items-center justify-center gap-1">
-                <div className="text-Primary-P500main text-sm font-medium leading-normal">
+                <div className="text-Primary-P500main text-sm leading-normal font-medium">
                   قیمت: {englishToFarsiNumber(Math.floor(priceRange[0] / 1000))} تا{" "}
                   {englishToFarsiNumber(Math.floor(priceRange[1] / 1000))} هزار
                 </div>
@@ -337,7 +337,7 @@ export function FlightFilters({
                 </div>
               </div>
               <div className="flex items-center justify-center gap-1">
-                <div className="text-Primary-P500main text-sm font-medium leading-normal">
+                <div className="text-Primary-P500main text-sm leading-normal font-medium">
                   ساعت پرواز: {englishToFarsiNumber(flightTimeRange[0])} تا {englishToFarsiNumber(flightTimeRange[1])}
                 </div>
               </div>
@@ -362,10 +362,10 @@ export function FlightFilters({
               <div className="flex items-center justify-start gap-2 py-1">
                 <Setting5 color="#334155" size={16} className="text-Gray-N700" />
               </div>
-              <div className="text-Gray-N600 text-right text-base font-semibold leading-7">فیلتر‌ها</div>
+              <div className="text-Gray-N600 text-right text-base leading-7 font-semibold">فیلتر‌ها</div>
               {activeFiltersCount > 0 && (
                 <div className="bg-Primary-P50 flex size-5 items-center justify-center gap-2 rounded-[80px]">
-                  <div className="text-Primary-P500main text-[13px] font-medium leading-normal">
+                  <div className="text-Primary-P500main text-[13px] leading-normal font-medium">
                     {englishToFarsiNumber(activeFiltersCount)}
                   </div>
                 </div>
@@ -374,7 +374,7 @@ export function FlightFilters({
 
             {activeFiltersCount > 0 && (
               <div className="h-5 cursor-pointer rounded-[80px]" onClick={clearFilters}>
-                <div className="text-Primary-P500main text-[13px] font-medium leading-normal">حذف فیلتر‌ها</div>
+                <div className="text-Primary-P500main text-[13px] leading-normal font-medium">حذف فیلتر‌ها</div>
               </div>
             )}
           </div>

@@ -149,7 +149,7 @@ export function FlightResultsList({ flights, onRefresh }: FlightResultsListProps
 
   return (
     <div className="flex w-full flex-col items-center gap-3 md:gap-4">
-      <div className="flex w-full max-w-[328px] flex-col gap-3 md:max-w-[738px] md:gap-4 sm-md:max-w-[400px] md-lg:max-w-[700px]">
+      <div className="sm-md:max-w-[400px] md-lg:max-w-[700px] flex w-full max-w-[328px] flex-col gap-3 md:max-w-[738px] md:gap-4">
         {flights.map((flight) => (
           <FlightCard
             key={flight.id}

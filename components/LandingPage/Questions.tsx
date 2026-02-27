@@ -27,7 +27,7 @@ const faqData = [
 const Questions = () => {
   return (
     <div className="items-right flex w-full flex-col justify-center pb-8">
-      <h2 className="text-Gray-N600 my-8 text-right text-xl font-bold leading-loose">سوالات متداول</h2>
+      <h2 className="text-Gray-N600 my-8 text-right text-xl leading-loose font-bold">سوالات متداول</h2>
       <Accordion type="single" collapsible className="space-y-3">
         {faqData.map((item, index) => (
           <AccordionItem
@@ -35,10 +35,10 @@ const Questions = () => {
             value={`item-${index}`}
             className="outline-Gray-N200 data-[state=open]:outline-Primary-P500main flex flex-col items-stretch justify-center self-stretch rounded-xl bg-[#fcfcfc] pb-2 outline-2 outline-offset-[-2px] data-[state=open]:outline-1 data-[state=open]:outline-offset-[-1px]"
           >
-            <AccordionTrigger className="data-[state=open]:text-Primary-P500main text-Gray-N600 -mb-2 flex items-center justify-between p-5 text-right text-base font-medium leading-7 md:text-lg">
+            <AccordionTrigger className="data-[state=open]:text-Primary-P500main text-Gray-N600 -mb-2 flex items-center justify-between p-5 text-right text-base leading-7 font-medium md:text-lg">
               {item.question}
             </AccordionTrigger>
-            <AccordionContent className="text-Gray-N600 mb-1 px-5 py-3 text-right text-base font-normal leading-7">
+            <AccordionContent className="text-Gray-N600 mb-1 px-5 py-3 text-right text-base leading-7 font-normal">
               {item.answer}
             </AccordionContent>
           </AccordionItem>
