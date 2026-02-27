@@ -241,7 +241,6 @@ true` in the user data. The user typically grants this by pressing “Start” w
   keep in mind as you scale.)
 
 - Use Cases for SendMessage in Floy: Once integrated, you might use this to send:
-
   - Booking Confirmations: After a user books a flight/hotel, send details or a confirmation code via
     Eitaa.
   - Price Drop Alerts: If a user is watching a route or hotel and the price drops, notify them instantly.
