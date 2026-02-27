@@ -20,11 +20,6 @@ const config = {
     { source: "/health", destination: "/api/health" },
     { source: "/ping", destination: "/api/health" },
   ],
-  experimental: {
-    turbopack: {
-      root: __dirname,
-    },
-  },
 }
 
 module.exports = async () => {
