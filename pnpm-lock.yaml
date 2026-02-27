@@ -242,6 +242,9 @@ importers:
       "@storybook/test-runner":
         specifier: ^0.21.0
         version: 0.21.3(@types/node@20.19.35)(storybook@8.6.17(prettier@3.0.3))
+      "@swc/core":
+        specifier: 1.15.17
+        version: 1.15.17
       "@tailwindcss/postcss":
         specifier: ^4.0.0
         version: 4.2.1

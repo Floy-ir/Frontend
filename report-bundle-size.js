@@ -37,7 +37,7 @@ if (fs.existsSync(appBuildManifestPath)) {
 } else if (fs.existsSync(appBuildManifestAltPath)) {
   appDirMeta = JSON.parse(fs.readFileSync(appBuildManifestAltPath, "utf8"))
 } else {
-  console.warn('No app-build-manifest.json found; skipping app-dir bundle analysis.')
+  console.warn("No app-build-manifest.json found; skipping app-dir bundle analysis.")
 }
 
 // this memory cache ensures we dont read any script file more than once
