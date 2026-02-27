@@ -37,11 +37,11 @@ export function FlightList({ origin, destination, departureDate, onFlightSelect 
     <div className="flex flex-col gap-6 p-6" dir="rtl">
       {/* Header */}
       <div className="flex flex-col gap-2">
-        <h1 className="font-anjoman-max text-Gray-N800 text-xl font-bold">
+        <h1 className="text-Gray-N800 font-anjoman-max text-xl font-bold">
           پرواز {origin} به {destination}
         </h1>
-        {departureDate && <p className="font-anjoman-max text-Gray-N600 text-sm">تاریخ پرواز: {departureDate}</p>}
-        <p className="font-anjoman-max text-Gray-N600 text-sm">{englishToFarsiNumber(flights.length)} پرواز موجود</p>
+        {departureDate && <p className="text-Gray-N600 font-anjoman-max text-sm">تاریخ پرواز: {departureDate}</p>}
+        <p className="text-Gray-N600 font-anjoman-max text-sm">{englishToFarsiNumber(flights.length)} پرواز موجود</p>
       </div>
 
       {/* Flight Results */}
@@ -75,8 +75,8 @@ export function FlightList({ origin, destination, departureDate, onFlightSelect 
           ))
         ) : (
           <div className="flex flex-col items-center justify-center py-12 text-center">
-            <p className="font-anjoman-max text-Gray-N600 text-lg">پروازی برای این مسیر یافت نشد</p>
-            <p className="font-anjoman-max text-Gray-N500 mt-2 text-sm">لطفاً تاریخ یا مقصد دیگری را انتخاب کنید</p>
+            <p className="text-Gray-N600 font-anjoman-max text-lg">پروازی برای این مسیر یافت نشد</p>
+            <p className="text-Gray-N500 mt-2 font-anjoman-max text-sm">لطفاً تاریخ یا مقصد دیگری را انتخاب کنید</p>
           </div>
         )}
       </div>

@@ -10,7 +10,7 @@ export function SearchFormContainer() {
   return (
     <div
       data-name="Container-for-search-container"
-      className="outline-Gray-N100 relative mx-auto flex w-full max-w-full flex-col items-start gap-4 rounded-xl bg-white p-4 outline-1 outline-offset-[-1px] md:gap-6 md:rounded-3xl md:px-8 md:pt-6 md:pb-5"
+      className="outline-Gray-N100 relative mx-auto flex w-full max-w-full flex-col items-start gap-4 rounded-xl bg-white p-4 outline-1 outline-offset-[-1px] md:gap-6 md:rounded-3xl md:px-8 md:pb-5 md:pt-6"
     >
       {/* Tabs Navigation */}
       <div className="border-Gray-N200 flex w-full items-center justify-center gap-4 border-b pb-4 md:gap-6 md:pb-6">
@@ -30,7 +30,7 @@ export function SearchFormContainer() {
               <Button
                 intent="secondary"
                 size="small"
-                className="absolute -top-5 -left-5 cursor-not-allowed rounded-full px-1.5 py-1 text-[8px] font-normal sm:text-[10px]"
+                className="absolute -left-5 -top-5 cursor-not-allowed rounded-full px-1.5 py-1 text-[8px] font-normal sm:text-[10px]"
               >
                 به‌زودی
               </Button>
@@ -46,7 +46,7 @@ export function SearchFormContainer() {
               <Button
                 intent="secondary"
                 size="small"
-                className="absolute -top-5 -left-5 cursor-not-allowed rounded-full px-1.5 py-1 text-[8px] font-normal sm:text-[10px]"
+                className="absolute -left-5 -top-5 cursor-not-allowed rounded-full px-1.5 py-1 text-[8px] font-normal sm:text-[10px]"
               >
                 به‌زودی
               </Button>

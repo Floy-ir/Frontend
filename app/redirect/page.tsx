@@ -110,8 +110,8 @@ function RedirectContent() {
       <div className="text-Gray-N600 mt-2 text-base font-normal md:mt-0 md:text-xl"> لطفا چند لحظه صبر کنید... </div>
 
       <div className="relative flex h-[80px] w-[80px] animate-pulse items-center justify-center">
-        <div className="bg-Primary-P100 absolute top-[11px] left-[12px] size-17 rounded-[20px]" />
-        <ArrowForwardSquare size="64" color="#5a28ee" className="absolute top-[0px] left-[0px] size-20" />
+        <div className="bg-Primary-P100 size-17 absolute left-[12px] top-[11px] rounded-[20px]" />
+        <ArrowForwardSquare size="64" color="#5a28ee" className="absolute left-[0px] top-[0px] size-20" />
       </div>
 
       <button onClick={handleManualRedirect} className="text-Gray-N800 mt-10 underline" type="button">

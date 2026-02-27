@@ -57,14 +57,14 @@ type TransportationCardProps = {
 // Format duration for display
 const FormatDuration = ({ hours, minutes }: { hours: number; minutes: number }) => (
   <span>
-    <span className="text-Gray-N500 md-lg:text-[12px] text-[10px] leading-3 font-normal lg:text-[12px]">
+    <span className="text-Gray-N500 text-[10px] font-normal leading-3 lg:text-[12px] md-lg:text-[12px]">
       {englishToFarsiNumber(hours)}{" "}
     </span>
-    <span className="text-Gray-N500 md-lg:text-[12px] text-[10px] leading-3 font-normal lg:text-[12px]">ساعت </span>
-    <span className="text-Gray-N500 md-lg:text-[12px] text-[10px] leading-3 font-normal lg:text-[12px]">
+    <span className="text-Gray-N500 text-[10px] font-normal leading-3 lg:text-[12px] md-lg:text-[12px]">ساعت </span>
+    <span className="text-Gray-N500 text-[10px] font-normal leading-3 lg:text-[12px] md-lg:text-[12px]">
       {englishToFarsiNumber(minutes)}
     </span>
-    <span className="text-Gray-N500 md-lg:text-[12px] text-[10px] leading-3 font-normal lg:text-[12px]"> دقیقه</span>
+    <span className="text-Gray-N500 text-[10px] font-normal leading-3 lg:text-[12px] md-lg:text-[12px]"> دقیقه</span>
   </span>
 )
 
@@ -72,7 +72,7 @@ const FormatDuration = ({ hours, minutes }: { hours: number; minutes: number }) 
 const FlightRouteVisualization = ({ isMobile = true }: { isMobile?: boolean }) => (
   <div className="relative mx-0 flex flex-1 items-center justify-center">
     <div className="border-Gray-N300 size-1 rounded-[33px] border lg:size-1.5 2xl:size-1.5" />
-    <div className="bg-Gray-N200 relative h-px w-23 flex-1" />
+    <div className="bg-Gray-N200 w-23 relative h-px flex-1" />
     <div className="bg-Gray-N300 size-1 rounded-[2px] lg:size-1.5 2xl:size-1.5" />
     <div
       className="absolute size-2.5 origin-top-left -rotate-90 lg:size-3 2xl:size-3"
@@ -86,7 +86,7 @@ const FlightRouteVisualization = ({ isMobile = true }: { isMobile?: boolean }) =
 // Badge component for flight info items
 const InfoBadge = ({ text }: { text: string }) => (
   <div className={badgeStyles()}>
-    <div className="text-Gray-N600 md-lg:text-[12px] justify-center text-right text-[10px] leading-3 font-normal lg:text-[12px]">
+    <div className="text-Gray-N600 justify-center text-right text-[10px] font-normal leading-3 lg:text-[12px] md-lg:text-[12px]">
       {text}
     </div>
   </div>
@@ -95,8 +95,8 @@ const InfoBadge = ({ text }: { text: string }) => (
 // Badge with icon for baggage
 const BaggageBadge = ({ text }: { text: string }) => (
   <div className={badgeStyles()}>
-    <PiSuitcaseRollingLight className="text-Gray-N600 md-lg:h-3 md-lg:w-3 h-2.5 w-2.5 lg:h-3 lg:w-3" />
-    <div className="text-Gray-N600 md-lg:gap-1 md-lg:text-[12px] inline-flex justify-center gap-0.5 text-right text-[10px] leading-3 font-normal lg:gap-1 lg:text-[12px]">
+    <PiSuitcaseRollingLight className="text-Gray-N600 h-2.5 w-2.5 lg:h-3 lg:w-3 md-lg:h-3 md-lg:w-3" />
+    <div className="text-Gray-N600 inline-flex justify-center gap-0.5 text-right text-[10px] font-normal leading-3 lg:gap-1 lg:text-[12px] md-lg:gap-1 md-lg:text-[12px]">
       {text} کیلوگرم
     </div>
   </div>
@@ -108,21 +108,21 @@ const PriceInfo = ({
 }: {
   price: { amount: number; formattedAmount: string; agency: string; agencyLogo?: string; label?: string }
 }) => (
-  <div className="bg-Gray-N50 outline-Gray-N200 md-lg:gap-3 md-lg:px-3 md-lg:py-2 relative flex flex-col items-end justify-center gap-1.5 self-stretch rounded-lg px-2 py-1.5 outline-1 outline-offset-[-1px] lg:gap-3 lg:px-3 lg:py-2">
+  <div className="bg-Gray-N50 outline-Gray-N200 relative flex flex-col items-end justify-center gap-1.5 self-stretch rounded-lg px-2 py-1.5 outline-1 outline-offset-[-1px] lg:gap-3 lg:px-3 lg:py-2 md-lg:gap-3 md-lg:px-3 md-lg:py-2">
     {price.label && (
-      <div className="md-lg:gap-1 flex w-full items-start gap-0.5 lg:gap-1">
-        <div className="text-Gray-N500 md-lg:text-[12px] justify-center self-stretch text-right text-[10px] font-normal lg:text-[12px]">
+      <div className="flex w-full items-start gap-0.5 lg:gap-1 md-lg:gap-1">
+        <div className="text-Gray-N500 justify-center self-stretch text-right text-[10px] font-normal lg:text-[12px] md-lg:text-[12px]">
           {price.label}
         </div>
-        <div className="text-Gray-N600 md-lg:text-[12px] justify-start self-stretch text-right text-[10px] font-normal lg:text-[12px]">
+        <div className="text-Gray-N600 justify-start self-stretch text-right text-[10px] font-normal lg:text-[12px] md-lg:text-[12px]">
           در
         </div>
       </div>
     )}
     <div className="inline-flex items-center justify-between self-stretch">
-      <div className="md-lg:gap-1 flex items-center justify-start gap-0.5 lg:gap-1">
+      <div className="flex items-center justify-start gap-0.5 lg:gap-1 md-lg:gap-1">
         {price.agencyLogo && (
-          <div className="outline-Gray-N200 md-lg:size-6 size-4 overflow-hidden rounded-[48px] bg-white outline-1 outline-offset-[-1px] lg:size-6">
+          <div className="outline-Gray-N200 size-4 overflow-hidden rounded-[48px] bg-white outline-1 outline-offset-[-1px] lg:size-6 md-lg:size-6">
             <Image
               src={price.agencyLogo}
               alt={`${price.agency} logo`}
@@ -134,16 +134,16 @@ const PriceInfo = ({
         )}
 
         <div className="inline-flex flex-col items-start justify-center">
-          <div className="text-Gray-N600 md-lg:text-[15px] justify-start text-right text-[11px] font-normal lg:text-[15px]">
+          <div className="text-Gray-N600 justify-start text-right text-[11px] font-normal lg:text-[15px] md-lg:text-[15px]">
             {price.agency}
           </div>
         </div>
       </div>
-      <div className="md-lg:gap-1 flex items-center justify-end gap-0.5 lg:gap-1">
-        <div className="text-Gray-N700 md-lg:text-base md-lg:leading-7 justify-start text-right text-xs leading-6 font-semibold lg:text-base lg:leading-7">
+      <div className="flex items-center justify-end gap-0.5 lg:gap-1 md-lg:gap-1">
+        <div className="text-Gray-N700 justify-start text-right text-xs font-semibold leading-6 lg:text-base lg:leading-7 md-lg:text-base md-lg:leading-7">
           {englishToFarsiNumber(price.formattedAmount)}
         </div>
-        <div className="text-Gray-N500 md-lg:text-[11px] justify-start text-right text-[9px] leading-none font-normal lg:text-[11px]">
+        <div className="text-Gray-N500 justify-start text-right text-[9px] font-normal leading-none lg:text-[11px] md-lg:text-[11px]">
           تومان
         </div>
       </div>
@@ -216,10 +216,10 @@ export function TransportationCard({
   return (
     <article className={twMerge(flightCardVariants({ intent }), className)}>
       {/* Mobile/Tablet Layout */}
-      <div className="md-lg:hidden flex flex-col lg:hidden">
+      <div className="flex flex-col lg:hidden md-lg:hidden">
         <div
           data-layer="Frame 1000002364"
-          className="bg-Shade-White outline-Gray-N200 inline-flex flex-col items-center justify-center gap-3 self-stretch overflow-hidden rounded-xl px-4 pt-4 pb-2 outline-1 outline-offset-[-1px]"
+          className="bg-Shade-White outline-Gray-N200 inline-flex flex-col items-center justify-center gap-3 self-stretch overflow-hidden rounded-xl px-4 pb-2 pt-4 outline-1 outline-offset-[-1px]"
         >
           {/* Flight info section */}
           <div
@@ -231,13 +231,13 @@ export function TransportationCard({
                 data-layer="Frame 1000002403"
                 className="inline-flex flex-row-reverse items-center justify-start self-stretch"
               >
-                <time className="text-Gray-N800 flex-1 justify-start text-center text-lg leading-loose font-semibold">
+                <time className="text-Gray-N800 flex-1 justify-start text-center text-lg font-semibold leading-loose">
                   {arrivalTime}
                 </time>
 
                 <FlightRouteVisualization isMobile={true} />
 
-                <time className="text-Gray-N800 flex-1 justify-start text-center text-lg leading-loose font-semibold">
+                <time className="text-Gray-N800 flex-1 justify-start text-center text-lg font-semibold leading-loose">
                   {departureTime}
                 </time>
               </div>
@@ -260,7 +260,7 @@ export function TransportationCard({
                   </div>
                 )}
               </div>
-              <div className="text-Gray-N600 justify-start text-right text-[12px] leading-none font-semibold">
+              <div className="text-Gray-N600 justify-start text-right text-[12px] font-semibold leading-none">
                 {flight.airline}
               </div>
             </div>
@@ -287,10 +287,10 @@ export function TransportationCard({
               >
                 {priceWithLabel.label && (
                   <div className="flex w-full items-center justify-start gap-1">
-                    <div className="text-Gray-N500 justify-center self-stretch text-right text-[10px] leading-3 font-normal">
+                    <div className="text-Gray-N500 justify-center self-stretch text-right text-[10px] font-normal leading-3">
                       {priceWithLabel.label}
                     </div>
-                    <div className="text-Gray-N600 justify-start self-stretch text-right text-[11px] leading-none font-normal">
+                    <div className="text-Gray-N600 justify-start self-stretch text-right text-[11px] font-normal leading-none">
                       در
                     </div>
                   </div>
@@ -298,20 +298,20 @@ export function TransportationCard({
 
                 <div
                   data-layer="Frame 1000002410"
-                  className="mt-1 mb-0.5 inline-flex flex-row-reverse items-center justify-between self-stretch"
+                  className="mb-0.5 mt-1 inline-flex flex-row-reverse items-center justify-between self-stretch"
                 >
                   <div data-layer="Frame 1000002342" className="flex flex-row-reverse items-center justify-end gap-1">
-                    <div className="text-Gray-N500 justify-start text-right text-[11px] leading-none font-normal">
+                    <div className="text-Gray-N500 justify-start text-right text-[11px] font-normal leading-none">
                       تومان
                     </div>
-                    <div className="text-Gray-N700 justify-start text-right text-base leading-7 font-semibold">
+                    <div className="text-Gray-N700 justify-start text-right text-base font-semibold leading-7">
                       {englishToFarsiNumber(priceWithLabel.formattedAmount)}
                     </div>
                   </div>
                   <div data-layer="Frame 1000002408" className="flex flex-row-reverse items-center justify-end gap-2">
                     <div className="inline-flex flex-col items-end justify-center gap-1">
                       <div
-                        className={`text-Gray-N600 justify-start self-stretch text-right text-[12px] leading-none font-semibold`}
+                        className={`text-Gray-N600 justify-start self-stretch text-right text-[12px] font-semibold leading-none`}
                       >
                         {priceWithLabel.agency}
                       </div>
@@ -342,7 +342,7 @@ export function TransportationCard({
                   {isInBasket ? (
                     <button
                       onClick={handleRemoveFromBasket}
-                      className="bg-Error-E50 text-Error-E500main hover:bg-Error-E100 focus:ring-Error-E500main flex items-center justify-center rounded-lg px-3 py-2 transition-colors focus:ring-2 focus:ring-offset-2 focus:outline-none"
+                      className="bg-Error-E50 text-Error-E500main hover:bg-Error-E100 focus:ring-Error-E500main flex items-center justify-center rounded-lg px-3 py-2 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2"
                       aria-label="حذف از سبد"
                     >
                       <Trash2 size={20} className="shrink-0" />
@@ -350,7 +350,7 @@ export function TransportationCard({
                   ) : (
                     <button
                       onClick={handleAddToBasket}
-                      className="bg-Primary-P50 text-Primary-P500main hover:bg-Primary-P100 focus:ring-Primary-P500main flex items-center justify-center rounded-lg px-3 py-2 transition-colors focus:ring-2 focus:ring-offset-2 focus:outline-none"
+                      className="bg-Primary-P50 text-Primary-P500main hover:bg-Primary-P100 focus:ring-Primary-P500main flex items-center justify-center rounded-lg px-3 py-2 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2"
                       aria-label="افزودن به سبد"
                     >
                       <Plus size={20} className="shrink-0" />
@@ -373,7 +373,7 @@ export function TransportationCard({
       </div>
 
       {/* Desktop Layout */}
-      <div className="md-lg:inline-flex hidden w-full items-start justify-between gap-2 self-stretch px-3 pt-4 pb-2 lg:inline-flex lg:gap-4 xl:gap-6 2xl:gap-8 2xl:px-6">
+      <div className="hidden w-full items-start justify-between gap-2 self-stretch px-3 pb-2 pt-4 lg:inline-flex lg:gap-4 xl:gap-6 2xl:gap-8 2xl:px-6 md-lg:inline-flex">
         {/* Flight details - Right */}
         <div className="inline-flex flex-1 flex-col items-center justify-between self-stretch px-1 py-3 lg:px-2 xl:px-3 xl:py-4 2xl:px-4">
           <div className="inline-flex items-center justify-end gap-0.5 self-stretch lg:gap-1 xl:gap-1.5 2xl:gap-2">
@@ -397,11 +397,11 @@ export function TransportationCard({
             </div>
             <div className="inline-flex flex-1 flex-col items-start justify-center">
               <div className="inline-flex items-center justify-start self-stretch">
-                <time className="text-Gray-N800 flex-1 justify-start text-center text-lg leading-loose font-semibold lg:text-xl 2xl:text-xl">
+                <time className="text-Gray-N800 flex-1 justify-start text-center text-lg font-semibold leading-loose lg:text-xl 2xl:text-xl">
                   {departureTime}
                 </time>
                 <FlightRouteVisualization isMobile={false} />
-                <time className="text-Gray-N800 flex-1 justify-start text-center text-lg leading-loose font-semibold lg:text-xl 2xl:text-xl">
+                <time className="text-Gray-N800 flex-1 justify-start text-center text-lg font-semibold leading-loose lg:text-xl 2xl:text-xl">
                   {arrivalTime}
                 </time>
               </div>
@@ -437,7 +437,7 @@ export function TransportationCard({
                 {isInBasket ? (
                   <button
                     onClick={handleRemoveFromBasket}
-                    className="bg-Error-E50 text-Error-E500main hover:bg-Error-E100 focus:ring-Error-E500main flex items-center justify-center rounded-lg px-2 py-1.5 transition-colors focus:ring-2 focus:ring-offset-2 focus:outline-none lg:px-2.5 xl:px-3"
+                    className="bg-Error-E50 text-Error-E500main hover:bg-Error-E100 focus:ring-Error-E500main flex items-center justify-center rounded-lg px-2 py-1.5 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 lg:px-2.5 xl:px-3"
                     aria-label="حذف از سبد"
                   >
                     <Trash2 size={18} className="shrink-0" />
@@ -445,7 +445,7 @@ export function TransportationCard({
                 ) : (
                   <button
                     onClick={handleAddToBasket}
-                    className="bg-Primary-P50 text-Primary-P500main hover:bg-Primary-P100 focus:ring-Primary-P500main flex items-center justify-center rounded-lg px-2 py-1.5 transition-colors focus:ring-2 focus:ring-offset-2 focus:outline-none lg:px-2.5 xl:px-3"
+                    className="bg-Primary-P50 text-Primary-P500main hover:bg-Primary-P100 focus:ring-Primary-P500main flex items-center justify-center rounded-lg px-2 py-1.5 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 lg:px-2.5 xl:px-3"
                     aria-label="افزودن به سبد"
                   >
                     <Plus size={18} className="shrink-0" />

@@ -20,17 +20,17 @@ const badgeStyles = cva(
 // Badge component for flight info items
 const InfoBadge = ({ text }: { text: string }) => (
   <div className={badgeStyles()}>
-    <div className="text-Gray-N600 justify-center text-right text-[10px] leading-3 font-normal">{text}</div>
+    <div className="text-Gray-N600 justify-center text-right text-[10px] font-normal leading-3">{text}</div>
   </div>
 )
 
 // Badge with icon for baggage
 const BaggageBadge = ({ text }: { text: string }) => (
   <div className={badgeStyles()}>
-    <div className="text-Gray-N600 justify-center text-right text-[10px] leading-3 font-normal">{text}</div>
+    <div className="text-Gray-N600 justify-center text-right text-[10px] font-normal leading-3">{text}</div>
     <div className="relative size-3 overflow-hidden">
-      <div className="bg-Gray-N700 absolute top-[1px] left-[2.67px] h-[9.89px] w-[6.45px]" />
-      <div className="bg-Gray-N700 absolute top-[3.63px] left-[4.14px] h-[5.25px] w-[3.52px]" />
+      <div className="bg-Gray-N700 absolute left-[2.67px] top-[1px] h-[9.89px] w-[6.45px]" />
+      <div className="bg-Gray-N700 absolute left-[4.14px] top-[3.63px] h-[5.25px] w-[3.52px]" />
     </div>
   </div>
 )

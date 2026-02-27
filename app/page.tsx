@@ -32,7 +32,7 @@ export default function Web() {
   return (
     <>
       {/* Background Image with Oval Bottom */}
-      <div className="rounded-oval-mobile absolute inset-0 -z-10 h-[720px] max-h-[775px] w-full overflow-hidden sm:h-[720px] md:h-[760px] lg:h-[478px]">
+      <div className="absolute inset-0 -z-10 h-[720px] max-h-[775px] w-full overflow-hidden rounded-oval-mobile sm:h-[720px] md:h-[760px] lg:h-[478px]">
         {/* Main image container */}
         <Image
           src="/images/landing2.webp"
@@ -61,14 +61,14 @@ export default function Web() {
 
         <Companies />
 
-        <div className="w-full pt-8 pb-12 lg:py-16">
+        <div className="w-full pb-12 pt-8 lg:py-16">
           <Benefits />
         </div>
 
         {/* Cities */}
         <div
           data-name="Container-for-cities"
-          className="flex w-full shrink-0 flex-col items-center justify-between bg-white py-8 lg:pt-12 lg:pb-4"
+          className="flex w-full shrink-0 flex-col items-center justify-between bg-white py-8 lg:pb-4 lg:pt-12"
           id="cheapest-week"
         >
           <div className="mx-auto w-full max-w-[1136px] px-6 xl:px-0">

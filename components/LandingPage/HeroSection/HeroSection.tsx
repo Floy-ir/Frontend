@@ -13,10 +13,10 @@ export function HeroSection() {
       <div className="flex w-full flex-col items-start">
         {/* Main Title */}
         <div className="mb-6 flex w-full flex-col items-start gap-[9px] lg:mb-10 lg:inline-flex lg:w-auto lg:flex-row lg:items-baseline">
-          <span className="text-right text-[28px] leading-[48px] font-light text-white lg:text-5xl lg:leading-normal">
+          <span className="text-right text-[28px] font-light leading-[48px] text-white lg:text-5xl lg:leading-normal">
             مرجع مقایسه قیمت و خرید
           </span>
-          <h1 className="text-right text-[28px] leading-[48px] font-bold text-white lg:text-5xl lg:leading-normal lg:font-extrabold">
+          <h1 className="text-right text-[28px] font-bold leading-[48px] text-white lg:text-5xl lg:font-extrabold lg:leading-normal">
             بلیط هواپیما
           </h1>
         </div>

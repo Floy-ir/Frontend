@@ -99,20 +99,20 @@ export function FlightSearchHeader({
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.3, ease: "easeInOut" }}
           >
-            <div className="border-Gray-N200 flex w-full items-center justify-center gap-3 border-t border-b bg-white px-4 py-4 md:px-0">
+            <div className="border-Gray-N200 flex w-full items-center justify-center gap-3 border-b border-t bg-white px-4 py-4 md:px-0">
               {/* info */}
-              <div className="sm-md:flex-row sm-md:items-center flex flex-col items-start gap-2 sm:justify-start md:flex-row md:items-center md:justify-end">
+              <div className="flex flex-col items-start gap-2 sm:justify-start md:flex-row md:items-center md:justify-end sm-md:flex-row sm-md:items-center">
                 {/* city */}
-                <div className="text-Gray-N700 shrink-0 text-right text-base leading-7 font-semibold lg:text-[17px]">
+                <div className="text-Gray-N700 shrink-0 text-right text-base font-semibold leading-7 lg:text-[17px]">
                   پرواز {originCity} به {destinationCity}
                 </div>
 
                 {/* dot */}
-                <div className="bg-Gray-N200 sm-md:block ml-1 hidden size-1 shrink-0 rounded-[33px] md:block"></div>
+                <div className="bg-Gray-N200 ml-1 hidden size-1 shrink-0 rounded-[33px] md:block sm-md:block"></div>
 
                 <div className="flex items-center gap-2 sm:justify-start md:justify-end">
                   {/* date */}
-                  <div className="text-Gray-N500 shrink-0 text-right text-[13px] leading-normal font-medium lg:text-[15px]">
+                  <div className="text-Gray-N500 shrink-0 text-right text-[13px] font-medium leading-normal lg:text-[15px]">
                     {persianDate}
                   </div>
 
@@ -120,7 +120,7 @@ export function FlightSearchHeader({
                   <div className="bg-Gray-N200 size-1 shrink-0 rounded-[33px]"></div>
 
                   {/* passengers */}
-                  <div className="text-Gray-N500 shrink-0 text-right text-[13px] leading-normal font-medium lg:text-[15px]">
+                  <div className="text-Gray-N500 shrink-0 text-right text-[13px] font-medium leading-normal lg:text-[15px]">
                     {englishToFarsiNumber(passengerCount)} مسافر
                   </div>
                 </div>
@@ -145,23 +145,23 @@ export function FlightSearchHeader({
             <div className="flex gap-2">
               {/* Arrow */}
               <div>
-                <Link href="/" className="sm-md:mt-1 mt-3.5 flex items-center gap-1 text-sm">
+                <Link href="/" className="mt-3.5 flex items-center gap-1 text-sm sm-md:mt-1">
                   <ArrowRight size="29" color="#737373" />
                 </Link>
               </div>
               {/* info */}
-              <div className="sm-md:flex-row sm-md:items-center flex flex-col items-start gap-2 sm:justify-start md:flex-row md:items-center md:justify-end">
+              <div className="flex flex-col items-start gap-2 sm:justify-start md:flex-row md:items-center md:justify-end sm-md:flex-row sm-md:items-center">
                 {/* city */}
-                <div className="text-Gray-N700 shrink-0 text-right text-base leading-7 font-semibold lg:text-[17px]">
+                <div className="text-Gray-N700 shrink-0 text-right text-base font-semibold leading-7 lg:text-[17px]">
                   پرواز {originCity} به {destinationCity}
                 </div>
 
                 {/* dot */}
-                <div className="bg-Gray-N200 sm-md:block ml-1 hidden size-1 shrink-0 rounded-[33px] md:block"></div>
+                <div className="bg-Gray-N200 ml-1 hidden size-1 shrink-0 rounded-[33px] md:block sm-md:block"></div>
 
                 <div className="flex items-center gap-2 sm:justify-start md:justify-end">
                   {/* date */}
-                  <div className="text-Gray-N500 shrink-0 text-right text-[13px] leading-normal font-medium lg:text-[15px]">
+                  <div className="text-Gray-N500 shrink-0 text-right text-[13px] font-medium leading-normal lg:text-[15px]">
                     {persianDate}
                   </div>
 
@@ -169,7 +169,7 @@ export function FlightSearchHeader({
                   <div className="bg-Gray-N200 size-1 shrink-0 rounded-[33px]"></div>
 
                   {/* passengers */}
-                  <div className="text-Gray-N500 shrink-0 text-right text-[13px] leading-normal font-medium lg:text-[15px]">
+                  <div className="text-Gray-N500 shrink-0 text-right text-[13px] font-medium leading-normal lg:text-[15px]">
                     {englishToFarsiNumber(passengerCount)} مسافر
                   </div>
                 </div>

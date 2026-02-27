@@ -21,12 +21,12 @@ export function Breadcrumb({ items, className = "" }: BreadcrumbProps) {
             {item.onClick ? (
               <button
                 onClick={item.onClick}
-                className="font-anjoman-max text-Primary-P500main hover:text-primary-600 focus:ring-Primary-P500main rounded text-sm transition-colors focus:ring-2 focus:ring-offset-2 focus:outline-none"
+                className="text-Primary-P500main focus:ring-Primary-P500main rounded font-anjoman-max text-sm transition-colors hover:text-primary-600 focus:outline-none focus:ring-2 focus:ring-offset-2"
               >
                 {item.label}
               </button>
             ) : (
-              <span className="font-anjoman-max text-Gray-N600 text-sm">{item.label}</span>
+              <span className="text-Gray-N600 font-anjoman-max text-sm">{item.label}</span>
             )}
 
             {index < items.length - 1 && (

@@ -211,9 +211,9 @@ const Timeline = ({
     }
   }, [selectedDay, data])
   return (
-    <div id="scroll-container" className="relative max-w-screen items-center justify-center">
+    <div id="scroll-container" className="max-w-screen relative items-center justify-center">
       {/* Gradient */}
-      <div className="pointer-events-none absolute inset-0 z-9 flex w-full justify-between">
+      <div className="z-9 pointer-events-none absolute inset-0 flex w-full justify-between">
         <div className="h-full w-[73px] bg-gradient-to-l from-white to-transparent lg:rounded-2xl"></div>
         <div className="h-full w-[73px] bg-gradient-to-r from-white to-transparent lg:rounded-2xl"></div>
       </div>
@@ -229,7 +229,7 @@ const Timeline = ({
             scrollRef.current.scrollBy({ left: -200, behavior: "smooth" })
           }
         }}
-        className="absolute top-1/3 left-4 z-10 hidden rotate-180 cursor-pointer md:block"
+        className="absolute left-4 top-1/3 z-10 hidden rotate-180 cursor-pointer md:block"
       />
       <Image
         src={img}
@@ -241,7 +241,7 @@ const Timeline = ({
             scrollRef.current.scrollBy({ left: 200, behavior: "smooth" })
           }
         }}
-        className="absolute top-1/3 right-4 z-10 hidden cursor-pointer md:block"
+        className="absolute right-4 top-1/3 z-10 hidden cursor-pointer md:block"
       />
 
       {/* Timeline scroll area */}
@@ -285,9 +285,9 @@ const Timeline = ({
                     } `}
                   >
                     <div
-                      className={`justify-center text-center [user-select:none] select-none ${
+                      className={`select-none justify-center text-center [user-select:none] ${
                         isSelected ? "text-Primary-P500main" : "text-Gray-N500"
-                      } text-[11px] leading-none font-medium`}
+                      } text-[11px] font-medium leading-none`}
                     >
                       <span className="inline select-none md:hidden">
                         {`${formatToJalali(new Date(item.date))?.split(" ")[0]?.[0]}- ${formatToJalali(
@@ -302,9 +302,9 @@ const Timeline = ({
                       </span>
                     </div>
                     <div
-                      className={`mt-1 justify-center text-center [user-select:none] select-none ${
+                      className={`mt-1 select-none justify-center text-center [user-select:none] ${
                         isSelected ? "text-Primary-P500main" : `${priceColor}`
-                      } text-[13px] leading-normal font-medium`}
+                      } text-[13px] font-medium leading-normal`}
                     >
                       {item.price === 0
                         ? "-"

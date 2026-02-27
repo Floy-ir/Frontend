@@ -148,16 +148,16 @@ const SellersAvatars = ({ websites }: { websites?: FlightCardProps["websites"] }
 // Format duration for display
 const FormatDuration = ({ hours, minutes }: { hours: number; minutes: number }) => (
   <span>
-    <span className={`text-Gray-N500 text-[12px] leading-3 font-normal ${textStyles.small} ${textStyles.normal}`}>
+    <span className={`text-Gray-N500 text-[12px] font-normal leading-3 ${textStyles.small} ${textStyles.normal}`}>
       {englishToFarsiNumber(hours)}{" "}
     </span>
     <span className={`text-Gray-N500 text-[12px] font-normal leading-3${textStyles.small} ${textStyles.normal}`}>
       ساعت{" "}
     </span>
-    <span className={`text-Gray-N500 text-[12px] leading-3 font-normal ${textStyles.small} ${textStyles.normal}`}>
+    <span className={`text-Gray-N500 text-[12px] font-normal leading-3 ${textStyles.small} ${textStyles.normal}`}>
       {englishToFarsiNumber(minutes)}
     </span>
-    <span className={`text-Gray-N500 text-[12px] leading-3 font-normal ${textStyles.small} ${textStyles.normal}`}>
+    <span className={`text-Gray-N500 text-[12px] font-normal leading-3 ${textStyles.small} ${textStyles.normal}`}>
       {" "}
       دقیقه
     </span>
@@ -168,7 +168,7 @@ const FormatDuration = ({ hours, minutes }: { hours: number; minutes: number }) 
 const FlightRouteVisualization = ({ isMobile = true }: { isMobile?: boolean }) => (
   <div className="relative mx-0 flex flex-1 items-center justify-center">
     <div className="border-Gray-N300 size-1.5 rounded-[33px] border" />
-    <div className="bg-Gray-N200 relative h-px w-23 flex-1" />
+    <div className="bg-Gray-N200 w-23 relative h-px flex-1" />
     <div className="bg-Gray-N300 size-1.5 rounded-[2px]" />
     <div
       className="absolute size-3 origin-top-left -rotate-90"
@@ -183,7 +183,7 @@ const FlightRouteVisualization = ({ isMobile = true }: { isMobile?: boolean }) =
 const InfoBadge = ({ text }: { text: string }) => (
   <div className={badgeStyles()}>
     <div
-      className={`text-Gray-N600 justify-center text-right text-[12px] leading-3 font-normal ${textStyles.small} ${textStyles.normal}`}
+      className={`text-Gray-N600 justify-center text-right text-[12px] font-normal leading-3 ${textStyles.small} ${textStyles.normal}`}
     >
       {text}
     </div>
@@ -195,7 +195,7 @@ const BaggageBadge = ({ text }: { text: string }) => (
   <div className={badgeStyles()}>
     <PiSuitcaseRollingLight className="text-Gray-N600 h-3 w-3" />
     <div
-      className={`text-Gray-N600 inline-flex justify-center gap-1 text-right text-[12px] leading-3 font-normal ${textStyles.small} ${textStyles.normal}`}
+      className={`text-Gray-N600 inline-flex justify-center gap-1 text-right text-[12px] font-normal leading-3 ${textStyles.small} ${textStyles.normal}`}
     >
       {text} کیلوگرم
     </div>
@@ -251,7 +251,7 @@ const PriceInfo = ({ price }: { price: FlightCardProps["price"] }) => (
         </div>
       </div>
       <div className="flex items-center justify-end gap-1">
-        <div className="text-Gray-N700 justify-start text-right text-base text-[17px] leading-7 font-semibold">
+        <div className="text-Gray-N700 justify-start text-right text-[17px] text-base font-semibold leading-7">
           {englishToFarsiNumber(price.formattedAmount)}
         </div>
         <div className={`text-Gray-N500 justify-start text-right ${textStyles.medium} ${textStyles.normal}`}>تومان</div>
@@ -483,10 +483,10 @@ export function FlightCard({
   return (
     <article className={twMerge(flightCardVariants({ intent, className }))}>
       {/* Mobile/Tablet Layout */}
-      <div className="md-lg:hidden flex flex-col lg:hidden">
+      <div className="flex flex-col lg:hidden md-lg:hidden">
         <div
           data-layer="Frame 1000002364"
-          className="bg-Shade-White outline-Gray-N200 inline-flex flex-col items-center justify-center gap-3 self-stretch overflow-hidden rounded-xl px-4 pt-4 pb-2 outline-1 outline-offset-[-1px]"
+          className="bg-Shade-White outline-Gray-N200 inline-flex flex-col items-center justify-center gap-3 self-stretch overflow-hidden rounded-xl px-4 pb-2 pt-4 outline-1 outline-offset-[-1px]"
         >
           {/* Flight info section */}
           <div
@@ -498,13 +498,13 @@ export function FlightCard({
                 data-layer="Frame 1000002403"
                 className="inline-flex flex-row-reverse items-center justify-start self-stretch"
               >
-                <time className="text-Gray-N800 flex-1 justify-start text-center text-lg leading-loose font-semibold">
+                <time className="text-Gray-N800 flex-1 justify-start text-center text-lg font-semibold leading-loose">
                   {englishToFarsiNumber(arrivalTime)}
                 </time>
 
                 <FlightRouteVisualization isMobile={true} />
 
-                <time className="text-Gray-N800 flex-1 justify-start text-center text-lg leading-loose font-semibold">
+                <time className="text-Gray-N800 flex-1 justify-start text-center text-lg font-semibold leading-loose">
                   {englishToFarsiNumber(departureTime)}
                 </time>
               </div>
@@ -521,7 +521,7 @@ export function FlightCard({
               <div className="border-Gray-N200 relative size-9 overflow-hidden rounded-[48px] border">
                 <Image src={airline.logo} alt={`${airline.name} logo`} fill className="object-contain" />
               </div>
-              <div className="text-Gray-N600 justify-start text-right text-[12px] leading-none font-semibold">
+              <div className="text-Gray-N600 justify-start text-right text-[12px] font-semibold leading-none">
                 {airline.name}
               </div>
             </div>
@@ -550,10 +550,10 @@ export function FlightCard({
               >
                 {price.label && (
                   <div className="flex w-full items-center justify-start gap-1">
-                    <div className="text-Gray-N500 justify-center self-stretch text-right text-[10px] leading-3 font-normal">
+                    <div className="text-Gray-N500 justify-center self-stretch text-right text-[10px] font-normal leading-3">
                       {price.label}
                     </div>
-                    <div className="text-Gray-N600 justify-start self-stretch text-right text-[11px] leading-none font-normal">
+                    <div className="text-Gray-N600 justify-start self-stretch text-right text-[11px] font-normal leading-none">
                       در
                     </div>
                   </div>
@@ -561,20 +561,20 @@ export function FlightCard({
 
                 <div
                   data-layer="Frame 1000002410"
-                  className="mt-1 mb-0.5 inline-flex flex-row-reverse items-center justify-between self-stretch"
+                  className="mb-0.5 mt-1 inline-flex flex-row-reverse items-center justify-between self-stretch"
                 >
                   <div data-layer="Frame 1000002342" className="flex flex-row-reverse items-center justify-end gap-1">
-                    <div className="text-Gray-N500 justify-start text-right text-[11px] leading-none font-normal">
+                    <div className="text-Gray-N500 justify-start text-right text-[11px] font-normal leading-none">
                       تومان
                     </div>
-                    <div className="text-Gray-N700 justify-start text-right text-base leading-7 font-semibold">
+                    <div className="text-Gray-N700 justify-start text-right text-base font-semibold leading-7">
                       {englishToFarsiNumber(price.formattedAmount)}
                     </div>
                   </div>
                   <div data-layer="Frame 1000002408" className="flex flex-row-reverse items-center justify-end gap-2">
                     <div className="inline-flex flex-col items-end justify-center gap-1">
                       <div
-                        className={`text-Gray-N600 justify-start self-stretch text-right text-[12px] leading-none font-semibold`}
+                        className={`text-Gray-N600 justify-start self-stretch text-right text-[12px] font-semibold leading-none`}
                       >
                         {price.agency}
                       </div>
@@ -635,7 +635,7 @@ export function FlightCard({
       </div>
 
       {/* Desktop Layout */}
-      <div className="md-lg:inline-flex hidden w-full items-start justify-between gap-8 self-stretch px-6 pt-4 pb-2 lg:inline-flex">
+      <div className="hidden w-full items-start justify-between gap-8 self-stretch px-6 pb-2 pt-4 lg:inline-flex md-lg:inline-flex">
         {/* Flight details - Right */}
         <FlightDetailsSection
           departureTime={departureTime}
@@ -649,7 +649,7 @@ export function FlightCard({
         />
 
         {/* Vertical divider */}
-        <div className="bg-Gray-N100 relative h-45 w-[1px]" />
+        <div className="bg-Gray-N100 h-45 relative w-[1px]" />
 
         {/* Price and action section - Left */}
         <PriceActionSection price={price} otherSellersCount={otherSellersCount} websites={websites} />

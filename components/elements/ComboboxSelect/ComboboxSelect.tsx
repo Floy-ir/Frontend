@@ -213,7 +213,7 @@ export const ComboboxSelect = React.forwardRef<HTMLInputElement, ComboboxSelectP
                   <div className="relative size-4">
                     <Location size={16} color="var(--color-Gray-N500)" />
                   </div>
-                  <div className="text-Gray-N800 flex-1 text-right text-base leading-7 font-normal">{option.label}</div>
+                  <div className="text-Gray-N800 flex-1 text-right text-base font-normal leading-7">{option.label}</div>
                 </CommandItem>
                 {index < options.length - 1 && <div className="border-Gray-N100 w-full border-t"></div>}
               </React.Fragment>

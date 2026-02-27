@@ -641,7 +641,7 @@ export default function AuthModal({
 
       {!showOtp && step !== "forgot-phone" && (
         <div className="my-4 flex items-center justify-center">
-          <div className="absolute top-3 right-5">
+          <div className="absolute right-5 top-3">
             <button onClick={handleClose} className="text-gray-500 hover:text-gray-700" aria-label="close">
               ✕
             </button>
@@ -822,7 +822,7 @@ export default function AuthModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-      <div className="sm-md:w-[350px] border-Gray-N100 relative w-full overflow-hidden rounded-2xl border bg-white p-2 shadow-xl md:w-[350px]">
+      <div className="border-Gray-N100 relative w-full overflow-hidden rounded-2xl border bg-white p-2 shadow-xl md:w-[350px] sm-md:w-[350px]">
         {Inner}
       </div>
     </div>

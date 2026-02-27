@@ -38,7 +38,7 @@ export default function PasswordInput({
         <button
           type="button"
           onClick={() => setVisible((v) => !v)}
-          className="text-Gray-N700 absolute top-1/2 right-auto left-3 z-10 -translate-y-1/2 cursor-pointer text-sm"
+          className="text-Gray-N700 absolute left-3 right-auto top-1/2 z-10 -translate-y-1/2 cursor-pointer text-sm"
           aria-label={visible ? "Hide password" : "Show password"}
         >
           {visible ? (

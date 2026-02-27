@@ -96,29 +96,29 @@ function CityCard({
     <div
       onClick={handleClick}
       className={`relative flex ${
-        large ? "h-80 w-67 px-8 py-4 md:w-80 lg:w-120" : "h-39 w-69 px-6 py-4"
+        large ? "w-67 lg:w-120 h-80 px-8 py-4 md:w-80" : "h-39 w-69 px-6 py-4"
       } flex-1 cursor-pointer flex-col justify-end overflow-hidden rounded-2xl border-2 border-slate-200 transition-colors hover:border-blue-400`}
     >
       {/* Background Image */}
       <Image src={bg} alt={city} fill className="h-full w-full object-cover" priority />
 
       {/* Gradient Overlay */}
-      <div className="absolute top-0 left-0 h-full w-full bg-gradient-to-l from-slate-800/80 to-slate-700/0" />
+      <div className="absolute left-0 top-0 h-full w-full bg-gradient-to-l from-slate-800/80 to-slate-700/0" />
 
       {/* City Info  */}
       <div className="flex w-full items-end justify-between">
         {/* City Name */}
         <div className="flex flex-col items-start">
-          <div className="text-Shade-White z-10 justify-center self-stretch text-right text-lg leading-loose font-semibold">
+          <div className="text-Shade-White z-10 justify-center self-stretch text-right text-lg font-semibold leading-loose">
             {city}
           </div>
-          <div className="text-Shade-White z-10 justify-center text-sm leading-normal font-normal">شروع قیمت از</div>
+          <div className="text-Shade-White z-10 justify-center text-sm font-normal leading-normal">شروع قیمت از</div>
         </div>
 
         {/* Price */}
         <div className="flex flex-col items-end text-right">
-          <div className="text-Shade-White z-10 mb-1 text-xs leading-none font-normal">تومان</div>
-          <div className="text-Shade-White z-10 justify-center self-stretch text-base leading-7 font-semibold">
+          <div className="text-Shade-White z-10 mb-1 text-xs font-normal leading-none">تومان</div>
+          <div className="text-Shade-White z-10 justify-center self-stretch text-base font-semibold leading-7">
             {englishToFarsiNumber(price)}
           </div>
         </div>
@@ -172,7 +172,7 @@ export default function PopularCities() {
   }, [])
 
   return (
-    <div className="mt-6 mb-8 flex w-full gap-2 md:mt-10 lg:mt-14 lg:flex-row">
+    <div className="mb-8 mt-6 flex w-full gap-2 md:mt-10 lg:mt-14 lg:flex-row">
       <div className="relative flex w-full snap-x snap-mandatory flex-nowrap gap-2 overflow-x-auto scroll-smooth sm:px-0">
         {cityData && cityData.results.length > 0 ? (
           <>

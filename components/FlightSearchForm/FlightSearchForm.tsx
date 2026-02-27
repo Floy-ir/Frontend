@@ -338,7 +338,7 @@ export function FlightSearchForm({
     if (!errorMessage) return null
 
     return (
-      <div className="text-Error-E500main absolute right-0 -bottom-2 z-20 text-xs">
+      <div className="text-Error-E500main absolute -bottom-2 right-0 z-20 text-xs">
         <span>{errorMessage}</span>
       </div>
     )
@@ -348,7 +348,7 @@ export function FlightSearchForm({
     <div className="m-0 flex w-full flex-col items-center" id={id}>
       <div
         className={`relative flex h-full w-full flex-col items-center lg:flex-row lg:justify-center ${
-          contextPage == "flights" ? "px-0 lg:px-30" : ""
+          contextPage == "flights" ? "lg:px-30 px-0" : ""
         }`}
         role="dialog"
         aria-label="جستجوی پرواز"
@@ -361,7 +361,7 @@ export function FlightSearchForm({
             }`}
           >
             <ArrowRight size="24" color="#748297" onClick={onClose} className="cursor-pointer" />
-            <div className="text-Gray-N600 text-sm leading-normal font-semibold">تغییر جستجو</div>
+            <div className="text-Gray-N600 text-sm font-semibold leading-normal">تغییر جستجو</div>
           </div>
           <div className={`bg-Gray-N200 h-px w-full ${contextPage == "flights" ? "block md:hidden" : "hidden"}`}></div>
 
@@ -388,7 +388,7 @@ export function FlightSearchForm({
                 {/* Fields Container - Mobile & Tablet */}
                 <div className="flex flex-1 flex-col">
                   {/* Origin Field - Mobile & Tablet */}
-                  <div className="relative z-150 w-full">
+                  <div className="z-150 relative w-full">
                     <Controller
                       name="origin"
                       control={control}
@@ -460,7 +460,7 @@ export function FlightSearchForm({
             {/* Origin/Destination Section - Desktop layout (1170px and up) */}
             <div className="hidden w-full items-start gap-4 lg:flex lg:w-auto lg:flex-row lg:items-center xl:gap-6">
               {/* Origin Field - Desktop */}
-              <div className="relative w-full lg:w-40 xl:w-47">
+              <div className="xl:w-47 relative w-full lg:w-40">
                 <Controller
                   name="origin"
                   control={control}
@@ -505,7 +505,7 @@ export function FlightSearchForm({
               </div>
 
               {/* Destination Field - Desktop */}
-              <div className="relative w-full lg:w-40 xl:w-47">
+              <div className="xl:w-47 relative w-full lg:w-40">
                 <Controller
                   name="destination"
                   control={control}
@@ -584,7 +584,7 @@ export function FlightSearchForm({
               <div className="bg-Gray-N200 h-12 w-px" />
 
               {/* Passengers Field */}
-              <div className="relative w-1/2 lg:w-16 lg:pb-0 xl:w-18">
+              <div className="xl:w-18 relative w-1/2 lg:w-16 lg:pb-0">
                 <Controller
                   name="passengers"
                   control={control}
@@ -640,7 +640,7 @@ export function FlightSearchForm({
       <Button
         intent="text"
         size="medium"
-        className={`mt-2 -mb-5 ${contextPage == "flights" ? "hidden md:block" : "hidden"}`}
+        className={`-mb-5 mt-2 ${contextPage == "flights" ? "hidden md:block" : "hidden"}`}
         onClick={onClose}
         leftIcon={<ArrowUp2 size="20" color="#5A28EE" />}
       >

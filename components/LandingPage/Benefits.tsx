@@ -10,10 +10,10 @@ import line from "../../public/images/Underline_06_small.svg"
 export default function Benefits() {
   return (
     <div className="w-full overflow-x-auto pb-2 md:flex md:items-center md:justify-center md:pb-0">
-      <div className="mt-8 mb-4 inline-flex h-[54px] min-w-max shrink-0 snap-x snap-mandatory items-center justify-center gap-18 px-4 md:px-0">
+      <div className="gap-18 mb-4 mt-8 inline-flex h-[54px] min-w-max shrink-0 snap-x snap-mandatory items-center justify-center px-4 md:px-0">
         {/*Title */}
         <div className="hidden flex-col items-end justify-end gap-1 md:inline-flex">
-          <div className="text-Gray-N700 w-full text-end text-[25px] leading-10 font-bold lg:mr-0">فلوی</div>
+          <div className="text-Gray-N700 w-full text-end text-[25px] font-bold leading-10 lg:mr-0">فلوی</div>
           <Image src={line} width={100} height={100} alt="underline" className="h-[9.19px] w-[49px] text-start" />
         </div>
 
@@ -22,30 +22,30 @@ export default function Benefits() {
           {/* Benefit 1 */}
           <div className="flex items-center justify-end gap-3 sm:gap-3.5 md:gap-4">
             <div className="relative size-7 sm:size-9 md:size-[39.02px]">
-              <div className="bg-Primary-P100 absolute top-[4.78px] left-[4.78px] size-[21.85px] rounded-[20.07px] sm:top-[6px] sm:left-[6px] sm:size-[26px] md:hidden"></div>
+              <div className="bg-Primary-P100 absolute left-[4.78px] top-[4.78px] size-[21.85px] rounded-[20.07px] sm:left-[6px] sm:top-[6px] sm:size-[26px] md:hidden"></div>
               <Image
                 src={flashBg}
                 alt="flash-bg"
                 width={39}
                 height={39}
-                className="absolute top-0 left-0 hidden md:block"
+                className="absolute left-0 top-0 hidden md:block"
               />
               <Image
                 src={flashOutline}
                 alt="flash-outline"
                 width={27}
                 height={27}
-                className="absolute top-0 left-0 size-[27.32px] sm:size-9 md:hidden"
+                className="absolute left-0 top-0 size-[27.32px] sm:size-9 md:hidden"
               />
               <Image
                 src={flashOutline}
                 alt="flash-outline"
                 width={35}
                 height={35}
-                className="absolute top-[-1.5px] left-[1px] hidden md:block"
+                className="absolute left-[1px] top-[-1.5px] hidden md:block"
               />
             </div>
-            <span className="text-Gray-N700 text-right text-[13px] leading-normal font-medium sm:text-[15px] md:text-base md:leading-7">
+            <span className="text-Gray-N700 text-right text-[13px] font-medium leading-normal sm:text-[15px] md:text-base md:leading-7">
               <span className="md:hidden">سریع‌ترین روش خرید!</span>
               <span className="hidden md:inline">سریع‌ترین روش خرید</span>
             </span>
@@ -62,31 +62,31 @@ export default function Benefits() {
                 alt="lamp-bg"
                 width={27}
                 height={27}
-                className="absolute top-[1.37px] left-[2.73px] sm:top-[2px] sm:left-[3px] sm:size-9 md:hidden"
+                className="absolute left-[2.73px] top-[1.37px] sm:left-[3px] sm:top-[2px] sm:size-9 md:hidden"
               />
               <Image
                 src={lampBg}
                 alt="lamp-bg"
                 width={39}
                 height={39}
-                className="absolute top-0 left-0 hidden md:block"
+                className="absolute left-0 top-0 hidden md:block"
               />
               <Image
                 src={lampOutline}
                 alt="lamp-outline"
                 width={27}
                 height={27}
-                className="absolute top-0 left-0 sm:size-9 md:hidden"
+                className="absolute left-0 top-0 sm:size-9 md:hidden"
               />
               <Image
                 src={lampOutline}
                 alt="lamp-outline"
                 width={34.96}
                 height={34.96}
-                className="absolute top-[1.5px] left-[-1px] hidden md:block"
+                className="absolute left-[-1px] top-[1.5px] hidden md:block"
               />
             </div>
-            <span className="text-Gray-N700 text-right text-[13px] leading-normal font-medium sm:text-[15px] md:text-base md:leading-7">
+            <span className="text-Gray-N700 text-right text-[13px] font-medium leading-normal sm:text-[15px] md:text-base md:leading-7">
               ارزان‌ترین قیمت
             </span>
           </div>
@@ -102,31 +102,31 @@ export default function Benefits() {
                 alt="crown-bg"
                 width={27}
                 height={27}
-                className="absolute top-[1.37px] left-[2.73px] sm:top-[2px] sm:left-[3px] sm:size-9 md:hidden"
+                className="absolute left-[2.73px] top-[1.37px] sm:left-[3px] sm:top-[2px] sm:size-9 md:hidden"
               />
               <Image
                 src={crownBg}
                 alt="crown-bg"
                 width={39}
                 height={39}
-                className="absolute top-0 left-0 hidden md:block"
+                className="absolute left-0 top-0 hidden md:block"
               />
               <Image
                 src={crownOutline}
                 alt="crown-outline"
                 width={27}
                 height={27}
-                className="absolute top-0 left-0 sm:size-9 md:hidden"
+                className="absolute left-0 top-0 sm:size-9 md:hidden"
               />
               <Image
                 src={crownOutline}
                 alt="crown-outline"
                 width={34.96}
                 height={34.96}
-                className="absolute top-[2.5px] left-[-1px] hidden md:block"
+                className="absolute left-[-1px] top-[2.5px] hidden md:block"
               />
             </div>
-            <span className="text-Gray-N700 text-right text-[13px] leading-normal font-medium sm:text-[15px] md:text-base md:leading-7">
+            <span className="text-Gray-N700 text-right text-[13px] font-medium leading-normal sm:text-[15px] md:text-base md:leading-7">
               بهترین برای مقایسه
             </span>
           </div>
