@@ -29,7 +29,16 @@ try {
 
 // if so, we can import the build manifest
 const buildMeta = JSON.parse(fs.readFileSync(path.join(nextMetaRoot, "build-manifest.json"), "utf8"))
-const appDirMeta = JSON.parse(fs.readFileSync(path.join(nextMetaRoot, "app-build-manifest.json"), "utf8"))
+const appBuildManifestPath = path.join(nextMetaRoot, "app-build-manifest.json")
+const appBuildManifestAltPath = path.join(nextMetaRoot, "app", "app-build-manifest.json")
+let appDirMeta = { pages: {}, rootMainFiles: [] }
+if (fs.existsSync(appBuildManifestPath)) {
+  appDirMeta = JSON.parse(fs.readFileSync(appBuildManifestPath, "utf8"))
+} else if (fs.existsSync(appBuildManifestAltPath)) {
+  appDirMeta = JSON.parse(fs.readFileSync(appBuildManifestAltPath, "utf8"))
+} else {
+  console.warn("No app-build-manifest.json found; skipping app-dir bundle analysis.")
+}
 
 // this memory cache ensures we dont read any script file more than once
 // bundles are often shared between pages
@@ -51,11 +60,12 @@ const _allPageSizes = Object.values(buildMeta.pages).reduce((acc, scriptPaths, i
   return acc
 }, {})
 
-const globalAppDirBundle = buildMeta.rootMainFiles
+const globalAppDirBundle = appDirMeta.rootMainFiles ?? buildMeta.rootMainFiles ?? []
 const globalAppDirBundleSizes = getScriptSizes(globalAppDirBundle)
 
-const allAppDirSizes = Object.values(appDirMeta.pages).reduce((acc, scriptPaths, i) => {
-  const pagePath = Object.keys(appDirMeta.pages)[i]
+const appDirPages = appDirMeta.pages ?? {}
+const allAppDirSizes = Object.values(appDirPages).reduce((acc, scriptPaths, i) => {
+  const pagePath = Object.keys(appDirPages)[i]
   const scriptSizes = getScriptSizes(scriptPaths.filter((scriptPath) => !globalAppDirBundle.includes(scriptPath)))
   acc[pagePath] = scriptSizes
 
