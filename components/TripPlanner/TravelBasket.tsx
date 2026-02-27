@@ -38,7 +38,7 @@ const BasketHeader = ({ itemCount }: { itemCount: number }) => (
       <h2 className="text-Gray-N800 font-anjoman-max text-xl font-bold">سبد سفر</h2>
     </div>
     {itemCount > 0 && (
-      <div className="bg-Primary-P100 text-Primary-P600 font-anjoman-max rounded-full px-3 py-1 text-sm font-semibold">
+      <div className="bg-Primary-P100 text-Primary-P600 rounded-full px-3 py-1 font-anjoman-max text-sm font-semibold">
         {englishToFarsiNumber(itemCount)} مورد
       </div>
     )}

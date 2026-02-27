@@ -80,7 +80,7 @@ export function TripMap({ tripPlan }: TripMapProps) {
 
       {/* Modify Route Button Overlay */}
       <button
-        className="font-anjoman-max text-Gray-N800 focus:ring-Primary-P500main absolute bottom-4 left-1/2 z-[1000] -translate-x-1/2 rounded-lg bg-white px-4 py-2 text-sm font-medium shadow-md transition-colors hover:bg-gray-50 focus:ring-2 focus:ring-offset-2 focus:outline-none"
+        className="text-Gray-N800 focus:ring-Primary-P500main absolute bottom-4 left-1/2 z-[1000] -translate-x-1/2 rounded-lg bg-white px-4 py-2 font-anjoman-max text-sm font-medium shadow-md transition-colors hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2"
         aria-label="تغییر مسیر"
       >
         تغییر مسیر

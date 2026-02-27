@@ -84,7 +84,7 @@ const FancySlider = React.forwardRef<React.ElementRef<typeof SliderPrimitive.Roo
           {/* Slider with custom styling */}
           <SliderPrimitive.Root
             ref={ref}
-            className="absolute inset-0 flex touch-none items-center select-none"
+            className="absolute inset-0 flex touch-none select-none items-center"
             value={value}
             defaultValue={normalizedDefaultValue}
             min={min}
@@ -98,11 +98,11 @@ const FancySlider = React.forwardRef<React.ElementRef<typeof SliderPrimitive.Roo
             </SliderPrimitive.Track>
 
             {/* Left thumb with arrow */}
-            <SliderPrimitive.Thumb className="block h-5 w-5 rounded-full bg-[var(--Primary-P500main,#5a28ee)] focus:ring-2 focus:ring-[var(--Primary-P500main,#5a28ee)] focus:ring-offset-2 focus:outline-none">
-              <div className="absolute -top-[6px] -left-[6px] size-8">
-                <div className="absolute top-[6px] left-[6px] size-5 rounded-full bg-[var(--Primary-P500main,#5a28ee)]" />
+            <SliderPrimitive.Thumb className="block h-5 w-5 rounded-full bg-[var(--Primary-P500main,#5a28ee)] focus:outline-none focus:ring-2 focus:ring-[var(--Primary-P500main,#5a28ee)] focus:ring-offset-2">
+              <div className="absolute -left-[6px] -top-[6px] size-8">
+                <div className="absolute left-[6px] top-[6px] size-5 rounded-full bg-[var(--Primary-P500main,#5a28ee)]" />
               </div>
-              <div className="absolute top-[4px] left-[4px] size-3 overflow-hidden text-white">
+              <div className="absolute left-[4px] top-[4px] size-3 overflow-hidden text-white">
                 <svg viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path
                     d="M4.17 2.67L7.5 6L4.17 9.33"
@@ -116,11 +116,11 @@ const FancySlider = React.forwardRef<React.ElementRef<typeof SliderPrimitive.Roo
             </SliderPrimitive.Thumb>
 
             {/* Right thumb with arrow */}
-            <SliderPrimitive.Thumb className="block h-5 w-5 rounded-full bg-[var(--Primary-P500main,#5a28ee)] focus:ring-2 focus:ring-[var(--Primary-P500main,#5a28ee)] focus:ring-offset-2 focus:outline-none">
-              <div className="absolute -top-[6px] -left-[6px] size-8">
-                <div className="absolute top-[6px] left-[6px] size-5 rounded-full bg-[var(--Primary-P500main,#5a28ee)]" />
+            <SliderPrimitive.Thumb className="block h-5 w-5 rounded-full bg-[var(--Primary-P500main,#5a28ee)] focus:outline-none focus:ring-2 focus:ring-[var(--Primary-P500main,#5a28ee)] focus:ring-offset-2">
+              <div className="absolute -left-[6px] -top-[6px] size-8">
+                <div className="absolute left-[6px] top-[6px] size-5 rounded-full bg-[var(--Primary-P500main,#5a28ee)]" />
               </div>
-              <div className="absolute top-[4px] left-[4px] size-3 overflow-hidden text-white">
+              <div className="absolute left-[4px] top-[4px] size-3 overflow-hidden text-white">
                 <svg viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path
                     d="M7.83 2.67L4.5 6L7.83 9.33"
