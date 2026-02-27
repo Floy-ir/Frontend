@@ -285,7 +285,7 @@ const Timeline = ({
                     } `}
                   >
                     <div
-                      className={`justify-center text-center [user-select:none] select-none ${
+                      className={`justify-center text-center select-none [user-select:none] ${
                         isSelected ? "text-Primary-P500main" : "text-Gray-N500"
                       } text-[11px] leading-none font-medium`}
                     >
@@ -302,7 +302,7 @@ const Timeline = ({
                       </span>
                     </div>
                     <div
-                      className={`mt-1 justify-center text-center [user-select:none] select-none ${
+                      className={`mt-1 justify-center text-center select-none [user-select:none] ${
                         isSelected ? "text-Primary-P500main" : `${priceColor}`
                       } text-[13px] leading-normal font-medium`}
                     >
